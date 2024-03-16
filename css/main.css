@@ -1,0 +1,190 @@
+@charset "UTF-8";
+@font-face {
+  font-family: "이쁜폰트";
+  src: url("../font/NanumSquareB.ttf");
+}
+:root {
+  scroll-behavior: auto;
+}
+
+body {
+  font-family: "이쁜폰트";
+}
+
+.alert-box {
+  background: skyblue;
+  margin: 20px;
+  padding: 20px;
+  color: white;
+  border-radius: 5px;
+}
+
+.show {
+  display: block;
+}
+
+.black-bg {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  padding: 30px;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.4s ease-in-out;
+  z-index: 10;
+}
+
+.white-bg {
+  background: white;
+  border-radius: 5px;
+  padding: 30px;
+}
+
+.show-modal {
+  visibility: visible;
+  opacity: 1;
+}
+
+.list-group {
+  height: 0px;
+  visibility: hidden;
+  overflow: hidden;
+  transition: all 0.4s;
+}
+
+.show-submenu {
+  height: 300px;
+  overflow: hidden;
+  visibility: visible;
+}
+
+.main-bg {
+  padding: 100px 20px;
+  background: lightgray;
+}
+
+.bg-black {
+  background: black;
+}
+
+.bg-white {
+  background-color: white;
+  color: black;
+  border: 1px solid gray;
+}
+
+.badge {
+  width: 60px;
+  height: 20px;
+}
+
+.slide-container {
+  width: 300vw;
+  transform: translateX(0);
+}
+
+.slide-transition {
+  transition: all 1s;
+}
+
+.slide-box {
+  width: 100vw;
+  height: 400px;
+  float: left;
+}
+.slide-box img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: scale-down;
+     object-fit: scale-down;
+}
+
+.navbar {
+  position: fixed;
+  width: 100vw;
+  z-index: 5;
+}
+
+.navbar-brand {
+  font-size: 25px;
+  transition: all 1s;
+}
+
+.progress {
+  position: fixed;
+  background: linear-gradient(to left, #e66465, #9198e5);
+  width: 0vw;
+  height: 15px;
+  box-sizing: border-box;
+  z-index: 10;
+  left: 0;
+  bottom: 5px;
+  border-radius: 0px 20px 20px 0px;
+}
+
+ul.list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #ccc;
+}
+
+ul.list::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.tab-button {
+  display: block;
+  padding: 10px 20px 10px 20px;
+  float: left;
+  margin-right: -1px;
+  margin-bottom: -1px;
+  color: grey;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.orange {
+  border-top: 2px solid orange;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid white;
+  border-left: 1px solid #ccc;
+  color: black;
+  margin-top: -2px;
+}
+
+.tab-content {
+  display: none;
+  padding: 10px;
+}
+
+.show {
+  display: block;
+}
+
+.form-hide {
+  display: none;
+}
+
+.btn-wrapper {
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.btn-wrapper button {
+  margin: 10px auto 0px auto;
+}
+
+.hide {
+  display: none;
+}
+
+div button .btn {
+  margin-left: 10px;
+}/*# sourceMappingURL=main.css.map */

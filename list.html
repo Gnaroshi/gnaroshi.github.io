@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+
+        <!-- Bootstrap -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+
+        <!-- Font Awesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        />
+        <!-- my css -->
+        <!-- <link rel="stylesheet" href="./css/normalize.css" /> -->
+        <link rel="stylesheet" href="./css/main.css" />
+
+        <!-- jQuery -->
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"
+        ></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row"></div>
+        </div>
+
+        <div class="container">
+            <div class="btn-wrapper">
+                <button class="btn btn-danger" id="price-ac">
+                    높은가격순정렬
+                </button>
+                <button class="btn btn-danger" id="price-dc">
+                    낮은가격순정렬
+                </button>
+            </div>
+            <div class="btn-wrapper">
+                <button class="btn btn-danger" id="title-ac">
+                    이름오름차순정렬
+                </button>
+                <button class="btn btn-danger" id="title-dc">
+                    이름내림차순정렬
+                </button>
+            </div>
+            <div class="btn-wrapper">
+                <input type="number" id="manwon" />
+                <button class="btn btn-danger" id="filter">(만원)이하</button>
+            </div>
+            <div class="btn-wrapper">
+                <button class="btn btn-danger" id="origin">원래대로</button>
+                <button class="btn btn-danger" id="more">더보기</button>
+            </div>
+        </div>
+
+        <button
+            class="btn-black"
+            type="button"
+            onclick="location.href='cart.html'"
+            style="width: 20px; height: 10px"
+        ></button>
+
+        <script>
+            var products = [
+                { id: 0, price: 70000, title: "Blossom Dress" },
+                { id: 1, price: 50000, title: "Springfield Shirt" },
+                { id: 2, price: 60000, title: "Black Monastery" },
+            ];
+
+            function make_products(p) {
+                p.forEach((a) => {
+                    var 템플릿 = `<div class="col-sm-4">
+                        <img src="https://via.placeholder.com/600" class="w-100">
+                        <h5>${a.title}</h5>
+                        <p>가격 : ${a.price}</p>
+                        <button class="buy">구매</button>
+                      </div>`;
+                    $(".row").append(템플릿);
+                });
+            }
+
+            make_products(products);
+
+            $("#price-dc").click(function () {
+                let t = Object.assign([], products);
+                t.sort(function (a, b) {
+                    return a.price - b.price;
+                });
+                $(".row").html("");
+                make_products(t);
+            });
+
+            $("#price-ac").click(function () {
+                let t = Object.assign([], products);
+                t.sort(function (a, b) {
+                    return b.price - a.price;
+                });
+                $(".row").html("");
+                make_products(t);
+            });
+
+            $("#title-ac").click(function () {
+                let t = Object.assign([], products);
+                t.sort(function (a, b) {
+                    if (a.title > b.title) return 1;
+                    else return -1;
+                });
+                $(".row").html("");
+                make_products(t);
+            });
+
+            $("#title-dc").click(function () {
+                let t = Object.assign([], products);
+                t.sort(function (a, b) {
+                    if (a.title < b.title) return 1;
+                    else return -1;
+                });
+                $(".row").html("");
+                make_products(t);
+            });
+
+            $("#price-ac").click(function () {
+                let t = Object.assign([], products);
+                t.sort(function (a, b) {
+                    return b.price - a.price;
+                });
+                $(".row").html("");
+                make_products(t);
+            });
+
+            $("#filter").click(function () {
+                let mwValue = $("#manwon").val();
+                console.log(mwValue);
+                let t = products.filter(function (a) {
+                    return a.price <= mwValue * 10000;
+                });
+                $(".row").html("");
+                make_products(t);
+            });
+
+            $("#origin").click(function () {
+                $(".row").html("");
+                make_products(products);
+            });
+
+            var clickCnt = 1;
+
+            $("#more").click(function () {
+                var more = $.get(
+                    `https://codingapple1.github.io/js/more${clickCnt}.json`
+                );
+
+                more.then(function (data) {
+                    make_products(data);
+                    for (let i = 0; i < data.length; i++)
+                        products[products.length + i] = data[i];
+                }).fail((error) => {
+                    $("#more").addClass("hide");
+                });
+                clickCnt++;
+            });
+
+            $(".buy").click(function (e) {
+                var title = $(e.target).siblings("h5").text();
+                if (localStorage.getItem("cart") != null) {
+                    var 꺼낸거 = JSON.parse(localStorage.cart);
+                    꺼낸거.push(title);
+                    localStorage.setItem("cart", JSON.stringify(꺼낸거));
+                } else {
+                    localStorage.setItem("cart", JSON.stringify([title]));
+                }
+            });
+        </script>
+
+        <!-- Bootstrap -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+    </body>
+</html>
