@@ -1,0 +1,118 @@
+{
+  "meta": {
+    "research_count": {
+      "published_count": 1,
+      "working_count": 6,
+      "project_count": 0
+    }
+  },
+  "published": {
+    "capub0": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Spatial Bias for Attention-free Non-local Neural Networks (Expert Systems with applications, 2024)",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    }
+  },
+
+  "working": {
+    "cawor0": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Enriching Local Patterns with Multi-Token Attention for Broad-Sight Neural Networks",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "cawor1": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Interactive Multi-Head Self-Attention with Linear Complexity",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "cawor2": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Re-parameterization Training Strategy",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "cawor3": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Unsupervised Hashing Network with Hyper Quantization Tree",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "cawor4": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Balanced Drop Path for Regularizing Overemphasis on Hard Samples",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "cawor5": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Applying Computer Vision Technique to LLM",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    }
+  },
+  "project": {}
+}
