@@ -1,0 +1,9 @@
+#news-card-wrapper {
+  width: auto;
+  height: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: auto;
+}
