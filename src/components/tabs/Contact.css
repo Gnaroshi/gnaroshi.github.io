@@ -1,0 +1,9 @@
+#contact {
+  text-align: center;
+}
+
+#contact img {
+  height: 4rem;
+  width: 6rem;
+  object-fit: cover;
+}

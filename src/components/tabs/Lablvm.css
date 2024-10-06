@@ -1,0 +1,75 @@
+#lablvm {
+  width: 100%;
+  height: auto;
+  /* height: 100%; */
+  /* margin: 2rem 3rem; */
+  padding: 2rem 1rem;
+
+  text-align: center;
+
+  background-color: white;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../../assets/DSCF2143.jpg");
+  background-size: cover;
+  /* background-size: contain; */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#lablvm > h1 {
+  width: 20rem;
+  min-width: 20rem;
+  margin: 0.2rem;
+
+  font-size: 8rem;
+  /* line-height: 0.5rem; */
+  letter-spacing: 0.5rem;
+  /* color: lightgrey; */
+  /* border: none; */
+
+  word-break: break-all;
+
+  display: block;
+  text-shadow: 0 0 5rem rgba(255, 255, 255, 0.5);
+  background: url("../../assets/images/lablvm-title-background.png");
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: lablvm-anim 10s linear infinite;
+}
+
+@keyframes lablvm-anim {
+  0% {
+    background-position: -50% 50%;
+  }
+  100% {
+    background-position: 150% 50%;
+  }
+}
+
+@-webkit-keyframes lablvm-anim {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+#news-abs {
+  width: 100%;
+  height: auto;
+
+  margin: 4rem 1rem 2rem 1rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

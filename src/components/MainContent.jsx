@@ -10,13 +10,13 @@ import Photo from "./tabs/Photo.jsx";
 import Join from "./tabs/Join.jsx";
 import Contact from "./tabs/Contact.jsx";
 
-function MainContent({ isNavAtTop, selectedTab }) {
+function MainContent({ selectedTab }) {
   return (
     <div
       id="main-content-wrapper"
-      className={isNavAtTop ? "fixed-nav" : "bottom-nav"}
+      // className={isNavAtTop ? "fixed-nav" : "bottom-nav"}
     >
-      {selectedTab && isNavAtTop && (
+      {selectedTab && (
         <section id="content">
           {selectedTab === "home" && <Home />}
           {selectedTab === "about" && <About />}

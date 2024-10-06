@@ -1,7 +1,10 @@
+import contactImage from "../../assets/IMG_0148.jpeg";
+import "./Contact.css";
 function Contact() {
   return (
-    <div>
-      <h1>Contact</h1>
+    <div id="contact">
+      <h1>contact</h1>
+      <img src={contactImage} alt="" />
     </div>
   );
 }

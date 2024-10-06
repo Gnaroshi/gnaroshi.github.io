@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "research_count": {
+      "published_count": 0,
+      "working_count": 4,
+      "project_count": 0
+    }
+  },
+  "published": {},
+  "working": {
+    "": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Efficient Vision-Language Model Finetuning",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Vision-Language Model from Scratch",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Multi-modality Fusion",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Prompt Learning in Vision-Language Model",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    }
+  },
+  "project": {}
+}

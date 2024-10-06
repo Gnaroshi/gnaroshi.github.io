@@ -1,6 +1,7 @@
-#home {
+#home-wrapper {
   width: 100%;
   height: auto;
+  margin: 2rem 0rem;
   /* height: 100%; */
 
   display: flex;
@@ -9,48 +10,27 @@
   align-items: center;
 }
 
-#lablvm {
-  width: 100%;
-  height: auto;
-  /* height: 100%; */
-  /* margin: 2rem 3rem; */
-  padding: 2rem 3rem;
-
-  text-align: center;
-
-  background-color: white;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("../../assets/DSCF2143.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-#lablvm > h1 {
-  margin: 5rem;
-
-  font-size: 10rem;
-  line-height: 0.5rem;
-  color: lightgrey;
-  border: none;
-}
-
-#news-abs {
+#home-introduce {
   width: 100%;
   height: auto;
 
-  margin: 4rem 1rem 2rem 1rem;
+  margin: 2rem 0rem;
 
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   justify-content: center;
+  align-items: center;
 }
 
-#research-abs {
+#home-research {
   width: 100%;
+  height: auto;
+
+  /* margin: 2rem 1rem 0rem 1rem; */
+  margin: 2rem 0rem;
+
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: center;
+  align-items: center;
 }

@@ -1,0 +1,117 @@
+{
+  "meta": {
+    "research_count": {
+      "published_count": 0,
+      "working_count": 0,
+      "project_count": 7
+    }
+  },
+  "published": {},
+  "working": {},
+  "project": {
+    "aapro0": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Seamless Visual ROI Tacking using Co-training Algorithm for Soccer Broadcast",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "aapro1": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "문화공연 방송을 위한 실시간 다중 객체 추적 기술 구현",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "aapro2": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "객체 탐지율 향상을 위한 탐지기 융합형 고속 객체 추적 기술 분석",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "aapro3": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "워킹스루기반 마스크 등 얼굴 가림 영상의 전이학습 모델 구축",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "aapro4": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "방사선 데이터에서의 결함 예측 머신러닝 모델 연구개발",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "aapro5": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "로봇 운영 환경에 지속 적응하며 인식 신뢰도를 개선하는 적응학습 SW 개발",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "aapro6": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "적외선 도메인에서 학습가능한 멀티태스크 러닝 모델 개발",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    }
+  }
+}

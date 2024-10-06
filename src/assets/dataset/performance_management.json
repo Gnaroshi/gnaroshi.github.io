@@ -1,0 +1,35 @@
+{
+  "contents": {
+    "core_ai": {
+      "title": "CORE AI",
+      "subtitle": [
+        "Self // Semi // Unsupervised Learning",
+        "Model Architecture"
+      ],
+      "explaination": "Core Ai는 핵심적인 인공지능 기술을 뜻하며 인공지능 모델의 Architecture 구조 개선, 학습의 방법 개선, 효율성 개선 등을 포함한 전반적인 인공지능의 핵심적인 내용을 다룸.",
+      "tags": ["Architecture", "Efficient", "Robust", "Regularization"]
+    },
+    "multi-modal_ai": {
+      "title": "MULTI-MODAL AI",
+      "subtitle": ["Vision-language Model", "Multi-modal Finetuning"],
+      "explaination": "Multi-Modal AI는 두 개 이상의 서로 다른 모달리티를 활용하는 인공지능 기술로 단일 모달리티를 활용한 모델보다 더욱 풍부한 표현을 얻을 수 있으며 다양한 태스크를 동시에 다룰 수 있음.",
+      "tags": ["Vision-language", "Finetuning", "Prompt Engineering", "Fusion"]
+    },
+    "biomedical_ai": {
+      "title": "BIOMEDICAL AI",
+      "subtitle": ["Diagnostic Assistant", "Biomedical Image Recognition"],
+      "explaination": "Biomedical AI는 의료 도메인에서 인공지능 모델을 통해 의료진단의 보조적인 역할을 수행하기 위한 방법으로 의료 영상 이미지의 인식 성능의 개선, 모델구조의 해석, 데이터 불균형 해소 등을 처리함.",
+      "tags": [
+        "Diagnostic Assistant",
+        "Biomedical Image Recognition",
+        "Analysis"
+      ]
+    },
+    "application_ai": {
+      "title": "APPLICATION AI",
+      "subtitle": ["Object Detection", "Visual Tracking"],
+      "explaination": "Application AI는 실제 환경에서 활용가능한 인공지능 모델을 개발하는 방법으로 객체 탐지, 추적, 얼굴 인식 등 실산업에 인공지능 모델을 적용하는 방법을 의미함.",
+      "tags": ["Object Detection", "Visual Tracking", "Face Recognition"]
+    }
+  }
+}

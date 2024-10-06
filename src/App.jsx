@@ -1,24 +1,27 @@
 import { useState } from "react";
 import MainContent from "./components/MainContent.jsx";
 import Nav from "./components/Nav.jsx";
+import Lablvm from "./components/tabs/Lablvm.jsx";
 import Footer from "./components/Footer.jsx";
 
 import "./App.css";
 
 function App() {
-  const [isNavAtTop, setIsNavAtTop] = useState(false);
+  // const [isNavAtTop, setIsNavAtTop] = useState(false);
   const [selectedTab, setSelectedTab] = useState("home");
 
   const handleNavBtnClick = (tab) => {
-    setIsNavAtTop(true);
+    // setIsNavAtTop(true);
     setSelectedTab(tab);
   };
 
   return (
     <div id="app-wrapper">
       <div id="content-wrapper">
-        <Nav handleNavBtnClick={handleNavBtnClick} />
-        <MainContent isNavAtTop={isNavAtTop} selectedTab={selectedTab} />
+        <Nav id="top-nav" handleNavBtnClick={handleNavBtnClick} />
+        <Lablvm />
+        {/* <MainContent isNavAtTop={isNavAtTop} selectedTab={selectedTab} /> */}
+        <MainContent selectedTab={selectedTab} />
       </div>
       <Footer />
     </div>

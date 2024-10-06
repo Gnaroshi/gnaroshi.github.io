@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "research_count": {
+      "published_count": 5,
+      "working_count": 2,
+      "project_count": 1
+    }
+  },
+  "published": {
+    "bapub0": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Deep Learning Using Computed Tomography to Identify High-Risk Patients for Acute Small Bowel Obstruction: Development and Validation of a Prediction Model: A Retrospective Cohort Study(Journal of Surgery, 2023)",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "bapub1": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Robust Asymmetric Loss for Multi-Label Long-Tailed Learning(ICCVW, 2023)",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "bapub2": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Attentional Decoder Networks for Chest X-ray Image Recognition on High-resolution Features (Computer Methods and Programs in Biomedicine, 2024)",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "bapub3": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Analyzing to Discover Origins of CNNs and ViT Architectures in Medical Images(Scientific Reports, 2024)",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "bapub4": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Style-KD : Class-Imbalanced Medical Image Classification via Style Knowledge Distillation(Biomedical Signal Processing and Control, 2024)",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    }
+  },
+  "working": {
+    "bawor0": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "GEN-SSL: Learning to Generative Self-Supervision for Medical Image Recognition",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+
+    "bawor1": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Alzheimer's Disease and Cognitive Normal classification using 3D MRI and PET image",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    }
+  },
+  "project": {
+    "bapro0": {
+      "research_meta": {
+        "author": "",
+        "published_place": "",
+        "published_date": "",
+        "source_code_link": ""
+      },
+      "title": "Key-Frame Selection in 3D CT images for Efficient Lymphoma Diagnosis",
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    }
+  }
+}

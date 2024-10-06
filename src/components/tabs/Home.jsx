@@ -1,20 +1,15 @@
 import "./Home.css";
-import News from "./Home/News";
-import ResearchAbs from "./Home/ResearchAbs";
+import HomeResearch from "./Home/HomeResearch";
+import HomeIntroduction from "./Home/HomeIntroduction";
 
 function Home() {
   return (
-    <div id="home">
-      <section id="lablvm">
-        <h1>LAB</h1>
-        <h1>LVM</h1>
-        <section id="news-abs">
-          <News />
-        </section>
+    <div id="home-wrapper">
+      <section id="home-introduce">
+        <HomeIntroduction />
       </section>
-
-      <section id="research-abs">
-        <ResearchAbs />
+      <section id="home-research">
+        <HomeResearch />
       </section>
     </div>
   );
