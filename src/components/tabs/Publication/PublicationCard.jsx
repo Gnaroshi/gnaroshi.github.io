@@ -14,23 +14,31 @@ function PublicationCard({ category, meta, title, content = null }) {
 
   return (
     <div className="publication-card">
-      <div className="publication-card-title">
-        <a href={meta.paper_link}>
-          <p>{title}</p>
-        </a>
+      <div className="publication-card-img">
+        <img src={CORE_IMG} alt="" />
       </div>
+
       <div className={"publication-card-dividor " + category + "_ai"}></div>
-      <div className="publication-card-publish">
-        <p className="publication-card-published_place">
-          {meta.published_date}
-        </p>
-        <p>{meta.published_place}</p>
-      </div>
-      <div className="publication-card-author">
-        <p>{meta.author}</p>
-      </div>
-      <div className={"publication-card-category " + category + "_ai"}>
-        <p>{category}</p>
+
+      <div className="publication-card-info-wrapper">
+        <div className="publication-card-title">
+          <a href={meta.paper_link}>
+            <p>{title}</p>
+          </a>
+        </div>
+        {/* <div className={"publication-card-dividor " + category + "_ai"}></div> */}
+        <div className="publication-card-publish">
+          <p className="publication-card-published_place">
+            {meta.published_date}
+          </p>
+          <p>{meta.published_place}</p>
+        </div>
+        <div className="publication-card-author">
+          <p>{meta.author}</p>
+        </div>
+        {/* <div className={"publication-card-category " + category + "_ai"}> */}
+        {/*   <p>{category}</p> */}
+        {/* </div> */}
       </div>
     </div>
   );

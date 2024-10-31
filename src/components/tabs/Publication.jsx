@@ -94,7 +94,9 @@ function Publication() {
 
   return (
     <div className="publication">
-      <h1>Publication</h1>
+      <div className="content-header">
+        <h1>Publication</h1>
+      </div>
       <div className="publication-area-btn-wrapper">
         {areaCategory.map((area, i) => (
           <PublicationBtn

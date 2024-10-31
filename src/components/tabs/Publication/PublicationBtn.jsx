@@ -3,10 +3,16 @@ import "./PublicationBtn.css";
 function PublicationBtn({ children, isSelected, onSelect }) {
   return (
     <button
-      className={isSelected ? "publication-btn-active" : undefined}
+      className={
+        "publication-btn" +
+        " publication-btn-" +
+        children.toLowerCase() +
+        " " +
+        (isSelected ? "publication-btn-active" : undefined)
+      }
       onClick={onSelect}
     >
-      {children}
+      <p>{children}</p>
     </button>
   );
 }

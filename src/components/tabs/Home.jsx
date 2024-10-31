@@ -8,9 +8,12 @@ function Home() {
       <section id="home-introduce">
         <HomeIntroduction />
       </section>
-      <section id="home-research">
-        <HomeResearch />
-      </section>
+      {/* <section id="home-research"> */}
+      {/*   <HomeResearch /> */}
+      {/* </section> */}
+      <div className="home-temp">
+        <p>추가 내용 구현 예정</p>
+      </div>
     </div>
   );
 }

@@ -9,6 +9,17 @@
   align-items: center;
 }
 
+.publication-area-btn-wrapper {
+  width: 100%;
+  height: auto;
+
+  margin: 1rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .publication-card-wrapper {
   width: 90%;
   height: auto;
@@ -16,7 +27,7 @@
 
   margin: 1rem 0 4rem 0;
 
-  overflow: auto;
+  overflow: hidden;
 
   display: flex;
   flex-wrap: wrap;

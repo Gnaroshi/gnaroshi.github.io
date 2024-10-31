@@ -7,7 +7,9 @@ function Research() {
 
   return (
     <div id="research-wrapper">
-      <h1>Research Area</h1>
+      <div className="content-header">
+        <h1>Research Area</h1>
+      </div>
 
       <div id="research-card-wrapper">
         {RESEARCH_CONTENTS.map((contentItem, i) => (

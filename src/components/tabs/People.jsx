@@ -14,6 +14,21 @@ function People() {
       </div>
 
       <div className="people-degree-header">
+        <h2>Professor</h2>
+      </div>
+
+      <div className="people-card-wrapper">
+        {PEOPLE_INFO.professor.map((p, i) => (
+          <PeopleCard
+            key={i}
+            profile={PEOPLE_IMG.professor[i]}
+            name={p.name}
+            email={p.email}
+          />
+        ))}
+      </div>
+
+      <div className="people-degree-header">
         <h2>Intergrated M.S and Ph.D</h2>
       </div>
       <div className="people-card-wrapper">

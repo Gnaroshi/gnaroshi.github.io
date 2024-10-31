@@ -35,8 +35,10 @@
 .people-card-profile {
   width: 50%;
   height: 90%;
-  min-width: 12rem;
-  min-height: 12rem;
+  min-width: 8rem;
+  max-width: 12rem;
+  min-height: 8rem;
+  max-height: 12rem;
 
   margin-right: 1.2rem;
 }

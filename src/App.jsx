@@ -9,7 +9,7 @@ import "./App.css";
 function App() {
   // const [isNavAtTop, setIsNavAtTop] = useState(false);
   // const [selectedTab, setSelectedTab] = useState("home");
-  const [selectedTab, setSelectedTab] = useState("people");
+  const [selectedTab, setSelectedTab] = useState("home");
 
   const handleNavBtnClick = (tab) => {
     // setIsNavAtTop(true);
