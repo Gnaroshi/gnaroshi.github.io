@@ -9,12 +9,13 @@
   "published": {
     "capub0": {
       "research_meta": {
-        "author": "",
-        "published_place": "",
-        "published_date": "",
-        "source_code_link": ""
+        "author": "Junhyung Go, Jonngbin Ryu",
+        "published_place": "Expert Systems with applications",
+        "published_date": "2024-10-04",
+        "source_code_link": "",
+        "paper_link": "https://www.sciencedirect.com/science/article/pii/S0957417423025551"
       },
-      "title": "Spatial Bias for Attention-free Non-local Neural Networks (Expert Systems with applications, 2024)",
+      "title": "Spatial Bias for Attention-free Non-local Neural Networks",
       "content": {
         "problem": "",
         "solve": "",

@@ -12,8 +12,8 @@
 }
 
 #home-research-card {
-  width: 50%;
-  max-width: 30rem;
+  /* width: 50%; */
+  /* max-width: 30rem; */
   height: auto;
   min-height: 20rem;
 
@@ -71,6 +71,8 @@
   height: auto;
   margin: 0.2rem;
   white-space: nowrap;
+
+  text-align: center;
 }
 
 #home-research-card-explaination {

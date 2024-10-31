@@ -2,10 +2,7 @@
   "contents": {
     "core_ai": {
       "title": "CORE AI",
-      "subtitle": [
-        "Self // Semi // Unsupervised Learning",
-        "Model Architecture"
-      ],
+      "subtitle": ["Self・Semi・Unsupervised Learning", "Model Architecture"],
       "explaination": "Core Ai는 핵심적인 인공지능 기술을 뜻하며 인공지능 모델의 Architecture 구조 개선, 학습의 방법 개선, 효율성 개선 등을 포함한 전반적인 인공지능의 핵심적인 내용을 다룸.",
       "tags": ["Architecture", "Efficient", "Robust", "Regularization"]
     },

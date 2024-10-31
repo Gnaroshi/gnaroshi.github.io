@@ -41,6 +41,12 @@ html {
   /* min-height: 80rem; */
 }
 
+@media (max-width: 425) {
+  html {
+    font-size: 8px;
+  }
+}
+
 body {
   height: 100vh;
   width: 100%;

@@ -8,7 +8,8 @@ import "./App.css";
 
 function App() {
   // const [isNavAtTop, setIsNavAtTop] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("home");
+  // const [selectedTab, setSelectedTab] = useState("home");
+  const [selectedTab, setSelectedTab] = useState("people");
 
   const handleNavBtnClick = (tab) => {
     // setIsNavAtTop(true);
@@ -19,7 +20,7 @@ function App() {
     <div id="app-wrapper">
       <div id="content-wrapper">
         <Nav id="top-nav" handleNavBtnClick={handleNavBtnClick} />
-        <Lablvm />
+        <Lablvm isHome={selectedTab == "home"} />
         {/* <MainContent isNavAtTop={isNavAtTop} selectedTab={selectedTab} /> */}
         <MainContent selectedTab={selectedTab} />
       </div>

@@ -7,10 +7,13 @@ function HomeIntroduction() {
         <h1>Welcome</h1>
       </div>
       <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius dolore
-        excepturi debitis mollitia doloremque, cum unde, est, corrupti
-        voluptatem consectetur voluptate autem asperiores reprehenderit
-        temporibus placeat inventore amet perferendis neque.
+        We are working on a range of challenges in the realm of machine
+        learning, concentrating in particular on computer vision releated
+        problems. Our research incldues the development of large-scale vision
+        models and exploring multimodal approaches that integrate vision with
+        language and speech modalities. We apply these models to investigate
+        real-world challenges across diverse domains, including industrial and
+        medical data.
       </p>
     </div>
   );

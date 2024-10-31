@@ -1,0 +1,139 @@
+.publication-card {
+  width: 80%;
+  height: auto;
+
+  background-color: white;
+  border: 0.1rem solid transparent;
+  border-radius: 0.8rem;
+  box-shadow: 0 0.8rem 0.8rem rgba(0, 0, 0, 0.4);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  max-width: 100%;
+  margin: 1rem;
+  overflow: hidden;
+
+  font-size: 1rem;
+
+  transition: all 0.2s ease-in-out;
+}
+
+.publication-card p {
+  text-overflow: ellipsis;
+  /* white-space: nowrap; */
+  overflow: visible;
+  margin: 0.2rem;
+  padding: 0.4rem 1rem;
+
+  text-align: center;
+}
+
+.publication-card-title {
+  width: 100%;
+  height: auto;
+  margin: 0.4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #000;
+  transition: all 0.2s ease-in-out;
+}
+
+.publication-card-title p {
+  font-weight: bold;
+}
+
+.publication-card-publish {
+  width: 90%;
+  height: auto;
+  padding: 0.2rem 0;
+
+  display: flex;
+  justify-content: center;
+}
+.publication-card-publish p {
+  font-size: 0.8rem;
+  padding: 0.2rem;
+}
+
+.publication-card-publish :first-child {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.publication-card-author {
+  width: 100%;
+  height: auto;
+  box-shadow: 0 0.2rem 0.2rem 0.2rem rgba(0, 0, 0, 0.2);
+  padding: 0.2rem 0;
+}
+.publication-card-author p {
+  font-size: 0.8rem;
+  padding: 0.2rem;
+}
+
+.publication-card-category {
+  width: 100%;
+  height: auto;
+
+  margin: 0;
+
+  text-align: center;
+  font-size: 1rem;
+}
+.publication-card-category p {
+  margin: 0;
+  color: white;
+}
+
+.publication-card-dividor {
+  width: 100%;
+  height: 0.2rem;
+  margin: 0 0 0.2rem 0;
+  padding: 0;
+  box-shadow: 0 0.2rem 0.1rem rgba(0, 0, 0, 0.2);
+}
+
+.application_ai {
+  background-color: #8a7ed9;
+}
+
+.biomedical_ai {
+  background-color: #7eacb5;
+}
+
+.core_ai {
+  background-color: #fadfa1;
+}
+
+.multi-modal_ai {
+  background-color: #c96868;
+}
+
+.publication-card img {
+  /* display: ; */
+
+  width: 5rem;
+  height: 5rem;
+
+  border: 0.2rem solid wheat;
+  border-radius: 2rem;
+}
+
+/* hover effect */
+
+.publication-card:hover {
+  /* box-shadow: */
+  /*   0.4rem 0.4rem 0.4rem rgba(0, 0, 0, 0.1), */
+  /*   -0.4rem 0.4rem 0.4rem white; */
+  box-shadow: 0 0.8rem 0.8rem rgba(0, 0, 0, 0);
+  border-color: #aaa;
+  transition: all 0.2s ease-in-out;
+}
+
+.publication-card-title:hover {
+  color: #537791;
+  text-decoration: underline #537791;
+  transition: all 0.2s ease-in-out;
+}

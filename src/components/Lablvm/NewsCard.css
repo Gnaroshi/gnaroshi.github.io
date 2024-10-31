@@ -1,10 +1,15 @@
 .news-card {
-  width: 100%;
+  width: 80%;
   height: auto;
   min-width: 18rem;
 
   margin: 0.2rem 2rem 0.2rem 2rem;
-  padding: 0 2rem;
+  /* padding: 0 2rem; */
+
+  scroll-snap-align: center;
+  flex-shrink: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(1rem);
 
   /* background-color: gray; */
 }
@@ -12,27 +17,26 @@
 .news-card-date-wrapper {
   width: 100%;
   height: 2rem;
-  padding: 0 0.5rem;
+  /* padding: 0 0.5rem; */
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  background-color: black;
-  color: white;
+  /* background-color: black; */
+  background-color: transparent;
+  color: #537791;
 }
 .news-card-date {
-  width: auto;
+  width: 100%;
   height: auto;
   margin: 0;
 }
 .news-card h1 {
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 .news-card-content {
   width: 100%;
   height: 100%;
-
-  backdrop-filter: blur(1rem);
 }

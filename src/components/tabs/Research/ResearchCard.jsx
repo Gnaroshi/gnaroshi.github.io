@@ -1,38 +1,22 @@
 import "./ResearchCard.css";
-import CORE_IMG from "../../../assets/images/research_concepts/core.png";
 
-function ResearchCard() {
-  let category = "application_ai";
+function ResearchCard({ title, subtitle, explaination, tags }) {
   return (
-    <div id="research-card">
-      {/* <img src={CORE_IMG} alt="" /> */}
-      {/* <h2>Title</h2> */}
-      {/* <p> */}
-      {/*   Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores, */}
-      {/*   eligendi? Officia facilis consequatur, aspernatur aperiam repellendus */}
-      {/*   sequi? Neque quasi illum at facere hic iste quas voluptates, esse */}
-      {/*   blanditiis laudantium maiores. */}
-      {/* </p> */}
-      {/* <button>more</button> */}
-      {/* <div className={"title " + category}> */}
-      <div className="title">
-        <p>Spatial Bias for Attention-free Non-local Neural Networks</p>
+    <div id="research-card" className="research-flex1">
+      <h1 id="research-card-title">{title}</h1>
+      {/* <p id="research-card-subtitle">{subtitle}</p> */}
+      <div id="research-card-subtitle" className="research-flex2">
+        {subtitle.map((subtitleItem, i) => {
+          return <p key={i}>{subtitleItem}</p>;
+        })}
       </div>
-      <div className={"card-dividor " + category}></div>
-      <div className="publish">
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores,
-          eligendi? Officia facilis consequatur, aspernatur aperiam repellendus
-          sequi? Neque quasi illum at facere hic iste quas voluptates, esse
-          blanditiis laudantium maiores.
-        </p>
+      <div id="research-card-explaination" className="research-flex2">
+        <p>{explaination}</p>
       </div>
-      <div className="author">
-        <p>Author</p>
-      </div>
-      {/* <div className="category"> */}
-      <div className={"category " + category}>
-        <p>Application AI</p>
+      <div id="research-card-tags" className="research-flex2">
+        {tags.map((tagItem, i) => {
+          return <p key={i}>{tagItem}</p>;
+        })}
       </div>
     </div>
   );

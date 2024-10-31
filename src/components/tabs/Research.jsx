@@ -1,18 +1,20 @@
 import "./Research.css";
-import ResearchCard from "./Research/ResearchCard";
+import ResearchCard from "./Research/ResearchCard.jsx";
+import CONTENTS from "../../assets/dataset/performance_management.json";
 
 function Research() {
+  const RESEARCH_CONTENTS = Object.values(CONTENTS.contents);
+
   return (
-    <div id="research">
-      <h1>Research</h1>
-      <section id="research-card-wrapper">
-        <ResearchCard />
-        <ResearchCard />
-        <ResearchCard />
-        <ResearchCard />
-        <ResearchCard />
-        <ResearchCard />
-      </section>
+    <div id="research-wrapper">
+      <h1>Research Area</h1>
+
+      <div id="research-card-wrapper">
+        {RESEARCH_CONTENTS.map((contentItem, i) => (
+          <ResearchCard key={i} {...contentItem} />
+        ))}
+      </div>
+      {/* <HomeResearchCard {...HOME_CONTENTS.core_ai} /> */}
     </div>
   );
 }

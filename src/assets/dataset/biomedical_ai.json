@@ -9,12 +9,13 @@
   "published": {
     "bapub0": {
       "research_meta": {
-        "author": "",
-        "published_place": "",
-        "published_date": "",
-        "source_code_link": ""
+        "author": "Seungmin Oh, Jongbin Ryu, Ho-Jung Shin, Jeong Ho Song, Sang-Yong Son, Hoon Hur, Sang-Uk Han",
+        "published_place": "International Journal of Surgery",
+        "published_date": "2023-12-01",
+        "source_code_link": "",
+        "paper_link": "https://journals.lww.com/international-journal-of-surgery/fulltext/2023/12000/deep_learning_using_computed_tomography_to.39.aspx"
       },
-      "title": "Deep Learning Using Computed Tomography to Identify High-Risk Patients for Acute Small Bowel Obstruction: Development and Validation of a Prediction Model: A Retrospective Cohort Study(Journal of Surgery, 2023)",
+      "title": "Deep Learning Using Computed Tomography to Identify High-Risk Patients for Acute Small Bowel Obstruction: Development and Validation of a Prediction Model: A Retrospective Cohort Study",
       "content": {
         "problem": "",
         "solve": "",
@@ -24,12 +25,13 @@
 
     "bapub1": {
       "research_meta": {
-        "author": "",
-        "published_place": "",
-        "published_date": "",
-        "source_code_link": ""
+        "author": "Wongi Park, Inhyuk Park, Sungeun Kim, Jongbin Ryu",
+        "published_place": "ICCVW",
+        "published_date": "2023-08-10",
+        "source_code_link": "https://github.com/kalelpark/RAL",
+        "paper_link": "https://openaccess.thecvf.com/content/ICCV2023W/CVAMD/html/Park_Robust_Asymmetric_Loss_for_Multi-Label_Long-Tailed_Learning_ICCVW_2023_paper.html"
       },
-      "title": "Robust Asymmetric Loss for Multi-Label Long-Tailed Learning(ICCVW, 2023)",
+      "title": "Robust Asymmetric Loss for Multi-Label Long-Tailed Learning",
       "content": {
         "problem": "",
         "solve": "",
@@ -39,12 +41,13 @@
 
     "bapub2": {
       "research_meta": {
-        "author": "",
-        "published_place": "",
-        "published_date": "",
-        "source_code_link": ""
+        "author": "Hankyul Kang, Namkug Kim, Jongbin Ryu",
+        "published_place": "Computer Methods and Programs in Biomedicine",
+        "published_date": "2024-04-21",
+        "source_code_link": "https://github.com/Lab-LVM/ADNet",
+        "paper_link": "https://www.sciencedirect.com/science/article/pii/S0169260724001949"
       },
-      "title": "Attentional Decoder Networks for Chest X-ray Image Recognition on High-resolution Features (Computer Methods and Programs in Biomedicine, 2024)",
+      "title": "Attentional Decoder Networks for Chest X-ray Image Recognition on High-resolution Features",
       "content": {
         "problem": "",
         "solve": "",
@@ -54,12 +57,13 @@
 
     "bapub3": {
       "research_meta": {
-        "author": "",
-        "published_place": "",
-        "published_date": "",
-        "source_code_link": ""
+        "author": "Seungmin Oh, Namkug Kim, Jongbin Ryu",
+        "published_place": "Scientific Reports",
+        "published_date": "2024-04-16",
+        "source_code_link": "",
+        "paper_link": "https://www.nature.com/articles/s41598-024-58382-3"
       },
-      "title": "Analyzing to Discover Origins of CNNs and ViT Architectures in Medical Images(Scientific Reports, 2024)",
+      "title": "Analyzing to Discover Origins of CNNs and ViT Architectures in Medical Images",
       "content": {
         "problem": "",
         "solve": "",
@@ -69,12 +73,13 @@
 
     "bapub4": {
       "research_meta": {
-        "author": "",
-        "published_place": "",
-        "published_date": "",
-        "source_code_link": ""
+        "author": "Inhyuk Park, Won Hwa Kim, Jongbin Ryu",
+        "published_place": "Biomedical Signall Processing and Control",
+        "published_date": "2024-12-29",
+        "source_code_link": "",
+        "paper_link": "https://www.sciencedirect.com/science/article/pii/S1746809423013617"
       },
-      "title": "Style-KD : Class-Imbalanced Medical Image Classification via Style Knowledge Distillation(Biomedical Signal Processing and Control, 2024)",
+      "title": "Style-KD : Class-Imbalanced Medical Image Classification via Style Knowledge Distillation",
       "content": {
         "problem": "",
         "solve": "",

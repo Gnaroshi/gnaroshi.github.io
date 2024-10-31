@@ -1,143 +1,95 @@
-#research-card {
-  width: auto;
-  height: auto;
-
-  /* width: 100%; */
-  /* height: 100%; */
-
-  background-color: white;
-  border-radius: 0.8rem;
-  box-shadow: 0 0.8rem 0.8rem rgba(0, 0, 0, 0.4);
-  /* border: 0.2rem rgba(0, 0, 0, 0.2); */
-
+.research-flex1 {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+}
 
-  max-width: 100%;
+.research-flex2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#research-card {
+  /* width: 50%; */
+  /* max-width: 30rem; */
+  height: auto;
+  min-height: 20rem;
+
   margin: 1rem;
-  overflow: hidden;
-  /* padding: 1rem 0.2rem 1rem 0.2rem; */
+  padding: 0.5rem 1rem;
+
+  width: calc(90% / 2);
+  justify-content: flex-start;
+
+  backdrop-filter: blur(1rem);
+}
+
+#research-card > div,
+#research-card > h1 {
+  border-bottom: 1px dotted #afafaf;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+#research-card > h1 {
+  border-bottom: 0.4rem solid #ccc;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+#research-card > div:last-child,
+#research-card > h1:last-child {
+  border-bottom: none;
+}
+
+#research-card-title {
+  width: auto;
+  min-width: 18rem;
+  height: auto;
+
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+#research-card-subtitle {
+  width: 100%;
+  height: auto;
+
+  font-size: 1.2rem;
+
+  flex-wrap: wrap;
+  flex-direction: column;
+  /* align-items: flex-start; */
+  /* gap: 0.8rem; */
+}
+
+#research-card-subtitle p {
+  min-width: calc(50% - 10px);
+
+  height: auto;
+  margin: 0.2rem;
+  white-space: nowrap;
+
+  text-align: center;
+}
+
+#research-card-explaination {
+  width: 100%;
+  height: auto;
 
   font-size: 1rem;
 }
 
-#research-card p {
-  text-overflow: ellipsis;
-  /* white-space: nowrap; */
-  overflow: visible;
-  margin: 0.2rem;
-  padding: 0.4rem 1rem;
-
-  text-align: center;
-}
-
-.title {
-  width: 100%;
+#research-card-tags {
+  width: 90%;
   height: auto;
-  margin: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+
+  flex-wrap: wrap;
 }
 
-.title p {
-  font-weight: bold;
-}
-
-.publish {
-  width: 100%;
-  height: auto;
-  padding: 0.2rem 0;
-}
-.publish p {
+#research-card-tags p {
+  margin: 0rem 0.5rem;
   font-size: 0.8rem;
 }
-
-.author {
-  width: 100%;
-  height: auto;
-  box-shadow: 0 0.2rem 0.2rem 0.2rem rgba(0, 0, 0, 0.2);
-  padding: 0.2rem 0;
-}
-.author p {
-  font-size: 0.8rem;
-}
-
-.category {
-  width: 100%;
-  height: auto;
-
-  text-align: center;
-  font-size: 0.8rem;
-}
-.category p {
-  color: white;
-}
-
-.card-dividor {
-  width: 100%;
-  height: 0.2rem;
-  margin: 0 0 1rem 0;
-  padding: 0;
-  box-shadow: 0 0.2rem 0.1rem rgba(0, 0, 0, 0.2);
-}
-
-.application_ai {
-  background-color: #8a7ed9;
-}
-
-.biomedical_ai {
-  background-color: #c96868;
-}
-
-.core_ai {
-  background-color: #fadfa1;
-}
-
-.multimodal_ai {
-  background-color: #7eacb5;
-}
-
-#research-card img {
-  /* display: ; */
-
-  width: 5rem;
-  height: 5rem;
-
-  border: 0.2rem solid wheat;
-  border-radius: 2rem;
-}
-
-/* .title { */
-/*   background-color: pink; */
-/* } */
-/**/
-/* .title p { */
-/*   text-align: center; */
-/*   font-size: 1.2rem; */
-/* } */
-/**/
-/* .author { */
-/*   background-color: #ba5abd; */
-/* } */
-/**/
-/* .author p { */
-/*   padding: 0.2rem; */
-/* } */
-/**/
-/* .publish { */
-/*   background-color: #4899c9; */
-/* } */
-/**/
-/* .publish p { */
-/*   padding: 0.2rem; */
-/* } */
-/**/
-/* .category { */
-/*   background-color: #4899c9; */
-/* } */
-/**/
-/* .category p { */
-/*   padding: 0.2rem; */
-/* } */

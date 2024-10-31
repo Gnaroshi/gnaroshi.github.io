@@ -1,0 +1,31 @@
+.people-wrapper {
+  width: 100%;
+  height: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.people-header {
+  width: 100%;
+  height: auto;
+}
+
+.people-card-wrapper {
+  width: 100%;
+  height: auto;
+
+  padding: 1rem 0.4rem 0.4rem 1rem;
+
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  flex-wrap: wrap;
+
+  background-color: #e7e6e1;
+}

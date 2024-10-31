@@ -1,0 +1,136 @@
+{
+  "professor": [
+    {
+      "name": "Jonbin Ryu",
+      "position": "Associate Professor",
+      "email": "jongbinryu@ajou.ac.kr",
+      "homepage": "https://sites.google.com/view/jongbinryu"
+    }
+  ],
+  "intergrated_mp": [
+    {
+      "name": "Sungeun Kim",
+      "email": "kimsungeun@ajou.ac.kr",
+      "research_interests": ["Computer Vision", "Image Hashing"]
+    },
+    {
+      "name": "Junhyeong Ko",
+      "email": "threegopark@ajou.ac.kr",
+      "research_interests": ["Computer Vision", "Continual Learning"]
+    },
+    {
+      "name": "Hankyul Kang",
+      "email": "consistant1y@ajou.ac.kr",
+      "research_interests": ["Image Classification", "Deep Learning"]
+    },
+    {
+      "name": "Seongmin Oh",
+      "email": "mangusn1@ajou.ac.kr",
+      "research_interests": ["Meta Learning", "Vision-Language Model"]
+    }
+  ],
+  "phd": [],
+  "master": [
+    {
+      "name": "Sunki Joo",
+      "email": "dollyin@ajou.ac.kr",
+      "research_interests": ["Computer Vision"]
+    },
+    {
+      "name": "Soohyeon Pyo",
+      "email": "pyosh11@ajou.ac.kr",
+      "research_interests": ["Computer Vision"]
+    },
+    {
+      "name": "Yuri Kim",
+      "email": "kimuri02@ajou.ac.kr",
+      "research_interests": ["Deep Learning", "Fast deep architecture"]
+    },
+    {
+      "name": "Gregor Seifer",
+      "email": "gregorseifer@ajou.ac.kr  ",
+      "research_interests": ["Long-tailed Learning", "Computer Vision"]
+    },
+    {
+      "name": "Seunghun Kang",
+      "email": "xldi28@ajou.ac.kr",
+      "research_interests": ["Computer Vision", "Deep Learning"]
+    },
+    {
+      "name": "Dongkyu Kim",
+      "email": "eaststst123@ajou.ac.kr ",
+      "research_interests": [
+        "Deep Learning",
+        "Network Calibration and Generative Model"
+      ]
+    },
+    {
+      "name": "Kyusung Nam",
+      "email": "scott9601@ajou.ac.kr",
+      "research_interests": ["Multi-modal task", "Few-show Learning"]
+    },
+    {
+      "name": "Donghyun Kim",
+      "email": "dk58319@ajou.ac.kr  ",
+      "research_interests": ["Computer Vision", "Image Segmentation"]
+    },
+    {
+      "name": "Donggun Lee",
+      "email": "edg1113@ajou.ac.kr ",
+      "research_interests": ["Vision-Language model"]
+    },
+    {
+      "name": "Euihak Heo",
+      "email": "euihakeg@ajou.ac.kr",
+      "research_interests": ["Deep Learning", "Computer Vision"]
+    },
+    {
+      "name": "Eunju Shin",
+      "email": "sinssinej7@ajou.ac.kr",
+      "research_interests": ["Deep Learning", "Image Generation"]
+    }
+  ],
+  "intern": [
+    {
+      "name": "Duyeon Na",
+      "email": "ndy10101@gmail.com",
+      "research_interests": ["Deep Learning", "Image Classification"]
+    },
+    {
+      "name": "Geunhyung Park",
+      "email": "gorilla35@ajou.ac.kr",
+      "research_interests": ["Vision-Language Model", "Deep-Learning"]
+    },
+    {
+      "name": "Hwasik Jeong ",
+      "email": "y5ryan@ajou.ac.kr ",
+      "research_interests": ["Computer Vision"]
+    },
+    {
+      "name": "Minjae Kim ",
+      "email": "meansash@ajou.ac.kr",
+      "research_interests": ["Computer Vision", "Medical Image"]
+    }
+  ],
+  "alumni": [
+    {
+      "name": "Seokjin Jang",
+      "email": "naskyrun@ajou.ac.kr",
+      "current_position": ["LG Energy Solution"]
+    },
+    {
+      "name": "Jihoon Kim ",
+      "email": "kimji6784@gmail.com",
+      "current_position": ["SNU hospital"]
+    },
+    {
+      "name": "Hyunsoo Park",
+      "email": "qkrgustnq@gmail.com "
+    },
+    {
+      "name": "Inhyuk Park",
+      "email": "inhyuk@ajou.ac.kr",
+      "current_position": ["VUNO"]
+    }
+  ]
+}

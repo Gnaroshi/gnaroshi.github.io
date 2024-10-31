@@ -8,7 +8,7 @@
   text-align: center;
 
   background-color: white;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
     url("../../assets/DSCF2143.jpg");
   background-size: cover;
   /* background-size: contain; */
@@ -63,13 +63,46 @@
   }
 }
 
+.lablvm-ajou {
+  width: auto;
+  height: auto;
+}
+
+.lablvm-ajou p {
+  margin: 0;
+  font-size: 2rem;
+  color: #fff;
+}
+
 #news-abs {
   width: 100%;
   height: auto;
+  min-height: 10rem;
 
-  margin: 4rem 1rem 2rem 1rem;
+  /* margin: 4rem 1rem 2rem 1rem; */
+  margin: 2rem 0rem 2rem 0rem;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+@supports (scrollbar-color: auto) {
+  .custom-scrollbar {
+    scrollbar-color: #86aac2 rgba(0, 0, 0, 0);
+    scrollbar-width: 1rem;
+  }
+}
+
+@supports selector(::-webkit-scrollbar) {
+  .custom-scrollbar::-webkit-scrollbar {
+    scrollbar-color: #86aac2 rgba(0, 0, 0, 0);
+    width: 1rem;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #86aac2;
+  }
 }
