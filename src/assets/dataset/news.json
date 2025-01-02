@@ -1,37 +1,73 @@
 [
   {
     "news": {
-      "date": "2024/09/28",
-      "title": "WOW",
-      "desc": "lorem ipsum "
+      "date": "Nov. 2024",
+      "title": "Paper Accepted",
+      "desc": "Two paper have been accepted at WACV."
     }
   },
+
   {
     "news": {
-      "date": "2024/09/30",
-      "title": "WOW",
-      "desc": "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum "
+      "date": "Sep. 2024",
+      "title": "Paper Accepted",
+      "desc": "Two papers have been accepted at ACCV."
     }
   },
+
   {
     "news": {
-      "date": "2024/10/01",
-      "title": "WOW",
-      "desc": "lorem ipsum "
+      "date": "Jul. 2024",
+      "title": "Paper Accepted",
+      "desc": "A paper has been accepted at BMVC."
     }
   },
+
   {
     "news": {
-      "date": "2024/10/02",
-      "title": "WOW",
-      "desc": "lorem ipsum "
+      "date": "May. 2024",
+      "title": "Paper Accepted",
+      "desc": "A paper has been accepted at Medical Image Analysis (MedIA)."
     }
   },
+
   {
     "news": {
-      "date": "2024/10/04",
-      "title": "WOW",
-      "desc": "lorem ipsum "
+      "date": "Apr. 2024",
+      "title": "Paper Accepted",
+      "desc": "A paper has been accepted at Computers in Biology and Medicine."
+    }
+  },
+
+  {
+    "news": {
+      "date": "Apr. 2024",
+      "title": "Paper Accepted",
+      "desc": "A paper has been accepted at Computer Methods and Programs in Biomedicine."
+    }
+  },
+
+  {
+    "news": {
+      "date": "Dec. 2023",
+      "title": "Paper Accepted",
+      "desc": "A paper has been accepted at International Journal of Surgery (IF 15.3, JCR Top 1%)."
+    }
+  },
+
+  {
+    "news": {
+      "date": "Jul. 2023",
+      "title": "Paper Accepted",
+      "desc": "A paper has been accepted at ICCV."
+    }
+  },
+
+  {
+    "news": {
+      "date": "Jul. 2023",
+      "title": "Paper Accepted",
+      "desc": "A paper has been accepted at ICCV Workshop."
     }
   }
 ]

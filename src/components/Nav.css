@@ -1,20 +1,98 @@
-#nav {
-  /* position: fixed; */
+.navbar {
+  position: relative;
   height: auto;
-  width: auto;
-  /* width: auto; */
-  /* height: 70%; */
+  width: 100%;
   margin: 1rem 2rem;
-  padding: 0;
+  padding: 0 1rem;
   display: flex;
-  /* flex-direction: column; */
   justify-content: space-between;
-
-  gap: 1rem;
-  list-style: none;
+  align-items: center;
+  z-index: 1000;
 }
 
-#nav button {
+.navbar-header {
+  width: 100%;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-lablvm {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar-toggle {
+  display: none;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  z-index: 1200;
+}
+
+.navbar-links {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+
+.navbar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.navbar-overlay.visible {
+  display: block;
+}
+
+.navbar-toggle-close {
+  display: none;
+
+  align-self: flex-end;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 57rem) {
+  .navbar-toggle {
+    display: block;
+  }
+
+  .navbar-links {
+    display: none;
+  }
+
+  .navbar-toggle-close {
+    display: block;
+  }
+
+  .navbar-links.collapsed {
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 16rem;
+    height: 100%;
+    flex-direction: column;
+    padding: 2rem 1rem;
+    background-color: #fff;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1500;
+    transition: right 0.3s ease;
+  }
+}
+
+.navbar button {
   text-align: center;
   width: auto;
   height: auto;
@@ -29,7 +107,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-#nav button:hover {
+.navbar button:hover {
   box-shadow:
     0.4rem 0.4rem 0.4rem rgba(0, 0, 0, 0.1),
     -0.4rem 0.4rem 0.4rem white;
@@ -39,7 +117,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-#nav button.nav-btn-active {
+.navbar button.nav-btn-active {
   box-shadow:
     0.4rem 0.4rem 0.4rem rgba(0, 0, 0, 0.1),
     -0.4rem 0.4rem 0.4rem white;

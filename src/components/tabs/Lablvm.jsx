@@ -10,9 +10,9 @@ function Lablvm({ isHome }) {
         LVM
       </h1>
 
-      <div className="lablvm-ajou">
-        <p>Ajou University</p>
-      </div>
+      {/* <div className="lablvm-ajou"> */}
+      {/*   <p>Ajou University</p> */}
+      {/* </div> */}
 
       {isHome && (
         <section id="news-abs" className="custom-scrollbar">

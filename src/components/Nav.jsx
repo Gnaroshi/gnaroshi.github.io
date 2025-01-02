@@ -4,15 +4,21 @@ import "./Nav.css";
 
 export default function Nav({ handleNavBtnClick }) {
   const [selectedTab, setSelectedTab] = useState("home");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
 
   function handleSelectTab(selectedTabButton) {
     handleNavBtnClick(selectedTabButton);
     setSelectedTab(selectedTabButton);
+    setIsMenuOpen(false);
   }
 
   const tabs = [
     "home",
-    "about",
+    // "about",
     "research",
     "publication",
     "people",
@@ -21,110 +27,33 @@ export default function Nav({ handleNavBtnClick }) {
   ];
 
   return (
-    <div id="nav">
-      {tabs.map((tab, i) => (
-        <NavBtn
-          key={tab + i}
-          isSelected={selectedTab === tab}
-          onSelect={() => handleSelectTab(tab)}
-        >
-          {tab.charAt(0).toUpperCase() + tab.slice(1)}
-        </NavBtn>
-      ))}
-    </div>
+    <>
+      <div
+        className={`navbar-overlay ${isMenuOpen ? "visible" : ""}`}
+        onClick={toggleMenu}
+      ></div>
+      <div className="navbar">
+        <div className="navbar-header">
+          <div className="navbar-lablvm">LAB LVM</div>
+          <button className="navbar-toggle" onClick={toggleMenu}>
+            ☰
+          </button>
+        </div>
+        <div className={`navbar-links ${isMenuOpen ? "collapsed" : ""}`}>
+          <button className="navbar-toggle-close" onClick={toggleMenu}>
+            ✕
+          </button>
+          {tabs.map((tab, i) => (
+            <NavBtn
+              key={tab + i}
+              isSelected={selectedTab === tab}
+              onSelect={() => handleSelectTab(tab)}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </NavBtn>
+          ))}
+        </div>
+      </div>
+    </>
   );
-
-  // return (
-  //   <div id="nav">
-  //     <NavBtn
-  //       isSelected={selectedTab === "home"}
-  //       onSelect={() => {
-  //         handleSelectTab("home");
-  //       }}
-  //     >
-  //       Home
-  //     </NavBtn>
-  //     <NavBtn
-  //       isSelected={selectedTab === "about"}
-  //       onSelect={() => {
-  //         handleSelectTab("about");
-  //       }}
-  //     >
-  //       About
-  //     </NavBtn>
-  //     <NavBtn
-  //       isSelected={selectedTab === "research"}
-  //       onSelect={() => {
-  //         handleSelectTab("research");
-  //       }}
-  //     >
-  //       Research
-  //     </NavBtn>
-  //     <NavBtn
-  //       isSelected={selectedTab === "publication"}
-  //       onSelect={() => {
-  //         handleSelectTab("publication");
-  //       }}
-  //     >
-  //       Publication
-  //     </NavBtn>
-  //     <NavBtn
-  //       isSelected={selectedTab === "people"}
-  //       onSelect={() => {
-  //         handleSelectTab("people");
-  //       }}
-  //     >
-  //       People
-  //     </NavBtn>
-  //     <NavBtn
-  //       isSelected={selectedTab === "photo"}
-  //       onSelect={() => {
-  //         handleSelectTab("photo");
-  //       }}
-  //     >
-  //       Photo
-  //     </NavBtn>
-  //     {/* <NavBtn */}
-  //     {/*   isSelected={selectedTab === "join"} */}
-  //     {/*   onSelect={() => { */}
-  //     {/*     handleSelectTab("join"); */}
-  //     {/*   }} */}
-  //     {/* > */}
-  //     {/*   Join */}
-  //     {/* </NavBtn> */}
-  //     <NavBtn
-  //       isSelected={selectedTab === "contact"}
-  //       onSelect={() => {
-  //         handleSelectTab("contact");
-  //       }}
-  //     >
-  //       Contact
-  //     </NavBtn>
-  //   </div>
-  // );
-  // return (
-  //   <nav>
-  //     <NavBtn label="" onSelect={() => handleSelectTab("Home")}>
-  //       Home
-  //     </NavBtn>
-  //     <NavBtn label="" onSelect={() => handleSelectTab("About")}>
-  //       About
-  //     </NavBtn>
-  //     <NavBtn label="" onSelect={() => handleSelectTab("Research")}>
-  //       Research
-  //     </NavBtn>
-  //     <NavBtn label="" onSelect={() => handleSelectTab("People")}>
-  //       People
-  //     </NavBtn>
-  //     <NavBtn label="" onSelect={() => handleSelectTab("Photo")}>
-  //       Photo
-  //     </NavBtn>
-  //     <NavBtn label="" onSelect={() => handleSelectTab("Join")}>
-  //       Join
-  //     </NavBtn>
-  //     <NavBtn label="" onSelect={() => handleSelectTab("Contact")}>
-  //       Contact
-  //     </NavBtn>
-  //   </nav>
-  // );
 }

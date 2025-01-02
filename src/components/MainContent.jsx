@@ -17,7 +17,7 @@ function MainContent({ selectedTab }) {
       {selectedTab && (
         <section id="content">
           {selectedTab === "home" && <Home />}
-          {selectedTab === "about" && <About />}
+          {/* {selectedTab === "about" && <About />} */}
           {selectedTab === "publication" && <Publication />}
           {selectedTab === "research" && <Research />}
           {selectedTab === "people" && <People />}

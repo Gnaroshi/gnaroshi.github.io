@@ -5,9 +5,12 @@ import { useEffect, useState } from "react";
 
 // This component code refereed to Ryan Santos's "Simple React Carousel Slides"
 
-const NEWS = NEWSCONTENT;
+// const NEWS = NEWSCONTENT;
+const NEWSMAXLEN = 5;
+const NEWS = NEWSCONTENT.slice(0, NEWSMAXLEN);
 const newsSlideWidth = 30;
-const newsSlideLength = NEWS.length;
+// const newsSlideLength = NEWS.length;
+const newsSlideLength = NEWSMAXLEN;
 NEWS.push(...NEWS);
 
 const sleep = (ms = 0) => {
@@ -131,7 +134,7 @@ function News() {
           <i className="news-btn-arrow news-btn-arrow-right" />
         </button>
         <div className="news-dots">
-          {items.slice(0, length).map((pos, i) => (
+          {items.slice(0, newsSlideLength).map((pos, i) => (
             <button
               key={i}
               onClick={() => handleDotClick(i)}

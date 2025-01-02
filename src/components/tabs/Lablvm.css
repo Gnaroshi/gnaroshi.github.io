@@ -3,13 +3,13 @@
   height: auto;
   /* height: 100%; */
   /* margin: 2rem 3rem; */
-  padding: 2rem 1rem;
+  padding: 2rem 1rem 4rem 1rem;
 
   text-align: center;
 
   background-color: white;
   background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-    url("../../assets/DSCF2143.jpg");
+    url("../../assets/images/lablvm-home-bg.jpg");
   background-size: cover;
   /* background-size: contain; */
   background-repeat: no-repeat;
@@ -37,7 +37,7 @@
 
   display: block;
   text-shadow: 0 0 5rem rgba(255, 255, 255, 0.5);
-  background: url("../../assets/images/lablvm-title-background.png");
+  background: url("../../assets/images/lablvm-title-bg.png");
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;

@@ -2,7 +2,8 @@
   width: 80%;
   height: auto;
 
-  min-height: 16rem;
+  min-height: 12rem;
+  max-height: 20rem;
 
   background-color: white;
   border: 0.1rem solid transparent;

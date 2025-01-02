@@ -29,3 +29,21 @@
 
   /* background-color: #e7e6e1; */
 }
+
+.people-degree-header {
+  width: 100%;
+  height: auto;
+  margin-top: 1rem;
+
+  display: flex;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.people-degree-header h2 {
+  width: 70%;
+  height: 100%;
+  margin-bottom: 0.5rem;
+  border-bottom: 0.15rem solid #e7e6e1;
+}

@@ -8,8 +8,9 @@ import "./App.css";
 
 function App() {
   // const [isNavAtTop, setIsNavAtTop] = useState(false);
-  // const [selectedTab, setSelectedTab] = useState("home");
   const [selectedTab, setSelectedTab] = useState("home");
+  // const [selectedTab, setSelectedTab] = useState("photo");
+  // const [selectedTab, setSelectedTab] = useState("publication");
 
   const handleNavBtnClick = (tab) => {
     // setIsNavAtTop(true);

@@ -1,0 +1,28 @@
+.photo-wrapper {
+  width: 100%;
+  height: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-gallery {
+  width: 100%;
+  height: auto;
+
+  margin: 2rem 1rem;
+}
+
+.custom-overlay__caption {
+  background-color: rgba(0, 0, 0, 0.8);
+  max-height: 240px;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  padding: 2px;
+  font-size: 90%;
+}
