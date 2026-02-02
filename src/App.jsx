@@ -1,28 +1,25 @@
-import { useState } from "react";
-import MainContent from "./components/MainContent.jsx";
-import Nav from "./components/Nav.jsx";
-import Lablvm from "./components/tabs/Lablvm.jsx";
-import Footer from "./components/Footer.jsx";
-
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import Nav from "./components/Nav";
+import { Lablvm } from "./components/tabs";
+import MainContent from "./components/MainContent";
+import Footer from "./components/Footer";
 import "./App.css";
 
 function App() {
-  // const [isNavAtTop, setIsNavAtTop] = useState(false);
+  const location = useLocation();
   const [selectedTab, setSelectedTab] = useState("home");
-  // const [selectedTab, setSelectedTab] = useState("photo");
-  // const [selectedTab, setSelectedTab] = useState("publication");
 
-  const handleNavBtnClick = (tab) => {
-    // setIsNavAtTop(true);
-    setSelectedTab(tab);
-  };
+  useEffect(() => {
+    const path = location.pathname === "/" ? "home" : location.pathname.slice(1);
+    setSelectedTab(path);
+  }, [location.pathname]);
 
   return (
-    <div id="app-wrapper">
-      <div id="content-wrapper">
-        <Nav id="top-nav" handleNavBtnClick={handleNavBtnClick} />
-        <Lablvm isHome={selectedTab == "home"} />
-        {/* <MainContent isNavAtTop={isNavAtTop} selectedTab={selectedTab} /> */}
+    <div className="app">
+      <div className="app__content">
+        <Nav />
+        <Lablvm isHome={selectedTab === "home"} />
         <MainContent selectedTab={selectedTab} />
       </div>
       <Footer />

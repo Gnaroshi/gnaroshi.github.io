@@ -1,0 +1,232 @@
+:root {
+  /*****************************
+   * Page key palette (primary)
+   *****************************/
+  --purple-100: #eceff4;
+  --purple-500: #7a8596;
+  --purple-800: #4b5563;
+
+  /*****************************
+   * Additional accent series
+   *****************************/
+  --blue-100: #e0e5fd;
+  --blue-500: #546ef6;
+  --blue-800: #2a4dd0;
+
+  --green-100: #e9faee;
+  --green-500: #57b47d;
+  --green-800: #3e8d27;
+
+  --red-100: #fcefed;
+  --red-500: #e97b77;
+  --red-800: #aa2d26;
+
+  --orange-100: #fff2e8;
+  --orange-500: #f08a42;
+  --orange-800: #b4551d;
+
+  --yellow-100: #fff9df;
+  --yellow-500: #e8bf3b;
+  --yellow-800: #a67f16;
+
+  --teal-100: #e4f8f5;
+  --teal-500: #2ea89a;
+  --teal-800: #1a746b;
+
+  /*****************************
+   * Neutral base
+   *****************************/
+  --white: #ffffff;
+  --black: #000000;
+
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f1f3f6;
+  --surface-3: #ebedf2;
+
+  --divider: #d6dceb;
+  --line: #b8c2d8;
+  --line-strong: #7a869f;
+
+  --ink: #0f172a;
+  --ink-2: #334155;
+  --muted: #64748b;
+  --muted-2: #94a3b8;
+
+  /*****************************
+   * Layout / viewport / radius
+   *****************************/
+  --outline-color: var(--ink);
+  --outline-width: 3px;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --viewport-min: 320px;
+  --viewport-max: 1440px;
+  --layout-max: 78rem;
+
+  /*****************************
+   * Hard shadow
+   *****************************/
+  --shadow-x: 6px;
+  --shadow-y: 6px;
+  --shadow-color: var(--ink);
+
+  /*****************************
+   * Hatching
+   *****************************/
+  --hatch-angle: 135deg;
+  --hatch-stripe: 2px;
+  --hatch-gap: 8px;
+  --hatch-ink: rgba(15, 23, 42, 0.16);
+
+  --hatch-purple: rgba(75, 85, 99, 0.2);
+  --hatch-blue: rgba(42, 77, 208, 0.18);
+  --hatch-green: rgba(62, 141, 39, 0.18);
+  --hatch-red: rgba(170, 45, 38, 0.18);
+  --hatch-orange: rgba(180, 85, 29, 0.2);
+  --hatch-yellow: rgba(166, 127, 22, 0.2);
+  --hatch-teal: rgba(26, 116, 107, 0.2);
+
+  /*****************************
+   * Semantic / topic mapping
+   *****************************/
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-2);
+  --text-muted: var(--muted);
+
+  --border-default: var(--line);
+  --border-strong: var(--outline-color);
+
+  --focus-ring: rgba(75, 85, 99, 0.35);
+
+  --topic-core-100: var(--blue-100);
+  --topic-core-500: var(--blue-500);
+  --topic-core-800: var(--blue-800);
+
+  --topic-application-100: var(--red-100);
+  --topic-application-500: var(--red-500);
+  --topic-application-800: var(--red-800);
+
+  --topic-biomedical-100: var(--green-100);
+  --topic-biomedical-500: var(--green-500);
+  --topic-biomedical-800: var(--green-800);
+
+  --topic-multi-modal-100: var(--purple-100);
+  --topic-multi-modal-500: var(--purple-500);
+  --topic-multi-modal-800: var(--purple-800);
+
+  --font-base: "Pretendard Variable", "Quicksand", sans-serif;
+  --font-heading: "Roboto Condensed", "Pretendard Variable", sans-serif;
+
+  --font-size-xs: 0.7rem;
+  --font-size-sm: 0.85rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.4rem;
+  --font-size-2xl: 2rem;
+  --font-size-3xl: 2.2rem;
+  --font-size-4xl: 3.6rem;
+
+  --transition-fast: 150ms ease;
+  --transition-base: 220ms ease;
+}
+
+.u-card {
+  background: var(--surface);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: var(--radius-lg);
+}
+
+.u-hard-shadow {
+  box-shadow: var(--shadow-x) var(--shadow-y) 0 0 var(--shadow-color);
+}
+
+.u-hatch {
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-ink) 0px,
+    var(--hatch-ink) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}
+
+.u-hatch-purple {
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-purple) 0px,
+    var(--hatch-purple) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}
+
+.u-hatch-blue {
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-blue) 0px,
+    var(--hatch-blue) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}
+
+.u-hatch-green {
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-green) 0px,
+    var(--hatch-green) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}
+
+.u-hatch-red {
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-red) 0px,
+    var(--hatch-red) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}
+
+.u-hatch-orange {
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-orange) 0px,
+    var(--hatch-orange) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}
+
+.u-hatch-yellow {
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-yellow) 0px,
+    var(--hatch-yellow) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}
+
+.u-hatch-teal {
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-teal) 0px,
+    var(--hatch-teal) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}

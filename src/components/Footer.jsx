@@ -2,7 +2,7 @@ import "./Footer.css";
 
 function Footer() {
   return (
-    <section id="footer">
+    <section className="footer">
       <p>
         Copyright 2024, Lab-LVM, Dept. of Artificial Intelligence, Ajou
         University. Prof. Jong Bin Ryu: + jongbinryu@ajou.ac.kr

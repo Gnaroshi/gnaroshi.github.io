@@ -1,25 +1,40 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import "./MainContent.css";
 
-import Home from "./tabs/Home.jsx";
-import About from "./tabs/About.jsx";
-import Research from "./tabs/Research.jsx";
-import Publication from "./tabs/Publication.jsx";
-import People from "./tabs/People.jsx";
-import Photo from "./tabs/Photo.jsx";
-import Join from "./tabs/Join.jsx";
-import Contact from "./tabs/Contact.jsx";
+import {
+  Contact,
+  Home,
+  Join,
+  People,
+  Photo,
+  Publication,
+  Research,
+  TestPage,
+} from "./tabs";
 
 function MainContent({ selectedTab }) {
+  const [selectedResearchTopic, setSelectedResearchTopic] = useState("core");
+  const navigate = useNavigate();
+
+  const handleActiveResearch = (topic) => {
+    navigate("/research");
+    setSelectedResearchTopic(topic);
+  };
+
   return (
-    <div id="main-content-wrapper">
+    <div className="main-content">
       {selectedTab && (
-        <section id="content">
-          {selectedTab === "home" && <Home />}
-          {/* {selectedTab === "about" && <About />} */}
+        <section className="main-content__body">
+          {selectedTab === "home" && (
+            <Home handleActiveResearch={handleActiveResearch} />
+          )}
+          {selectedTab === "test" && <TestPage />}
           {selectedTab === "publication" && <Publication />}
-          {selectedTab === "research" && <Research />}
+          {selectedTab === "research" && (
+            <Research selectedResearchTopic={selectedResearchTopic} />
+          )}
           {selectedTab === "people" && <People />}
           {selectedTab === "photo" && <Photo />}
           {selectedTab === "join" && <Join />}

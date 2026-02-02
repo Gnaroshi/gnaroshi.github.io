@@ -1,91 +1,74 @@
-#join-wrapper {
+.join {
   width: 100%;
-  height: 100%;
-
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  gap: var(--space-4);
 }
 
-#join-wrapper section {
-  width: 100%;
-  height: auto;
-
-  min-width: 10rem;
-  max-width: 20rem;
+.join h1 {
+  margin: 0;
+  text-transform: capitalize;
 }
 
-#join-wrapper section > form {
+.join__section {
+  width: min(96%, 28rem);
+}
+
+.join__form {
   width: 100%;
-  height: 100%;
   min-height: 20rem;
-
-  min-width: 10rem;
-  max-width: 20rem;
-
+  padding: var(--space-4);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-x) var(--shadow-y) 0 0 var(--shadow-color);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  text-align: left;
+  gap: var(--space-4);
 }
 
-.join-email {
-  width: 100%;
-  height: auto;
-  margin: 0rem 0.5rem 1.5rem 0.5rem;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.join-email input:focus {
-  border: 20px solid gray;
-  transition: all 0.2s ease-in-out;
-}
-
-.join-email input:invalid {
-  border: 20px solid red;
-  transition: all 0.2s ease-in-out;
-}
-
-.join-message {
-  width: 100%;
-  height: auto;
-  margin: 0rem 0.5rem 1.5rem 0.5rem;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
+.join-email,
+.join-message,
 .join-btn-wrapper {
   width: 100%;
-  height: auto;
-  margin: 0rem 0.5rem 1.5rem 0.5rem;
-
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  gap: var(--space-2);
+}
+
+.join-email p,
+.join-message p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.join-email input,
+.join__message-field {
+  width: 100%;
+  padding: var(--space-2);
+  border: 2px solid var(--outline-color);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.join__message-field {
+  min-height: 8rem;
+  resize: vertical;
 }
 
 .join-btn-wrapper button {
-  border: none;
-  background-color: mediumspringgreen;
+  width: fit-content;
+  padding: var(--space-2) var(--space-4);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: 999px;
+  background: var(--yellow-500);
+  color: var(--white);
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .join-btn-wrapper button:hover {
-  background: chocolate; /*마우스를 올려놓을 때*/
-}
-.join-btn-wrapper button:focus {
-  background: red; /*클릭 후 계속 포커스 상태일 때*/
-}
-.join-btn-wrapper button:active {
-  background: brown; /*클릭 중일 때*/
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 0 var(--outline-color);
 }

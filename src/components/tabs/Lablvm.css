@@ -1,108 +1,98 @@
-#lablvm {
+.hero {
   width: 100%;
-  height: auto;
-  /* height: 100%; */
-  /* margin: 2rem 3rem; */
-  padding: 2rem 1rem 4rem 1rem;
-
-  text-align: center;
-
-  background-color: white;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-    url("../../assets/images/lablvm-home-bg.jpg");
-  background-size: cover;
-  /* background-size: contain; */
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-
+  padding: var(--space-6) var(--space-5);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: var(--radius-lg);
+  background: var(--purple-100);
+  box-shadow: var(--shadow-x) var(--shadow-y) 0 0 var(--shadow-color);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  gap: var(--space-5);
+  position: relative;
+  overflow: visible;
 }
 
-#lablvm > h1 {
-  width: 20rem;
-  min-width: 20rem;
-  margin: 0.2rem;
-
-  font-size: 8rem;
-  /* line-height: 0.5rem; */
-  letter-spacing: 0.5rem;
-  /* color: lightgrey; */
-  /* border: none; */
-
-  word-break: break-all;
-
-  display: block;
-  text-shadow: 0 0 5rem rgba(255, 255, 255, 0.5);
-  background: url("../../assets/images/lablvm-title-bg.png");
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: lablvm-anim 10s linear infinite;
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-purple) 0,
+    var(--hatch-purple) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
-@keyframes lablvm-anim {
-  0% {
-    background-position: -50% 50%;
-  }
-  100% {
-    background-position: 150% 50%;
-  }
-}
-
-@-webkit-keyframes lablvm-anim {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
-}
-
-.lablvm-ajou {
-  width: auto;
-  height: auto;
-}
-
-.lablvm-ajou p {
+.hero > h1 {
+  width: min(100%, 42rem);
   margin: 0;
-  font-size: 2rem;
-  color: #fff;
+  padding: var(--space-4);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-size: clamp(2.6rem, 10vw, 5.2rem);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--purple-800);
+  box-shadow: 4px 4px 0 0 var(--outline-color);
+  z-index: 1;
+  text-align: center;
+  position: relative;
+  padding-bottom: calc(var(--space-4) + 10px);
 }
 
-#news-abs {
+.hero > h1::after {
+  content: "";
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: var(--space-2);
+  height: 6px;
+  border-radius: 999px;
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-purple) 0,
+    var(--hatch-purple) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}
+
+.hero__news {
   width: 100%;
-  height: auto;
   min-height: 10rem;
-
-  /* margin: 4rem 1rem 2rem 1rem; */
-  margin: 2rem 0rem 2rem 0rem;
-
+  padding-bottom: calc(var(--space-6) + var(--space-4));
+  margin: 0;
   display: flex;
-  flex-direction: column;
   justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 @supports (scrollbar-color: auto) {
   .custom-scrollbar {
-    scrollbar-color: #86aac2 rgba(0, 0, 0, 0);
-    scrollbar-width: 1rem;
+    scrollbar-color: var(--purple-500) transparent;
+    scrollbar-width: auto;
   }
 }
 
 @supports selector(::-webkit-scrollbar) {
   .custom-scrollbar::-webkit-scrollbar {
-    scrollbar-color: #86aac2 rgba(0, 0, 0, 0);
-    width: 1rem;
+    width: 0.75rem;
   }
+
   .custom-scrollbar::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0);
+    background-color: transparent;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #86aac2;
+    background-color: var(--purple-500);
+    border: 2px solid var(--outline-color);
+    border-radius: 999px;
   }
 }

@@ -1,24 +1,16 @@
-#research-wrapper {
+.research-wrapper {
   width: 100%;
-  height: auto;
-
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  flex-wrap: wrap;
-
-  background-color: #0f0f0f;
-  color: #f0f0f0;
 }
 
-#research-card-wrapper {
-  height: auto;
-
+.research-card-wrapper {
+  width: min(96%, var(--layout-max));
+  padding: var(--space-4) 0 var(--space-5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   flex-wrap: wrap;
-
-  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-    url("../../assets/images/lablvm-title-background.png");
+  gap: var(--space-4);
 }

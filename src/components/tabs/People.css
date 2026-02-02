@@ -1,49 +1,103 @@
-.people-wrapper {
+.people {
   width: 100%;
-  height: auto;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
 }
 
-.people-header {
-  width: 100%;
-  height: auto;
-}
-
-.people-card-wrapper {
-  width: 100%;
-  height: auto;
-
-  padding: 1rem 0.4rem 0.4rem 1rem;
-
-  display: flex;
-  /* flex-direction: column; */
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  flex-wrap: wrap;
-
-  /* background-color: #e7e6e1; */
-}
-
-.people-degree-header {
-  width: 100%;
-  height: auto;
-  margin-top: 1rem;
-
-  display: flex;
-  justify-content: center;
-
+.people__degree-header {
+  width: min(96%, var(--layout-max));
+  margin-top: var(--space-5);
   text-align: center;
 }
 
-.people-degree-header h2 {
-  width: 70%;
+.people__degree-header h2 {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: var(--radius-md);
+  background: var(--teal-100);
+  box-shadow: 4px 4px 0 0 var(--outline-color);
+  font-size: clamp(1.2rem, 3vw, 1.7rem);
+}
+
+.people__card-grid {
+  width: min(96%, var(--layout-max));
+  padding: var(--space-4) 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.people__card {
+  width: min(36rem, 100%);
+  min-height: 14rem;
+  padding: var(--space-4);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: 5px 5px 0 0 var(--outline-color);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.people__card-profile {
+  width: 8.6rem;
+  height: 8.6rem;
+  border: 2px solid var(--outline-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.people__card-profile img {
+  width: 100%;
   height: 100%;
-  margin-bottom: 0.5rem;
-  border-bottom: 0.15rem solid #e7e6e1;
+  object-fit: cover;
+  display: block;
+}
+
+.people__card-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.people__card-info h1 {
+  font-size: var(--font-size-xl);
+  color: var(--teal-800);
+}
+
+.people__card-info p {
+  margin: 0;
+  font-size: var(--font-size-md);
+  text-align: left;
+}
+
+.people__card-divider {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-teal) 0,
+    var(--hatch-teal) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}
+
+.people__card-additional-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.people__card-additional-info h2 {
+  margin: 0;
+  font-size: var(--font-size-md);
 }

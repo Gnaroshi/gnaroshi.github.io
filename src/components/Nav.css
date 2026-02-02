@@ -1,130 +1,124 @@
-.navbar {
-  position: relative;
-  height: auto;
+.nav {
   width: 100%;
-  margin: 1rem 2rem;
-  padding: 0 1rem;
+  margin: 0;
+  padding: var(--space-4) var(--space-4) var(--space-4);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-x) var(--shadow-y) 0 0 var(--shadow-color);
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  gap: var(--space-4);
+  position: relative;
   z-index: 1000;
 }
 
-.navbar-header {
-  width: 100%;
-  padding: 0 1rem;
+.nav::after {
+  content: "";
+  position: absolute;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: var(--space-2);
+  height: 6px;
+  border-radius: 999px;
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-purple) 0,
+    var(--hatch-purple) var(--hatch-stripe),
+    transparent var(--hatch-stripe),
+    transparent var(--hatch-gap)
+  );
+}
+
+.nav__header {
+  width: auto;
+  flex: 0 0 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 }
 
-.navbar-lablvm {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.navbar-toggle {
-  display: none;
-  font-size: 1.5rem;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
+.nav__logo {
+  width: auto;
+  min-width: 10rem;
   cursor: pointer;
-  z-index: 1200;
 }
 
-.navbar-links {
+.nav__logo img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.nav__links {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: row;
-  gap: 1rem;
+  flex-wrap: nowrap;
+  gap: var(--space-2);
   align-items: center;
+  justify-content: flex-end;
+  overflow: visible;
+  max-width: 100%;
+  padding-right: var(--space-1);
 }
 
-.navbar-overlay {
+.nav__overlay {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.2);
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45);
   z-index: 1000;
 }
 
-.navbar-overlay.visible {
+.nav__overlay.is-visible {
   display: block;
 }
 
-.navbar-toggle-close {
+.nav__toggle {
   display: none;
+  padding: var(--space-1) var(--space-2);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  z-index: 1200;
+}
 
+.nav__toggle--close {
   align-self: flex-end;
-  font-size: 1.5rem;
-  cursor: pointer;
-  margin-bottom: 1rem;
 }
 
-@media (max-width: 57rem) {
-  .navbar-toggle {
-    display: block;
-  }
-
-  .navbar-links {
-    display: none;
-  }
-
-  .navbar-toggle-close {
-    display: block;
-  }
-
-  .navbar-links.collapsed {
-    display: flex;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 16rem;
-    height: 100%;
-    flex-direction: column;
-    padding: 2rem 1rem;
-    background-color: #fff;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    z-index: 1500;
-    transition: right 0.3s ease;
-  }
+.nav__toggle:hover {
+  background: var(--purple-100);
 }
 
-.navbar button {
+.nav__button {
   text-align: center;
-  width: auto;
-  height: auto;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  background-color: transparent;
-  color: #86aac2;
-  font-family: "Roboto Condensed", sans-serif;
-  font-size: 1.5rem;
+  padding: var(--space-2) var(--space-3);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: 999px;
+  background-color: var(--surface);
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  line-height: 1.2;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: var(--transition-base);
+  white-space: nowrap;
 }
 
-.navbar button:hover {
-  box-shadow:
-    0.4rem 0.4rem 0.4rem rgba(0, 0, 0, 0.1),
-    -0.4rem 0.4rem 0.4rem white;
-  /* color: #c1c0b9; */
-  color: #537791;
-  text-decoration: underline #537791;
-  transition: all 0.2s ease-in-out;
+.nav__button:hover {
+  box-shadow: 2px 2px 0 0 var(--outline-color);
+  background: var(--purple-100);
 }
 
-.navbar button.nav-btn-active {
-  box-shadow:
-    0.4rem 0.4rem 0.4rem rgba(0, 0, 0, 0.1),
-    -0.4rem 0.4rem 0.4rem white;
-  /* color: #c1c0b9; */
-  color: #537791;
-  /* background-color: #f7f6e7; */
-  background-color: #ffffff;
-  text-decoration: underline #537791;
-  transition: all 0.2s ease-in-out;
+.nav__button.is-active {
+  background: var(--purple-500);
+  color: var(--white);
+  box-shadow: 2px 2px 0 0 var(--purple-800);
 }

@@ -1,118 +1,82 @@
 import "./Publication.css";
-import PublicationCard from "./Publication/PublicationCard";
+import PublicationCard from "./Publication.Card";
 import AA from "../../assets/dataset/application_ai.json";
 import BA from "../../assets/dataset/biomedical_ai.json";
 import CA from "../../assets/dataset/core_ai.json";
 import MMA from "../../assets/dataset/multi-modal_ai.json";
 import { useState } from "react";
-import PublicationBtn from "./Publication/PublicationBtn";
+import PublicationButton from "./Publication.Button";
 
 const AA_PUB = AA.published;
 const BA_PUB = BA.published;
 const CA_PUB = CA.published;
 const MMA_PUB = MMA.published;
-// const PUB = { ...AA_PUB, ...BA_PUB, ...CA_PUB, ...MMA_PUB };
-// console.log(PUB);
-// let allPub = {};
-let allPub = { ...AA_PUB, ...BA_PUB, ...CA_PUB, ...MMA_PUB };
+const DATASET_BY_CATEGORY = {
+  application: AA_PUB,
+  biomedical: BA_PUB,
+  core: CA_PUB,
+  "multi-modal": MMA_PUB,
+};
 
-let areaCategory = ["all"];
-let areaCategorySelected = {};
-if (Object.keys(AA_PUB).length != 0) {
-  areaCategory.push("application");
-}
-if (Object.keys(BA_PUB).length != 0) {
-  areaCategory.push("biomedical");
-}
-if (Object.keys(CA_PUB).length != 0) {
-  areaCategory.push("core");
-}
-if (Object.keys(MMA_PUB).length != 0) {
-  areaCategory.push("multi-modal");
-}
+const areaCategory = [
+  "all",
+  ...Object.entries(DATASET_BY_CATEGORY)
+    .filter(([, dataset]) => Object.keys(dataset).length !== 0)
+    .map(([category]) => category),
+];
 
-areaCategory.forEach((item) => {
-  areaCategorySelected[item] = 1;
-});
+const inferCategoryFromKey = (key) => {
+  if (key.startsWith("aa")) return "application";
+  if (key.startsWith("ba")) return "biomedical";
+  if (key.startsWith("ca")) return "core";
+  if (key.startsWith("mma")) return "multi-modal";
+  return "all";
+};
 
-Object.keys(allPub).forEach((key) => {
-  if (key.startsWith("aa")) {
-    allPub[key].category = "application";
-  } else if (key.startsWith("ba")) {
-    allPub[key].category = "biomedical";
-  } else if (key.startsWith("ca")) {
-    allPub[key].category = "core";
-  } else if (key.startsWith("mma")) {
-    allPub[key].category = "multi-modal";
-  }
-});
-
-console.log(allPub);
-
-// // 출판 시각 기준 정렬
-// let pub = [];
-//
-// Object.values(allPub).forEach((section) => {
-//   Object.values(section).forEach((tpub) => {
-//     pub.push(tpub);
-//   });
-// });
-let pub = Object.values(allPub).sort((a, b) => {
+const publications = Object.entries({
+  ...AA_PUB,
+  ...BA_PUB,
+  ...CA_PUB,
+  ...MMA_PUB,
+})
+  .map(([key, value]) => ({
+    ...value,
+    category: inferCategoryFromKey(key),
+  }))
+  .sort((a, b) => {
   const dateA = new Date(a.research_meta.published_date);
   const dateB = new Date(b.research_meta.published_date);
   return dateB - dateA;
-});
-
-// console.log(pub);
+  });
 
 function Publication() {
-  let [selectedArea, setSelectedArea] = useState("all");
-  function handleSelectedArea(selectedArea) {
+  const [selectedArea, setSelectedArea] = useState("all");
+
+  const handleSelectedArea = (selectedArea) => {
     setSelectedArea(selectedArea);
-    if (selectedArea === "all") {
-      for (let k in areaCategorySelected) {
-        areaCategorySelected[k] = 1;
-      }
-    } else {
-      for (let k in areaCategorySelected) {
-        if (k === selectedArea) areaCategorySelected[k] = 1;
-        else areaCategorySelected[k] = 0;
-      }
-    }
-
-    // console.log(selectedArea);
-  }
-
-  // console.log(areaCategorySelected);
-  // console.log(areaCategorySelected[pub[0].category]);
-
-  // console.log("AFDSFDASFDSAFDSA");
-  // pub.map((tpub, index) => {
-  //   // console.log(tpub.category);
-  //   console.log(tpub);
-  // });
+  };
 
   return (
     <div className="publication">
-      <div className="content-header">
+      <div className="tab-header">
         <h1>Publication</h1>
       </div>
-      <div className="publication-area-btn-wrapper">
+      <div className="publication__filter">
         {areaCategory.map((area, i) => (
-          <PublicationBtn
+          <PublicationButton
             key={area + i}
             isSelected={selectedArea === area}
             onSelect={() => handleSelectedArea(area)}
           >
             {area.charAt(0).toUpperCase() + area.slice(1)}
-          </PublicationBtn>
+          </PublicationButton>
         ))}
       </div>
 
-      <section className="publication-card-wrapper">
-        {pub.map(
+      <section className="publication__list">
+        {publications.map(
           (tpub, index) =>
-            areaCategorySelected[tpub.category] === 1 && (
+            (selectedArea === "all" || selectedArea === tpub.category) && (
               <PublicationCard
                 key={index}
                 category={tpub.category}

@@ -1,17 +1,17 @@
 import "./Home.css";
-import HomeResearch from "./Home/HomeResearch";
-import HomeIntroduction from "./Home/HomeIntroduction";
+import HomeIntroduction from "./Home.Introduction";
+import HomeResearch from "./HomeResearch";
 
-function Home() {
+function Home({ handleActiveResearch }) {
   return (
-    <div id="home-wrapper">
-      <section id="home-introduce">
+    <div className="home">
+      <section className="home__introduction">
         <HomeIntroduction />
       </section>
-      {/* <section id="home-research"> */}
-      {/*   <HomeResearch /> */}
-      {/* </section> */}
-      <div className="home-temp">
+      <section className="home__research">
+        <HomeResearch handleActiveResearch={handleActiveResearch} />
+      </section>
+      <div className="home__placeholder">
         <p>추가 내용 구현 예정</p>
       </div>
     </div>

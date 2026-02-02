@@ -3,19 +3,15 @@ import News from "../Lablvm/News";
 
 function Lablvm({ isHome }) {
   return (
-    <div id="lablvm">
+    <div className="hero">
       <h1>
-        LAB
+        Lab
         <wbr />
         LVM
       </h1>
 
-      {/* <div className="lablvm-ajou"> */}
-      {/*   <p>Ajou University</p> */}
-      {/* </div> */}
-
       {isHome && (
-        <section id="news-abs" className="custom-scrollbar">
+        <section className="hero__news custom-scrollbar">
           <News />
         </section>
       )}

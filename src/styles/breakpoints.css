@@ -1,0 +1,10 @@
+:root {
+  --bp-mobile-max: 57rem;
+  --bp-phone-max: 425px;
+}
+
+/*
+  CSS custom properties cannot be used directly in media queries yet.
+  Keep literal breakpoints in `styles/responsive.css` synchronized with
+  these token values.
+*/

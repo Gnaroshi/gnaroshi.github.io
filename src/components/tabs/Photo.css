@@ -1,28 +1,22 @@
 .photo-wrapper {
   width: 100%;
-  height: auto;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
 
 .photo-gallery {
-  width: 100%;
-  height: auto;
-
-  margin: 2rem 1rem;
+  width: min(96%, var(--layout-max));
+  margin: 0;
+  padding: var(--space-4);
+  border: var(--outline-width) solid var(--outline-color);
+  border-radius: var(--radius-lg);
+  background: var(--purple-100);
+  box-shadow: var(--shadow-x) var(--shadow-y) 0 0 var(--shadow-color);
 }
 
 .custom-overlay__caption {
-  background-color: rgba(0, 0, 0, 0.8);
-  max-height: 240px;
-  overflow: hidden;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  color: white;
-  padding: 2px;
-  font-size: 90%;
+  background-color: var(--ink);
+  color: var(--white);
+  padding: var(--space-1);
 }
