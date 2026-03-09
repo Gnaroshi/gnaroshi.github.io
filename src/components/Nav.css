@@ -1,34 +1,17 @@
 .nav {
   width: 100%;
   margin: 0;
-  padding: var(--space-4) var(--space-4) var(--space-4);
+  padding: var(--card-pad);
   border: var(--outline-width) solid var(--outline-color);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: var(--shadow-x) var(--shadow-y) 0 0 var(--shadow-color);
+  box-shadow: var(--shadow-elev-1);
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: var(--space-4);
   position: relative;
   z-index: 1000;
-}
-
-.nav::after {
-  content: "";
-  position: absolute;
-  left: var(--space-4);
-  right: var(--space-4);
-  bottom: var(--space-2);
-  height: 6px;
-  border-radius: 999px;
-  background-image: repeating-linear-gradient(
-    var(--hatch-angle),
-    var(--hatch-purple) 0,
-    var(--hatch-purple) var(--hatch-stripe),
-    transparent var(--hatch-stripe),
-    transparent var(--hatch-gap)
-  );
 }
 
 .nav__header {
@@ -42,7 +25,16 @@
 .nav__logo {
   width: auto;
   min-width: 10rem;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-decoration: none;
+  transition:
+    transform var(--dur-base) var(--ease-standard),
+    opacity var(--dur-fast) var(--ease-soft);
 }
 
 .nav__logo img {
@@ -65,60 +57,199 @@
 }
 
 .nav__overlay {
-  display: none;
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.45);
+  background-color: rgba(15, 23, 42, 0.36);
   z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-menu) var(--ease-standard),
+    visibility 0s linear var(--dur-menu);
 }
 
 .nav__overlay.is-visible {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0ms;
 }
 
 .nav__toggle {
+  --surface-hover-bg: rgba(15, 23, 42, 0.06);
+  --surface-hover-border: var(--line-strong);
+  --surface-hover-shadow: none;
+  --surface-hover-translate: 0px;
+
   display: none;
-  padding: var(--space-1) var(--space-2);
+  width: 2.3rem;
+  height: 2.3rem;
+  min-width: 2.3rem;
+  min-height: 2.3rem;
+  padding: 0;
   border: var(--outline-width) solid var(--outline-color);
   border-radius: var(--radius-sm);
   background-color: var(--surface);
   color: var(--text-primary);
-  font-size: var(--font-size-xl);
+  font-size: 1.1rem;
+  line-height: 1;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: var(--transition-interactive);
   z-index: 1200;
 }
 
 .nav__toggle--close {
   align-self: flex-end;
+  margin-bottom: var(--space-1);
 }
 
-.nav__toggle:hover {
-  background: var(--purple-100);
+.nav__toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 1;
+  transition:
+    transform var(--dur-base) var(--ease-standard),
+    opacity var(--dur-fast) var(--ease-soft);
+}
+
+.nav__toggle-icon--menu {
+  transform: translateY(-0.5px) rotate(0deg);
+}
+
+.nav.is-menu-open .nav__header .nav__toggle-icon--menu {
+  transform: translateY(-0.5px) rotate(90deg) scale(0.82);
+  opacity: 0;
+}
+
+.nav__toggle-icon--close {
+  transform: rotate(-0.35turn) scale(0.86);
+  opacity: 0.45;
+}
+
+.nav__links:not(.is-hidden) .nav__toggle-icon--close {
+  transform: rotate(0turn) scale(1);
+  opacity: 1;
 }
 
 .nav__button {
+  --nav-tab-tint: var(--tab-home-tint);
+  --nav-tab-border: var(--tab-home-border);
+  --nav-tab-accent: var(--tab-home-accent);
+  --surface-hover-bg: var(--nav-tab-tint);
+  --surface-hover-border: var(--nav-tab-border);
+  --surface-hover-shadow: none;
+  --surface-hover-translate: 0px;
+
   text-align: center;
-  padding: var(--space-2) var(--space-3);
-  border: var(--outline-width) solid var(--outline-color);
+  padding: 0.6rem 0.9rem 0.68rem;
+  border: 1px solid transparent;
   border-radius: 999px;
-  background-color: var(--surface);
-  color: var(--text-primary);
+  background-color: transparent;
+  color: var(--text-secondary);
   font-size: 0.92rem;
   line-height: 1.2;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition-base);
+  transition: var(--transition-interactive);
   white-space: nowrap;
+  position: relative;
 }
 
-.nav__button:hover {
-  box-shadow: 2px 2px 0 0 var(--outline-color);
-  background: var(--purple-100);
+.nav__button--home,
+.nav__button--test {
+  --nav-tab-tint: var(--tab-home-tint);
+  --nav-tab-border: var(--tab-home-border);
+  --nav-tab-accent: var(--tab-home-accent);
+}
+
+.nav__button--news {
+  --nav-tab-tint: var(--tab-news-tint);
+  --nav-tab-border: var(--tab-news-border);
+  --nav-tab-accent: var(--tab-news-accent);
+}
+
+.nav__button--research {
+  --nav-tab-tint: var(--tab-research-tint);
+  --nav-tab-border: var(--tab-research-border);
+  --nav-tab-accent: var(--tab-research-accent);
+}
+
+.nav__button--publication {
+  --nav-tab-tint: var(--tab-publication-tint);
+  --nav-tab-border: var(--tab-publication-border);
+  --nav-tab-accent: var(--tab-publication-accent);
+}
+
+.nav__button--people {
+  --nav-tab-tint: var(--tab-people-tint);
+  --nav-tab-border: var(--tab-people-border);
+  --nav-tab-accent: var(--tab-people-accent);
+}
+
+.nav__button--photo {
+  --nav-tab-tint: var(--tab-photo-tint);
+  --nav-tab-border: var(--tab-photo-border);
+  --nav-tab-accent: var(--tab-photo-accent);
+}
+
+.nav__button--contact {
+  --nav-tab-tint: var(--tab-contact-tint);
+  --nav-tab-border: var(--tab-contact-border);
+  --nav-tab-accent: var(--tab-contact-accent);
 }
 
 .nav__button.is-active {
-  background: var(--purple-500);
-  color: var(--white);
-  box-shadow: 2px 2px 0 0 var(--purple-800);
+  color: var(--nav-tab-accent);
+  background-color: var(--nav-tab-tint);
+  border-color: var(--nav-tab-border);
+}
+
+.nav__button::after {
+  content: "";
+  position: absolute;
+  left: 0.9rem;
+  right: 0.9rem;
+  bottom: 0.28rem;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--nav-tab-accent);
+  transform: scaleX(0.4);
+  opacity: 0;
+  transform-origin: center;
+  transition:
+    transform var(--dur-base) var(--ease-standard),
+    opacity var(--dur-fast) var(--ease-soft);
+}
+
+.nav__button.is-active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav__logo:hover {
+    transform: translateY(var(--hover-translate-y-sm));
+    opacity: 0.92;
+  }
+
+  .nav__button:hover {
+    color: var(--nav-tab-accent);
+  }
+
+  .nav__button:hover::after {
+    opacity: 0.65;
+    transform: scaleX(0.86);
+  }
+
+  .nav__button.is-active:hover::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
 }

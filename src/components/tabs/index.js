@@ -6,6 +6,7 @@ export { default as HomeResearchCard } from "./HomeResearch.Card";
 export { default as HomeResearchDummyCard } from "./HomeResearch.DummyCard";
 export { default as Join } from "./Join";
 export { default as Lablvm } from "./Lablvm";
+export { default as News } from "./News";
 export { default as People } from "./People";
 export { default as PeopleCard } from "./People.Card";
 export { default as Photo } from "./Photo";

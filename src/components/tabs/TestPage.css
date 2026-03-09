@@ -3,16 +3,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--stack-gap);
 }
 
 .test-page__body {
-  width: min(96%, var(--layout-max));
+  width: 100%;
   min-height: 14rem;
   padding: var(--space-4);
   border: var(--outline-width) solid var(--outline-color);
   border-radius: var(--radius-lg);
-  background: var(--surface-3);
-  box-shadow: var(--shadow-x) var(--shadow-y) 0 0 var(--shadow-color);
+  background: var(--surface);
+  box-shadow: var(--shadow-elev-1);
   display: flex;
   align-items: center;
   justify-content: center;

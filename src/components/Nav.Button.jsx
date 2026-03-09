@@ -1,10 +1,17 @@
-export default function NavButton({ children, isSelected, onSelect }) {
+import { Link } from "react-router-dom";
+
+export default function NavButton({ children, tabKey, isSelected, onSelect }) {
+  const to = tabKey === "home" ? "/" : `/${tabKey}`;
+
   return (
-    <button
-      className={`nav__button ${isSelected ? "is-active" : ""}`}
+    <Link
+      to={to}
+      className={`nav__button nav__button--${tabKey} btn btn--sm interactive-button ${isSelected ? "is-active" : ""}`}
+      data-tab={tabKey}
       onClick={onSelect}
+      aria-current={isSelected ? "page" : undefined}
     >
       {children}
-    </button>
+    </Link>
   );
 }

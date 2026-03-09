@@ -7,12 +7,102 @@
   background: var(--bg);
 }
 
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: 2200;
+  background: transparent;
+  pointer-events: none;
+}
+
+.scroll-progress__bar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 0 0;
+  background: var(--accent-ui-500);
+  transition: transform var(--dur-fast) linear;
+}
+
 .app__content {
   width: 100%;
-  max-width: 100rem;
-  padding: var(--space-4);
+  padding-block: var(--layout-shell-pad-y);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-5);
+  gap: var(--layout-shell-gap);
+}
+
+.fab {
+  position: fixed;
+  right: clamp(0.9rem, 2vw, 1.5rem);
+  bottom: clamp(1rem, 2.5vw, 1.8rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(7px);
+  z-index: 2100;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-base) var(--ease-standard),
+    transform var(--dur-base) var(--ease-standard),
+    visibility 0s linear var(--dur-base);
+}
+
+.fab.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 0ms;
+}
+
+.fab__btn {
+  --btn-icon-size: 2.45rem;
+  --btn-border: var(--outline-color);
+  --btn-shadow: var(--shadow-elev-1);
+
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.fab__btn--secondary {
+  --btn-bg: var(--surface);
+  --btn-border: var(--outline-color);
+  --btn-ink: var(--text-secondary);
+}
+
+.fab__btn--contact {
+  --btn-bg: var(--tab-contact-tint);
+  --btn-border: var(--tab-contact-border);
+  --btn-ink: var(--tab-contact-accent);
+  --surface-hover-bg: rgba(227, 160, 184, 0.16);
+  --surface-hover-border: var(--tab-contact-accent);
+  --surface-hover-shadow: var(--shadow-elev-1);
+}
+
+.fab__btn--primary {
+  --btn-accent: var(--accent-ui-500);
+}
+
+@media (max-width: 57rem) {
+  .app__content {
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .fab {
+    right: var(--space-3);
+    bottom: var(--space-3);
+  }
+
+  .fab__btn {
+    --btn-icon-size: 2.35rem;
+  }
 }

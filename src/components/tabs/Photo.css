@@ -3,20 +3,461 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--stack-gap);
 }
 
 .photo-gallery {
-  width: min(96%, var(--layout-max));
+  width: 100%;
   margin: 0;
-  padding: var(--space-4);
-  border: var(--outline-width) solid var(--outline-color);
+  padding: var(--card-pad);
+  border: var(--outline-width) solid var(--tab-identity-border, var(--outline-color));
   border-radius: var(--radius-lg);
-  background: var(--purple-100);
-  box-shadow: var(--shadow-x) var(--shadow-y) 0 0 var(--shadow-color);
+  background: linear-gradient(
+    180deg,
+    var(--tab-identity-tint, var(--surface-2)) 0%,
+    var(--surface) 56%
+  );
+  box-shadow: var(--shadow-elev-1);
 }
 
-.custom-overlay__caption {
-  background-color: var(--ink);
+.photo-gallery .ReactGridGallery {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.photo-gallery .ReactGridGallery > div {
+  width: min(100%, 71rem) !important;
+  margin: 0 auto;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-content: flex-start;
+}
+
+.photo-gallery :where(img) {
+  transition:
+    transform var(--dur-base) var(--ease-standard),
+    filter var(--dur-base) var(--ease-standard);
+}
+
+.photo-gallery .ReactGridGallery_tile {
+  border: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transform: translateY(0);
+  transition: var(--transition-interactive);
+  will-change: transform, border-color, box-shadow;
+  position: relative;
+  background: transparent;
+}
+
+.photo-gallery .ReactGridGallery_tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: var(--transition-interactive);
+}
+
+.photo-gallery .ReactGridGallery_tile-viewport {
+  border-radius: var(--radius-md);
+}
+
+.photo-gallery .ReactGridGallery_custom-overlay {
+  pointer-events: none;
+}
+
+.photo-overlay {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-2);
+  background: linear-gradient(180deg, transparent 44%, rgba(15, 23, 42, 0.78) 100%);
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity var(--dur-base) var(--ease-standard),
+    transform var(--dur-base) var(--ease-standard);
+}
+
+.photo-overlay__content {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  gap: 0.08rem;
+}
+
+.photo-overlay__title,
+.photo-overlay__description {
+  margin: 0;
   color: var(--white);
-  padding: var(--space-1);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.photo-overlay__title {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  line-height: 1.35;
+  -webkit-line-clamp: 1;
+}
+
+.photo-overlay__description {
+  font-size: 0.68rem;
+  font-weight: 500;
+  line-height: 1.35;
+  opacity: 0.92;
+  -webkit-line-clamp: 2;
+}
+
+.photo-gallery .ReactGridGallery_tile:focus-within {
+  box-shadow: var(--shadow-elev-1);
+  transform: translateY(var(--hover-translate-y-sm));
+}
+
+.photo-gallery .ReactGridGallery_tile:focus-within::after {
+  border-color: var(--tab-identity-accent, var(--line-strong));
+}
+
+.photo-gallery :where(a:focus-visible) {
+  outline: var(--focus-w) solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.photo-gallery :where(a:focus-visible) .photo-overlay,
+.photo-gallery .ReactGridGallery_tile:focus-within .photo-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.photo-lightbox {
+  --lightbox-pad: clamp(0.72rem, 2.2vw, 1.3rem);
+  --lightbox-close-offset: clamp(0.52rem, 1.5vw, 0.88rem);
+
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+  background: rgba(15, 23, 42, 0.78);
+  display: grid;
+  place-items: center;
+  padding: var(--lightbox-pad);
+  animation: photo-lightbox-fade-in var(--dur-base) var(--ease-standard);
+  animation-fill-mode: both;
+}
+
+.photo-lightbox__inner {
+  position: relative;
+  width: min(95vw, 72rem);
+  height: min(calc(100dvh - (var(--lightbox-pad) * 2)), 48.4rem);
+  min-height: min(33rem, calc(100dvh - (var(--lightbox-pad) * 2)));
+  border: 1px solid var(--outline-color);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-elev-2);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  transform: translateY(10px);
+  opacity: 0;
+  animation: photo-lightbox-panel-in var(--dur-base) var(--ease-standard) forwards;
+}
+
+.photo-lightbox.is-closing {
+  animation-name: photo-lightbox-fade-out;
+  animation-duration: var(--dur-fast);
+  animation-timing-function: var(--ease-soft);
+}
+
+.photo-lightbox.is-closing .photo-lightbox__inner {
+  animation-name: photo-lightbox-panel-out;
+  animation-duration: var(--dur-fast);
+  animation-timing-function: var(--ease-soft);
+}
+
+.photo-lightbox__close {
+  --btn-icon-size: 2rem;
+  --btn-bg: rgba(248, 250, 252, 0.94);
+  --btn-border: rgba(148, 163, 184, 0.45);
+
+  position: absolute;
+  top: var(--lightbox-close-offset);
+  right: var(--lightbox-close-offset);
+  z-index: 5;
+}
+
+.photo-lightbox__viewer {
+  min-height: 0;
+  position: relative;
+  padding:
+    clamp(2.9rem, 4.4vw, 3.55rem)
+    clamp(2.9rem, 5.3vw, 4rem)
+    clamp(0.75rem, 1.8vw, 1.05rem);
+  display: grid;
+  place-items: center;
+}
+
+.photo-lightbox__media-frame {
+  width: min(100%, 65rem);
+  height: 100%;
+  max-height: 100%;
+  border: 1px solid var(--outline-color);
+  border-radius: var(--radius-md);
+  background: #f8fafc;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.photo-lightbox__media-frame > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #f8fafc;
+}
+
+.photo-lightbox__meta {
+  min-height: 5.4rem;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  border-top: 1px solid var(--outline-color);
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  text-align: center;
+  gap: 0.24rem;
+}
+
+.photo-lightbox__caption,
+.photo-lightbox__description {
+  margin: 0;
+  max-width: 62ch;
+  overflow-wrap: anywhere;
+}
+
+.photo-lightbox__index {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.photo-lightbox__caption {
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.photo-lightbox__description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.photo-lightbox__nav {
+  --btn-icon-size: 2.1rem;
+  --btn-bg: rgba(248, 250, 252, 0.95);
+  --btn-border: rgba(148, 163, 184, 0.45);
+
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+}
+
+.photo-lightbox__nav:active {
+  transform: translateY(calc(-50% + var(--press-translate-y)));
+}
+
+.photo-lightbox__nav--prev {
+  left: clamp(0.45rem, 1.7vw, 0.95rem);
+}
+
+.photo-lightbox__nav--next {
+  right: clamp(0.45rem, 1.7vw, 0.95rem);
+}
+
+@media (max-width: 57rem) {
+  .photo-wrapper {
+    gap: var(--space-3);
+  }
+
+  .photo-gallery {
+    padding: var(--panel-pad-sm);
+  }
+
+  .photo-overlay {
+    padding: var(--space-1);
+  }
+
+  .photo-lightbox {
+    --lightbox-pad: 0.5rem;
+    --lightbox-close-offset: 0.44rem;
+  }
+
+  .photo-lightbox__inner {
+    width: 100%;
+    height: calc(100dvh - (var(--lightbox-pad) * 2));
+    min-height: 0;
+  }
+
+  .photo-lightbox__viewer {
+    padding: 2.78rem 2.3rem 0.64rem;
+  }
+
+  .photo-lightbox__meta {
+    min-height: 5rem;
+    padding: var(--space-2) var(--space-2) var(--space-2);
+  }
+
+  .photo-lightbox__nav {
+    --btn-icon-size: 1.9rem;
+  }
+
+  .photo-lightbox__nav--prev {
+    left: 0.38rem;
+  }
+
+  .photo-lightbox__nav--next {
+    right: 0.38rem;
+  }
+}
+
+@media (max-width: 425px) {
+  .photo-lightbox {
+    --lightbox-pad: 0.35rem;
+    --lightbox-close-offset: 0.3rem;
+  }
+
+  .photo-lightbox__inner {
+    border-radius: var(--radius-md);
+  }
+
+  .photo-lightbox__viewer {
+    padding: 2.54rem 2.02rem 0.48rem;
+  }
+
+  .photo-lightbox__meta {
+    min-height: 4.45rem;
+    padding: var(--space-1) var(--space-2) var(--space-2);
+    gap: 0.14rem;
+  }
+
+  .photo-lightbox__nav {
+    --btn-icon-size: 1.75rem;
+  }
+
+  .photo-lightbox__caption,
+  .photo-lightbox__description {
+    font-size: var(--font-size-xs);
+  }
+
+  .photo-lightbox__close {
+    --btn-icon-size: 1.8rem;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .photo-gallery .ReactGridGallery_tile:hover {
+    box-shadow: var(--shadow-elev-1);
+    transform: translateY(var(--hover-translate-y-sm));
+  }
+
+  .photo-gallery .ReactGridGallery_tile:hover::after {
+    border-color: var(--tab-identity-accent, var(--line-strong));
+  }
+
+  .photo-gallery :where(.ReactGridGallery_tile:hover img, .ReactGridGallery_tile-viewport:hover img, a:hover img) {
+    transform: scale(1.012);
+    filter: saturate(1.04);
+  }
+
+  .photo-gallery :where(.ReactGridGallery_tile:hover .photo-overlay, a:hover .photo-overlay) {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .photo-lightbox__nav:hover {
+    transform: translateY(calc(-50% + var(--hover-translate-y-sm)));
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .photo-gallery :where(img) {
+    transform: none;
+    filter: none;
+  }
+
+  .photo-overlay {
+    opacity: 1;
+    transform: translateY(0);
+    background: linear-gradient(180deg, transparent 42%, rgba(15, 23, 42, 0.68) 100%);
+  }
+
+  .photo-lightbox__nav,
+  .photo-lightbox__nav:active {
+    transform: translateY(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-lightbox__nav,
+  .photo-lightbox__nav:hover,
+  .photo-lightbox__nav:active {
+    transform: translateY(-50%) !important;
+  }
+}
+
+@keyframes photo-lightbox-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes photo-lightbox-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes photo-lightbox-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes photo-lightbox-panel-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
 }

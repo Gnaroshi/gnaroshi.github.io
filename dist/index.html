@@ -4,8 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LAB LVM</title>
-    <script type="module" crossorigin src="/gnaroshi.github.io/assets/index-C5C-ShMw.js"></script>
-    <link rel="stylesheet" crossorigin href="/gnaroshi.github.io/assets/index-CZmglOQ5.css">
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var redirectedPath = params.get("__gh_path__");
+
+        if (!redirectedPath) {
+          return;
+        }
+
+        var basePath = window.location.pathname.replace(/\/$/, "");
+        var normalizedPath = redirectedPath.startsWith("/")
+          ? redirectedPath
+          : "/" + redirectedPath;
+        window.history.replaceState(null, "", basePath + normalizedPath);
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-D7gfCMXG.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CxHNEbvn.css">
   </head>
   <body>
     <div id="root"></div>

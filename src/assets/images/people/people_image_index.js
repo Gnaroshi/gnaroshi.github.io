@@ -34,24 +34,41 @@ import HyunsooPark from "./Hyunsoo Park.jpg";
 import InhyukPark from "./Inhyuk Park.jpg";
 
 const people_images = {
-  professor: [JongbinRyu],
-  intergrated_mp: [SungeunKim, JunhyeongKo, HankyulKang, SeongminOh],
-  phd: [],
-  master: [
-    SunkiJoo,
-    SoohyeonPyo,
-    YuriKim,
-    GregorSeifer,
-    SeunghunKang,
-    DongkyuKim,
-    KyusungNam,
-    DonghyunKim,
-    DonggunLee,
-    EuihakHeo,
-    EunjuShin,
-  ],
-  intern: [DuyeonNa, GeunhyungPark, HwasikJeong, MinjaeKim],
-  alumni: [SeokjinJang, JihoonKim, HyunsooPark, InhyukPark],
+  professor: {
+    jonbin_ryu: JongbinRyu,
+  },
+  intergrated_mp: {
+    sungeun_kim: SungeunKim,
+    junhyeong_ko: JunhyeongKo,
+    hankyul_kang: HankyulKang,
+    seongmin_oh: SeongminOh,
+  },
+  phd: {},
+  master: {
+    sunki_joo: SunkiJoo,
+    soohyeon_pyo: SoohyeonPyo,
+    yuri_kim: YuriKim,
+    gregor_seifer: GregorSeifer,
+    seunghun_kang: SeunghunKang,
+    dongkyu_kim: DongkyuKim,
+    kyusung_nam: KyusungNam,
+    donghyun_kim: DonghyunKim,
+    donggun_lee: DonggunLee,
+    euihak_heo: EuihakHeo,
+    eunju_shin: EunjuShin,
+  },
+  intern: {
+    duyeon_na: DuyeonNa,
+    geunhyung_park: GeunhyungPark,
+    hwasik_jeong: HwasikJeong,
+    minjae_kim: MinjaeKim,
+  },
+  alumni: {
+    seokjin_jang: SeokjinJang,
+    jihoon_kim: JihoonKim,
+    hyunsoo_park: HyunsooPark,
+    inhyuk_park: InhyukPark,
+  },
 };
 
 export default people_images;

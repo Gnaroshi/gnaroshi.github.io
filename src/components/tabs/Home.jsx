@@ -1,19 +1,29 @@
 import "./Home.css";
-import HomeIntroduction from "./Home.Introduction";
 import HomeResearch from "./HomeResearch";
+import {
+  HomeCTA,
+  HomeHighlights,
+  HomeLatestNewsList,
+  HomePeoplePreview,
+  HomeSelectedPublications,
+} from "./home/index";
 
 function Home({ handleActiveResearch }) {
   return (
-    <div className="home">
-      <section className="home__introduction">
-        <HomeIntroduction />
-      </section>
-      <section className="home__research">
+    <div data-reveal data-reveal-load-delay="60" className="home">
+      <HomeLatestNewsList />
+
+      <HomeHighlights />
+
+      <section data-reveal data-reveal-load-delay="120" className="home-block home__research">
         <HomeResearch handleActiveResearch={handleActiveResearch} />
       </section>
-      <div className="home__placeholder">
-        <p>추가 내용 구현 예정</p>
-      </div>
+
+      <HomeSelectedPublications />
+
+      <HomePeoplePreview />
+
+      <HomeCTA />
     </div>
   );
 }

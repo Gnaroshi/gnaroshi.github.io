@@ -1,16 +1,4 @@
-/* phone */
-@media (max-width: 425px) {
-  html {
-    font-size: 8px;
-  }
-
-  .app__content {
-    padding: var(--space-2);
-  }
-}
-
-/* mobile */
-@media (max-width: 84rem) {
+@media (max-width: 57rem) {
   .nav {
     align-items: center;
   }
@@ -18,6 +6,7 @@
   .nav__header {
     width: 100%;
     justify-content: space-between;
+    gap: var(--space-2);
   }
 
   .nav__logo {
@@ -25,121 +14,110 @@
   }
 
   .nav__toggle {
-    display: block;
-    margin-left: auto;
+    display: inline-flex;
+    transform: translateY(0) scale(1);
+  }
+
+  .nav.is-menu-open .nav__header .nav__toggle {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px) scale(0.9);
   }
 
   .nav__links {
     position: fixed;
-    top: var(--space-3);
-    right: var(--space-3);
-    width: 18rem;
-    max-height: calc(100vh - var(--space-6));
+    top: max(var(--space-3), env(safe-area-inset-top));
+    right: var(--page-pad-x);
+    width: min(21rem, calc(100% - (var(--page-pad-x) * 2)));
+    max-height: calc(100dvh - var(--space-6));
     overflow-y: auto;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    padding: var(--space-4);
+    gap: var(--space-2);
+    padding: var(--space-3);
     border: var(--outline-width) solid var(--outline-color);
     border-radius: var(--radius-lg);
     background: var(--surface);
-    box-shadow: var(--shadow-x) var(--shadow-y) 0 0 var(--shadow-color);
+    box-shadow: var(--shadow-elev-2);
     z-index: 1500;
-    transition: right var(--transition-base);
-    max-width: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    transform-origin: top right;
+    transition:
+      transform var(--dur-menu) var(--ease-standard),
+      opacity var(--dur-menu) var(--ease-standard),
+      visibility 0s linear 0s;
   }
 
   .nav__links.is-hidden {
-    right: -24rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-10px) scale(0.97);
+    transition-delay: 0ms, 0ms, var(--dur-menu);
   }
 
   .nav__button {
     width: 100%;
+    min-height: 2.65rem;
+    justify-content: flex-start;
+    padding: 0.64rem 0.9rem;
   }
 }
 
 @media (max-width: 57rem) {
-  .nav {
-    padding-bottom: var(--space-4);
+  .app__content {
+    gap: var(--space-3);
   }
 
   .tab-header {
-    width: 100%;
-    margin-top: var(--space-2);
+    padding: var(--panel-pad-sm);
   }
 
-  .home-introduction {
-    flex-direction: column;
+  .tab-header h1 {
+    font-size: clamp(1.45rem, 6vw, 1.9rem);
   }
 
-  .home-introduction::after {
-    display: none;
-  }
-
-  .home-research {
-    padding: var(--space-4);
-  }
-
-  .publication__card {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .publication__card-image {
-    width: 100%;
-    height: 12rem;
-  }
-
-  .publication__card-divider {
-    width: 100%;
-    height: 6px;
-  }
-
-  .research-card {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .people__card {
-    width: 100%;
-    min-height: 12rem;
-  }
-
-  .people__card-profile {
-    width: 6.4rem;
-    height: 6.4rem;
+  .tab-header h1::before {
+    width: 0.32rem;
+    height: 1.2rem;
   }
 
   .hero {
-    padding: var(--space-4);
-  }
-
-  .hero > h1 {
-    letter-spacing: 0.04em;
-  }
-
-  .news-carousel {
-    width: 100%;
-  }
-
-  .news-carousel__nav--prev {
-    transform: translate(calc(-15rem - 3rem), -50%);
-  }
-
-  .news-carousel__nav--next {
-    transform: translate(calc(15rem + 0.2rem), -50%);
-  }
-
-  .news-carousel__dot {
-    width: 0.75rem;
-    height: 0.75rem;
+    padding: var(--panel-pad-sm);
   }
 
   .contact__body {
-    padding: var(--space-3);
+    padding: var(--panel-pad-sm);
   }
 
   .contact__map {
-    min-height: 16rem;
+    min-height: 15rem;
+  }
+
+  .footer {
+    margin-bottom: var(--space-3);
+  }
+}
+
+@media (max-width: 425px) {
+  .nav {
+    padding: var(--panel-pad-sm);
+  }
+
+  .nav__logo {
+    min-width: 7.8rem;
+  }
+
+  .nav__links {
+    top: max(var(--space-2), env(safe-area-inset-top));
+    padding: var(--space-2);
+  }
+
+  .tab-header {
+    padding: var(--panel-pad-sm);
   }
 }

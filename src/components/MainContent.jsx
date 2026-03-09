@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useRevealOnScroll from "../hooks/useRevealOnScroll";
 
 import "./MainContent.css";
 
@@ -7,6 +8,7 @@ import {
   Contact,
   Home,
   Join,
+  News,
   People,
   Photo,
   Publication,
@@ -15,8 +17,10 @@ import {
 } from "./tabs";
 
 function MainContent({ selectedTab }) {
-  const [selectedResearchTopic, setSelectedResearchTopic] = useState("core");
+  const [selectedResearchTopic, setSelectedResearchTopic] = useState(null);
+  const contentBodyRef = useRef(null);
   const navigate = useNavigate();
+  useRevealOnScroll(contentBodyRef, selectedTab);
 
   const handleActiveResearch = (topic) => {
     navigate("/research");
@@ -26,11 +30,16 @@ function MainContent({ selectedTab }) {
   return (
     <div className="main-content">
       {selectedTab && (
-        <section className="main-content__body">
+        <section
+          key={selectedTab}
+          ref={contentBodyRef}
+          className={`main-content__body main-content__body--route main-content__body--${selectedTab}`}
+        >
           {selectedTab === "home" && (
             <Home handleActiveResearch={handleActiveResearch} />
           )}
           {selectedTab === "test" && <TestPage />}
+          {selectedTab === "news" && <News />}
           {selectedTab === "publication" && <Publication />}
           {selectedTab === "research" && (
             <Research selectedResearchTopic={selectedResearchTopic} />

@@ -4,6 +4,8 @@ import Nav from "./components/Nav";
 import { Lablvm } from "./components/tabs";
 import MainContent from "./components/MainContent";
 import Footer from "./components/Footer";
+import ScrollProgress from "./components/ScrollProgress";
+import BackToTopButton from "./components/BackToTopButton";
 import "./App.css";
 
 function App() {
@@ -17,11 +19,13 @@ function App() {
 
   return (
     <div className="app">
-      <div className="app__content">
+      <ScrollProgress />
+      <div className="app__content site-shell">
         <Nav />
         <Lablvm isHome={selectedTab === "home"} />
         <MainContent selectedTab={selectedTab} />
       </div>
+      <BackToTopButton />
       <Footer />
     </div>
   );

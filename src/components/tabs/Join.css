@@ -3,26 +3,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
-}
-
-.join h1 {
-  margin: 0;
-  text-transform: capitalize;
+  gap: var(--stack-gap);
 }
 
 .join__section {
-  width: min(96%, 28rem);
+  width: 100%;
+  max-width: 36rem;
 }
 
 .join__form {
   width: 100%;
   min-height: 20rem;
-  padding: var(--space-4);
-  border: var(--outline-width) solid var(--outline-color);
+  padding: var(--space-5);
+  border: var(--outline-width) solid var(--tab-identity-border, var(--outline-color));
   border-radius: var(--radius-lg);
-  background: var(--surface);
-  box-shadow: var(--shadow-x) var(--shadow-y) 0 0 var(--shadow-color);
+  background: linear-gradient(180deg, var(--tab-identity-tint, var(--surface-2)) 0%, var(--surface) 45%);
+  box-shadow: var(--shadow-elev-1);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -41,13 +37,14 @@
 .join-message p {
   margin: 0;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .join-email input,
 .join__message-field {
   width: 100%;
-  padding: var(--space-2);
-  border: 2px solid var(--outline-color);
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--outline-color);
   border-radius: var(--radius-sm);
   background: var(--surface-2);
 }
@@ -57,18 +54,9 @@
   resize: vertical;
 }
 
-.join-btn-wrapper button {
-  width: fit-content;
-  padding: var(--space-2) var(--space-4);
-  border: var(--outline-width) solid var(--outline-color);
-  border-radius: 999px;
-  background: var(--yellow-500);
-  color: var(--white);
-  font-weight: 700;
-  cursor: pointer;
-}
+.join-btn-wrapper .btn {
+  --btn-accent: var(--tab-identity-accent, var(--accent-ui-500));
+  --btn-height-local: 2.35rem;
 
-.join-btn-wrapper button:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 3px 3px 0 0 var(--outline-color);
+  width: fit-content;
 }

@@ -12,163 +12,112 @@ import P20241127 from "./20241127.jpg";
 import P20241128 from "./20241128.jpg";
 import P20241211 from "./20241211.jpg";
 
-const photo_images = [
-  {
+const createPhotoItem = ({
+  src,
+  width,
+  height,
+  caption,
+  description = "",
+  alt = caption,
+}) => ({
+  src,
+  width,
+  height,
+  caption,
+  description,
+  alt,
+  customOverlay: (
+    <div className="photo-overlay" aria-hidden="true">
+      <div className="photo-overlay__content">
+        <p className="photo-overlay__title">{caption}</p>
+        {description ? <p className="photo-overlay__description">{description}</p> : null}
+      </div>
+    </div>
+  ),
+});
+
+const photoImages = [
+  createPhotoItem({
     src: P20241211,
     width: 721,
     height: 961,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>ACCV2024</div>
-      </div>
-    ),
-  },
-  {
+    caption: "ACCV 2024",
+    description: "Conference presentation",
+  }),
+  createPhotoItem({
     src: P20241128,
     width: 3000,
     height: 4000,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>BMVC 2024</div>
-      </div>
-    ),
-  },
-  {
+    caption: "BMVC 2024",
+    description: "Lab poster session",
+  }),
+  createPhotoItem({
     src: P20241127,
     width: 4032,
     height: 3024,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>24년 겨울</div>
-      </div>
-    ),
-  },
-  {
+    caption: "Winter 2024 Lab Gathering",
+  }),
+  createPhotoItem({
     src: P20240910,
     width: 1024,
     height: 768,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>24년 AIAI</div>
-      </div>
-    ),
-  },
-  {
+    caption: "AIAI 2024",
+    description: "Invited talk",
+  }),
+  createPhotoItem({
     src: P20240826_2,
     width: 5752,
     height: 3835,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>24년 8월 졸업</div>
-      </div>
-    ),
-  },
-  {
+    caption: "August 2024 Graduation",
+  }),
+  createPhotoItem({
     src: P20240826_1,
     width: 4032,
     height: 3024,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>24년 여름 멘토멘티 프로그램</div>
-      </div>
-    ),
-  },
-  {
+    caption: "Summer 2024 Mentoring Program",
+  }),
+  createPhotoItem({
     src: P20240717,
     width: 1440,
     height: 543,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>24년 친목대회</div>
-      </div>
-    ),
-  },
-  {
+    caption: "Summer 2024 Team Event",
+  }),
+  createPhotoItem({
     src: P20240222,
     width: 4284,
     height: 5712,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>24년 2월 졸업</div>
-      </div>
-    ),
-  },
-  {
+    caption: "February 2024 Graduation",
+  }),
+  createPhotoItem({
     src: P20231227_2,
     width: 1400,
     height: 1050,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>2023년 송년회</div>
-      </div>
-    ),
-  },
-  {
+    caption: "2023 Year-end Gathering",
+  }),
+  createPhotoItem({
     src: P20231227_1,
     width: 1400,
     height: 1050,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>12월 연구실 세미나</div>
-      </div>
-    ),
-  },
-  {
+    caption: "December Lab Seminar",
+  }),
+  createPhotoItem({
     src: P20230822_2,
     width: 2268,
     height: 4032,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>23년 8월 졸업</div>
-      </div>
-    ),
-  },
-  {
+    caption: "August 2023 Graduation",
+  }),
+  createPhotoItem({
     src: P20230822_1,
     width: 4032,
     height: 3024,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>23년 8월 졸업</div>
-      </div>
-    ),
-  },
-  {
+    caption: "August 2023 Graduation",
+  }),
+  createPhotoItem({
     src: P20230609,
     width: 4032,
     height: 3024,
-    tags: [{ value: "", title: "" }],
-    alt: "",
-    customOverlay: (
-      <div className="custom-overlay__caption">
-        <div>6월 회식</div>
-      </div>
-    ),
-  },
+    caption: "June Lab Dinner",
+  }),
 ];
 
-export default photo_images;
+export default photoImages;

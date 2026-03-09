@@ -1,12 +1,14 @@
-function PublicationButton({ children, isSelected, onSelect }) {
-  const areaClass = children.toLowerCase();
+function PublicationButton({ children, areaKey = "", isSelected, onSelect }) {
+  const areaClass = (areaKey || String(children)).toLowerCase();
 
   return (
     <button
-      className={`publication__button publication__button--${areaClass} ${isSelected ? "is-active" : "is-inactive"}`}
+      type="button"
+      className={`publication__button publication__button--${areaClass} btn btn--secondary btn--sm interactive-button ${isSelected ? "is-active" : "is-inactive"}`}
       onClick={onSelect}
+      aria-pressed={isSelected}
     >
-      <p>{children}</p>
+      {children}
     </button>
   );
 }

@@ -1,73 +1,159 @@
-[
-  {
-    "news": {
-      "date": "Nov. 2024",
-      "title": "Paper Accepted",
-      "desc": "Two paper have been accepted at WACV."
+{
+  "meta": {
+    "schema_version": "3.0",
+    "default_sort": "date_desc",
+    "type_labels": {
+      "paper_accepted": "Paper Accepted",
+      "equipment": "Equipment",
+      "new_member": "New Member",
+      "graduation": "Graduation",
+      "seminar": "Seminar / Talk",
+      "award": "Award",
+      "visit": "Visit / Collaboration",
+      "workshop": "Workshop",
+      "general": "General Update"
     }
   },
-
-  {
-    "news": {
-      "date": "Sep. 2024",
-      "title": "Paper Accepted",
-      "desc": "Two papers have been accepted at ACCV."
+  "items": [
+    {
+      "id": "2026-paper-wacv",
+      "type": "paper_accepted",
+      "title": "Paper accepted at WACV 2026",
+      "summary": "Our work on robust visual representation learning was accepted for publication.",
+      "date": "2026-02-18",
+      "year": 2026,
+      "related_person": "Sungeun Kim, Jonbin Ryu",
+      "venue": "WACV 2026",
+      "external_url": "https://arxiv.org/",
+      "internal_slug": "paper-accepted-wacv-2026",
+      "is_external": true,
+      "featured": true
+    },
+    {
+      "id": "2026-seminar-vlm",
+      "type": "seminar",
+      "title": "Weekly seminar on efficient multimodal models",
+      "summary": "Lab members shared current experiments and discussion notes from ongoing projects.",
+      "date": "2026-02-07",
+      "year": 2026,
+      "related_person": "Lab-LVM Seminar Team",
+      "venue": "Lab-LVM, Ajou University",
+      "external_url": "",
+      "internal_slug": "seminar-efficient-multimodal-models",
+      "is_external": false,
+      "featured": false
+    },
+    {
+      "id": "2026-new-member-winter",
+      "type": "new_member",
+      "title": "New winter-term interns joined the lab",
+      "summary": "New student researchers joined projects in biomedical AI and real-world deployment.",
+      "date": "2026-01-22",
+      "year": 2026,
+      "related_person": "Lab-LVM Intern Cohort",
+      "venue": "Lab-LVM",
+      "external_url": "",
+      "internal_slug": "winter-interns-2026",
+      "is_external": false,
+      "featured": false
+    },
+    {
+      "id": "2025-equipment-gpu",
+      "type": "equipment",
+      "title": "New multi-GPU workstation installed",
+      "summary": "A dedicated training workstation was added to support larger multimodal experiments.",
+      "date": "2025-12-03",
+      "year": 2025,
+      "related_person": "Lab Infrastructure Team",
+      "venue": "Lab-LVM, Ajou University",
+      "external_url": "",
+      "internal_slug": "new-gpu-workstation-2025",
+      "is_external": false,
+      "featured": false
+    },
+    {
+      "id": "2025-award-student",
+      "type": "award",
+      "title": "Best Student Presentation Award",
+      "summary": "Lab-LVM received a student presentation award for work on trustworthy computer vision.",
+      "date": "2025-11-14",
+      "year": 2025,
+      "related_person": "Gregor Seifer",
+      "venue": "KCVS 2025",
+      "external_url": "",
+      "internal_slug": "best-student-presentation-2025",
+      "is_external": false,
+      "featured": false
+    },
+    {
+      "id": "2025-visit-collaboration",
+      "type": "visit",
+      "title": "Industry collaboration visit hosted",
+      "summary": "Research exchange session held with an industrial R&D team on applied multimodal AI.",
+      "date": "2025-10-02",
+      "year": 2025,
+      "related_person": "Lab-LVM + Partner R&D Group",
+      "venue": "Ajou University",
+      "external_url": "",
+      "internal_slug": "industry-collaboration-visit-2025",
+      "is_external": false,
+      "featured": false
+    },
+    {
+      "id": "2025-workshop-vision",
+      "type": "workshop",
+      "title": "Lab workshop on biomedical vision pipelines",
+      "summary": "Internal workshop covered annotation quality, uncertainty, and deployment constraints.",
+      "date": "2025-09-11",
+      "year": 2025,
+      "related_person": "Biomedical AI Group",
+      "venue": "Lab-LVM Workshop",
+      "external_url": "",
+      "internal_slug": "biomedical-workshop-2025",
+      "is_external": false,
+      "featured": false
+    },
+    {
+      "id": "2025-paper-media",
+      "type": "paper_accepted",
+      "title": "Paper accepted in Medical Image Analysis",
+      "summary": "A medical imaging paper from Lab-LVM was accepted after peer review.",
+      "date": "2025-05-28",
+      "year": 2025,
+      "related_person": "Biomedical AI Group",
+      "venue": "Medical Image Analysis",
+      "external_url": "https://www.sciencedirect.com/journal/medical-image-analysis",
+      "internal_slug": "paper-accepted-media-2025",
+      "is_external": true,
+      "featured": true
+    },
+    {
+      "id": "2025-graduation-spring",
+      "type": "graduation",
+      "title": "Congratulations to spring graduates",
+      "summary": "We congratulate graduating students and thank them for their contributions to the lab.",
+      "date": "2025-02-20",
+      "year": 2025,
+      "related_person": "Lab-LVM Alumni",
+      "venue": "Ajou University",
+      "external_url": "",
+      "internal_slug": "spring-graduation-2025",
+      "is_external": false,
+      "featured": false
+    },
+    {
+      "id": "2024-general-openhouse",
+      "type": "general",
+      "title": "Lab open house and project showcase",
+      "summary": "Visitors explored ongoing projects and discussed possible collaboration opportunities.",
+      "date": "2024-11-08",
+      "year": 2024,
+      "related_person": "Lab-LVM",
+      "venue": "Ajou University",
+      "external_url": "",
+      "internal_slug": "open-house-2024",
+      "is_external": false,
+      "featured": false
     }
-  },
-
-  {
-    "news": {
-      "date": "Jul. 2024",
-      "title": "Paper Accepted",
-      "desc": "A paper has been accepted at BMVC."
-    }
-  },
-
-  {
-    "news": {
-      "date": "May. 2024",
-      "title": "Paper Accepted",
-      "desc": "A paper has been accepted at Medical Image Analysis (MedIA)."
-    }
-  },
-
-  {
-    "news": {
-      "date": "Apr. 2024",
-      "title": "Paper Accepted",
-      "desc": "A paper has been accepted at Computers in Biology and Medicine."
-    }
-  },
-
-  {
-    "news": {
-      "date": "Apr. 2024",
-      "title": "Paper Accepted",
-      "desc": "A paper has been accepted at Computer Methods and Programs in Biomedicine."
-    }
-  },
-
-  {
-    "news": {
-      "date": "Dec. 2023",
-      "title": "Paper Accepted",
-      "desc": "A paper has been accepted at International Journal of Surgery (IF 15.3, JCR Top 1%)."
-    }
-  },
-
-  {
-    "news": {
-      "date": "Jul. 2023",
-      "title": "Paper Accepted",
-      "desc": "A paper has been accepted at ICCV."
-    }
-  },
-
-  {
-    "news": {
-      "date": "Jul. 2023",
-      "title": "Paper Accepted",
-      "desc": "A paper has been accepted at ICCV Workshop."
-    }
-  }
-]
+  ]
+}

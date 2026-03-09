@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "schema_version": "1.0",
+    "section_order": [
+      "introduction",
+      "research",
+      "culture"
+    ]
+  },
+  "items": {
+    "intro_group_photo": {
+      "id": "intro_group_photo",
+      "title": "Lab Group",
+      "description": "Lab-LVM members during a recent group gathering.",
+      "section": "introduction",
+      "image_key": "intro_group_photo",
+      "alt": "Lab-LVM team gathered together for a group photo.",
+      "priority": 1
+    },
+    "intro_meeting_room": {
+      "id": "intro_meeting_room",
+      "title": "Collaborative Workspace",
+      "description": "A day-to-day research discussion environment in the lab.",
+      "section": "introduction",
+      "image_key": "intro_meeting_room",
+      "alt": "Researchers in a meeting room discussing vision AI projects.",
+      "priority": 2
+    },
+    "research_environment": {
+      "id": "research_environment",
+      "title": "Research Environment",
+      "description": "Experiments and applied model development across vision and multimodal AI.",
+      "section": "research",
+      "image_key": "research_environment",
+      "alt": "Lab workspace representing research experimentation and development.",
+      "priority": 1
+    },
+    "culture_seminar": {
+      "id": "culture_seminar",
+      "title": "Seminar & Culture",
+      "description": "Regular seminars and collaborative discussions across members.",
+      "section": "culture",
+      "image_key": "culture_seminar",
+      "alt": "Lab members participating in a seminar session.",
+      "priority": 1
+    },
+    "culture_discussion": {
+      "id": "culture_discussion",
+      "title": "Daily Collaboration",
+      "description": "Focused teamwork and peer feedback in ongoing projects.",
+      "section": "culture",
+      "image_key": "culture_discussion",
+      "alt": "Researchers discussing progress around a shared workspace.",
+      "priority": 2
+    }
+  }
+}

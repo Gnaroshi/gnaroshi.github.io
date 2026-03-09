@@ -1,33 +1,94 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import NavButton from "./Nav.Button";
 import "./Nav.css";
 import LABLVMLOGO from "../assets/logo.svg";
 
+const MOBILE_NAV_QUERY = "(max-width: 57rem)";
+
 export default function Nav() {
   const [selectedTab, setSelectedTab] = useState("home");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navigate = useNavigate();
+  const [isMobileNav, setIsMobileNav] = useState(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return false;
+    }
+    return window.matchMedia(MOBILE_NAV_QUERY).matches;
+  });
   const location = useLocation();
 
   useEffect(() => {
     const path = location.pathname === "/" ? "home" : location.pathname.slice(1);
     setSelectedTab(path);
+    setIsMenuOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return undefined;
+    }
+
+    const mediaQueryList = window.matchMedia(MOBILE_NAV_QUERY);
+    const syncMobileState = (eventOrList) => {
+      const matches = "matches" in eventOrList ? eventOrList.matches : mediaQueryList.matches;
+      setIsMobileNav(matches);
+      if (!matches) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    syncMobileState(mediaQueryList);
+    if (typeof mediaQueryList.addEventListener === "function") {
+      mediaQueryList.addEventListener("change", syncMobileState);
+    } else {
+      mediaQueryList.addListener(syncMobileState);
+    }
+
+    return () => {
+      if (typeof mediaQueryList.removeEventListener === "function") {
+        mediaQueryList.removeEventListener("change", syncMobileState);
+      } else {
+        mediaQueryList.removeListener(syncMobileState);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isMobileNav || !isMenuOpen) {
+      return undefined;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isMenuOpen, isMobileNav]);
+
   const toggleMenu = () => {
+    if (!isMobileNav) {
+      return;
+    }
     setIsMenuOpen((prev) => !prev);
   };
 
   const handleSelectTab = (selectedTabButton) => {
     setSelectedTab(selectedTabButton);
     setIsMenuOpen(false);
-    const path = selectedTabButton === "home" ? "/" : `/${selectedTabButton}`;
-    navigate(path);
   };
 
   const tabs = [
     "home",
+    "news",
     "test",
     "research",
     "publication",
@@ -38,26 +99,57 @@ export default function Nav() {
 
   return (
     <>
-      <div
-        className={`nav__overlay ${isMenuOpen ? "is-visible" : ""}`}
-        onClick={toggleMenu}
-      ></div>
-      <div className="nav">
+      {isMobileNav ? (
+        <div
+          className={`nav__overlay ${isMenuOpen ? "is-visible" : ""}`}
+          onClick={toggleMenu}
+        ></div>
+      ) : null}
+      <div className={`nav animated-surface ${isMenuOpen ? "is-menu-open" : ""}`}>
         <div className="nav__header">
-          <div className="nav__logo" onClick={() => handleSelectTab("home")}>
+          <Link
+            to="/"
+            className="nav__logo"
+            onClick={() => handleSelectTab("home")}
+            aria-label="Go to Home"
+          >
             <img src={LABLVMLOGO} alt="LABLVM logo" />
-          </div>
-          <button className="nav__toggle" onClick={toggleMenu}>
-            ☰
-          </button>
+          </Link>
+          {isMobileNav ? (
+            <button
+              type="button"
+              className="nav__toggle btn btn--icon btn--sm interactive-button"
+              onClick={toggleMenu}
+              aria-expanded={isMenuOpen}
+              aria-controls="nav-links"
+              aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            >
+              <span className="nav__toggle-icon nav__toggle-icon--menu" aria-hidden="true">
+                ☰
+              </span>
+            </button>
+          ) : null}
         </div>
-        <div className={`nav__links ${isMenuOpen ? "" : "is-hidden"}`}>
-          <button className="nav__toggle nav__toggle--close" onClick={toggleMenu}>
-            ✕
-          </button>
+        <div
+          id="nav-links"
+          className={`nav__links animated-surface ${isMobileNav && !isMenuOpen ? "is-hidden" : ""}`}
+        >
+          {isMobileNav ? (
+            <button
+              type="button"
+              className="nav__toggle nav__toggle--close btn btn--icon btn--sm interactive-button"
+              onClick={toggleMenu}
+              aria-label="Close navigation menu"
+            >
+              <span className="nav__toggle-icon nav__toggle-icon--close" aria-hidden="true">
+                ✕
+              </span>
+            </button>
+          ) : null}
           {tabs.map((tab, i) => (
             <NavButton
               key={tab + i}
+              tabKey={tab}
               isSelected={selectedTab === tab}
               onSelect={() => handleSelectTab(tab)}
             >
