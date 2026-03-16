@@ -36,20 +36,27 @@
   --viewport-min: 320px;
   --viewport-max: 1440px;
   --layout-max: 78rem;
+  --container-max: var(--layout-max);
+  --container-pad-x: clamp(1rem, 2.4vw, 2rem);
   --content-measure: 66ch;
-  --page-pad-x: clamp(1rem, 2.2vw, 2rem);
+  --page-pad-x: var(--container-pad-x);
   --section-pad-y: clamp(1rem, 2vw, 1.75rem);
-  --stack-gap: clamp(1rem, 2vw, 1.5rem);
+  --stack-gap: clamp(1.1rem, 2.2vw, 1.75rem);
+  --section-gap: var(--stack-gap);
   --section-pad: clamp(1rem, 2vw, 1.5rem);
   --grid-gap: clamp(1rem, 2vw, 1.5rem);
-  --layout-shell-max: var(--layout-max);
-  --layout-shell-pad-x: var(--page-pad-x);
+  --layout-shell-max: var(--container-max);
+  --layout-shell-pad-x: var(--container-pad-x);
   --layout-shell-pad-y: var(--section-pad-y);
   --layout-shell-gap: var(--stack-gap);
   --panel-pad: clamp(0.85rem, 1.8vw, 1.25rem);
   --panel-pad-sm: clamp(0.68rem, 1.6vw, 0.96rem);
+  --panel-radius: var(--radius-lg);
   --heading-gap: clamp(0.5rem, 1.2vw, 0.75rem);
   --card-pad: var(--panel-pad);
+  --section-head-bottom: var(--space-3);
+  --section-head-gap: var(--space-1);
+  --section-head-copy-max: 78ch;
 
   --shadow-elev-1:
     0 1px 2px rgba(15, 23, 42, 0.06),
@@ -168,6 +175,16 @@
   --h1: clamp(2rem, 4.2vw, 3.2rem);
   --h2: clamp(1.4rem, 2.6vw, 2rem);
   --letter-spacing: -0.01em;
+  --page-title-size: clamp(1.62rem, 3.8vw, 2.25rem);
+  --section-title-size: clamp(1.24rem, 2.35vw, 1.62rem);
+  --section-copy-size: clamp(0.9rem, 1.35vw, 0.97rem);
+  --supporting-text-size: 0.79rem;
+  --meta-text-size: 0.72rem;
+  --badge-text-size: 0.7rem;
+  --section-title-line-height: 1.36;
+  --section-copy-line-height: 1.58;
+  --supporting-line-height: 1.46;
+  --action-label-size: var(--font-size-sm);
 
   --btn-font-size: var(--font-size-sm);
   --btn-font-weight: 600;

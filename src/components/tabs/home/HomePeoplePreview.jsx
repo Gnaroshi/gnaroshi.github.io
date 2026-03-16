@@ -32,10 +32,10 @@ export default function HomePeoplePreview() {
             )}
           </div>
           <div className="home-people__culture-copy">
-            <p className="home-people__culture-title">Collaborative Lab Environment</p>
+            <p className="home-people__culture-title">Lab Culture & Environment</p>
             <p className="home-people__culture-desc">
-              Seminar discussions, peer feedback, and day-to-day collaboration
-              shape our research culture across vision and multimodal AI projects.
+              Group discussions, mentoring, and shared experimentation define
+              the day-to-day research environment across our vision and multimodal projects.
             </p>
           </div>
           <div className="home-people__culture-actions">
@@ -77,8 +77,8 @@ export default function HomePeoplePreview() {
         ))}
       </div>
 
-      <div className="home-people__footer">
-        <Link to="/people" className="home-people__all-link btn btn--secondary btn--sm interactive-button">
+      <div className="home-block__section-footer">
+        <Link to="/people" className="home-block__section-action btn btn--tertiary animated-underline">
           View all people
         </Link>
       </div>

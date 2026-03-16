@@ -36,6 +36,15 @@
   gap: var(--layout-shell-gap);
 }
 
+.app__hero-loading {
+  width: 100%;
+  min-height: clamp(13rem, 24vw, 18rem);
+  border: var(--outline-width) solid var(--tab-home-border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--tab-home-tint) 0%, var(--surface) 66%);
+  box-shadow: var(--shadow-elev-1);
+}
+
 .fab {
   position: fixed;
   right: clamp(0.9rem, 2vw, 1.5rem);
@@ -69,6 +78,19 @@
 
   font-size: 1rem;
   font-weight: 700;
+}
+
+.fab__btn svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  display: block;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.fab__btn .icon-mail {
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .fab__btn--secondary {

@@ -1,0 +1,76 @@
+{
+  "defaults": {
+    "category": "events",
+    "description": ""
+  },
+  "items": {
+    "20230609": {
+      "title": "June Lab Dinner",
+      "caption": "June Lab Dinner",
+      "date": "2023-06-09"
+    },
+    "20240222": {
+      "title": "February 2024 Graduation",
+      "caption": "February 2024 Graduation",
+      "date": "2024-02-22"
+    },
+    "20240717": {
+      "title": "Summer 2024 Team Event",
+      "caption": "Summer 2024 Team Event",
+      "date": "2024-07-17"
+    },
+    "20240910": {
+      "title": "AIAI 2024",
+      "caption": "AIAI 2024",
+      "description": "Invited talk",
+      "date": "2024-09-10"
+    },
+    "20241127": {
+      "title": "Winter 2024 Lab Gathering",
+      "caption": "Winter 2024 Lab Gathering",
+      "date": "2024-11-27"
+    },
+    "20241128": {
+      "title": "BMVC 2024",
+      "caption": "BMVC 2024",
+      "description": "Lab poster session",
+      "date": "2024-11-28"
+    },
+    "20241211": {
+      "title": "ACCV 2024",
+      "caption": "ACCV 2024",
+      "description": "Conference presentation",
+      "date": "2024-12-11"
+    },
+    "20240826_2": {
+      "title": "August 2024 Graduation",
+      "caption": "August 2024 Graduation",
+      "date": "2024-08-26"
+    },
+    "20240826_1": {
+      "title": "Summer 2024 Mentoring Program",
+      "caption": "Summer 2024 Mentoring Program",
+      "date": "2024-08-26"
+    },
+    "20231227_2": {
+      "title": "2023 Year-end Gathering",
+      "caption": "2023 Year-end Gathering",
+      "date": "2023-12-27"
+    },
+    "20231227_1": {
+      "title": "December Lab Seminar",
+      "caption": "December Lab Seminar",
+      "date": "2023-12-27"
+    },
+    "20230822_2": {
+      "title": "August 2023 Graduation",
+      "caption": "August 2023 Graduation",
+      "date": "2023-08-22"
+    },
+    "20230822_1": {
+      "title": "August 2023 Graduation",
+      "caption": "August 2023 Graduation",
+      "date": "2023-08-22"
+    }
+  }
+}

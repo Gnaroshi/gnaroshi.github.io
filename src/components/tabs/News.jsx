@@ -53,12 +53,6 @@ function News() {
             Archive of papers, seminars, member updates, infrastructure milestones,
             and collaboration activities.
           </p>
-          <a
-            href="#news-year-nav"
-            className="news-page__archive-jump btn btn--tertiary animated-underline"
-          >
-            Archive years ↓
-          </a>
         </div>
         <div className="news-page__filters" role="group" aria-label="Filter news by type">
           {typeOptions.map((type) => (
@@ -128,7 +122,7 @@ function News() {
                     data-reveal
                     data-reveal-load-delay={`${120 + Math.min(index, 5) * 60}`}
                     style={{ "--reveal-delay": `${Math.min(index, 5) * 60}ms` }}
-                    className="news-page__item interactive-row"
+                    className="news-page__item"
                   >
                     <p className="news-page__date">{formatNewsDate(item.date)}</p>
                     <div className="news-page__content">
@@ -138,9 +132,7 @@ function News() {
                           {statusLabel}
                         </p>
                       </div>
-                      <h3 className="news-page__title interactive-row__title animated-underline">
-                        {item.title}
-                      </h3>
+                      <h3 className="news-page__title">{item.title}</h3>
                       <p className="news-page__summary">{item.summary}</p>
                       {details ? <p className="news-page__details">{details}</p> : null}
                     </div>
@@ -153,17 +145,10 @@ function News() {
                           className="news-page__action-link btn btn--tertiary animated-underline"
                         >
                           <span>Open</span>
-                          <span className="news-page__action-arrow interactive-row__arrow">↗</span>
+                          <span className="news-page__action-arrow">↗</span>
                         </a>
                       ) : (
-                        <a
-                          href="#news-year-nav"
-                          className="news-page__action-link news-page__action-link--muted btn btn--tertiary animated-underline"
-                          aria-label={`Jump to archive year index from ${item.title}`}
-                        >
-                          <span>Archive</span>
-                          <span className="news-page__action-arrow interactive-row__arrow">↑</span>
-                        </a>
+                        <span className="news-page__action-placeholder" aria-hidden="true"></span>
                       )}
                     </div>
                   </article>

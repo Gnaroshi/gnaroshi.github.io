@@ -1,0 +1,144 @@
+{
+  "meta": {
+    "schema_version": "1.0",
+    "generated_at": "2026-03-16T06:42:17.359Z",
+    "source": "content/publications",
+    "categories": [
+      "biomedical",
+      "core"
+    ],
+    "statuses": [
+      "published",
+      "working",
+      "project"
+    ]
+  },
+  "items": [
+    {
+      "id": "biomedical-bapub4-style-kd-class-imbalanced-medical-image",
+      "key": "biomedical-bapub4-style-kd-class-imbalanced-medical-image",
+      "category": "biomedical",
+      "status": "published",
+      "title": "Style-KD : Class-Imbalanced Medical Image Classification via Style Knowledge Distillation",
+      "summary": "",
+      "featured": false,
+      "research_meta": {
+        "author": "Inhyuk Park, Won Hwa Kim, Jongbin Ryu",
+        "published_place": "Biomedical Signall Processing and Control",
+        "published_date": "2024-12-29",
+        "source_code_link": "",
+        "paper_link": "https://www.sciencedirect.com/science/article/pii/S1746809423013617"
+      },
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+    {
+      "id": "core-capub0-spatial-bias-for-attention-free-non-local",
+      "key": "core-capub0-spatial-bias-for-attention-free-non-local",
+      "category": "core",
+      "status": "published",
+      "title": "Spatial Bias for Attention-free Non-local Neural Networks",
+      "summary": "",
+      "featured": false,
+      "research_meta": {
+        "author": "Junhyung Go, Jonngbin Ryu",
+        "published_place": "Expert Systems with applications",
+        "published_date": "2024-10-04",
+        "source_code_link": "",
+        "paper_link": "https://www.sciencedirect.com/science/article/pii/S0957417423025551"
+      },
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+    {
+      "id": "biomedical-bapub2-attentional-decoder-networks-for-chest-x-r",
+      "key": "biomedical-bapub2-attentional-decoder-networks-for-chest-x-r",
+      "category": "biomedical",
+      "status": "published",
+      "title": "Attentional Decoder Networks for Chest X-ray Image Recognition on High-resolution Features",
+      "summary": "",
+      "featured": false,
+      "research_meta": {
+        "author": "Hankyul Kang, Namkug Kim, Jongbin Ryu",
+        "published_place": "Computer Methods and Programs in Biomedicine",
+        "published_date": "2024-04-21",
+        "source_code_link": "https://github.com/Lab-LVM/ADNet",
+        "paper_link": "https://www.sciencedirect.com/science/article/pii/S0169260724001949"
+      },
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+    {
+      "id": "biomedical-bapub3-analyzing-to-discover-origins-of-cnns-and",
+      "key": "biomedical-bapub3-analyzing-to-discover-origins-of-cnns-and",
+      "category": "biomedical",
+      "status": "published",
+      "title": "Analyzing to Discover Origins of CNNs and ViT Architectures in Medical Images",
+      "summary": "",
+      "featured": false,
+      "research_meta": {
+        "author": "Seungmin Oh, Namkug Kim, Jongbin Ryu",
+        "published_place": "Scientific Reports",
+        "published_date": "2024-04-16",
+        "source_code_link": "",
+        "paper_link": "https://www.nature.com/articles/s41598-024-58382-3"
+      },
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+    {
+      "id": "biomedical-bapub0-deep-learning-using-computed-tomography-to",
+      "key": "biomedical-bapub0-deep-learning-using-computed-tomography-to",
+      "category": "biomedical",
+      "status": "published",
+      "title": "Deep Learning Using Computed Tomography to Identify High-Risk Patients for Acute Small Bowel Obstruction: Development and Validation of a Prediction Model: A Retrospective Cohort Study",
+      "summary": "",
+      "featured": false,
+      "research_meta": {
+        "author": "Seungmin Oh, Jongbin Ryu, Ho-Jung Shin, Jeong Ho Song, Sang-Yong Son, Hoon Hur, Sang-Uk Han",
+        "published_place": "International Journal of Surgery",
+        "published_date": "2023-12-01",
+        "source_code_link": "",
+        "paper_link": "https://journals.lww.com/international-journal-of-surgery/fulltext/2023/12000/deep_learning_using_computed_tomography_to.39.aspx"
+      },
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    },
+    {
+      "id": "biomedical-bapub1-robust-asymmetric-loss-for-multi-label-lon",
+      "key": "biomedical-bapub1-robust-asymmetric-loss-for-multi-label-lon",
+      "category": "biomedical",
+      "status": "published",
+      "title": "Robust Asymmetric Loss for Multi-Label Long-Tailed Learning",
+      "summary": "",
+      "featured": false,
+      "research_meta": {
+        "author": "Wongi Park, Inhyuk Park, Sungeun Kim, Jongbin Ryu",
+        "published_place": "ICCVW",
+        "published_date": "2023-08-10",
+        "source_code_link": "https://github.com/kalelpark/RAL",
+        "paper_link": "https://openaccess.thecvf.com/content/ICCV2023W/CVAMD/html/Park_Robust_Asymmetric_Loss_for_Multi-Label_Long-Tailed_Learning_ICCVW_2023_paper.html"
+      },
+      "content": {
+        "problem": "",
+        "solve": "",
+        "expermental_result": ""
+      }
+    }
+  ]
+}

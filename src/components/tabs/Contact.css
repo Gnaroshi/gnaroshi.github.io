@@ -114,6 +114,10 @@
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   gap: var(--space-2);
   align-items: stretch;
+  padding: var(--space-2);
+  border: 1px solid var(--tab-identity-border, var(--outline-color));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--tab-identity-tint, var(--surface-2)) 48%, var(--surface));
 }
 
 .contact__map-media {
@@ -186,14 +190,25 @@
   line-height: 1.55;
 }
 
+.contact__email-cta {
+  width: 100%;
+  margin-top: var(--space-2);
+  display: flex;
+  align-items: center;
+}
+
 .contact__email-button {
   --btn-accent: var(--tab-contact-accent, var(--tab-identity-accent));
+  --btn-bg: color-mix(in srgb, var(--tab-contact-tint, var(--surface-2)) 74%, var(--surface));
+  --btn-border: var(--tab-contact-border, var(--outline-color));
+  --btn-ink: color-mix(in srgb, var(--tab-contact-accent, var(--text-primary)) 70%, var(--text-primary));
   --btn-height-local: 2.75rem;
   --btn-pad-x-local: 0.95rem;
 
-  margin-top: var(--space-2);
-  width: 12.8rem;
-  justify-content: space-between;
+  width: fit-content;
+  min-width: 12rem;
+  justify-content: center;
+  gap: 0.52rem;
 }
 
 .contact__email-text {
@@ -201,18 +216,20 @@
 }
 
 .contact__email-icon {
-  width: 1.65rem;
-  height: 1.65rem;
-  border-left: 1px solid rgba(255, 255, 255, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-left: var(--space-2);
+  width: 1.1rem;
+  height: 1.1rem;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
-.contact__email-icon img {
-  width: 1rem;
-  height: 1rem;
+.contact__email-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 @media (max-width: 72rem) {
@@ -244,6 +261,7 @@
 
   .contact__location-media {
     gap: var(--space-2);
+    padding: var(--space-1);
   }
 
   .contact__map-media,
@@ -252,8 +270,11 @@
     min-height: 13.4rem;
   }
 
+  .contact__email-cta {
+    justify-content: center;
+  }
+
   .contact__email-button {
-    width: 100%;
     max-width: 12.8rem;
   }
 }
@@ -271,6 +292,7 @@
 
   .contact__email-button {
     max-width: none;
+    margin-inline: auto;
   }
 }
 

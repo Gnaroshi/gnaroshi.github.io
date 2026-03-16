@@ -1,6 +1,6 @@
-import emailIcon from "../../assets/icons/email-svgrepo-com.svg";
 import "./Contact.css";
 import HOME_MEDIA_IMAGES from "../../assets/images/home/home_media_index";
+import MailIcon from "../icons/MailIcon";
 
 function Contact() {
   const emailAddress = "jongbinryu@ajou.ac.kr";
@@ -25,7 +25,7 @@ function Contact() {
         <section
           data-reveal
           data-reveal-load-delay="100"
-          className="contact__location contact__panel interactive-card"
+          className="contact__location contact__panel"
         >
           <div className="contact__location-intro">
             <p className="contact__panel-label">Location</p>
@@ -60,7 +60,7 @@ function Contact() {
           <section
             data-reveal
             data-reveal-load-delay="140"
-            className="contact__panel contact__panel--address interactive-card"
+            className="contact__panel contact__panel--address"
           >
             <p className="contact__panel-label">Address</p>
             <p className="contact__panel-title">Department of Computer Science, Ajou University</p>
@@ -75,7 +75,7 @@ function Contact() {
           <article
             data-reveal
             data-reveal-load-delay="180"
-            className="contact__panel contact__panel--email interactive-card"
+            className="contact__panel contact__panel--email"
           >
             <p className="contact__panel-label">Email</p>
             <p className="contact__panel-title">General inquiries</p>
@@ -86,15 +86,17 @@ function Contact() {
               For collaboration, admissions, and project inquiries, please include your affiliation
               and topic.
             </p>
-            <a
-              className="contact__email-button btn btn--primary interactive-button lift-on-hover"
-              href={`mailto:${emailAddress}?subject=${mailSubject}&body=${mailBody}`}
-            >
-              <span className="contact__email-text">Contact us</span>
-              <span className="contact__email-icon">
-                <img src={emailIcon} alt="" />
-              </span>
-            </a>
+            <div className="contact__email-cta">
+              <a
+                className="contact__email-button btn btn--primary interactive-button lift-on-hover"
+                href={`mailto:${emailAddress}?subject=${mailSubject}&body=${mailBody}`}
+              >
+                <span className="contact__email-text">Contact us</span>
+                <span className="contact__email-icon">
+                  <MailIcon className="icon-mail" />
+                </span>
+              </a>
+            </div>
           </article>
         </div>
       </section>

@@ -28,7 +28,7 @@ function HomeResearchCard({
       data-reveal
       data-reveal-load-delay={revealLoadDelay}
       style={{ "--reveal-delay": revealDelay }}
-      className={`home-research__card home-research__card--${topic} interactive-card`}
+      className={`home-research__card home-research__card--${topic} interactive-card is-clickable`}
       role="button"
       tabIndex={0}
       onClick={setTopic}

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import NavButton from "./Nav.Button";
+import { resolveTabFromPath } from "../routes/routeUtils";
 import "./Nav.css";
 import LABLVMLOGO from "../assets/logo.svg";
 
 const MOBILE_NAV_QUERY = "(max-width: 57rem)";
 
 export default function Nav() {
-  const [selectedTab, setSelectedTab] = useState("home");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileNav, setIsMobileNav] = useState(() => {
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
@@ -16,10 +16,9 @@ export default function Nav() {
     return window.matchMedia(MOBILE_NAV_QUERY).matches;
   });
   const location = useLocation();
+  const selectedTab = resolveTabFromPath(location.pathname);
 
   useEffect(() => {
-    const path = location.pathname === "/" ? "home" : location.pathname.slice(1);
-    setSelectedTab(path);
     setIsMenuOpen(false);
   }, [location.pathname]);
 
@@ -81,8 +80,7 @@ export default function Nav() {
     setIsMenuOpen((prev) => !prev);
   };
 
-  const handleSelectTab = (selectedTabButton) => {
-    setSelectedTab(selectedTabButton);
+  const handleSelectTab = () => {
     setIsMenuOpen(false);
   };
 
@@ -110,7 +108,7 @@ export default function Nav() {
           <Link
             to="/"
             className="nav__logo"
-            onClick={() => handleSelectTab("home")}
+            onClick={handleSelectTab}
             aria-label="Go to Home"
           >
             <img src={LABLVMLOGO} alt="LABLVM logo" />
@@ -124,8 +122,8 @@ export default function Nav() {
               aria-controls="nav-links"
               aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             >
-              <span className="nav__toggle-icon nav__toggle-icon--menu" aria-hidden="true">
-                ☰
+              <span className="nav__toggle-icon" aria-hidden="true">
+                {isMenuOpen ? "✕" : "☰"}
               </span>
             </button>
           ) : null}
@@ -134,24 +132,12 @@ export default function Nav() {
           id="nav-links"
           className={`nav__links animated-surface ${isMobileNav && !isMenuOpen ? "is-hidden" : ""}`}
         >
-          {isMobileNav ? (
-            <button
-              type="button"
-              className="nav__toggle nav__toggle--close btn btn--icon btn--sm interactive-button"
-              onClick={toggleMenu}
-              aria-label="Close navigation menu"
-            >
-              <span className="nav__toggle-icon nav__toggle-icon--close" aria-hidden="true">
-                ✕
-              </span>
-            </button>
-          ) : null}
           {tabs.map((tab, i) => (
             <NavButton
               key={tab + i}
               tabKey={tab}
               isSelected={selectedTab === tab}
-              onSelect={() => handleSelectTab(tab)}
+              onSelect={handleSelectTab}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </NavButton>

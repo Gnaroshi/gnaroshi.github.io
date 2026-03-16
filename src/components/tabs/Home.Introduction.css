@@ -2,9 +2,9 @@
   width: 100%;
   padding: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  grid-template-columns: minmax(0, 1.36fr) minmax(0, 0.94fr);
   align-items: flex-start;
-  gap: clamp(1rem, 2.5vw, 1.9rem);
+  gap: clamp(0.9rem, 2vw, 1.5rem);
 }
 
 .home-introduction__copy {
@@ -31,14 +31,14 @@
 .home-introduction__head p {
   margin: var(--space-1) 0 0;
   color: var(--text-muted);
-  font-size: var(--font-size-sm);
-  line-height: 1.5;
-  max-width: min(66ch, 100%);
+  font-size: var(--section-copy-size);
+  line-height: var(--section-copy-line-height);
+  max-width: min(90ch, 100%);
 }
 
 .home-introduction__lead {
   margin: 0;
-  max-width: min(72ch, 100%);
+  max-width: min(95ch, 100%);
   color: var(--text-primary);
   font-size: clamp(1rem, 1.6vw, 1.08rem);
   line-height: 1.62;
@@ -48,7 +48,7 @@
 
 .home-introduction__body {
   margin: 0;
-  max-width: min(74ch, 100%);
+  max-width: min(98ch, 100%);
   text-align: left;
   font-size: var(--font-size-md);
   line-height: 1.68;

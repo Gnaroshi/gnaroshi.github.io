@@ -17,7 +17,59 @@
   gap: var(--stack-gap);
 }
 
+.main-content__body > * {
+  width: 100%;
+}
+
+.main-content__loading {
+  width: 100%;
+  padding: var(--card-pad);
+  border: var(--outline-width) solid var(--tab-identity-border, var(--outline-color));
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--tab-identity-tint, var(--surface-2)) 70%, var(--surface)) 0%,
+    var(--surface) 76%
+  );
+  box-shadow: var(--shadow-elev-1);
+  display: grid;
+  gap: var(--space-1);
+}
+
+.main-content__loading-kicker,
+.main-content__loading-title {
+  margin: 0;
+}
+
+.main-content__loading-kicker {
+  color: var(--text-muted);
+  font-size: var(--meta-text-size);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.main-content__loading-title {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.main-content__loading-line {
+  width: min(22rem, 58%);
+  height: 0.36rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tab-identity-accent, var(--line-strong)) 34%, transparent);
+}
+
 .main-content__body--home {
+  --tab-identity-tint: var(--tab-home-tint);
+  --tab-identity-border: var(--tab-home-border);
+  --tab-identity-accent: var(--tab-home-accent);
+}
+
+.main-content__body--test {
   --tab-identity-tint: var(--tab-home-tint);
   --tab-identity-border: var(--tab-home-border);
   --tab-identity-accent: var(--tab-home-accent);
@@ -78,16 +130,19 @@
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, var(--tab-identity-tint) 0%, var(--surface) 72%);
   box-shadow: var(--shadow-elev-1);
+  display: grid;
+  gap: var(--section-head-gap);
 }
 
 .tab-header h1 {
   margin: 0;
-  font-size: clamp(1.6rem, 4vw, 2.25rem);
+  font-size: var(--page-title-size);
   letter-spacing: var(--letter-spacing);
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--heading-gap);
+  line-height: 1.2;
 }
 
 .tab-header h1::before {
@@ -96,6 +151,15 @@
   height: 1.55rem;
   border-radius: 999px;
   background: var(--tab-identity-accent);
+}
+
+.tab-header p {
+  margin: var(--space-2) 0 0;
+  max-width: var(--section-head-copy-max);
+  color: var(--text-muted);
+  font-size: var(--section-copy-size);
+  line-height: var(--section-copy-line-height);
+  text-wrap: pretty;
 }
 
 [data-reveal] {
@@ -123,7 +187,7 @@
 @keyframes route-fade-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
 
   to {

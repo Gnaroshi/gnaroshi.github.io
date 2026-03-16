@@ -118,9 +118,6 @@ export default function HomeLatestNewsList() {
           <h2 id="home-news-title">Latest News</h2>
           <p>Recent lab updates across research, people, seminars, and achievements.</p>
         </div>
-        <Link to="/news" className="home-block__more-link btn btn--tertiary animated-underline">
-          View all news
-        </Link>
       </div>
 
       <div className="home-news__list">
@@ -136,7 +133,7 @@ export default function HomeLatestNewsList() {
             "data-reveal": true,
             "data-reveal-load-delay": revealLoadDelay,
             style: { "--reveal-delay": revealDelay },
-            className: "home-news__row home-news__row--link interactive-row",
+            className: "home-news__row home-news__row--link interactive-row is-clickable",
           };
 
           const rowContent = (
@@ -187,6 +184,12 @@ export default function HomeLatestNewsList() {
             </Link>
           );
         })}
+      </div>
+
+      <div className="home-block__section-footer">
+        <Link to="/news" className="home-block__section-action btn btn--tertiary animated-underline">
+          View all news
+        </Link>
       </div>
     </section>
   );

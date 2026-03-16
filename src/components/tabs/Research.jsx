@@ -93,10 +93,10 @@ function Research({ selectedResearchTopic }) {
       <section data-reveal className="research__intro">
         <div className="research__intro-copy-wrap">
           <p className="research__intro-kicker">Connected Overview</p>
-          <h2 className="research__intro-title">How our research program is organized</h2>
+          <h2 className="research__intro-title">How the research program is connected</h2>
           <p className="research__intro-copy">
-            Each area below links to related publications and researchers so visitors can
-            move from topics to concrete outputs quickly.
+            Research is organized by focused areas and linked directly to publication
+            outputs, so visitors can move from themes to evidence quickly.
           </p>
           <div className="research__intro-metrics">
             <span>{researchContents.length} active areas</span>
@@ -108,9 +108,6 @@ function Research({ selectedResearchTopic }) {
               className="btn btn--secondary btn--sm interactive-button"
             >
               View all publications
-            </Link>
-            <Link to="/people" className="btn btn--tertiary animated-underline">
-              Meet the researchers
             </Link>
           </div>
         </div>
@@ -127,6 +124,29 @@ function Research({ selectedResearchTopic }) {
             </figcaption>
           </figure>
         ) : null}
+      </section>
+
+      <section data-reveal className="research__areas" aria-labelledby="research-areas-title">
+        <div className="research__section-head research__section-head--areas">
+          <div>
+            <h2 id="research-areas-title">Research Areas</h2>
+            <p>Each area summarizes focus, key methods, and direct links to related outputs.</p>
+          </div>
+          <Link to="/publication" className="btn btn--tertiary animated-underline">
+            Browse all publications
+          </Link>
+        </div>
+        <div className="research-card-wrapper">
+          {researchContents.map((contentItem, index) => (
+            <ResearchCard
+              key={contentItem.topicKey}
+              {...contentItem}
+              isSelected={contentItem.topicKey === selectedResearchTopic}
+              revealDelay={`${Math.min(index, 5) * 60}ms`}
+              revealLoadDelay={`${140 + Math.min(index, 5) * 60}`}
+            />
+          ))}
+        </div>
       </section>
 
       <section data-reveal className="research__resources" aria-labelledby="research-resources-title">
@@ -163,29 +183,6 @@ function Research({ selectedResearchTopic }) {
               </article>
             );
           })}
-        </div>
-      </section>
-
-      <section data-reveal className="research__areas" aria-labelledby="research-areas-title">
-        <div className="research__section-head research__section-head--areas">
-          <div>
-            <h2 id="research-areas-title">Research Areas</h2>
-            <p>Each area summarizes focus, key methods, and direct links to related outputs.</p>
-          </div>
-          <Link to="/publication" className="btn btn--tertiary animated-underline">
-            Browse all publications
-          </Link>
-        </div>
-        <div className="research-card-wrapper">
-          {researchContents.map((contentItem, index) => (
-            <ResearchCard
-              key={contentItem.topicKey}
-              {...contentItem}
-              isSelected={contentItem.topicKey === selectedResearchTopic}
-              revealDelay={`${Math.min(index, 5) * 60}ms`}
-              revealLoadDelay={`${140 + Math.min(index, 5) * 60}`}
-            />
-          ))}
         </div>
       </section>
     </div>

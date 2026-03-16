@@ -1,26 +1,26 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 // import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+import { getRouterBasename } from "./routes/routerBasename";
 
-const getRouterBasename = () => {
-  const baseUrl = import.meta.env.BASE_URL;
-  if (!baseUrl || baseUrl === "/") {
-    return undefined;
-  }
-
-  const withLeadingSlash = baseUrl.startsWith("/") ? baseUrl : `/${baseUrl}`;
-  return withLeadingSlash.endsWith("/")
-    ? withLeadingSlash.slice(0, -1)
-    : withLeadingSlash;
-};
-
-createRoot(document.getElementById("root")).render(
+const appTree = (
   <StrictMode>
     <BrowserRouter basename={getRouterBasename()}>
       <App />
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 );
+
+const container = document.getElementById("root");
+if (!container) {
+  throw new Error("Root container not found");
+}
+
+if (container.hasChildNodes()) {
+  hydrateRoot(container, appTree);
+} else {
+  createRoot(container).render(appTree);
+}

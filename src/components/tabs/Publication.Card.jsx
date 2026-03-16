@@ -35,6 +35,7 @@ function PublicationCard({
   const hasPaperLink = isValidHttpUrl(paperLink);
   const categoryMeta = CATEGORY_META[category] ?? CATEGORY_META["multi-modal"];
   const categoryImage = CATEGORY_IMAGE[category] ?? CATEGORY_IMAGE["multi-modal"];
+  const authorText = meta.author?.trim() ?? "";
   const venueText = meta.published_place?.trim() ?? "";
   const dateText = meta.published_date?.trim() ?? "";
 
@@ -43,7 +44,7 @@ function PublicationCard({
       data-reveal
       data-reveal-load-delay={revealLoadDelay}
       style={{ "--reveal-delay": revealDelay }}
-      className="publication__card interactive-row"
+      className="publication__card"
     >
       <div className="publication__card-media">
         {categoryImage ? (
@@ -53,54 +54,51 @@ function PublicationCard({
         )}
       </div>
       <div className="publication__card-main">
-        <div className="publication__card-head">
-          <div className="publication__card-badges">
-            <p className={`publication__card-badge publication__card-badge--${category}`}>
-              {categoryMeta.label}
-            </p>
-            {venueText ? (
-              <p className="publication__card-published-place">{venueText}</p>
-            ) : null}
-          </div>
-          <div className="publication__card-meta-right">
-            {dateText ? <p className="publication__card-date">{dateText}</p> : null}
-            {hasPaperLink ? (
-              <a
-                href={paperLink}
-                target="_blank"
-                rel="noreferrer"
-                className="publication__card-action-link btn btn--secondary btn--sm interactive-button"
-              >
-                Open paper ↗
-              </a>
-            ) : (
-              <span className="publication__card-action-link publication__card-action-link--muted">
-                Internal archive
-              </span>
-            )}
-          </div>
+        <div className="publication__card-badges">
+          <p className={`publication__card-badge publication__card-badge--${category}`}>
+            {categoryMeta.label}
+          </p>
         </div>
-
         <h3 className="publication__card-title">
           {hasPaperLink ? (
             <a
               href={paperLink}
               target="_blank"
               rel="noreferrer"
-              className="publication__card-title-link interactive-row__title animated-underline"
+              className="publication__card-title-link animated-underline"
             >
               {title}
             </a>
           ) : (
-            <span className="publication__card-title-link publication__card-title-link--muted interactive-row__title">
+            <span className="publication__card-title-link publication__card-title-link--muted">
               {title}
             </span>
           )}
         </h3>
 
-        <div className="publication__card-author">
-          <p>{meta.author}</p>
-        </div>
+        {authorText ? <p className="publication__card-author">{authorText}</p> : null}
+        {(venueText || dateText) && (
+          <p className="publication__card-meta-line">
+            {venueText ? <span className="publication__card-venue">{venueText}</span> : null}
+            {dateText ? <span className="publication__card-date">{dateText}</span> : null}
+          </p>
+        )}
+      </div>
+      <div className="publication__card-side">
+        {hasPaperLink ? (
+          <a
+            href={paperLink}
+            target="_blank"
+            rel="noreferrer"
+            className="publication__card-action-link btn btn--secondary btn--sm interactive-button"
+          >
+            Open paper ↗
+          </a>
+        ) : (
+          <span className="publication__card-action-link publication__card-action-link--muted">
+            Internal archive
+          </span>
+        )}
       </div>
     </article>
   );

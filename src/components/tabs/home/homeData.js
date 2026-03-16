@@ -1,7 +1,3 @@
-import AA from "../../../assets/dataset/application_ai.json";
-import BA from "../../../assets/dataset/biomedical_ai.json";
-import CA from "../../../assets/dataset/core_ai.json";
-import MMA from "../../../assets/dataset/multi-modal_ai.json";
 import HOME_MEDIA from "../../../assets/dataset/home_media.json";
 import HOME_MEDIA_IMAGES from "../../../assets/images/home/home_media_index";
 import RESEARCH from "../../../assets/dataset/performance_management.json";
@@ -16,13 +12,11 @@ import {
   getNewsTypeMeta,
   isValidExternalUrl,
 } from "../../../utils/newsData";
-
-const DATASET_BY_CATEGORY = {
-  application: AA.published,
-  biomedical: BA.published,
-  core: CA.published,
-  "multi-modal": MMA.published,
-};
+import {
+  getAllPublications,
+  getLatestPublications,
+  getPublicationCategories,
+} from "../../../utils/publicationData";
 
 const MEMBER_COUNT_GROUPS = ["professor", "intergrated_mp", "phd", "master", "intern", "alumni"];
 const PREVIEW_GROUPS = ["intergrated_mp", "phd", "master", "intern"];
@@ -32,29 +26,10 @@ export const isValidHttpUrl = (url) => {
 };
 
 export const aggregatePublications = () => {
-  return Object.entries(DATASET_BY_CATEGORY)
-    .flatMap(([category, dataset]) =>
-      Object.entries(dataset).map(([key, value]) => ({
-        key,
-        category,
-        ...value,
-      })),
-    )
-    .sort((a, b) => {
-      const dateA = new Date(a.research_meta.published_date);
-      const dateB = new Date(b.research_meta.published_date);
-      return dateB - dateA;
-    });
+  return getAllPublications();
 };
 
-export const getPublicationCategories = () => {
-  return [
-    "all",
-    ...Object.entries(DATASET_BY_CATEGORY)
-      .filter(([, dataset]) => Object.keys(dataset).length !== 0)
-      .map(([category]) => category),
-  ];
-};
+export { getPublicationCategories };
 
 export const computeCounts = () => {
   const publications = aggregatePublications();
@@ -68,9 +43,7 @@ export const computeCounts = () => {
   };
 };
 
-export const getLatestPublications = (limit = 3) => {
-  return aggregatePublications().slice(0, limit);
-};
+export { getLatestPublications };
 
 export const getLatestNews = (limit = 5) => {
   return getLatestNewsItems(limit);

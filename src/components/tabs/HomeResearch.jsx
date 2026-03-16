@@ -19,9 +19,6 @@ function HomeResearch({ handleActiveResearch }) {
           <h2>Research Areas</h2>
           <p>Concise topic previews that route into the full Research page.</p>
         </div>
-        <Link to="/research" className="home-block__more-link btn btn--tertiary animated-underline">
-          View all research
-        </Link>
       </div>
       <div className="home-research__grid">
         {researchContents.map((contentItem, index) => (
@@ -33,6 +30,11 @@ function HomeResearch({ handleActiveResearch }) {
             {...contentItem}
           />
         ))}
+      </div>
+      <div className="home-block__section-footer">
+        <Link to="/research" className="home-block__section-action btn btn--tertiary animated-underline">
+          View all research
+        </Link>
       </div>
     </div>
   );

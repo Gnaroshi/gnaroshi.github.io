@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import MailIcon from "./icons/MailIcon";
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 const FAB_VISIBILITY_SCROLL_Y = 520;
@@ -56,7 +59,7 @@ function BackToTopButton() {
         onClick={handleContact}
         aria-label="Contact us"
       >
-        ✉
+        <MailIcon className="icon-mail" />
       </button>
       <button
         type="button"
@@ -64,7 +67,7 @@ function BackToTopButton() {
         onClick={handleBackToTop}
         aria-label="Back to top"
       >
-        ↑
+        <FontAwesomeIcon icon={faArrowUp} aria-hidden="true" />
       </button>
     </div>
   );

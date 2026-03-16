@@ -2,12 +2,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBookOpen,
   faEnvelope,
-  faGlobe,
   faLightbulb,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import { SOCIAL_ITEMS, isValidExternalLink } from "./peopleCardShared";
+import {
+  PERSONAL_LINK_ITEMS,
+  getPersonalLinkUrl,
+  isValidExternalLink,
+} from "./peopleCardShared";
 
 function PeopleCard({
   profile,
@@ -27,7 +30,6 @@ function PeopleCard({
     ? `/publication?q=${encodeURIComponent(nameText)}&scope=title-authors`
     : "/publication";
 
-  const hasHomepageLink = isValidExternalLink(homepageText);
   const hasResearchInterests = Array.isArray(research_interest) && research_interest.length > 0;
   const hasCurrentPosition = Array.isArray(current_position) && current_position.length > 0;
   const infoLabel = hasCurrentPosition ? "Current position" : "Research interests";
@@ -45,21 +47,17 @@ function PeopleCard({
       className="people__member-card interactive-card"
     >
       <div className="people__member-main">
-        <div className="people__member-photo">
-          {profile ? <img src={profile} alt={nameText} /> : <span>{nameText?.[0]}</span>}
-        </div>
-
-        <div className="people__member-content">
-          <div className="people__member-header">
-            <h3 className="people__meta-line people__meta-line--name">
-              <span className="people__meta-icon" aria-hidden="true">
-                <FontAwesomeIcon icon={faUser} />
-              </span>
-              <span>{nameText}</span>
-            </h3>
-            <div className="people__social-links" aria-label={`${nameText} personal links`}>
-              {SOCIAL_ITEMS.map((item) => {
-                const url = typeof links?.[item.key] === "string" ? links[item.key].trim() : "";
+        <div className="people__member-identity">
+          <div className="people__member-photo">
+            {profile ? <img src={profile} alt={nameText} /> : <span>{nameText?.[0]}</span>}
+          </div>
+          <div className="people__identity-links">
+            <div
+              className="people__social-links people__social-links--identity"
+              aria-label={`${nameText} personal links`}
+            >
+              {PERSONAL_LINK_ITEMS.map((item) => {
+                const url = getPersonalLinkUrl(item.key, homepageText, links);
                 const isEnabled = isValidExternalLink(url);
 
                 if (!isEnabled) {
@@ -89,52 +87,45 @@ function PeopleCard({
               })}
             </div>
           </div>
+        </div>
 
-          {emailText ? (
-            <a className="people__meta-line people__member-email" href={`mailto:${emailText}`}>
-              <span className="people__meta-icon" aria-hidden="true">
-                <FontAwesomeIcon icon={faEnvelope} />
-              </span>
-              <span>{emailText}</span>
-            </a>
-          ) : (
-            <p className="people__meta-line people__member-email people__member-email--empty">
-              <span className="people__meta-icon" aria-hidden="true">
-                <FontAwesomeIcon icon={faEnvelope} />
-              </span>
-              <span>Email not listed</span>
-            </p>
-          )}
+        <div className="people__member-content">
+          <h3 className="people__meta-line people__meta-line--name">
+            <span className="people__meta-icon" aria-hidden="true">
+              <FontAwesomeIcon icon={faUser} />
+            </span>
+            <span>{nameText}</span>
+          </h3>
 
-          <div className="people__member-actions">
-            {hasHomepageLink ? (
-              <a
-                href={homepageText}
-                target="_blank"
-                rel="noreferrer"
-                className="people__meta-action people__meta-action--homepage btn btn--tertiary animated-underline"
-                aria-label={`${nameText} official page`}
-              >
-                <span className="people__meta-action-icon" aria-hidden="true">
-                  <FontAwesomeIcon icon={faGlobe} />
+          <div className="people__member-meta">
+            {emailText ? (
+              <a className="people__meta-line people__member-email" href={`mailto:${emailText}`}>
+                <span className="people__meta-icon" aria-hidden="true">
+                  <FontAwesomeIcon icon={faEnvelope} />
                 </span>
-                <span>Official page</span>
+                <span>{emailText}</span>
               </a>
             ) : (
-              <span className="people__meta-action-placeholder" aria-hidden="true">
-                Official page not listed
-              </span>
+              <p className="people__meta-line people__member-email people__member-email--empty">
+                <span className="people__meta-icon" aria-hidden="true">
+                  <FontAwesomeIcon icon={faEnvelope} />
+                </span>
+                <span>Email not listed</span>
+              </p>
             )}
-            <Link
-              to={publicationSearchLink}
-              className="people__meta-action people__meta-action--publication btn btn--tertiary animated-underline"
-              aria-label={`Search publications by ${nameText}`}
-            >
-              <span className="people__meta-action-icon" aria-hidden="true">
-                <FontAwesomeIcon icon={faBookOpen} />
-              </span>
-              <span>View publications</span>
-            </Link>
+
+            <div className="people__member-actions">
+              <Link
+                to={publicationSearchLink}
+                className="people__meta-action people__meta-action--publication btn btn--tertiary animated-underline"
+                aria-label={`Search publications by ${nameText}`}
+              >
+                <span className="people__meta-action-icon" aria-hidden="true">
+                  <FontAwesomeIcon icon={faBookOpen} />
+                </span>
+                <span>View publications</span>
+              </Link>
+            </div>
           </div>
 
           <div className="people__member-divider" />

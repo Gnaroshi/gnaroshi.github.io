@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { Gallery as PhotoGallery } from "react-grid-gallery";
 import "./Photo.css";
-import { Gallery } from "react-grid-gallery";
-import images from "../../assets/images/photo/photo_image_index";
+import "./Photo.lightbox.css";
+import PHOTO_DATA from "../../generated/photos.generated.json";
 
 const REM = 16;
-const DESKTOP_ROW_HEIGHT = 14.5 * REM;
-const LIGHTBOX_CLOSE_DURATION = 180;
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+const DESKTOP_ROW_HEIGHT = 12.4 * REM;
+const GALLERY_MARGIN = 4;
 
 const getResponsiveRowHeight = () => {
   if (typeof window === "undefined") {
@@ -14,63 +15,153 @@ const getResponsiveRowHeight = () => {
   }
 
   if (window.innerWidth <= 430) {
-    return 8.5 * REM;
+    return 7.4 * REM;
   }
 
   if (window.innerWidth <= 768) {
-    return 11 * REM;
+    return 9.8 * REM;
   }
 
   return DESKTOP_ROW_HEIGHT;
 };
 
+const lockBodyScroll = () => {
+  if (typeof window === "undefined" || typeof document === "undefined") {
+    return () => {};
+  }
+
+  const { body, documentElement } = document;
+  const lockScrollY = window.scrollY;
+  const scrollbarWidth = Math.max(0, window.innerWidth - documentElement.clientWidth);
+
+  const previousState = {
+    bodyOverflow: body.style.overflow,
+    bodyPosition: body.style.position,
+    bodyTop: body.style.top,
+    bodyLeft: body.style.left,
+    bodyRight: body.style.right,
+    bodyWidth: body.style.width,
+    bodyPaddingRight: body.style.paddingRight,
+    htmlOverflow: documentElement.style.overflow,
+  };
+
+  documentElement.style.overflow = "hidden";
+  body.classList.add("photo-lightbox-open");
+  body.style.overflow = "hidden";
+  body.style.position = "fixed";
+  body.style.top = `-${lockScrollY}px`;
+  body.style.left = "0";
+  body.style.right = "0";
+  body.style.width = "100%";
+  body.style.paddingRight = scrollbarWidth > 0 ? `${scrollbarWidth}px` : "";
+
+  return () => {
+    body.style.overflow = previousState.bodyOverflow;
+    body.style.position = previousState.bodyPosition;
+    body.style.top = previousState.bodyTop;
+    body.style.left = previousState.bodyLeft;
+    body.style.right = previousState.bodyRight;
+    body.style.width = previousState.bodyWidth;
+    body.style.paddingRight = previousState.bodyPaddingRight;
+    documentElement.style.overflow = previousState.htmlOverflow;
+    body.classList.remove("photo-lightbox-open");
+    window.scrollTo({ top: lockScrollY, behavior: "auto" });
+  };
+};
+
 function Photo() {
   const [rowHeight, setRowHeight] = useState(getResponsiveRowHeight);
   const [activeIndex, setActiveIndex] = useState(-1);
-  const [isLightboxClosing, setIsLightboxClosing] = useState(false);
-  const scrollLockRef = useRef(null);
-  const isLightboxOpen = activeIndex >= 0;
+  const [galleryWidth, setGalleryWidth] = useState(0);
+  const galleryRef = useRef(null);
+  const images = useMemo(() => {
+    const baseUrl = import.meta.env.BASE_URL || "/";
+    const withBase = (relativePath) =>
+      `${baseUrl.replace(/\/+$/, "/")}${String(relativePath || "").replace(/^\/+/, "")}`;
+
+    return (PHOTO_DATA?.items ?? []).map((item) => {
+      const caption = item.caption || item.title || "Lab photo";
+      const description = item.description || "";
+      const thumbnailSrc = withBase(item.thumbnail);
+      const fullSrc = withBase(item.full);
+
+      return {
+        id: item.id,
+        thumbnailSrc,
+        src: thumbnailSrc,
+        fullSrc,
+        width: Number(item.width) || 1200,
+        height: Number(item.height) || 800,
+        caption,
+        description,
+        alt: item.alt || caption,
+        customOverlay: (
+          <div className="photo-overlay" aria-hidden="true">
+            <div className="photo-overlay__content">
+              <p className="photo-overlay__title">{caption}</p>
+              {description ? <p className="photo-overlay__description">{description}</p> : null}
+            </div>
+          </div>
+        ),
+      };
+    });
+  }, []);
+  const isLightboxOpen = activeIndex >= 0 && activeIndex < images.length;
   const activeImage = useMemo(
     () => (isLightboxOpen ? images[activeIndex] : null),
-    [activeIndex, isLightboxOpen],
+    [activeIndex, images, isLightboxOpen],
+  );
+  const isPortraitImage = Boolean(
+    activeImage && Number(activeImage.height) > Number(activeImage.width),
+  );
+  const lightboxRoot = typeof document !== "undefined" ? document.body : null;
+
+  const renderGalleryThumbnail = useCallback(
+    ({ imageProps, item }) => (
+      <img
+        {...imageProps}
+        src={item.thumbnailSrc || item.src}
+        alt={item.alt || item.caption || "Lab photo"}
+        width={item.width}
+        height={item.height}
+        sizes="(max-width: 430px) 46vw, (max-width: 768px) 31vw, 16rem"
+        loading="lazy"
+        decoding="async"
+      />
+    ),
+    [],
   );
 
   const closeLightbox = useCallback(() => {
     setActiveIndex(-1);
-    setIsLightboxClosing(false);
   }, []);
 
-  const requestCloseLightbox = useCallback(() => {
-    if (activeIndex < 0) {
+  const openLightbox = useCallback((index) => {
+    if (!Number.isInteger(index) || index < 0 || index >= images.length) {
       return;
     }
-
-    const prefersReducedMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia(REDUCED_MOTION_QUERY).matches;
-    if (prefersReducedMotion) {
-      closeLightbox();
-      return;
-    }
-
-    setIsLightboxClosing(true);
-  }, [activeIndex, closeLightbox]);
+    setActiveIndex(index);
+  }, [images.length]);
 
   const showPrevious = useCallback(() => {
     setActiveIndex((prev) => {
       if (prev < 0) return prev;
       return (prev - 1 + images.length) % images.length;
     });
-  }, []);
+  }, [images.length]);
 
   const showNext = useCallback(() => {
     setActiveIndex((prev) => {
       if (prev < 0) return prev;
       return (prev + 1) % images.length;
     });
-  }, []);
+  }, [images.length]);
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
     const handleResize = () => {
       setRowHeight(getResponsiveRowHeight());
     };
@@ -82,28 +173,37 @@ function Photo() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const node = galleryRef.current;
+    if (!node || typeof ResizeObserver === "undefined") {
+      return undefined;
+    }
+
+    const handleResize = (entries) => {
+      const nextWidth = Math.max(0, Math.floor(entries[0]?.contentRect?.width ?? 0));
+      setGalleryWidth(nextWidth);
+    };
+
+    const observer = new ResizeObserver(handleResize);
+    observer.observe(node);
+    setGalleryWidth(Math.max(0, Math.floor(node.getBoundingClientRect().width)));
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (!isLightboxOpen) {
       return undefined;
     }
 
-    const { body, documentElement } = document;
-    const lockScrollY = window.scrollY;
-    const scrollbarWidth = window.innerWidth - documentElement.clientWidth;
-    const previousState = {
-      bodyOverflow: body.style.overflow,
-      bodyPosition: body.style.position,
-      bodyTop: body.style.top,
-      bodyLeft: body.style.left,
-      bodyRight: body.style.right,
-      bodyWidth: body.style.width,
-      bodyPaddingRight: body.style.paddingRight,
-      htmlOverflow: documentElement.style.overflow,
-    };
-    scrollLockRef.current = { scrollY: lockScrollY, previousState };
+    const unlockScroll = lockBodyScroll();
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        requestCloseLightbox();
+        closeLightbox();
       } else if (event.key === "ArrowLeft") {
         showPrevious();
       } else if (event.key === "ArrowRight") {
@@ -111,116 +211,64 @@ function Photo() {
       }
     };
 
-    documentElement.style.overflow = "hidden";
-    body.style.overflow = "hidden";
-    body.style.position = "fixed";
-    body.style.top = `-${lockScrollY}px`;
-    body.style.left = "0";
-    body.style.right = "0";
-    body.style.width = "100%";
-    if (scrollbarWidth > 0) {
-      body.style.paddingRight = `${scrollbarWidth}px`;
-    }
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      const lockState = scrollLockRef.current;
-      const restoreState = lockState?.previousState ?? previousState;
-      const restoreY = lockState?.scrollY ?? lockScrollY;
-
-      body.style.overflow = restoreState.bodyOverflow;
-      body.style.position = restoreState.bodyPosition;
-      body.style.top = restoreState.bodyTop;
-      body.style.left = restoreState.bodyLeft;
-      body.style.right = restoreState.bodyRight;
-      body.style.width = restoreState.bodyWidth;
-      body.style.paddingRight = restoreState.bodyPaddingRight;
-      documentElement.style.overflow = restoreState.htmlOverflow;
-      window.scrollTo({ top: restoreY, behavior: "auto" });
-      scrollLockRef.current = null;
+      unlockScroll();
     };
-  }, [isLightboxOpen, requestCloseLightbox, showNext, showPrevious]);
+  }, [closeLightbox, isLightboxOpen, showNext, showPrevious]);
 
   useEffect(() => {
-    if (isLightboxOpen) {
-      setIsLightboxClosing(false);
-    }
-  }, [isLightboxOpen]);
-
-  useEffect(() => {
-    if (!isLightboxClosing) {
-      return undefined;
+    if (!isLightboxOpen || !images[activeIndex]) {
+      return;
     }
 
-    const timerId = window.setTimeout(() => {
-      closeLightbox();
-    }, LIGHTBOX_CLOSE_DURATION);
+    const totalCount = images.length;
+    const preloadTargets = [
+      images[(activeIndex + 1) % totalCount],
+      images[(activeIndex - 1 + totalCount) % totalCount],
+    ];
 
-    return () => window.clearTimeout(timerId);
-  }, [closeLightbox, isLightboxClosing]);
+    preloadTargets.forEach((item) => {
+      const targetSrc = item?.fullSrc || item?.src;
+      if (!targetSrc) {
+        return;
+      }
+      const preload = new Image();
+      preload.src = targetSrc;
+    });
+  }, [activeIndex, images, isLightboxOpen]);
 
-  const handleImageClick = useCallback((index) => {
-    setActiveIndex(index);
-  }, []);
-
-  return (
-    <div data-reveal data-reveal-load-delay="60" className="photo-wrapper">
-      <div data-reveal className="tab-header">
-        <h1>Photo</h1>
-      </div>
-
-      <div data-reveal className="photo-gallery">
-        <Gallery
-          images={images}
-          enableImageSelection={false}
-          rowHeight={rowHeight}
-          margin={3}
-          onClick={handleImageClick}
-        />
-      </div>
-
-      {isLightboxOpen && activeImage ? (
+  const lightbox = isLightboxOpen && activeImage && lightboxRoot
+    ? createPortal(
         <div
-          className={`photo-lightbox ${isLightboxClosing ? "is-closing" : ""}`}
+          className="photo-lightbox"
           role="dialog"
           aria-modal="true"
           aria-label="Expanded photo preview"
-          onClick={requestCloseLightbox}
+          onClick={closeLightbox}
         >
-          <div className="photo-lightbox__inner" onClick={(event) => event.stopPropagation()}>
+          <div className="photo-lightbox__panel" onClick={(event) => event.stopPropagation()}>
             <button
               type="button"
-              className="photo-lightbox__close btn btn--icon btn--sm btn--secondary interactive-button"
-              onClick={requestCloseLightbox}
+              className="photo-lightbox__close"
+              onClick={closeLightbox}
               aria-label="Close photo preview"
             >
-              ✕
+              <span aria-hidden="true">×</span>
             </button>
 
-            <div className="photo-lightbox__viewer">
-              <button
-                type="button"
-                className="photo-lightbox__nav photo-lightbox__nav--prev btn btn--icon btn--sm btn--secondary interactive-button"
-                onClick={showPrevious}
-                aria-label="Previous photo"
-              >
-                ←
-              </button>
-              <div className="photo-lightbox__media-frame">
+            <div className={`photo-lightbox__stage ${isPortraitImage ? "is-portrait" : ""}`}>
+              <div className="photo-lightbox__frame">
                 <img
-                  src={activeImage.src}
+                  src={activeImage.fullSrc || activeImage.src}
                   alt={activeImage.alt || activeImage.caption || "Lab photo"}
+                  loading="eager"
+                  decoding="async"
+                  draggable={false}
                 />
               </div>
-              <button
-                type="button"
-                className="photo-lightbox__nav photo-lightbox__nav--next btn btn--icon btn--sm btn--secondary interactive-button"
-                onClick={showNext}
-                aria-label="Next photo"
-              >
-                →
-              </button>
             </div>
 
             <div className="photo-lightbox__meta">
@@ -235,10 +283,50 @@ function Photo() {
                   {activeImage.description}
                 </p>
               ) : null}
+              <div className="photo-lightbox__controls" role="group" aria-label="Photo navigation">
+                <button
+                  type="button"
+                  className="photo-lightbox__nav photo-lightbox__nav--prev"
+                  onClick={showPrevious}
+                  aria-label="Previous photo"
+                >
+                  <span aria-hidden="true">‹</span>
+                </button>
+                <button
+                  type="button"
+                  className="photo-lightbox__nav photo-lightbox__nav--next"
+                  onClick={showNext}
+                  aria-label="Next photo"
+                >
+                  <span aria-hidden="true">›</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ) : null}
+        </div>,
+        lightboxRoot,
+      )
+    : null;
+
+  return (
+    <div data-reveal data-reveal-load-delay="60" className="photo-wrapper">
+      <div data-reveal className="tab-header">
+        <h1>Photo</h1>
+      </div>
+
+      <div data-reveal ref={galleryRef} className="photo-gallery">
+        <PhotoGallery
+          images={images}
+          enableImageSelection={false}
+          rowHeight={rowHeight}
+          margin={GALLERY_MARGIN}
+          defaultContainerWidth={galleryWidth || 1200}
+          onClick={openLightbox}
+          thumbnailImageComponent={renderGalleryThumbnail}
+        />
+      </div>
+
+      {lightbox}
     </div>
   );
 }

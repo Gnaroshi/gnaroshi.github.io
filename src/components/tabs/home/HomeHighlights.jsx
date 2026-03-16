@@ -82,7 +82,7 @@ export default function HomeHighlights() {
                 data-reveal
                 data-reveal-load-delay={revealLoadDelay}
                 style={{ "--reveal-delay": revealDelay }}
-                className={`home-highlights__card home-highlights__card--${item.key} interactive-card`}
+                className={`home-highlights__card home-highlights__card--${item.key} interactive-card is-clickable`}
               >
                 {body}
               </Link>

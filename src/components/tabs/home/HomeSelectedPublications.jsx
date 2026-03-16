@@ -42,17 +42,6 @@ export default function HomeSelectedPublications() {
             Editorial preview of recent work with direct access to the full publication archive.
           </p>
         </div>
-        <div className="home-block__actions">
-          <Link
-            to="/publication?scope=title-authors"
-            className="home-block__more-link btn btn--tertiary animated-underline"
-          >
-            Search publications
-          </Link>
-          <Link to="/publication" className="home-block__more-link btn btn--tertiary animated-underline">
-            View all publications
-          </Link>
-        </div>
       </div>
 
       <article
@@ -107,7 +96,7 @@ export default function HomeSelectedPublications() {
           const revealDelay = `${index * 60}ms`;
           const revealLoadDelay = `${200 + index * 60}`;
           const queryTarget = `/publication?q=${encodeURIComponent(item.title)}&scope=title`;
-          const rowClassName = "home-pubs__row home-pubs__row--link interactive-row";
+          const rowClassName = "home-pubs__row home-pubs__row--link interactive-row is-clickable";
           const rowContent = (
             <>
               <p className={`home-pubs__badge home-pubs__badge--${item.category}`}>
@@ -155,6 +144,12 @@ export default function HomeSelectedPublications() {
             </Link>
           );
         })}
+      </div>
+
+      <div className="home-block__section-footer">
+        <Link to="/publication" className="home-block__section-action btn btn--tertiary animated-underline">
+          View all publications
+        </Link>
       </div>
     </section>
   );

@@ -1,11 +1,15 @@
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 const DEFAULT_LOAD_DELAY = 80;
-const IN_VIEW_REVEAL_THRESHOLD = 0.86;
+const IN_VIEW_REVEAL_THRESHOLD = 1.08;
+const IN_VIEW_TOP_EXIT_THRESHOLD = -0.12;
+const OBSERVER_ROOT_MARGIN = "0px 0px 14% 0px";
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 function useRevealOnScroll(containerRef, dependency = null) {
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const containerNode = containerRef?.current;
     if (!containerNode) {
       return undefined;
@@ -39,8 +43,8 @@ function useRevealOnScroll(containerRef, dependency = null) {
           });
         },
         {
-          threshold: 0.14,
-          rootMargin: "0px 0px -8% 0px",
+          threshold: 0.01,
+          rootMargin: OBSERVER_ROOT_MARGIN,
         },
       );
     }
@@ -61,8 +65,10 @@ function useRevealOnScroll(containerRef, dependency = null) {
       node.classList.remove("is-revealed");
       delete node.dataset.revealed;
 
+      const nodeRect = node.getBoundingClientRect();
       const shouldRevealImmediately =
-        node.getBoundingClientRect().top <= window.innerHeight * IN_VIEW_REVEAL_THRESHOLD;
+        nodeRect.top <= window.innerHeight * IN_VIEW_REVEAL_THRESHOLD &&
+        nodeRect.bottom >= window.innerHeight * IN_VIEW_TOP_EXIT_THRESHOLD;
       if (shouldRevealImmediately) {
         const delay = Number.parseInt(node.dataset.revealLoadDelay ?? String(DEFAULT_LOAD_DELAY), 10);
         const timerId = window.setTimeout(() => {

@@ -5,11 +5,23 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "content:bootstrap": "node scripts/content/bootstrap-from-legacy.mjs",
+    "content:sync": "node scripts/content/sync.mjs",
+    "photos:sync": "node scripts/content/photos.mjs",
+    "validate:content": "node scripts/content/validate.mjs",
+    "operator:verify": "npm run content:sync && npm run build",
+    "prebuild": "npm run validate:content",
     "build": "vite build",
+    "build:client": "vite build",
+    "build:ssr": "vite build --ssr src/ssg/entry-server.jsx --outDir dist/server",
+    "prerender": "NODE_ENV=production node scripts/prerender.mjs",
+    "build:static": "npm run build:client && npm run build:ssr && npm run prerender",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "predeploy:static": "npm run build:static",
+    "deploy:static": "gh-pages -d dist"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",

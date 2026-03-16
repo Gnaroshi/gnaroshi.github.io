@@ -1,6 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faGlobe, faLightbulb, faUser } from "@fortawesome/free-solid-svg-icons";
-import { SOCIAL_ITEMS, isValidExternalLink } from "./peopleCardShared";
+import { faEnvelope, faLightbulb, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  PERSONAL_LINK_ITEMS,
+  getPersonalLinkUrl,
+  isValidExternalLink,
+} from "./peopleCardShared";
 
 const trimText = (value) => (typeof value === "string" ? value.trim() : "");
 
@@ -33,7 +37,6 @@ function PeopleProfessorCard({
   const emailText = email?.trim() ?? "";
   const positionText = position?.trim() ?? "Professor";
   const homepageText = homepage?.trim() ?? "";
-  const hasHomepageLink = isValidExternalLink(homepageText);
   const interests =
     Array.isArray(research_interest) && research_interest.length > 0
       ? research_interest
@@ -81,24 +84,17 @@ function PeopleProfessorCard({
       className="people-professor-card interactive-card"
     >
       <div className="people-professor-card__main">
-        <div className="people-professor-card__photo">
-          {profile ? <img src={profile} alt={nameText} /> : <span>{nameText?.[0]}</span>}
-        </div>
-
-        <div className="people-professor-card__content">
-          <div className="people-professor-card__header">
-            <div className="people-professor-card__identity">
-              <h3 className="people__meta-line people__meta-line--name">
-                <span className="people__meta-icon" aria-hidden="true">
-                  <FontAwesomeIcon icon={faUser} />
-                </span>
-                <span>{nameText}</span>
-              </h3>
-              <p className="people__meta-line people-professor-card__position">{positionText}</p>
-            </div>
-            <div className="people__social-links" aria-label={`${nameText} personal links`}>
-              {SOCIAL_ITEMS.map((item) => {
-                const url = typeof links?.[item.key] === "string" ? links[item.key].trim() : "";
+        <div className="people-professor-card__identity-block">
+          <div className="people-professor-card__photo">
+            {profile ? <img src={profile} alt={nameText} /> : <span>{nameText?.[0]}</span>}
+          </div>
+          <div className="people__identity-links">
+            <div
+              className="people__social-links people__social-links--identity"
+              aria-label={`${nameText} personal links`}
+            >
+              {PERSONAL_LINK_ITEMS.map((item) => {
+                const url = getPersonalLinkUrl(item.key, homepageText, links);
                 const isEnabled = isValidExternalLink(url);
 
                 if (!isEnabled) {
@@ -128,42 +124,36 @@ function PeopleProfessorCard({
               })}
             </div>
           </div>
+        </div>
 
-          {emailText ? (
-            <a className="people__meta-line people-professor-card__email" href={`mailto:${emailText}`}>
+        <div className="people-professor-card__content">
+          <div className="people-professor-card__identity">
+            <h3 className="people__meta-line people__meta-line--name">
               <span className="people__meta-icon" aria-hidden="true">
-                <FontAwesomeIcon icon={faEnvelope} />
+                <FontAwesomeIcon icon={faUser} />
               </span>
-              <span>{emailText}</span>
-            </a>
-          ) : (
-            <p className="people__meta-line people-professor-card__email people-professor-card__email--empty">
-              <span className="people__meta-icon" aria-hidden="true">
-                <FontAwesomeIcon icon={faEnvelope} />
-              </span>
-              <span>Email not listed</span>
-            </p>
-          )}
+              <span>{nameText}</span>
+            </h3>
+            <p className="people__meta-line people-professor-card__position">{positionText}</p>
+          </div>
 
-          <div className="people-professor-card__actions">
-            {hasHomepageLink ? (
-              <a
-                href={homepageText}
-                target="_blank"
-                rel="noreferrer"
-                className="people__meta-action people__meta-action--homepage btn btn--tertiary animated-underline"
-                aria-label={`${nameText} official page`}
-              >
-                <span className="people__meta-action-icon" aria-hidden="true">
-                  <FontAwesomeIcon icon={faGlobe} />
+          <div className="people-professor-card__meta">
+            {emailText ? (
+              <a className="people__meta-line people-professor-card__email" href={`mailto:${emailText}`}>
+                <span className="people__meta-icon" aria-hidden="true">
+                  <FontAwesomeIcon icon={faEnvelope} />
                 </span>
-                <span>Official page</span>
+                <span>{emailText}</span>
               </a>
             ) : (
-              <span className="people-professor-card__action-placeholder" aria-hidden="true">
-                Official page not listed
-              </span>
+              <p className="people__meta-line people-professor-card__email people-professor-card__email--empty">
+                <span className="people__meta-icon" aria-hidden="true">
+                  <FontAwesomeIcon icon={faEnvelope} />
+                </span>
+                <span>Email not listed</span>
+              </p>
             )}
+
           </div>
 
           <div className="people-professor-card__divider" />

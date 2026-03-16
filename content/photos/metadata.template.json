@@ -1,0 +1,19 @@
+{
+  "defaults": {
+    "category": "events",
+    "description": ""
+  },
+  "items": {
+    "example-file-name": {
+      "title": "Example Photo Title",
+      "caption": "Example Caption",
+      "description": "Optional detail text",
+      "date": "2026-03-16",
+      "category": "events",
+      "slug": "example-photo-set",
+      "order": 1,
+      "alt": "Example photo alt text"
+    }
+  }
+}
+

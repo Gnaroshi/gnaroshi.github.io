@@ -99,37 +99,37 @@ function Publication() {
       </div>
 
       <div data-reveal className="publication__controls">
-        <div className="publication__controls-grid">
-          <section className="publication__controls-panel publication__controls-panel--filters">
-            <div className="publication__controls-header">
-              <p className="publication__controls-label">Filter by research area</p>
-              <p className="publication__controls-caption">
-                Choose one category to narrow the publication archive.
-              </p>
-            </div>
-            <div className="publication__filter" role="group" aria-label="Filter publications by area">
-              {areaCategory.map((area, i) => (
-                <PublicationButton
-                  key={area + i}
-                  areaKey={area}
-                  isSelected={selectedArea === area}
-                  onSelect={() => handleSelectedArea(area)}
-                >
-                  {AREA_LABELS[area] || area.charAt(0).toUpperCase() + area.slice(1)}
-                </PublicationButton>
-              ))}
-            </div>
-          </section>
+        <section className="publication__controls-block publication__controls-block--filter">
+          <div className="publication__controls-head">
+            <p className="publication__controls-label">Filter by research area</p>
+            <p className="publication__controls-caption">
+              Categorical filtering narrows the archive by major research theme.
+            </p>
+          </div>
+          <div className="publication__filter" role="group" aria-label="Filter publications by area">
+            {areaCategory.map((area, i) => (
+              <PublicationButton
+                key={area + i}
+                areaKey={area}
+                isSelected={selectedArea === area}
+                onSelect={() => handleSelectedArea(area)}
+              >
+                {AREA_LABELS[area] || area.charAt(0).toUpperCase() + area.slice(1)}
+              </PublicationButton>
+            ))}
+          </div>
+        </section>
 
-          <section className="publication__controls-panel publication__controls-panel--search">
-            <div className="publication__controls-header">
-              <label className="publication__search-label" htmlFor="publication-search">
-                Search publications
-              </label>
-              <p className="publication__controls-caption">
-                Use text search independently from category filters.
-              </p>
-            </div>
+        <section className="publication__controls-block publication__controls-block--search">
+          <div className="publication__controls-head">
+            <label className="publication__search-label" htmlFor="publication-search">
+              Search publications
+            </label>
+            <p className="publication__controls-caption">
+              Text search runs on title, authors, and venue based on the selected scope.
+            </p>
+          </div>
+          <div className="publication__search-layout">
             <div className="publication__search-input-wrap">
               <input
                 id="publication-search"
@@ -156,8 +156,8 @@ function Publication() {
                 ))}
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </div>
 
       <section data-reveal className="publication__archive" aria-labelledby="publication-archive-title">

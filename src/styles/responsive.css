@@ -18,12 +18,6 @@
     transform: translateY(0) scale(1);
   }
 
-  .nav.is-menu-open .nav__header .nav__toggle {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-4px) scale(0.9);
-  }
-
   .nav__links {
     position: fixed;
     top: max(var(--space-3), env(safe-area-inset-top));

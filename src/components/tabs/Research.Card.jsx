@@ -56,15 +56,16 @@ function ResearchCard({
       <div className="research-card-content-wrapper">
         <div className="research-card-head">
           <h2 className="research-card-title">{title}</h2>
-          {subtitleText ? (
-            <div className="research-card-subtitle-wrap">
-              <p className="research-card-subtitle-label">Positioning</p>
-              <p className="research-card-subtitle">{subtitleText}</p>
-            </div>
-          ) : null}
         </div>
 
         <p className="research-card-description">{explaination}</p>
+
+        {subtitleText ? (
+          <div className="research-card-positioning">
+            <p className="research-card-positioning-label">Positioning</p>
+            <p className="research-card-subtitle">{subtitleText}</p>
+          </div>
+        ) : null}
 
         {dedupedTags.length > 0 ? (
           <div className="research-card-metadata">
@@ -86,13 +87,7 @@ function ResearchCard({
               to={publicationLink}
               className="research-card-action research-card-action--primary btn btn--secondary btn--sm interactive-button"
             >
-              Related publications
-            </Link>
-            <Link
-              to="/people"
-              className="research-card-action research-card-action--secondary btn btn--tertiary animated-underline"
-            >
-              Related researchers
+              Explore publications
             </Link>
           </div>
         </div>

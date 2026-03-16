@@ -1,4 +1,4 @@
-import NEWS_DATA from "../assets/dataset/news.json";
+import NEWS_DATA from "../generated/news.generated.json";
 
 const DEFAULT_NEWS_TYPE_META = {
   all: { label: "All" },
