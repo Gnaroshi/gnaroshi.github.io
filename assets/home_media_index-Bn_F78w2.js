@@ -1,0 +1,1 @@
+const s="/assets/lablvm-home-bg-Bkpyv5rb.jpg",e="/assets/20240222-DGW3Echr.jpg",o="/assets/20240826_1-B9KiNxv8.jpg",t="/assets/20241127-CxZK_8JH.jpg",n="/assets/20231227_2-Bl5DtuCe.jpg",r={intro_group_photo:s,intro_meeting_room:e,research_environment:o,culture_seminar:t,culture_discussion:n};export{r as h};

@@ -1,1 +1,0 @@
-import{c as o,P as r,a as s,b as e}from"./20231227_2-0SeGMOhZ.js";const t="/assets/lablvm-home-bg-Bkpyv5rb.jpg",m={intro_group_photo:t,intro_meeting_room:e,research_environment:s,culture_seminar:r,culture_discussion:o};export{m as h};
