@@ -1,0 +1,1 @@
+const s="/assets/core-B0zBEY5_.png",a="/assets/multi-modal-vt8rTBth.png",i="/assets/biomedical-C2r9P2YX.png",t="/assets/application-DVjqhek4.png",o={core_ai_img:s,"multi-modal_ai_img":a,biomedical_ai_img:i,application_ai_img:t};export{o as r};
