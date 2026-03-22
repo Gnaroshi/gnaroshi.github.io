@@ -1,1 +1,0 @@
-import{j as a,a as e}from"./index-DUZztKca.js";function t(){return a("section",{className:"test-page",children:[e("div",{"data-reveal":!0,className:"tab-header",children:e("h1",{children:"Test"})}),e("div",{"data-reveal":!0,className:"test-page__body",children:e("p",{children:"테스트 페이지 준비 중입니다."})})]})}function r(){return e(t,{})}export{r as default};
