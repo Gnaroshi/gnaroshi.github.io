@@ -1,0 +1,52 @@
+---
+import type { PaperEntry, PaperStats as PaperStatsData } from "../../utils/papers";
+import { toPaperRecord } from "../../utils/papers";
+import NewPaperTemplate from "./NewPaperTemplate.astro";
+import PaperFilters from "./PaperFilters";
+import PaperStats from "./PaperStats.astro";
+import ReadingMethodPanel from "./ReadingMethodPanel.astro";
+
+interface Props {
+  papers: PaperEntry[];
+  stats: PaperStatsData;
+  countsByDate: Map<string, number>;
+  tags: string[];
+  today: string;
+}
+
+const { papers, stats, countsByDate, tags, today } = Astro.props;
+const paperRecords = papers.map(toPaperRecord);
+const years = [...new Set(paperRecords.map((paper) => paper.year))].sort((a, b) => b - a);
+const countsRecord = Object.fromEntries(countsByDate.entries());
+---
+
+<div class="paper-dashboard">
+  <header class="paper-hero">
+    <div class="paper-hero__copy">
+      <p class="eyebrow">Papers</p>
+      <h1>Paper Log</h1>
+      <p class="lede">A daily record of papers I skim, read, question, revisit, and connect to my research.</p>
+    </div>
+    <nav class="paper-hero__actions" aria-label="Paper log actions">
+      <a href="#new-paper-template">New paper template</a>
+      <a href="#reading-method">Reading method</a>
+      <a href="/blog/tags/paper-reading/">Blog posts about reading</a>
+    </nav>
+  </header>
+
+  <PaperStats stats={stats} />
+
+  <ReadingMethodPanel />
+
+  <PaperFilters
+    client:load
+    papers={paperRecords}
+    countsByDate={countsRecord}
+    tags={tags}
+    years={years}
+    today={today}
+  />
+
+  <NewPaperTemplate />
+</div>
+

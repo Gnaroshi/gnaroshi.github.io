@@ -1,0 +1,30 @@
+---
+import type { PaperStats as PaperStatsData } from "../../utils/papers";
+
+interface Props {
+  stats: PaperStatsData;
+}
+
+const { stats } = Astro.props;
+
+const items = [
+  { label: "Papers today", value: stats.today },
+  { label: "Current streak", value: stats.currentStreak },
+  { label: "Longest streak", value: stats.longestStreak },
+  { label: "This week", value: stats.thisWeek },
+  { label: "This month", value: stats.thisMonth },
+  { label: "This year", value: stats.thisYear },
+  { label: "Deep reads", value: stats.deepReads },
+  { label: "Implemented/reproduced", value: stats.implemented }
+];
+---
+
+<section class="paper-stats" aria-label="Paper reading statistics">
+  {items.map((item) => (
+    <article class="paper-stat-card">
+      <strong>{item.value}</strong>
+      <span>{item.label}</span>
+    </article>
+  ))}
+</section>
+

@@ -1,0 +1,54 @@
+---
+import type { PaperEntry } from "../../utils/papers";
+import { getPaperActivityDate, getPaperLastReviewedDate } from "../../utils/papers";
+import ExternalLink from "../common/ExternalLink.astro";
+import PaperDepthBadge from "./PaperDepthBadge.astro";
+import PaperStatusBadge from "./PaperStatusBadge.astro";
+
+interface Props {
+  paper: PaperEntry;
+}
+
+const { paper } = Astro.props;
+const readDate = getPaperActivityDate(paper);
+const lastReviewed = getPaperLastReviewedDate(paper);
+const links = [
+  paper.data.paperUrl ? { label: "Paper", href: paper.data.paperUrl } : null,
+  paper.data.codeUrl ? { label: "Code", href: paper.data.codeUrl } : null,
+  paper.data.projectUrl ? { label: "Project", href: paper.data.projectUrl } : null
+].filter(Boolean) as Array<{ label: string; href: string }>;
+---
+
+<header class="paper-detail-header">
+  <a class="paper-detail-header__back" href="/papers/">Back to Paper Log</a>
+  <div class="paper-detail-header__title">
+    <p class="eyebrow">Paper note</p>
+    <h1>{paper.data.title}</h1>
+    <p class="lede">{paper.data.oneLineSummary}</p>
+  </div>
+
+  <div class="paper-detail-header__meta">
+    <p>{paper.data.authors.join(", ")}</p>
+    <p>
+      {paper.data.venue} · {paper.data.year}
+      {readDate && <> · read {readDate}</>}
+      {lastReviewed && <> · reviewed {lastReviewed}</>}
+    </p>
+  </div>
+
+  <div class="paper-detail-header__badges">
+    <PaperStatusBadge status={paper.data.status} />
+    <PaperDepthBadge depth={paper.data.depth} />
+    <span class="paper-badge paper-badge--muted">Priority: {paper.data.priority}</span>
+    <span class="paper-badge paper-badge--muted">Difficulty {paper.data.difficulty}/5</span>
+    <span class="paper-badge paper-badge--muted">{paper.data.readingTimeMinutes} min</span>
+    {paper.data.draft && <span class="paper-badge paper-badge--draft">Draft</span>}
+  </div>
+
+  {links.length > 0 && (
+    <div class="paper-detail-header__links">
+      {links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
+    </div>
+  )}
+</header>
+

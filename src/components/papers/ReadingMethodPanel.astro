@@ -1,0 +1,45 @@
+---
+const passes = [
+  {
+    title: "Pass 1",
+    detail: "20-minute relevance check",
+    description: "Skim the abstract, figures, claims, and immediate connection to current questions."
+  },
+  {
+    title: "Pass 2",
+    detail: "Core structure understanding",
+    description: "Map the method, assumptions, experiments, baselines, and main weaknesses."
+  },
+  {
+    title: "Pass 3",
+    detail: "Equation, reproduction, implementation",
+    description: "Derive details, trace implementation choices, reproduce results, or build a small extension."
+  }
+];
+
+const principles = [
+  "Do not read every paper at the same depth.",
+  "Track questions, not only summaries.",
+  "Reward consistency.",
+  "Revisit important papers."
+];
+---
+
+<section id="reading-method" class="paper-method-panel" aria-labelledby="reading-method-heading">
+  <div class="paper-method-panel__header">
+    <p class="eyebrow">Method</p>
+    <h2 id="reading-method-heading">Three-pass reading</h2>
+  </div>
+  <div class="paper-method-panel__passes">
+    {passes.map((pass) => (
+      <article>
+        <h3>{pass.title} — {pass.detail}</h3>
+        <p>{pass.description}</p>
+      </article>
+    ))}
+  </div>
+  <ul class="paper-method-panel__principles">
+    {principles.map((principle) => <li>{principle}</li>)}
+  </ul>
+</section>
+

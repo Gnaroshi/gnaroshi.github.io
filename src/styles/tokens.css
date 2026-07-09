@@ -28,6 +28,11 @@
   --color-heatmap-2: #7fbda2;
   --color-heatmap-3: #3e9878;
   --color-heatmap-4: #176a50;
+  --paper-level-0: var(--color-heatmap-0);
+  --paper-level-1: var(--color-heatmap-1);
+  --paper-level-2: var(--color-heatmap-2);
+  --paper-level-3: var(--color-heatmap-3);
+  --paper-level-4: var(--color-heatmap-4);
 
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -85,5 +90,9 @@
   --color-heatmap-2: #2a7257;
   --color-heatmap-3: #38a47a;
   --color-heatmap-4: #6ad7a9;
+  --paper-level-0: var(--color-heatmap-0);
+  --paper-level-1: var(--color-heatmap-1);
+  --paper-level-2: var(--color-heatmap-2);
+  --paper-level-3: var(--color-heatmap-3);
+  --paper-level-4: var(--color-heatmap-4);
 }
-

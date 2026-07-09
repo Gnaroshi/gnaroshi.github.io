@@ -1,110 +1,146 @@
 ---
 import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import Badge from "../../components/common/Badge.astro";
-import ExternalLink from "../../components/common/ExternalLink.astro";
 import SectionHeader from "../../components/common/SectionHeader.astro";
-import { getPaperActivityDate, getPublishedPapers, type PaperEntry } from "../../utils/papers";
+import PaperDetailHeader from "../../components/papers/PaperDetailHeader.astro";
+import { getPublishedPapers, type PaperEntry } from "../../utils/papers";
 
 export async function getStaticPaths() {
   const papers = await getPublishedPapers();
 
-  return papers.map((paper) => ({
+  return papers.map((paper, index) => ({
     params: { slug: paper.id },
-    props: { paper }
+    props: {
+      paper,
+      newerPaper: papers[index - 1],
+      olderPaper: papers[index + 1]
+    }
   }));
 }
 
 interface Props {
   paper: PaperEntry;
+  newerPaper?: PaperEntry;
+  olderPaper?: PaperEntry;
 }
 
-const { paper } = Astro.props as Props;
+const { paper, newerPaper, olderPaper } = Astro.props as Props;
 const { Content } = await render(paper);
-const links = [
-  paper.data.paperUrl ? { label: "Paper", href: paper.data.paperUrl } : null,
-  paper.data.codeUrl ? { label: "Code", href: paper.data.codeUrl } : null,
-  paper.data.projectUrl ? { label: "Project", href: paper.data.projectUrl } : null
-].filter(Boolean) as Array<{ label: string; href: string }>;
+
+const fallback = "Not recorded yet.";
 ---
 
 <BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/papers/${paper.id}/`} type="article">
-  <article class="blog-post">
-    <header class="blog-post__header">
-      <p class="eyebrow">Paper log</p>
-      <h1>{paper.data.title}</h1>
-      <p class="lede">{paper.data.oneLineSummary}</p>
-      <p class="metadata">
-        {paper.data.authors.join(", ")} · {paper.data.venue} · {paper.data.year}
-        {getPaperActivityDate(paper) && <> · read {getPaperActivityDate(paper)}</>}
-      </p>
-      <div class="badge-row">
-        <Badge tone="accent">{paper.data.status}</Badge>
-        <Badge tone="muted">{paper.data.depth}</Badge>
-        <Badge tone="muted">priority: {paper.data.priority}</Badge>
-        <Badge tone="muted">difficulty {paper.data.difficulty}/5</Badge>
-        <Badge tone="muted">{paper.data.readingTimeMinutes} min</Badge>
-        {paper.data.tags.map((tag) => <Badge>{tag}</Badge>)}
-      </div>
-      {links.length > 0 && (
-        <div class="link-row">
-          {links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
-        </div>
-      )}
-    </header>
+  <article class="paper-detail">
+    <PaperDetailHeader paper={paper} />
 
     <section class="section" aria-labelledby="paper-summary-heading">
-      <SectionHeader id="paper-summary-heading" title="Reading summary" description="Structured fields from paper frontmatter." />
+      <SectionHeader id="paper-summary-heading" title="Structured reading note" description="Frontmatter fields that keep the paper searchable and comparable." />
       <div class="paper-detail-grid">
         <div>
+          <h2>One-line summary</h2>
+          <p>{paper.data.oneLineSummary || fallback}</p>
+        </div>
+        <div>
           <h2>Core question</h2>
-          <p>{paper.data.coreQuestion}</p>
+          <p>{paper.data.coreQuestion || fallback}</p>
         </div>
         <div>
           <h2>Core idea</h2>
-          <p>{paper.data.coreIdea}</p>
+          <p>{paper.data.coreIdea || fallback}</p>
         </div>
-        {paper.data.mainFormula && (
-          <div>
-            <h2>Main formula</h2>
-            <p>{paper.data.mainFormula}</p>
-          </div>
-        )}
-        {paper.data.formulaInterpretation && (
-          <div>
-            <h2>Formula interpretation</h2>
-            <p>{paper.data.formulaInterpretation}</p>
-          </div>
-        )}
-        {paper.data.experimentTakeaway && (
-          <div>
-            <h2>Experiment takeaway</h2>
-            <p>{paper.data.experimentTakeaway}</p>
-          </div>
-        )}
+        <div>
+          <h2>Main formula</h2>
+          <p>{paper.data.mainFormula || fallback}</p>
+        </div>
+        <div>
+          <h2>Formula interpretation</h2>
+          <p>{paper.data.formulaInterpretation || fallback}</p>
+        </div>
+        <div>
+          <h2>Experiment takeaway</h2>
+          <p>{paper.data.experimentTakeaway || fallback}</p>
+        </div>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="paper-strengths-heading">
-      <SectionHeader id="paper-strengths-heading" title="Strengths and weaknesses" />
+    <section class="section" aria-labelledby="paper-critique-heading">
+      <SectionHeader id="paper-critique-heading" title="Critique and follow-up" />
       <div class="paper-detail-grid">
         <div>
           <h2>Strengths</h2>
-          <ul>
-            {paper.data.strengths.map((item) => <li>{item}</li>)}
-          </ul>
+          {paper.data.strengths.length > 0 ? (
+            <ul>
+              {paper.data.strengths.map((item) => <li>{item}</li>)}
+            </ul>
+          ) : (
+            <p>{fallback}</p>
+          )}
         </div>
         <div>
           <h2>Weaknesses</h2>
-          <ul>
-            {paper.data.weaknesses.map((item) => <li>{item}</li>)}
-          </ul>
+          {paper.data.weaknesses.length > 0 ? (
+            <ul>
+              {paper.data.weaknesses.map((item) => <li>{item}</li>)}
+            </ul>
+          ) : (
+            <p>{fallback}</p>
+          )}
+        </div>
+        <div>
+          <h2>My connection</h2>
+          <p>{paper.data.myConnection || fallback}</p>
+        </div>
+        <div>
+          <h2>Next action</h2>
+          <p>{paper.data.nextAction || fallback}</p>
         </div>
       </div>
     </section>
 
-    <div class="prose">
-      <Content />
-    </div>
+    <section class="section" aria-labelledby="paper-tags-heading">
+      <SectionHeader id="paper-tags-heading" title="Tags and topics" />
+      <div class="paper-topic-group">
+        <div class="badge-row">
+          {paper.data.tags.map((tag) => <span class="paper-tag">{tag}</span>)}
+        </div>
+        {paper.data.relatedTopics.length > 0 && (
+          <div class="badge-row">
+            {paper.data.relatedTopics.map((topic) => <span class="paper-tag paper-tag--topic">{topic}</span>)}
+          </div>
+        )}
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="paper-body-heading">
+      <SectionHeader id="paper-body-heading" title="Full note" description="MDX body from the paper log file." />
+      <div class="prose">
+        <Content />
+      </div>
+    </section>
+
+    <nav class="paper-nav" aria-label="Paper note navigation">
+      <div>
+        {olderPaper ? (
+          <a href={`/papers/${olderPaper.id}/`}>
+            <span>Older paper</span>
+            {olderPaper.data.title}
+          </a>
+        ) : (
+          <span class="paper-nav__empty">No older paper</span>
+        )}
+      </div>
+      <div>
+        {newerPaper ? (
+          <a href={`/papers/${newerPaper.id}/`}>
+            <span>Newer paper</span>
+            {newerPaper.data.title}
+          </a>
+        ) : (
+          <span class="paper-nav__empty">No newer paper</span>
+        )}
+      </div>
+    </nav>
   </article>
 </BaseLayout>
+

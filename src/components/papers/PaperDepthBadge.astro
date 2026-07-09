@@ -1,0 +1,20 @@
+---
+import type { PaperRecord } from "../../utils/papers";
+
+interface Props {
+  depth: PaperRecord["depth"];
+}
+
+const { depth } = Astro.props;
+
+const labels: Record<PaperRecord["depth"], string> = {
+  skim: "Skim",
+  understand: "Understand",
+  deep: "Deep",
+  reproduce: "Reproduce",
+  implement: "Implement"
+};
+---
+
+<span class:list={["paper-badge", "paper-depth-badge", `paper-depth-badge--${depth}`]}>{labels[depth]}</span>
+

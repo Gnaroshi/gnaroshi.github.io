@@ -2,9 +2,10 @@ import { getCollection, type CollectionEntry } from "astro:content";
 
 export type PaperEntry = CollectionEntry<"papers">;
 
-type PaperStats = {
+export type PaperStats = {
   total: number;
   activeDays: number;
+  today: number;
   currentStreak: number;
   longestStreak: number;
   thisWeek: number;
@@ -13,6 +14,44 @@ type PaperStats = {
   deepReads: number;
   implemented: number;
   totalReadingMinutes: number;
+};
+
+export type PaperRecord = {
+  id: string;
+  href: string;
+  title: string;
+  authors: string[];
+  venue: string;
+  year: number;
+  paperUrl?: string;
+  codeUrl?: string;
+  projectUrl?: string;
+  readDate?: string;
+  lastReviewed?: string;
+  status: PaperEntry["data"]["status"];
+  depth: PaperEntry["data"]["depth"];
+  priority: PaperEntry["data"]["priority"];
+  difficulty: number;
+  readingTimeMinutes: number;
+  tags: string[];
+  relatedTopics: string[];
+  oneLineSummary: string;
+  coreQuestion: string;
+  coreIdea: string;
+  mainFormula: string;
+  formulaInterpretation: string;
+  experimentTakeaway: string;
+  strengths: string[];
+  weaknesses: string[];
+  myConnection: string;
+  nextAction: string;
+  reviewAfterDays?: number;
+  featured: boolean;
+  draft: boolean;
+};
+
+type PaperActivityOptions = {
+  includeDrafts?: boolean;
 };
 
 const ACTIVE_STATUSES = new Set(["pass1", "pass2", "pass3", "read", "implemented"]);
@@ -48,10 +87,10 @@ export function groupPapersByDate(papers: PaperEntry[]): Map<string, PaperEntry[
   return new Map([...groups.entries()].sort(([a], [b]) => b.localeCompare(a)));
 }
 
-export function countPapersByDate(papers: PaperEntry[]): Map<string, number> {
+export function countPapersByDate(papers: PaperEntry[], options: PaperActivityOptions = {}): Map<string, number> {
   const counts = new Map<string, number>();
 
-  for (const [date, papersOnDate] of groupPapersByDate(getActivePapers(papers))) {
+  for (const [date, papersOnDate] of groupPapersByDate(getActivePapers(papers, options))) {
     counts.set(date, papersOnDate.length);
   }
 
@@ -65,15 +104,20 @@ export function getPaperStats(papers: PaperEntry[], today = getTodayKey()): Pape
   return {
     total: papers.length,
     activeDays: counts.size,
+    today: getPapersToday(activePapers, today).length,
     currentStreak: getCurrentStreak(counts, today),
     longestStreak: getLongestStreak(counts),
     thisWeek: getPapersThisWeek(activePapers, today).length,
     thisMonth: getPapersThisMonth(activePapers, today).length,
     thisYear: getPapersThisYear(activePapers, today).length,
-    deepReads: getDeepReadCount(papers),
-    implemented: getImplementedCount(papers),
-    totalReadingMinutes: papers.reduce((sum, paper) => sum + paper.data.readingTimeMinutes, 0)
+    deepReads: getDeepReadCount(activePapers),
+    implemented: getImplementedCount(activePapers),
+    totalReadingMinutes: activePapers.reduce((sum, paper) => sum + paper.data.readingTimeMinutes, 0)
   };
+}
+
+export function getPapersToday(papers: PaperEntry[], today = getTodayKey()): PaperEntry[] {
+  return getActivePapers(papers).filter((paper) => getPaperActivityDate(paper) === today);
 }
 
 export function getCurrentStreak(countsOrPapers: Map<string, number> | PaperEntry[], today = getTodayKey()): number {
@@ -136,7 +180,9 @@ export function getDeepReadCount(papers: PaperEntry[]): number {
 }
 
 export function getImplementedCount(papers: PaperEntry[]): number {
-  return papers.filter((paper) => paper.data.status === "implemented" || paper.data.depth === "implement").length;
+  return papers.filter(
+    (paper) => paper.data.status === "implemented" || paper.data.depth === "reproduce" || paper.data.depth === "implement"
+  ).length;
 }
 
 export function normalizePaperTags(papers: PaperEntry[]): string[] {
@@ -149,12 +195,52 @@ export function getPaperActivityDate(paper: PaperEntry): string | undefined {
   return paper.data.readDate ? toDateKey(paper.data.readDate) : undefined;
 }
 
-export function isActivePaper(paper: PaperEntry): boolean {
-  return !paper.data.draft && ACTIVE_STATUSES.has(paper.data.status) && Boolean(paper.data.readDate);
+export function getPaperLastReviewedDate(paper: PaperEntry): string | undefined {
+  return paper.data.lastReviewed ? toDateKey(paper.data.lastReviewed) : undefined;
 }
 
-export function getActivePapers(papers: PaperEntry[]): PaperEntry[] {
-  return papers.filter(isActivePaper);
+export function toPaperRecord(paper: PaperEntry): PaperRecord {
+  return {
+    id: paper.id,
+    href: `/papers/${paper.id}/`,
+    title: paper.data.title,
+    authors: paper.data.authors,
+    venue: paper.data.venue,
+    year: paper.data.year,
+    paperUrl: paper.data.paperUrl,
+    codeUrl: paper.data.codeUrl,
+    projectUrl: paper.data.projectUrl,
+    readDate: getPaperActivityDate(paper),
+    lastReviewed: getPaperLastReviewedDate(paper),
+    status: paper.data.status,
+    depth: paper.data.depth,
+    priority: paper.data.priority,
+    difficulty: paper.data.difficulty,
+    readingTimeMinutes: paper.data.readingTimeMinutes,
+    tags: paper.data.tags,
+    relatedTopics: paper.data.relatedTopics,
+    oneLineSummary: paper.data.oneLineSummary,
+    coreQuestion: paper.data.coreQuestion,
+    coreIdea: paper.data.coreIdea,
+    mainFormula: paper.data.mainFormula,
+    formulaInterpretation: paper.data.formulaInterpretation,
+    experimentTakeaway: paper.data.experimentTakeaway,
+    strengths: paper.data.strengths,
+    weaknesses: paper.data.weaknesses,
+    myConnection: paper.data.myConnection,
+    nextAction: paper.data.nextAction,
+    reviewAfterDays: paper.data.reviewAfterDays,
+    featured: paper.data.featured,
+    draft: paper.data.draft
+  };
+}
+
+export function isActivePaper(paper: PaperEntry, options: PaperActivityOptions = {}): boolean {
+  return (options.includeDrafts || !paper.data.draft) && ACTIVE_STATUSES.has(paper.data.status) && Boolean(paper.data.readDate);
+}
+
+export function getActivePapers(papers: PaperEntry[], options: PaperActivityOptions = {}): PaperEntry[] {
+  return papers.filter((paper) => isActivePaper(paper, options));
 }
 
 export function toDateKey(date: Date): string {
