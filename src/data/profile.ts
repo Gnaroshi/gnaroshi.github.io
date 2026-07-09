@@ -9,7 +9,7 @@ export const profile = {
   bio: [
     "I work around AI systems, software engineering, and the practical workflows that make research easier to sustain.",
     "This site is my public research notebook: a place for technical notes, paper reading logs, small tools, project writeups, and questions I want to keep thinking about.",
-    "Some personal details are intentionally left as editable placeholders until they are ready to be published."
+    "I care about notes that stay close to the work: what I read, what I tried, what I understood, and what still needs another pass."
   ],
   researchBackground: [
     "I am interested in the engineering layer around AI research: how models are evaluated, how paper ideas become software, and how researchers can build repeatable reading and implementation loops.",
@@ -37,4 +37,3 @@ export const profile = {
     cv: ""
   }
 } as const;
-

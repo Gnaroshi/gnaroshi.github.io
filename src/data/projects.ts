@@ -2,7 +2,7 @@ export const projects = [
   {
     title: "gnaroshi.dev",
     summary:
-      "Personal academic homepage, research blog, and paper reading tracker. This is the live site scaffold and will evolve with real notes.",
+      "Personal academic homepage, research blog, and paper reading tracker for keeping research notes close to papers and code.",
     status: "active",
     featured: true,
     tags: ["astro", "mdx", "research-notebook"],
@@ -14,8 +14,8 @@ export const projects = [
   {
     title: "Paper reading tracker",
     summary:
-      "Planned static-first system for tracking daily paper reading, three-pass notes, revisits, and implementation attempts.",
-    status: "planned sample",
+      "Static-first system for tracking daily paper reading, three-pass notes, revisits, and implementation attempts.",
+    status: "active",
     featured: true,
     tags: ["paper-reading", "research-workflow", "static-data"],
     links: [{ label: "Paper log", href: "/papers" }]
@@ -23,11 +23,10 @@ export const projects = [
   {
     title: "Research workflow notes",
     summary:
-      "Placeholder project area for technical notes about reading workflows, experiment logs, and software systems for research.",
-    status: "placeholder",
+      "Technical notes about reading workflows, experiment logs, and software systems for research.",
+    status: "writing",
     featured: false,
     tags: ["notes", "workflow", "tools"],
     links: [{ label: "Blog", href: "/blog" }]
   }
 ] as const;
-

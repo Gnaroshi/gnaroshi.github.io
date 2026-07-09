@@ -12,7 +12,7 @@ const posts = (await getPublishedBlogPosts()).slice(0, 3);
     id="recent-posts-heading"
     eyebrow="Blog"
     title="Recent technical notes"
-    description="Latest public MDX posts from the research blog."
+    description="Recent writing on research workflows, paper reading, and implementation notes."
   >
     <a slot="action" href="/blog">Blog index</a>
   </SectionHeader>
@@ -28,7 +28,7 @@ const posts = (await getPublishedBlogPosts()).slice(0, 3);
       ))}
     </div>
   ) : (
-    <p class="empty-state">No public blog posts yet. The first technical notes will appear here as MDX files.</p>
+    <p class="empty-state">No public blog posts yet. The first technical notes will appear here.</p>
   )}
 </section>
 
@@ -38,4 +38,3 @@ const posts = (await getPublishedBlogPosts()).slice(0, 3);
     gap: var(--space-3);
   }
 </style>
-

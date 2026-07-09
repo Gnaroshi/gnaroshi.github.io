@@ -44,7 +44,7 @@ const postPreviews = posts.map(toBlogPostPreview);
     <SectionHeader
       id="recent-posts-heading"
       title="Recent posts"
-      description="Draft posts are hidden in production builds."
+      description="Published notes, newest first."
     >
       <a slot="action" href="/blog/archive">Archive</a>
     </SectionHeader>
@@ -70,10 +70,9 @@ const postPreviews = posts.map(toBlogPostPreview);
       <SectionHeader
         id="search-heading"
         title="Search and filter"
-        description="Client-side filtering over the static post index."
+        description="Find notes by title, topic, series, or tag."
       />
       <BlogSearch client:load posts={postPreviews} tags={tags} />
     </section>
   )}
 </BaseLayout>
-

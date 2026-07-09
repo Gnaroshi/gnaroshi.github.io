@@ -14,8 +14,7 @@ const sortedProjects = [...projects].sort((a, b) => Number(b.featured) - Number(
     <p class="eyebrow">Projects</p>
     <h1>Software and research systems</h1>
     <p class="lede">
-      Current and planned project areas. Items marked placeholder or planned sample are intentionally not presented
-      as completed achievements.
+      A compact view of software, writing, and research systems that support the notes on this site.
     </p>
   </header>
 
@@ -23,7 +22,7 @@ const sortedProjects = [...projects].sort((a, b) => Number(b.featured) - Number(
     <SectionHeader
       id="projects-heading"
       title="Project cards"
-      description="For now these cards are edited in src/data/projects.ts. Longer technical writeups can later move into src/content/projects/."
+      description="Project areas linked to technical notes, paper reading, and public research workflow."
     />
     <div class="project-grid">
       {sortedProjects.map((project) => (

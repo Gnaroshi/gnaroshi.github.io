@@ -1,11 +1,4 @@
-export const education = [
-  {
-    label: "Education details",
-    period: "To be updated",
-    description:
-      "Formal education details are intentionally left as a public placeholder until they are ready to publish."
-  }
-] as const;
+export const education = [] as const;
 
 export const researchTimeline = [
   {
@@ -21,4 +14,3 @@ export const researchTimeline = [
       "Turning daily reading and technical work into Markdown-first notes that can be searched, revisited, and linked."
   }
 ] as const;
-

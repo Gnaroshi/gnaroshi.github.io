@@ -10,7 +10,7 @@ const contactLinks = [
   { label: "Website", href: profile.links.website, note: "Canonical home for notes, projects, and paper logs." },
   profile.links.email
     ? { label: "Email", href: `mailto:${profile.links.email}`, note: "Direct contact." }
-    : { label: "Email", href: "#email-placeholder", note: "Email is not published yet." },
+    : null,
   profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar, note: "Research profile." } : null,
   profile.links.linkedin ? { label: "LinkedIn", href: profile.links.linkedin, note: "Professional profile." } : null,
   profile.links.cv ? { label: "CV", href: profile.links.cv, note: "Public CV." } : null
@@ -35,15 +35,11 @@ const contactLinks = [
   </section>
 
   <section class="section" aria-labelledby="links-heading">
-    <SectionHeader id="links-heading" title="Links" description="Editable in src/data/profile.ts." />
+    <SectionHeader id="links-heading" title="Links" description="Public places to follow the work." />
     <div class="timeline-list">
       {contactLinks.map((link) => (
         <Card title={link.label} description={link.note}>
-          {link.href.startsWith("#") ? (
-            <p id="email-placeholder" class="metadata">Placeholder: add a public email in src/data/profile.ts.</p>
-          ) : (
-            <ExternalLink href={link.href}>{link.label}</ExternalLink>
-          )}
+          <ExternalLink href={link.href}>{link.label}</ExternalLink>
         </Card>
       ))}
     </div>

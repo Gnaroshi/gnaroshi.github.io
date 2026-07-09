@@ -32,7 +32,7 @@ const papers = (await getPublishedPapers()).slice(0, 3);
     </div>
   ) : (
     <p class="empty-state">
-      No public paper logs yet. When paper MDX files are added, this section will show recent reading activity.
+      No public paper logs yet. Recent reading activity will appear here.
     </p>
   )}
 </section>
@@ -43,4 +43,3 @@ const papers = (await getPublishedPapers()).slice(0, 3);
     gap: var(--space-3);
   }
 </style>
-

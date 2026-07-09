@@ -1,6 +1,5 @@
 ---
 import Card from "../common/Card.astro";
-import Badge from "../common/Badge.astro";
 import SectionHeader from "../common/SectionHeader.astro";
 import { readingMap } from "../../data/research";
 ---
@@ -14,9 +13,7 @@ import { readingMap } from "../../data/research";
   />
   <div class="interest-grid">
     {readingMap.map((item) => (
-      <Card title={item.area} description={item.notes}>
-        <Badge tone="muted">editable in src/data/research.ts</Badge>
-      </Card>
+      <Card title={item.area} description={item.notes} />
     ))}
   </div>
 </section>

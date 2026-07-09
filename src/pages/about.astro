@@ -26,20 +26,22 @@ const publicLinks = [
   </header>
 
   <section class="section" aria-labelledby="bio-heading">
-    <SectionHeader id="bio-heading" title="Bio" description="A concise public introduction, editable from profile data." />
+    <SectionHeader id="bio-heading" title="Bio" description="A concise public introduction to the work and questions behind this site." />
     <div class="prose-stack">
       {profile.bio.map((paragraph) => <p>{paragraph}</p>)}
     </div>
   </section>
 
-  <section class="section" aria-labelledby="education-heading">
-    <SectionHeader id="education-heading" title="Education" description="Kept honest until formal public details are ready." />
-    <div class="timeline-list">
-      {education.map((item) => (
-        <Card title={item.label} eyebrow={item.period} description={item.description} />
-      ))}
-    </div>
-  </section>
+  {education.length > 0 && (
+    <section class="section" aria-labelledby="education-heading">
+      <SectionHeader id="education-heading" title="Education" description="Formal academic background and training." />
+      <div class="timeline-list">
+        {education.map((item) => (
+          <Card title={item.label} eyebrow={item.period} description={item.description} />
+        ))}
+      </div>
+    </section>
+  )}
 
   <section class="section" aria-labelledby="research-background-heading">
     <SectionHeader id="research-background-heading" title="Research background" description="The areas and workflows this site is built around." />

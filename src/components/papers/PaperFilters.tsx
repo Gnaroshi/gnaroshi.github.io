@@ -122,7 +122,6 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today 
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Title, author, tag, venue, summary..."
             />
           </label>
 
@@ -224,9 +223,7 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today 
         {papers.length === 0 ? (
           <div className="paper-empty-state">
             <h3>No paper logs yet. Start with one 20-minute pass.</h3>
-            <p>
-              Run <code>npm run paper:new</code>, then edit the generated draft under <code>src/content/papers/</code>.
-            </p>
+            <p>Begin with a short note that records the paper's question, core idea, and next reading decision.</p>
           </div>
         ) : filteredPapers.length > 0 ? (
           <div className="paper-card-list">
@@ -244,4 +241,3 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today 
     </div>
   );
 }
-

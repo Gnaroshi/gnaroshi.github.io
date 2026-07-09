@@ -52,7 +52,6 @@ export default function BlogSearch({ posts, tags }: Props) {
           <input
             type="search"
             value={query}
-            placeholder="Search title, description, tag..."
             onChange={(event) => setQuery(event.target.value)}
           />
         </label>
@@ -99,4 +98,3 @@ export default function BlogSearch({ posts, tags }: Props) {
     </div>
   );
 }
-
