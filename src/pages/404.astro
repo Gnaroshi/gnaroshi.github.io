@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Page Not Found"
+  description="The requested page does not exist on gnaroshi.dev."
+  canonical="https://gnaroshi.dev/404.html"
+>
+  <header class="page-header">
+    <p class="eyebrow">404</p>
+    <h1>Page not found</h1>
+    <p class="lede">
+      This page is not available. The main research notes, paper log, projects, and
+      contact links are still reachable.
+    </p>
+  </header>
+
+  <section class="section" aria-labelledby="not-found-links-heading">
+    <h2 id="not-found-links-heading">Useful links</h2>
+    <div class="not-found-links">
+      <a href="/">Home</a>
+      <a href="/blog">Blog</a>
+      <a href="/papers">Papers</a>
+      <a href="/projects">Projects</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .not-found-links a {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    padding: 0.65rem 0.85rem;
+    text-decoration: none;
+  }
+
+  .not-found-links a:hover,
+  .not-found-links a:focus-visible {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+</style>

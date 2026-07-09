@@ -1,7 +1,7 @@
 ---
 import { profile } from "../data/profile";
 import { navigation } from "../utils/navigation";
-import ThemeToggle from "./ThemeToggle";
+import ThemeToggle from "./ThemeToggle.astro";
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
@@ -29,7 +29,6 @@ const isActive = (href: string) => {
       ))}
     </nav>
 
-    <ThemeToggle client:load />
+    <ThemeToggle />
   </div>
 </header>
-

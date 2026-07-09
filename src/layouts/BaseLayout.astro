@@ -23,7 +23,10 @@ const { title, description, canonical, ogImage, type, width = "prose" } = Astro.
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f7f7f4" />
+    <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101211" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" href="/rss.xml" type="application/rss+xml" title="Gnaroshi Blog" />
     <SEO title={title} description={description} canonical={canonical} ogImage={ogImage} type={type} />
     <script is:inline>
       (() => {
@@ -46,4 +49,3 @@ const { title, description, canonical, ogImage, type, width = "prose" } = Astro.
     <SiteFooter />
   </body>
 </html>
-

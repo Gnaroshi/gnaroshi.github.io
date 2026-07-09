@@ -1,0 +1,50 @@
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label="Switch theme"
+  title="Switch theme"
+>
+  <span data-theme-toggle-icon aria-hidden="true">☾</span>
+</button>
+
+<script>
+  const getSystemTheme = () =>
+    window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  const getStoredTheme = () => {
+    try {
+      const stored = window.localStorage.getItem("theme");
+      return stored === "light" || stored === "dark" ? stored : null;
+    } catch {
+      return null;
+    }
+  };
+  const storeTheme = (theme: "light" | "dark") => {
+    try {
+      window.localStorage.setItem("theme", theme);
+    } catch {
+      // Theme preference is optional; the UI still works without storage.
+    }
+  };
+  const applyThemeToggleState = (button: Element) => {
+    const theme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    const icon = button.querySelector("[data-theme-toggle-icon]");
+    button.setAttribute("aria-label", `Switch to ${nextTheme} theme`);
+    button.setAttribute("title", `Switch to ${nextTheme} theme`);
+    if (icon) icon.textContent = theme === "dark" ? "☀" : "☾";
+  };
+
+  for (const button of document.querySelectorAll("[data-theme-toggle]")) {
+    const initialTheme = getStoredTheme() ?? getSystemTheme();
+    document.documentElement.dataset.theme = initialTheme;
+    applyThemeToggleState(button);
+    button.addEventListener("click", () => {
+      const theme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+      const nextTheme = theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = nextTheme;
+      storeTheme(nextTheme);
+      applyThemeToggleState(button);
+    });
+  }
+</script>

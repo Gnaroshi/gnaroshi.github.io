@@ -19,7 +19,7 @@ const {
 
 const pageTitle = title === profile.siteName ? profile.siteName : `${title} | ${profile.siteName}`;
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, profile.domain).toString();
-const imageUrl = ogImage ? new URL(ogImage, profile.domain).toString() : undefined;
+const imageUrl = new URL(ogImage ?? "/og/default.svg", profile.domain).toString();
 ---
 
 <title>{pageTitle}</title>
@@ -31,10 +31,9 @@ const imageUrl = ogImage ? new URL(ogImage, profile.domain).toString() : undefin
 <meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonicalUrl} />
-{imageUrl && <meta property="og:image" content={imageUrl} />}
+<meta property="og:image" content={imageUrl} />
 
-<meta name="twitter:card" content={imageUrl ? "summary_large_image" : "summary"} />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={pageTitle} />
 <meta name="twitter:description" content={description} />
-{imageUrl && <meta name="twitter:image" content={imageUrl} />}
-
+<meta name="twitter:image" content={imageUrl} />
