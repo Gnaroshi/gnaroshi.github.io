@@ -1,0 +1,41 @@
+---
+import Badge from "../common/Badge.astro";
+import { slugify } from "../../utils/slug";
+
+interface Props {
+  tags: readonly string[];
+  linked?: boolean;
+}
+
+const { tags, linked = true } = Astro.props;
+---
+
+<ul class="blog-tag-list" aria-label="Tags">
+  {tags.map((tag) => (
+    <li>
+      {linked ? (
+        <a href={`/blog/tags/${slugify(tag)}/`}>
+          <Badge>{tag}</Badge>
+        </a>
+      ) : (
+        <Badge>{tag}</Badge>
+      )}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .blog-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .blog-tag-list a {
+    text-decoration: none;
+  }
+</style>
+

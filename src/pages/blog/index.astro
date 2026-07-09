@@ -1,37 +1,79 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogCard from "../../components/blog/BlogCard.astro";
+import BlogSearch from "../../components/blog/BlogSearch";
+import TagList from "../../components/blog/TagList.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import {
+  getAllBlogTags,
+  getFeaturedBlogPosts,
+  getPublishedBlogPosts,
+  toBlogPostPreview
+} from "../../utils/content";
 
-const posts = (await getCollection("blog"))
-  .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+const posts = await getPublishedBlogPosts();
+const featuredPosts = getFeaturedBlogPosts(posts);
+const recentPosts = posts.slice(0, 6);
+const tags = getAllBlogTags(posts);
+const postPreviews = posts.map(toBlogPostPreview);
 ---
 
-<BaseLayout title="Blog" description="Technical notes, research logs, paper summaries, and project writeups.">
+<BaseLayout title="Blog" description="Technical notes, research logs, paper summaries, and project writeups." width="wide">
   <header class="page-header">
     <p class="eyebrow">Blog</p>
     <h1>Technical notes and research logs</h1>
-    <p class="lede">Writing space for implementation notes, reading summaries, experiments, and project decisions.</p>
+    <p class="lede">
+      MDX posts for research workflows, paper reading, implementation notes, and project writeups.
+    </p>
   </header>
 
-  <section class="section" aria-labelledby="posts-heading">
-    <h2 id="posts-heading">Posts</h2>
-    {posts.length > 0 ? (
-      <ul class="list">
-        {posts.map((post) => (
-          <li class="list-item">
-            <h3><a href={`/blog/${post.id}/`}>{post.data.title}</a></h3>
-            <p>{post.data.description}</p>
-            <p class="metadata">
-              {post.data.publishedAt.toLocaleDateString("en", { year: "numeric", month: "short", day: "numeric" })}
-              {" · "}
-              {post.data.tags.join(", ")}
-            </p>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p class="empty-state">No public posts yet.</p>
-    )}
+  {featuredPosts.length > 0 && (
+    <section class="section" aria-labelledby="featured-posts-heading">
+      <SectionHeader
+        id="featured-posts-heading"
+        title="Featured posts"
+        description="Pinned notes that explain the shape of the site and research workflow."
+      />
+      <div class="grid">
+        {featuredPosts.map((post) => <BlogCard post={post} />)}
+      </div>
+    </section>
+  )}
+
+  <section class="section" aria-labelledby="recent-posts-heading">
+    <SectionHeader
+      id="recent-posts-heading"
+      title="Recent posts"
+      description="Draft posts are hidden in production builds."
+    >
+      <a slot="action" href="/blog/archive">Archive</a>
+    </SectionHeader>
+    <div class="blog-layout">
+      <div class="blog-layout__main">
+        {recentPosts.length > 0 ? (
+          <div class="card-list">
+            {recentPosts.map((post) => <BlogCard post={post} />)}
+          </div>
+        ) : (
+          <p class="empty-state">No public posts yet.</p>
+        )}
+      </div>
+      <aside class="blog-layout__aside" aria-label="Blog tags">
+        <h2>Tags</h2>
+        {tags.length > 0 ? <TagList tags={tags} /> : <p class="empty-state">No tags yet.</p>}
+      </aside>
+    </div>
   </section>
+
+  {posts.length > 0 && (
+    <section class="section" aria-labelledby="search-heading">
+      <SectionHeader
+        id="search-heading"
+        title="Search and filter"
+        description="Client-side filtering over the static post index."
+      />
+      <BlogSearch client:load posts={postPreviews} tags={tags} />
+    </section>
+  )}
 </BaseLayout>
+

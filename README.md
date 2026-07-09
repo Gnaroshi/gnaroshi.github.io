@@ -61,3 +61,33 @@ src/data/now.ts
 ```
 
 Project cards currently use `src/data/projects.ts` because the early homepage needs lightweight, editable project metadata. Longer technical project writeups can later be added under `src/content/projects/`.
+
+## Add A Blog Post
+
+Add an MDX file under:
+
+```text
+src/content/blog/
+```
+
+Use this frontmatter:
+
+```yaml
+---
+title: "Post title"
+description: "Short description"
+pubDate: 2026-07-09
+updatedDate:
+draft: false
+tags:
+  - ai
+  - research
+series:
+seriesOrder:
+heroImage:
+readingTime:
+featured: false
+---
+```
+
+Drafts are hidden in production builds when `draft: true`. Tags should be lowercase kebab-case and generate static tag pages under `/blog/tags/[tag]`. The blog supports MDX, code blocks, math, table of contents, series navigation, archive pages, and RSS at `/rss.xml`.

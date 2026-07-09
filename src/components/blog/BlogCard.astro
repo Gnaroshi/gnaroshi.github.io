@@ -1,0 +1,18 @@
+---
+import Card from "../common/Card.astro";
+import BlogMeta from "./BlogMeta.astro";
+import TagList from "./TagList.astro";
+import type { BlogPost } from "../../utils/content";
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+---
+
+<Card title={post.data.title} href={`/blog/${post.id}/`} description={post.data.description}>
+  <BlogMeta post={post} />
+  <TagList tags={post.data.tags} />
+</Card>
+

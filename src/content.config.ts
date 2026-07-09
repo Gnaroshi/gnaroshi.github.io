@@ -3,20 +3,41 @@ import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
 const optionalUrl = z.union([z.url(), z.literal("")]).optional();
+const optionalNullableString = z
+  .string()
+  .nullable()
+  .optional()
+  .transform((value) => value || undefined);
+const optionalNullableUrl = z
+  .union([z.url(), z.literal(""), z.null()])
+  .optional()
+  .transform((value) => value || undefined);
+const optionalNullableDate = z
+  .preprocess((value) => (value === null || value === "" ? undefined : value), z.coerce.date().optional());
+const optionalNullableNumber = z
+  .union([z.number(), z.null()])
+  .optional()
+  .transform((value) => value ?? undefined);
 
 const blog = defineCollection({
   loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    publishedAt: z.coerce.date(),
-    updatedAt: z.coerce.date().optional(),
+    pubDate: z.coerce.date(),
+    updatedDate: optionalNullableDate,
     draft: z.boolean(),
     tags: z.array(z.string()).min(1),
-    series: z.string().optional(),
-    seriesOrder: z.number().int().positive().optional(),
-    canonicalUrl: optionalUrl,
-    ogImage: optionalUrl
+    series: optionalNullableString,
+    seriesOrder: optionalNullableNumber.pipe(z.number().int().positive().optional()),
+    heroImage: optionalNullableUrl,
+    readingTime: z
+      .union([z.string(), z.number(), z.null()])
+      .optional()
+      .transform((value) => value || undefined),
+    featured: z.boolean().default(false),
+    canonicalUrl: optionalNullableUrl,
+    ogImage: optionalNullableUrl
   })
 });
 
@@ -63,4 +84,3 @@ const projects = defineCollection({
 });
 
 export const collections = { blog, papers, projects };
-

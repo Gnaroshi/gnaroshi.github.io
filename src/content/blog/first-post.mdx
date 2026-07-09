@@ -1,0 +1,63 @@
+---
+title: "Example: Why I built this homepage"
+description: "A sample note explaining the purpose of this site as a personal research notebook."
+pubDate: 2026-07-09
+updatedDate:
+draft: false
+tags:
+  - site-notes
+  - research-workflow
+  - markdown
+series: "Research Workflow"
+seriesOrder: 1
+heroImage:
+readingTime:
+featured: true
+---
+
+## This Is A Sample Post
+
+This post is example content. It exists to prove that the blog supports MDX, metadata, tags, series navigation, table of contents, code blocks, math, RSS, and static routing.
+
+It does not claim publications, awards, or finished research achievements.
+
+## Why This Site Exists
+
+I want `gnaroshi.dev` to work as a public research notebook rather than a polished portfolio template. The site should make it easy to publish:
+
+- technical notes,
+- research logs,
+- paper summaries,
+- project writeups,
+- and small implementation records.
+
+The important constraint is maintenance. A good note should be publishable by adding one MDX file and committing it.
+
+## Content Should Stay Close To Git
+
+Markdown and Git are a useful baseline for research writing because the workflow is explicit:
+
+```ts
+const note = {
+  format: "mdx",
+  source: "git",
+  goal: "make research progress easy to revisit"
+};
+```
+
+That shape is intentionally simple. The site should not require a database, CMS, backend, or login flow for the core writing workflow.
+
+## A Small Metric
+
+For paper reading, a useful score is not only whether a paper is finished. A small daily signal could look like:
+
+$$
+progress = skim + questions + revisit + implementation
+$$
+
+The exact metric matters less than the habit of recording partial progress honestly.
+
+## Next
+
+Real posts will replace these examples over time. The first real posts should document specific research questions, implementation notes, and paper-reading observations.
+

@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogCard from "../../components/blog/BlogCard.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import { getArchiveGroups, getPublishedBlogPosts } from "../../utils/content";
+
+const posts = await getPublishedBlogPosts();
+const archiveGroups = getArchiveGroups(posts);
+---
+
+<BaseLayout title="Blog Archive" description="Blog archive grouped by publication month." width="wide">
+  <header class="page-header">
+    <p class="eyebrow">Archive</p>
+    <h1>Blog archive</h1>
+    <p class="lede">Posts grouped by publication month.</p>
+  </header>
+
+  <section class="section" aria-labelledby="archive-heading">
+    <SectionHeader id="archive-heading" title="Archive" description={`${posts.length} public post${posts.length === 1 ? "" : "s"}.`} />
+    <div class="archive-list">
+      {archiveGroups.map((group) => (
+        <section class="archive-group" aria-labelledby={`archive-${group.key}`}>
+          <h2 id={`archive-${group.key}`}>{group.label}</h2>
+          <div class="card-list">
+            {group.posts.map((post) => <BlogCard post={post} />)}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+

@@ -1,0 +1,56 @@
+---
+import type { BlogPost } from "../../utils/content";
+
+interface Props {
+  posts: BlogPost[];
+  currentId: string;
+}
+
+const { posts, currentId } = Astro.props;
+const currentIndex = posts.findIndex((post) => post.id === currentId);
+---
+
+{posts.length > 1 && (
+  <nav class="series-nav" aria-labelledby="series-nav-heading">
+    <p id="series-nav-heading" class="series-nav__title">Series: {posts[0].data.series}</p>
+    <ol>
+      {posts.map((post, index) => (
+        <li>
+          {post.id === currentId ? (
+            <span aria-current="step">{index + 1}. {post.data.title}</span>
+          ) : (
+            <a href={`/blog/${post.id}/`}>{index + 1}. {post.data.title}</a>
+          )}
+        </li>
+      ))}
+    </ol>
+    {currentIndex >= 0 && <p class="series-nav__meta">Part {currentIndex + 1} of {posts.length}</p>}
+  </nav>
+)}
+
+<style>
+  .series-nav {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-muted);
+  }
+
+  .series-nav__title,
+  .series-nav__meta {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    font-weight: 700;
+  }
+
+  .series-nav ol {
+    display: grid;
+    gap: var(--space-2);
+    padding-left: var(--space-5);
+    margin: 0;
+  }
+</style>
+

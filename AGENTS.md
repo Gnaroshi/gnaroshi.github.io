@@ -115,13 +115,14 @@ Astro 7 content collections are defined in `src/content.config.ts` using `glob()
 
 ## Adding A Blog Post
 
-After the blog system exists:
+The blog system exists:
 
 1. Add a Markdown or MDX file under `src/content/blog/`.
 2. Use the frontmatter schema from `docs/content-model.md`.
-3. Include title, description, publication date, draft state, and tags.
+3. Include `title`, `description`, `pubDate`, `draft`, `tags`, and `featured`.
 4. Use MDX only when components are needed.
-5. Run checks before committing.
+5. Keep tags lowercase kebab-case.
+6. Run checks before committing.
 
 ## Adding A Paper Log
 

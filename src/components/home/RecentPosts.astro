@@ -1,12 +1,10 @@
 ---
-import { getCollection } from "astro:content";
 import Card from "../common/Card.astro";
 import SectionHeader from "../common/SectionHeader.astro";
+import { formatDate } from "../../utils/date";
+import { getPostReadingTime, getPublishedBlogPosts } from "../../utils/content";
 
-const posts = (await getCollection("blog"))
-  .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
-  .slice(0, 3);
+const posts = (await getPublishedBlogPosts()).slice(0, 3);
 ---
 
 <section class="section" aria-labelledby="recent-posts-heading">
@@ -14,7 +12,7 @@ const posts = (await getCollection("blog"))
     id="recent-posts-heading"
     eyebrow="Blog"
     title="Recent technical notes"
-    description="MDX posts will appear here once public notes are committed."
+    description="Latest public MDX posts from the research blog."
   >
     <a slot="action" href="/blog">Blog index</a>
   </SectionHeader>
@@ -24,9 +22,7 @@ const posts = (await getCollection("blog"))
       {posts.map((post) => (
         <Card title={post.data.title} href={`/blog/${post.id}/`} description={post.data.description}>
           <p class="metadata">
-            {post.data.publishedAt.toLocaleDateString("en", { year: "numeric", month: "short", day: "numeric" })}
-            {" · "}
-            {post.data.tags.join(", ")}
+            {formatDate(post.data.pubDate)} · {getPostReadingTime(post)} · {post.data.tags.join(", ")}
           </p>
         </Card>
       ))}
@@ -42,3 +38,4 @@ const posts = (await getCollection("blog"))
     gap: var(--space-3);
   }
 </style>
+

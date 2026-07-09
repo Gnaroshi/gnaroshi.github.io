@@ -1,0 +1,43 @@
+---
+import type { BlogPost } from "../../utils/content";
+import { formatDate } from "../../utils/date";
+import { getPostReadingTime } from "../../utils/content";
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+const readingTime = getPostReadingTime(post);
+---
+
+<p class="blog-meta">
+  <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+  {post.data.updatedDate && (
+    <>
+      <span aria-hidden="true">·</span>
+      <span>Updated <time datetime={post.data.updatedDate.toISOString()}>{formatDate(post.data.updatedDate)}</time></span>
+    </>
+  )}
+  <span aria-hidden="true">·</span>
+  <span>{readingTime}</span>
+  {post.data.series && (
+    <>
+      <span aria-hidden="true">·</span>
+      <span>{post.data.series}</span>
+    </>
+  )}
+</p>
+
+<style>
+  .blog-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+</style>
+

@@ -35,36 +35,50 @@ Recommended frontmatter:
 
 ```yaml
 title: "Post title"
-description: "Short summary for index pages and SEO."
-publishedAt: "2026-01-15"
-updatedAt: "2026-01-20"
+description: "Short description"
+pubDate: 2026-07-09
+updatedDate:
 draft: false
 tags:
-  - deep-learning
-  - systems
-series: "Optional series name"
-seriesOrder: 1
-canonicalUrl: ""
-ogImage: ""
+  - ai
+  - research
+series:
+seriesOrder:
+heroImage:
+readingTime:
+featured: false
 ```
 
 Required fields:
 
 - `title`
 - `description`
-- `publishedAt`
+- `pubDate`
 - `draft`
 - `tags`
 
 Optional fields:
 
-- `updatedAt`
+- `updatedDate`
 - `series`
 - `seriesOrder`
-- `canonicalUrl`
+- `heroImage`
+- `readingTime`
+- `featured`
 - `ogImage`
+- `canonicalUrl`
 
-Blog content should support MDX components for callouts, equations, figures, and code examples.
+Draft behavior:
+
+- `draft: true` posts can appear during local development.
+- `draft: true` posts are hidden from production builds.
+
+Tag behavior:
+
+- Tags should remain lowercase kebab-case.
+- Tag pages are generated at `/blog/tags/[tag]`.
+
+Blog content supports MDX, equations, code examples, table of contents, series navigation, RSS, and static detail pages.
 
 ## Paper Log Schema
 
