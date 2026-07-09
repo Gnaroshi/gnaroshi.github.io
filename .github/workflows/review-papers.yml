@@ -1,0 +1,83 @@
+name: Review Papers with AI
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Review changed papers or all non-draft papers"
+        required: true
+        default: "changed"
+        type: choice
+        options:
+          - changed
+          - all
+      force:
+        description: "Re-review papers even when JSON reviews already exist"
+        required: true
+        default: false
+        type: boolean
+
+# To enable push-triggered review later, add:
+#  push:
+#    branches: [main]
+#    paths:
+#      - "src/content/papers/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-paper-review
+  cancel-in-progress: false
+
+jobs:
+  review:
+    name: Generate AI paper reviews
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate reviews
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+          BASE_SHA: ${{ github.event.before }}
+        run: |
+          if [ "${{ inputs.mode }}" = "all" ]; then
+            if [ "${{ inputs.force }}" = "true" ]; then
+              npm run paper:review:all -- --force
+            else
+              npm run paper:review:all
+            fi
+          else
+            if [ "${{ inputs.force }}" = "true" ]; then
+              npm run paper:review:changed -- --force
+            else
+              npm run paper:review:changed
+            fi
+          fi
+
+      - name: Commit generated reviews
+        run: |
+          if git diff --quiet -- src/generated/paper-reviews; then
+            echo "No generated review changes."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/generated/paper-reviews
+          git commit -m "chore: update AI paper reviews [skip ci]"
+          git push

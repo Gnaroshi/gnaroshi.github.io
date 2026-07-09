@@ -1,9 +1,13 @@
 ---
 import type { PaperEntry, PaperStats as PaperStatsData } from "../../utils/papers";
+import type { PaperReview, PaperReviewStats as PaperReviewStatsData } from "../../utils/paperReviews";
 import { toPaperRecord } from "../../utils/papers";
+import { formatScore, scoreLevelForScore, toPaperReviewSummary } from "../../utils/paperReviews";
 import NewPaperTemplate from "./NewPaperTemplate.astro";
 import PaperFilters from "./PaperFilters";
 import PaperStats from "./PaperStats.astro";
+import PaperScoreBadge from "./PaperScoreBadge.astro";
+import PaperScoreTrend from "./PaperScoreTrend.astro";
 import ReadingMethodPanel from "./ReadingMethodPanel.astro";
 
 interface Props {
@@ -12,10 +16,15 @@ interface Props {
   countsByDate: Map<string, number>;
   tags: string[];
   today: string;
+  reviewStats: PaperReviewStatsData;
+  reviewsBySlug: Map<string, PaperReview>;
 }
 
-const { papers, stats, countsByDate, tags, today } = Astro.props;
-const paperRecords = papers.map(toPaperRecord);
+const { papers, stats, countsByDate, tags, today, reviewStats, reviewsBySlug } = Astro.props;
+const paperRecords = papers.map((paper) => {
+  const review = reviewsBySlug.get(paper.id);
+  return toPaperRecord(paper, review ? toPaperReviewSummary(review) : undefined);
+});
 const years = [...new Set(paperRecords.map((paper) => paper.year))].sort((a, b) => b - a);
 const countsRecord = Object.fromEntries(countsByDate.entries());
 ---
@@ -38,6 +47,76 @@ const countsRecord = Object.fromEntries(countsByDate.entries());
 
   <ReadingMethodPanel />
 
+  <section class="paper-review-summary" aria-labelledby="paper-review-summary-heading">
+    <div class="paper-review-summary__header">
+      <div>
+        <p class="eyebrow">AI Review</p>
+        <h2 id="paper-review-summary-heading">Reading process score</h2>
+        <p>
+          Scores reflect evidence in written notes and three-pass discipline. They are not intelligence scores.
+        </p>
+      </div>
+      {reviewStats.averageScore !== null ? (
+        <PaperScoreBadge score={reviewStats.averageScore} level={scoreLevelForScore(reviewStats.averageScore)} label="Average" />
+      ) : (
+        <span class="paper-badge paper-badge--muted">No public reviews yet</span>
+      )}
+    </div>
+
+    <div class="paper-review-summary__grid">
+      <article class="paper-stat-card">
+        <strong>{formatScore(reviewStats.averageScore)}</strong>
+        <span>Average AI score</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{formatScore(reviewStats.recentAverageScore)}</strong>
+        <span>Average last 7 reviewed papers</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{reviewStats.reviewedCount}</strong>
+        <span>Reviewed papers</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{reviewStats.unreviewedCount}</strong>
+        <span>Unreviewed papers</span>
+      </article>
+    </div>
+
+    <div class="paper-review-summary__body">
+      <div>
+        <h3>Score trend</h3>
+        <PaperScoreTrend trend={reviewStats.trend} />
+      </div>
+      <div>
+        <h3>Recent badges</h3>
+        {reviewStats.recentBadges.length > 0 ? (
+          <ul class="paper-review-badge-list">
+            {reviewStats.recentBadges.map((badge) => (
+              <li>
+                <a href={`/papers/${badge.paperSlug}/`}>{badge.label}</a>
+                <span>{badge.paperTitle}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="metadata">No public review badges yet.</p>
+        )}
+      </div>
+      <div>
+        <h3>Best improved paper</h3>
+        {reviewStats.bestImproved ? (
+          <p class="metadata">
+            <a href={`/papers/${reviewStats.bestImproved.paperSlug}/`}>{reviewStats.bestImproved.paperTitle}</a>
+            {" "}
+            improved by {reviewStats.bestImproved.delta} points.
+          </p>
+        ) : (
+          <p class="metadata">No score history yet.</p>
+        )}
+      </div>
+    </div>
+  </section>
+
   <PaperFilters
     client:load
     papers={paperRecords}
@@ -49,4 +128,3 @@ const countsRecord = Object.fromEntries(countsByDate.entries());
 
   <NewPaperTemplate />
 </div>
-

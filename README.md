@@ -116,3 +116,23 @@ src/content/papers/
 ```
 
 It uses today's local date and never overwrites an existing file. Paper logs default to `draft: true`; set `draft: false` when the note should be public. The schema and status/depth definitions are documented in `docs/content-model.md` and `docs/paper-reading-system.md`.
+
+## AI Paper Review
+
+Paper notes can be reviewed by an AI-assisted CLI that scores evidence of written understanding and three-pass reading discipline. It does not run in the browser and does not expose API keys.
+
+Local setup:
+
+```bash
+OPENAI_API_KEY=...
+OPENAI_MODEL=...
+```
+
+Store those values in untracked `.env.local`, then run:
+
+```bash
+npm run paper:review -- --slug <paper-slug>
+npm run paper:review:all -- --dry-run
+```
+
+Generated JSON lives in `src/generated/paper-reviews/` and renders on paper detail pages when `reviewVisibility` is `public`. Full documentation is in `docs/ai-paper-review.md`.

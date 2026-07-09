@@ -1,0 +1,92 @@
+---
+import type { PaperReview } from "../../utils/paperReviews";
+import PaperReviewBreakdown from "./PaperReviewBreakdown.astro";
+import PaperScoreBadge from "./PaperScoreBadge.astro";
+
+interface Props {
+  review: PaperReview;
+}
+
+const { review } = Astro.props;
+const passLabels = {
+  pass1: "Pass 1",
+  pass2: "Pass 2",
+  pass3: "Pass 3"
+};
+---
+
+<section class="paper-review-card section" aria-labelledby="paper-review-heading">
+  <div class="paper-review-card__header">
+    <div>
+      <p class="eyebrow">AI Review</p>
+      <h2 id="paper-review-heading">Evidence of understanding</h2>
+      <p>{review.summary}</p>
+    </div>
+    <PaperScoreBadge score={review.overallScore} level={review.scoreLevel} label="Reading process score" />
+  </div>
+
+  <p class="paper-review-card__motivation">{review.motivationMessage}</p>
+
+  <div class="paper-review-pass-grid" aria-label="Three-pass review">
+    {Object.entries(passLabels).map(([key, label]) => {
+      const pass = review.threePassReview[key as keyof typeof review.threePassReview];
+      return (
+        <article>
+          <span class:list={["paper-badge", `paper-pass-review--${pass.status}`]}>{pass.status.replace("_", " ")}</span>
+          <h3>{label}</h3>
+          <p>{pass.comment}</p>
+        </article>
+      );
+    })}
+  </div>
+
+  <PaperReviewBreakdown review={review} />
+
+  <div class="paper-review-two-col">
+    <section aria-labelledby="review-strengths-heading">
+      <h3 id="review-strengths-heading">Strengths</h3>
+      <ul>
+        {review.strengths.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+
+    <section aria-labelledby="review-gaps-heading">
+      <h3 id="review-gaps-heading">Gaps</h3>
+      <ul>
+        {review.gaps.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+  </div>
+
+  <section aria-labelledby="review-next-actions-heading">
+    <h3 id="review-next-actions-heading">Next actions</h3>
+    <ol class="paper-review-actions">
+      {review.nextActions.map((item) => (
+        <li>
+          <strong>{item.type}</strong>
+          <span>{item.action}</span>
+          <em>{item.effortMinutes} min</em>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section aria-labelledby="review-retrieval-heading">
+    <h3 id="review-retrieval-heading">Retrieval questions</h3>
+    <ul class="paper-review-question-list">
+      {review.retrievalQuestions.map((question) => <li>{question}</li>)}
+    </ul>
+  </section>
+
+  <aside class="paper-review-badge" aria-label="Review badge">
+    <strong>{review.badge.label}</strong>
+    <span>{review.badge.reason}</span>
+  </aside>
+
+  <aside class="paper-review-limitations" aria-label="AI review limitations">
+    <h3>Limitations</h3>
+    <ul>
+      {review.limitations.map((item) => <li>{item}</li>)}
+    </ul>
+  </aside>
+</section>

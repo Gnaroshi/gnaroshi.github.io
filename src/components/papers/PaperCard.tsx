@@ -36,6 +36,14 @@ export default function PaperCard({ paper }: Props) {
           <h3>
             <a href={paper.href}>{paper.title}</a>
           </h3>
+          {paper.review ? (
+            <span className={`paper-score-badge paper-score-badge--${paper.review.scoreLevel}`}>
+              <span>AI review</span>
+              <strong>{paper.review.overallScore}</strong>
+            </span>
+          ) : (
+            <span className="paper-badge paper-badge--needs-review">Needs review</span>
+          )}
           {paper.draft ? <span className="paper-badge paper-badge--draft">Draft</span> : null}
           {paper.featured ? <span className="paper-badge paper-badge--featured">Featured</span> : null}
         </div>
@@ -77,4 +85,3 @@ export default function PaperCard({ paper }: Props) {
     </article>
   );
 }
-

@@ -22,6 +22,11 @@
   --color-status-deep: #7f4aa8;
   --color-status-implemented: #18704a;
   --color-status-blocked: #9b3d30;
+  --color-score-seed: #8d4538;
+  --color-score-developing: #8a6b19;
+  --color-score-solid: #2463a6;
+  --color-score-strong: #18704a;
+  --color-score-excellent: #116c5a;
 
   --color-heatmap-0: #e8ebe5;
   --color-heatmap-1: #bddccd;
@@ -84,6 +89,11 @@
   --color-code-bg: #20261f;
   --color-code-text: #edf4ee;
   --color-focus: #8ab4ff;
+  --color-score-seed: #f19a8a;
+  --color-score-developing: #d9bd63;
+  --color-score-solid: #8ab4ff;
+  --color-score-strong: #79d6a4;
+  --color-score-excellent: #68d0b2;
 
   --color-heatmap-0: #1b211d;
   --color-heatmap-1: #214637;

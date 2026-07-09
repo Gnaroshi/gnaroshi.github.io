@@ -3,7 +3,10 @@ import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionHeader from "../../components/common/SectionHeader.astro";
 import PaperDetailHeader from "../../components/papers/PaperDetailHeader.astro";
+import PaperReviewCard from "../../components/papers/PaperReviewCard.astro";
+import ReviewPromptFallback from "../../components/papers/ReviewPromptFallback.astro";
 import { getPublishedPapers, type PaperEntry } from "../../utils/papers";
+import { getPublicPaperReviewForPaper } from "../../utils/paperReviews";
 
 export async function getStaticPaths() {
   const papers = await getPublishedPapers();
@@ -26,6 +29,7 @@ interface Props {
 
 const { paper, newerPaper, olderPaper } = Astro.props as Props;
 const { Content } = await render(paper);
+const review = getPublicPaperReviewForPaper(paper);
 
 const fallback = "Not recorded yet.";
 ---
@@ -33,6 +37,8 @@ const fallback = "Not recorded yet.";
 <BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/papers/${paper.id}/`} type="article">
   <article class="paper-detail">
     <PaperDetailHeader paper={paper} />
+
+    {review ? <PaperReviewCard review={review} /> : <ReviewPromptFallback slug={paper.id} />}
 
     <section class="section" aria-labelledby="paper-summary-heading">
       <SectionHeader id="paper-summary-heading" title="Structured reading note" description="Frontmatter fields that keep the paper searchable and comparable." />
@@ -143,4 +149,3 @@ const fallback = "Not recorded yet.";
     </nav>
   </article>
 </BaseLayout>
-

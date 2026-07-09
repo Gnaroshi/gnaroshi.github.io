@@ -51,6 +51,8 @@ npm run check
 npm run build
 npm run preview
 npm run paper:new
+npm run paper:review -- --slug <paper-slug>
+npm run paper:review:all -- --dry-run
 ```
 
 - `npm run dev`: start local Astro dev server.
@@ -58,6 +60,8 @@ npm run paper:new
 - `npm run build`: build the static site into `dist/`.
 - `npm run preview`: preview the built static site.
 - `npm run paper:new`: create a draft paper log in `src/content/papers/`.
+- `npm run paper:review`: generate one AI paper review JSON from local CLI or GitHub Actions.
+- `npm run paper:review:all`: review all non-draft paper logs; use `--dry-run` before API-backed runs.
 
 The package scripts disable Astro telemetry to avoid global config writes during local and CI checks.
 
@@ -95,6 +99,7 @@ Use Astro file-based routes. Use `getStaticPaths` for dynamic blog and paper pag
 - Design tokens: `src/styles/tokens.css`
 - Global styles: `src/styles/global.css`
 - Static assets and `CNAME`: `public/`
+- Generated AI paper reviews: `src/generated/paper-reviews/`
 
 Astro 7 content collections are defined in `src/content.config.ts` using `glob()` loaders. Do not create or reintroduce legacy `src/content/config.ts`.
 
@@ -110,6 +115,10 @@ Astro 7 content collections are defined in `src/content.config.ts` using `glob()
 - Keep the site static-export compatible.
 - Avoid unnecessary dependencies.
 - Do not commit generated `dist/`, local caches, or machine-specific files.
+- Never expose `OPENAI_API_KEY`, `OPENAI_MODEL`, or any API secret in client-side code.
+- AI review scripts must run only server-side through local Node CLI or GitHub Actions.
+- Generated AI paper review files must follow the schema documented in `docs/ai-paper-review.md`.
+- AI review copy must be motivational, constructive, and evidence-based. Do not frame scores as intelligence, IQ, or personal worth.
 
 ## Design Rules
 
@@ -167,6 +176,28 @@ npm run paper:new
    - `Implementation Notes`
    - `Links`
 7. Partial progress is valid and should be represented honestly.
+
+## Adding An AI Paper Review
+
+1. Write or update a paper log under `src/content/papers/`.
+2. Keep secrets in untracked `.env.local`:
+
+```bash
+OPENAI_API_KEY=...
+OPENAI_MODEL=...
+```
+
+3. Generate a review:
+
+```bash
+npm run paper:review -- --slug <paper-slug>
+```
+
+4. Use `--force` to re-review and append score history.
+5. Set `reviewVisibility: "hidden"` in paper frontmatter if the JSON should exist but not render publicly.
+6. Do not call OpenAI from browser code. Do not commit `.env.local` or workflow secrets.
+
+See `docs/ai-paper-review.md` for scoring dimensions and workflow details.
 
 ## Adding Projects
 
@@ -227,6 +258,7 @@ See `docs/deployment.md` for DNS, HTTPS, and 404 troubleshooting.
 - Do not recover, reference, or migrate old Lab-LVM code.
 - Do not add backend services, databases, OAuth, or server runtimes without explicit approval.
 - Do not commit secrets, API keys, OAuth tokens, personal credentials, or local MCP configs.
+- Do not add browser-side AI API calls or expose OpenAI API keys in bundled JavaScript.
 - Do not set `base: "/gnaroshi.github.io/"`; this is a user site with a custom root domain.
 - Do not use a `gh-pages` branch unless the deployment strategy is explicitly changed.
 - Do not commit `dist/`.

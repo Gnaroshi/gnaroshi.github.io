@@ -106,6 +106,11 @@ tags:
   - paper-reading
 relatedTopics:
   - "TODO"
+abstract: ""
+sourceExcerpt: ""
+selfScore:
+selfReflection: ""
+reviewVisibility: "public"
 oneLineSummary: "One sentence summary in my own words."
 coreQuestion: "What problem is this paper trying to solve?"
 coreIdea: "What is the key idea?"
@@ -138,6 +143,14 @@ Required fields:
 - `oneLineSummary`
 - `coreQuestion`
 - `coreIdea`
+
+Optional AI review fields:
+
+- `abstract`: optional source text for review context.
+- `sourceExcerpt`: optional manually pasted source excerpt for review context.
+- `selfScore`: optional self-assessment from 0 to 100.
+- `selfReflection`: optional reflection before AI review.
+- `reviewVisibility`: `public` or `hidden`; defaults to `public`.
 
 `readDate` is required unless `status` is `planned`.
 

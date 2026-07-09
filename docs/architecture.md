@@ -17,6 +17,7 @@ All core data should be available at build time:
 
 - Blog posts from `src/content/blog/`.
 - Paper logs from `src/content/papers/`.
+- Generated paper review JSON from `src/generated/paper-reviews/`.
 - Project writeups from `src/content/projects/`.
 - Profile data from `src/data/profile.ts`.
 
@@ -95,6 +96,8 @@ Define schemas in `src/content.config.ts` for Astro 7. Prefer strict schemas tha
    - SEO metadata.
 4. Astro pages render static HTML.
 5. React islands receive serialized data only when filtering or dynamic interaction is needed.
+
+AI-assisted paper reviews are generated outside the browser by local Node CLI scripts or GitHub Actions. The static site reads committed JSON review files at build time. It must not call AI APIs from client-side code or expose API keys in bundled assets.
 
 ## React Island Policy
 

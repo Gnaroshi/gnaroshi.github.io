@@ -1,0 +1,35 @@
+---
+import type { PaperReviewStats } from "../../utils/paperReviews";
+
+interface Props {
+  trend: PaperReviewStats["trend"];
+}
+
+const { trend } = Astro.props;
+const width = 420;
+const height = 120;
+const padding = 12;
+const maxScore = 100;
+const points = trend.map((item, index) => {
+  const x = trend.length <= 1 ? width / 2 : padding + (index * (width - padding * 2)) / (trend.length - 1);
+  const y = height - padding - (item.overallScore / maxScore) * (height - padding * 2);
+  return { ...item, x, y };
+});
+const path = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+---
+
+<div class="paper-score-trend">
+  {points.length > 0 ? (
+    <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="AI review score trend over time">
+      <path class="paper-score-trend__grid" d={`M ${padding} ${height - padding} H ${width - padding}`} />
+      {path && <path class="paper-score-trend__line" d={path} />}
+      {points.map((point) => (
+        <a href={`/papers/${point.paperSlug}/`} aria-label={`${point.paperTitle}: ${point.overallScore} on ${point.reviewedAt.slice(0, 10)}`}>
+          <circle class="paper-score-trend__point" cx={point.x} cy={point.y} r="4" />
+        </a>
+      ))}
+    </svg>
+  ) : (
+    <p class="metadata">No public review trend yet.</p>
+  )}
+</div>

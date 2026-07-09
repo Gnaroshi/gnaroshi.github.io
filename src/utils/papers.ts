@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
+import type { PaperReviewSummary } from "./paperReviews";
 
 export type PaperEntry = CollectionEntry<"papers">;
 
@@ -48,6 +49,7 @@ export type PaperRecord = {
   reviewAfterDays?: number;
   featured: boolean;
   draft: boolean;
+  review?: PaperReviewSummary;
 };
 
 type PaperActivityOptions = {
@@ -199,7 +201,7 @@ export function getPaperLastReviewedDate(paper: PaperEntry): string | undefined 
   return paper.data.lastReviewed ? toDateKey(paper.data.lastReviewed) : undefined;
 }
 
-export function toPaperRecord(paper: PaperEntry): PaperRecord {
+export function toPaperRecord(paper: PaperEntry, review?: PaperReviewSummary): PaperRecord {
   return {
     id: paper.id,
     href: `/papers/${paper.id}/`,
@@ -231,7 +233,8 @@ export function toPaperRecord(paper: PaperEntry): PaperRecord {
     nextAction: paper.data.nextAction,
     reviewAfterDays: paper.data.reviewAfterDays,
     featured: paper.data.featured,
-    draft: paper.data.draft
+    draft: paper.data.draft,
+    review
   };
 }
 

@@ -1,0 +1,28 @@
+---
+import { buildManualReviewPrompt } from "../../../scripts/lib/paper-review-prompt.mjs";
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const prompt = buildManualReviewPrompt(slug);
+---
+
+<section class="paper-review-fallback section" aria-labelledby="paper-review-fallback-heading">
+  <div>
+    <p class="eyebrow">AI Review</p>
+    <h2 id="paper-review-fallback-heading">No AI review yet</h2>
+    <p>
+      Generate a local review after writing the paper note. The review runs through the CLI or GitHub Actions,
+      never from client-side browser code.
+    </p>
+  </div>
+
+  <pre><code>npm run paper:review -- --slug {slug}</code></pre>
+
+  <label class="paper-review-fallback__prompt">
+    <span>Manual review prompt</span>
+    <textarea readonly>{prompt}</textarea>
+  </label>
+</section>

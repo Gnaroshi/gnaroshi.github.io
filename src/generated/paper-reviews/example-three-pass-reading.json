@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0.0",
+  "paperSlug": "example-three-pass-reading",
+  "paperTitle": "Example: Three-pass reading method paper log",
+  "reviewedAt": "2026-07-09T00:00:00.000Z",
+  "model": "sample-review-no-api",
+  "reviewVisibility": "public",
+  "overallScore": 63,
+  "scoreLevel": "solid",
+  "confidence": "medium",
+  "summary": "Sample AI review for UI testing. The note gives clear evidence of a pass1-style relevance check, but it is intentionally not a real personal reading history.",
+  "motivationMessage": "This is a useful starting shape: the note captures why the paper matters and leaves concrete questions for the next pass.",
+  "dimensions": {
+    "problemFraming": {
+      "score": 7,
+      "feedback": "The note identifies the meta-problem of representing partial paper reading progress.",
+      "evidence": "The core question asks how a reading system should represent partial progress.",
+      "nextStep": "Add one sentence explaining why binary read/unread tracking fails for research work."
+    },
+    "coreIdea": {
+      "score": 8,
+      "feedback": "The central idea is stated in the user's own words.",
+      "evidence": "The note separates skim, structure, and deep-dive notes rather than treating reading as binary.",
+      "nextStep": "Add a short example of what each pass would capture for a real paper."
+    },
+    "methodUnderstanding": {
+      "score": 5,
+      "feedback": "The note describes workflow structure, but it does not analyze a concrete method.",
+      "evidence": "The pass headings are present, but this sample has no actual model, input/output, or evaluation flow.",
+      "nextStep": "For a real paper, add input, output, training objective, and evaluation setup."
+    },
+    "formulaUnderstanding": {
+      "score": 4,
+      "feedback": "Formula understanding is intentionally not covered in this sample.",
+      "evidence": "The mainFormula field is empty and the note says this is a content model example.",
+      "nextStep": "When a paper has math, rewrite the main formula and explain each term in plain language."
+    },
+    "experimentUnderstanding": {
+      "score": 4,
+      "feedback": "There is no experiment to evaluate in this sample note.",
+      "evidence": "The experiment takeaway explicitly says there is no experiment.",
+      "nextStep": "For a real paper, identify the single experiment that best supports the central claim."
+    },
+    "criticalThinking": {
+      "score": 6,
+      "feedback": "The note includes limitations about needing real logs to validate the workflow.",
+      "evidence": "The weakness says the workflow needs real paper logs to validate it.",
+      "nextStep": "Add one concrete failure case where the tracker could mislead the reader."
+    },
+    "researchConnection": {
+      "score": 6,
+      "feedback": "The sample connects to the site scaffold, but the research connection remains generic.",
+      "evidence": "The myConnection field says it is an example placeholder for the site scaffold.",
+      "nextStep": "For a real note, connect the paper to a project, open question, or future reading path."
+    },
+    "retrievalReadiness": {
+      "score": 7,
+      "feedback": "The note has questions that would help a later recall session.",
+      "evidence": "The Questions section asks what metadata should be required and which fields remain optional.",
+      "nextStep": "Add three closed-book retrieval questions about problem, method, and evidence."
+    },
+    "threePassDiscipline": {
+      "score": 8,
+      "feedback": "The note is honest about being a pass1 sample and does not overclaim deep understanding.",
+      "evidence": "The status is pass1, the depth is skim, and the pass1 section records relevance and next action.",
+      "nextStep": "Keep the same honesty when moving a real paper from pass1 to pass2 or pass3."
+    },
+    "noteQuality": {
+      "score": 8,
+      "feedback": "The note is structured, concise, and clearly marked as an example.",
+      "evidence": "The Example Notice explains that the log validates the content model and is not production reading history.",
+      "nextStep": "When replacing it with real notes, keep the explicit example/limitation style for uncertain claims."
+    }
+  },
+  "threePassReview": {
+    "pass1": {
+      "status": "complete",
+      "comment": "The note identifies the problem, relevance, and next questions for a first pass."
+    },
+    "pass2": {
+      "status": "partial",
+      "comment": "The structural headings exist, but there is no real method analysis because this is a sample."
+    },
+    "pass3": {
+      "status": "not_started",
+      "comment": "No formula derivation, reproduction, or implementation is attempted, which is acceptable for a pass1 sample."
+    }
+  },
+  "strengths": [
+    "Clear pass1 framing.",
+    "Honest sample labeling.",
+    "Good separation between partial progress and deep reading."
+  ],
+  "gaps": [
+    "No real paper method or experiment is analyzed.",
+    "No formula or reproduction detail is present."
+  ],
+  "nextActions": [
+    {
+      "type": "retrieval",
+      "action": "Close the note and rewrite the three-pass method from memory tomorrow.",
+      "effortMinutes": 10
+    },
+    {
+      "type": "deepening",
+      "action": "Apply the same template to one real paper and add a pass2 method structure paragraph.",
+      "effortMinutes": 20
+    }
+  ],
+  "retrievalQuestions": [
+    "What problem does three-pass paper reading solve for a research notebook?",
+    "What should pass1 capture that pass2 does not require yet?",
+    "How can a note reward partial progress without pretending the paper was fully read?"
+  ],
+  "badge": {
+    "id": "core-idea-captured",
+    "label": "Core Idea Captured",
+    "reason": "The sample note clearly explains the central idea of separating reading depth into passes."
+  },
+  "limitations": [
+    "This is a fake sample review for UI testing and should not be interpreted as real personal reading history.",
+    "This score is based only on the submitted paper note, not on a full independent verification of the paper."
+  ],
+  "history": [
+    {
+      "reviewedAt": "2026-07-09T00:00:00.000Z",
+      "overallScore": 63,
+      "scoreLevel": "solid"
+    }
+  ]
+}

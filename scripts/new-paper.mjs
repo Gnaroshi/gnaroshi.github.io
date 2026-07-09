@@ -49,6 +49,11 @@ tags:
   - paper-reading
 relatedTopics:
   - "TODO"
+abstract: ""
+sourceExcerpt: ""
+selfScore:
+selfReflection: ""
+reviewVisibility: "public"
 oneLineSummary: "TODO"
 coreQuestion: "TODO"
 coreIdea: "TODO"
@@ -97,4 +102,3 @@ TODO
 
 writeFileSync(targetPath, content, { flag: "wx" });
 console.log(`Created ${targetPath}`);
-

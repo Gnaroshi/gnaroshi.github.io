@@ -65,6 +65,14 @@ const papers = defineCollection({
       readingTimeMinutes: z.number().int().nonnegative(),
       tags: z.array(z.string()).min(1),
       relatedTopics: z.array(z.string()).default([]),
+      abstract: z.string().default(""),
+      sourceExcerpt: z.string().default(""),
+      selfScore: z
+        .union([z.number().int().min(0).max(100), z.null()])
+        .optional()
+        .transform((value) => value ?? undefined),
+      selfReflection: z.string().default(""),
+      reviewVisibility: z.enum(["public", "hidden"]).default("public"),
       oneLineSummary: z.string(),
       coreQuestion: z.string(),
       coreIdea: z.string(),

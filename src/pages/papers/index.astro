@@ -2,14 +2,25 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PaperDashboard from "../../components/papers/PaperDashboard.astro";
 import { countPapersByDate, getPaperStats, getPublishedPapers, getTodayKey, normalizePaperTags } from "../../utils/papers";
+import { getPaperReviewStats, getPublicPaperReviewMap } from "../../utils/paperReviews";
 
 const papers = await getPublishedPapers();
 const today = getTodayKey();
 const stats = getPaperStats(papers, today);
 const countsByDate = countPapersByDate(papers, { includeDrafts: !import.meta.env.PROD });
 const tags = normalizePaperTags(papers);
+const reviewsBySlug = getPublicPaperReviewMap(papers);
+const reviewStats = getPaperReviewStats(papers, reviewsBySlug);
 ---
 
 <BaseLayout title="Paper Log" description="A daily paper reading tracker for skim notes, deep reads, questions, and implementation attempts." width="dashboard">
-  <PaperDashboard papers={papers} stats={stats} countsByDate={countsByDate} tags={tags} today={today} />
+  <PaperDashboard
+    papers={papers}
+    stats={stats}
+    countsByDate={countsByDate}
+    tags={tags}
+    today={today}
+    reviewStats={reviewStats}
+    reviewsBySlug={reviewsBySlug}
+  />
 </BaseLayout>
