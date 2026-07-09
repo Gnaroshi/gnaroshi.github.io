@@ -27,6 +27,36 @@ const passLabels = {
 
   <p class="paper-review-card__motivation">{review.motivationMessage}</p>
 
+  <div class="paper-review-calibration-grid" aria-label="Review calibration">
+    <article>
+      <h3>Improvement target</h3>
+      <p>
+        Move from <strong>{review.improvementTarget.currentLevel}</strong> to{" "}
+        <strong>{review.improvementTarget.nextLevel}</strong>: {review.improvementTarget.oneThingToImprove}
+      </p>
+      <span>{review.improvementTarget.suggestedTimeMinutes} min</span>
+    </article>
+    <article>
+      <h3>Next review date</h3>
+      <p>{review.nextReviewDate}</p>
+      <span>Use this for spaced retrieval.</span>
+    </article>
+    <article>
+      <h3>Self-score comparison</h3>
+      {review.selfScoreComparison ? (
+        <>
+          <p>
+            Self {review.selfScoreComparison.userScore} · AI {review.selfScoreComparison.aiScore} · gap{" "}
+            {review.selfScoreComparison.difference}
+          </p>
+          <span>{review.selfScoreComparison.comment}</span>
+        </>
+      ) : (
+        <p>No self-score was recorded for this note.</p>
+      )}
+    </article>
+  </div>
+
   <div class="paper-review-pass-grid" aria-label="Three-pass review">
     {Object.entries(passLabels).map(([key, label]) => {
       const pass = review.threePassReview[key as keyof typeof review.threePassReview];

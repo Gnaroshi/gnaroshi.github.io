@@ -10,7 +10,7 @@ const stats = getPaperStats(papers, today);
 const countsByDate = countPapersByDate(papers, { includeDrafts: !import.meta.env.PROD });
 const tags = normalizePaperTags(papers);
 const reviewsBySlug = getPublicPaperReviewMap(papers);
-const reviewStats = getPaperReviewStats(papers, reviewsBySlug);
+const reviewStats = getPaperReviewStats(papers, reviewsBySlug, today);
 ---
 
 <BaseLayout title="Paper Log" description="A daily paper reading tracker for skim notes, deep reads, questions, and implementation attempts." width="dashboard">

@@ -55,6 +55,13 @@ async function main() {
   }
 
   const paper = loadPaperBySlug(args.slug);
+  if (args.dryRun) {
+    console.log("Dry run: single paper review");
+    console.log(`Would review: ${paper.slug} (${paper.relativePath})`);
+    console.log("No API call made. No files written.");
+    return;
+  }
+
   const result = await reviewOnePaper(paper, { force: args.force });
   console.log(result.message);
   console.log(`Score: ${result.review.overallScore} (${result.review.scoreLevel})`);
@@ -80,6 +87,7 @@ function parseArgs(argv) {
   const args = {
     slug: "",
     force: false,
+    dryRun: false,
     help: false
   };
 
@@ -90,6 +98,8 @@ function parseArgs(argv) {
       index += 1;
     } else if (arg === "--force") {
       args.force = true;
+    } else if (arg === "--dry-run") {
+      args.dryRun = true;
     } else if (arg === "--help" || arg === "-h") {
       args.help = true;
     }
@@ -104,6 +114,7 @@ function printHelp() {
 Usage:
   npm run paper:review -- --slug <paper-slug>
   npm run paper:review -- --slug <paper-slug> --force
+  npm run paper:review -- --slug <paper-slug> --dry-run
 
 Required environment variables for actual review:
   OPENAI_API_KEY

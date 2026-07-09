@@ -966,6 +966,12 @@ p {
   color: var(--color-text-muted);
 }
 
+.paper-badge--review-due {
+  border-color: color-mix(in srgb, var(--color-score-developing) 55%, var(--color-border));
+  background: color-mix(in srgb, var(--color-score-developing) 16%, var(--color-surface));
+  color: var(--color-text);
+}
+
 .paper-score-badge {
   display: inline-flex;
   width: fit-content;
@@ -1094,12 +1100,14 @@ p {
 
 .paper-review-pass-grid,
 .paper-review-two-col,
+.paper-review-calibration-grid,
 .paper-review-breakdown {
   display: grid;
   gap: var(--space-3);
 }
 
-.paper-review-pass-grid {
+.paper-review-pass-grid,
+.paper-review-calibration-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -1109,6 +1117,7 @@ p {
 }
 
 .paper-review-pass-grid article,
+.paper-review-calibration-grid article,
 .paper-review-dimension,
 .paper-review-badge,
 .paper-review-limitations {
@@ -1118,6 +1127,15 @@ p {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface-muted);
+}
+
+.paper-review-calibration-grid article {
+  align-content: start;
+}
+
+.paper-review-calibration-grid p,
+.paper-review-calibration-grid span {
+  color: var(--color-text-secondary);
 }
 
 .paper-review-dimension__header {
@@ -1413,6 +1431,7 @@ p {
   .paper-review-summary__body,
   .paper-review-card__header,
   .paper-review-pass-grid,
+  .paper-review-calibration-grid,
   .paper-review-two-col,
   .paper-review-breakdown,
   .new-paper-template,
@@ -1455,6 +1474,7 @@ p {
   .paper-filter-panel,
   .paper-review-summary,
   .paper-review-pass-grid article,
+  .paper-review-calibration-grid article,
   .paper-review-dimension,
   .paper-review-badge,
   .paper-review-limitations,

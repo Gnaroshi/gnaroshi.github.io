@@ -40,14 +40,49 @@ const passSchema = {
   additionalProperties: false
 };
 
+const selfScoreComparisonSchema = {
+  anyOf: [
+    {
+      type: "object",
+      properties: {
+        userScore: { type: "integer", minimum: 0, maximum: 100 },
+        aiScore: { type: "integer", minimum: 0, maximum: 100 },
+        difference: { type: "integer", minimum: -100, maximum: 100 },
+        comment: { type: "string" }
+      },
+      required: ["userScore", "aiScore", "difference", "comment"],
+      additionalProperties: false
+    },
+    { type: "null" }
+  ]
+};
+
+const improvementTargetSchema = {
+  type: "object",
+  properties: {
+    currentLevel: { type: "string", enum: SCORE_LEVELS },
+    nextLevel: { type: "string", enum: SCORE_LEVELS },
+    oneThingToImprove: { type: "string" },
+    suggestedTimeMinutes: { type: "integer", minimum: 1, maximum: 240 }
+  },
+  required: ["currentLevel", "nextLevel", "oneThingToImprove", "suggestedTimeMinutes"],
+  additionalProperties: false
+};
+
 const historySchema = {
   type: "object",
   properties: {
     reviewedAt: { type: "string" },
     overallScore: { type: "integer", minimum: 0, maximum: 100 },
-    scoreLevel: { type: "string", enum: SCORE_LEVELS }
+    scoreLevel: { type: "string", enum: SCORE_LEVELS },
+    dimensionScores: {
+      type: "object",
+      properties: Object.fromEntries(DIMENSION_KEYS.map((key) => [key, { type: "integer", minimum: 0, maximum: 10 }])),
+      required: DIMENSION_KEYS,
+      additionalProperties: false
+    }
   },
-  required: ["reviewedAt", "overallScore", "scoreLevel"],
+  required: ["reviewedAt", "overallScore", "scoreLevel", "dimensionScores"],
   additionalProperties: false
 };
 
@@ -65,6 +100,9 @@ export const PAPER_REVIEW_SCHEMA = {
     confidence: { type: "string", enum: CONFIDENCE_LEVELS },
     summary: { type: "string" },
     motivationMessage: { type: "string" },
+    selfScoreComparison: selfScoreComparisonSchema,
+    improvementTarget: improvementTargetSchema,
+    nextReviewDate: { type: "string" },
     dimensions: {
       type: "object",
       properties: Object.fromEntries(DIMENSION_KEYS.map((key) => [key, dimensionSchema])),
@@ -125,6 +163,9 @@ export const PAPER_REVIEW_SCHEMA = {
     "confidence",
     "summary",
     "motivationMessage",
+    "selfScoreComparison",
+    "improvementTarget",
+    "nextReviewDate",
     "dimensions",
     "threePassReview",
     "strengths",
@@ -163,7 +204,8 @@ export function compactHistoryEntry(review) {
   return {
     reviewedAt: String(review.reviewedAt),
     overallScore: clamp(Math.round(Number(review.overallScore)), 0, 100),
-    scoreLevel: scoreLevelForScore(clamp(Math.round(Number(review.overallScore)), 0, 100))
+    scoreLevel: scoreLevelForScore(clamp(Math.round(Number(review.overallScore)), 0, 100)),
+    dimensionScores: compactDimensionScores(review.dimensions)
   };
 }
 
@@ -186,6 +228,9 @@ export function normalizePaperReview(rawReview, { paper, model, reviewedAt = new
   review.retrievalQuestions = coerceStringArray(review.retrievalQuestions);
   review.limitations = ensureStandardLimitations(coerceStringArray(review.limitations));
   review.nextActions = Array.isArray(review.nextActions) ? review.nextActions : [];
+  review.selfScoreComparison = normalizeSelfScoreComparison(review.selfScoreComparison, paper, overallScore);
+  review.improvementTarget = normalizeImprovementTarget(review.improvementTarget, overallScore);
+  review.nextReviewDate = calculateNextReviewDate(reviewedAt, paper?.frontmatter?.reviewAfterDays);
   review.history = mergeHistory(existingReview, review);
 
   validatePaperReview(review);
@@ -213,6 +258,53 @@ export function validatePaperReview(review) {
 
   if (!CONFIDENCE_LEVELS.includes(review.confidence)) {
     errors.push(`confidence must be one of ${CONFIDENCE_LEVELS.join(", ")}`);
+  }
+
+  if (review.selfScoreComparison !== null) {
+    const comparison = review.selfScoreComparison;
+    if (!Number.isInteger(comparison?.userScore) || comparison.userScore < 0 || comparison.userScore > 100) {
+      errors.push("selfScoreComparison.userScore must be an integer from 0 to 100");
+    }
+
+    if (!Number.isInteger(comparison?.aiScore) || comparison.aiScore < 0 || comparison.aiScore > 100) {
+      errors.push("selfScoreComparison.aiScore must be an integer from 0 to 100");
+    }
+
+    if (comparison?.difference !== comparison.userScore - comparison.aiScore) {
+      errors.push("selfScoreComparison.difference must equal userScore - aiScore");
+    }
+
+    if (typeof comparison?.comment !== "string") {
+      errors.push("selfScoreComparison.comment must be a string");
+    }
+  }
+
+  if (!review.improvementTarget || typeof review.improvementTarget !== "object") {
+    errors.push("improvementTarget must be an object");
+  } else {
+    if (review.improvementTarget.currentLevel !== review.scoreLevel) {
+      errors.push("improvementTarget.currentLevel must match scoreLevel");
+    }
+
+    if (!SCORE_LEVELS.includes(review.improvementTarget.nextLevel)) {
+      errors.push(`improvementTarget.nextLevel must be one of ${SCORE_LEVELS.join(", ")}`);
+    }
+
+    if (typeof review.improvementTarget.oneThingToImprove !== "string") {
+      errors.push("improvementTarget.oneThingToImprove must be a string");
+    }
+
+    if (
+      !Number.isInteger(review.improvementTarget.suggestedTimeMinutes) ||
+      review.improvementTarget.suggestedTimeMinutes < 1 ||
+      review.improvementTarget.suggestedTimeMinutes > 240
+    ) {
+      errors.push("improvementTarget.suggestedTimeMinutes must be an integer from 1 to 240");
+    }
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(review.nextReviewDate)) {
+    errors.push("nextReviewDate must be YYYY-MM-DD");
   }
 
   for (const key of DIMENSION_KEYS) {
@@ -257,6 +349,15 @@ export function validatePaperReview(review) {
     if (!Array.isArray(review[listKey])) errors.push(`${listKey} must be an array`);
   }
 
+  const historyEntries = Array.isArray(review.history) ? review.history : [];
+  for (const [index, entry] of historyEntries.entries()) {
+    for (const key of DIMENSION_KEYS) {
+      if (!Number.isInteger(entry.dimensionScores?.[key]) || entry.dimensionScores[key] < 0 || entry.dimensionScores[key] > 10) {
+        errors.push(`history[${index}].dimensionScores.${key} must be an integer from 0 to 10`);
+      }
+    }
+  }
+
   if (typeof review.badge?.id !== "string" || typeof review.badge?.label !== "string" || typeof review.badge?.reason !== "string") {
     errors.push("badge must include id, label, and reason strings");
   }
@@ -276,7 +377,7 @@ function mergeHistory(existingReview, nextReview) {
   const entries = [];
 
   if (Array.isArray(existingReview?.history)) {
-    entries.push(...existingReview.history);
+    entries.push(...existingReview.history.map((entry) => normalizeHistoryEntry(entry, existingReview.dimensions)));
   }
 
   if (existingReview?.reviewedAt) {
@@ -294,9 +395,81 @@ function mergeHistory(existingReview, nextReview) {
   });
 }
 
+function normalizeHistoryEntry(entry, fallbackDimensions) {
+  return {
+    reviewedAt: String(entry.reviewedAt),
+    overallScore: clamp(Math.round(Number(entry.overallScore)), 0, 100),
+    scoreLevel: scoreLevelForScore(clamp(Math.round(Number(entry.overallScore)), 0, 100)),
+    dimensionScores: entry.dimensionScores ?? compactDimensionScores(fallbackDimensions)
+  };
+}
+
+function compactDimensionScores(dimensions) {
+  return Object.fromEntries(
+    DIMENSION_KEYS.map((key) => {
+      const score = Math.round(Number(dimensions?.[key]?.score));
+      return [key, Number.isFinite(score) ? clamp(score, 0, 10) : 0];
+    })
+  );
+}
+
 function ensureStandardLimitations(limitations) {
   const standard = "This score is based only on the submitted paper note, not on a full independent verification of the paper.";
   return limitations.some((item) => item.toLowerCase().includes("submitted paper note")) ? limitations : [...limitations, standard];
+}
+
+function normalizeSelfScoreComparison(value, paper, aiScore) {
+  const userSelfScore = getUserSelfScore(paper?.frontmatter?.selfScore);
+  if (userSelfScore === undefined) return null;
+
+  return {
+    userScore: userSelfScore,
+    aiScore,
+    difference: userSelfScore - aiScore,
+    comment:
+      typeof value?.comment === "string" && value.comment.trim()
+        ? value.comment
+        : "Compare the self-score with the AI score as a calibration signal, not as a judgment."
+  };
+}
+
+function normalizeImprovementTarget(value, overallScore) {
+  const currentLevel = scoreLevelForScore(overallScore);
+  const nextLevel = getNextScoreLevel(currentLevel);
+
+  return {
+    currentLevel,
+    nextLevel,
+    oneThingToImprove:
+      typeof value?.oneThingToImprove === "string" && value.oneThingToImprove.trim()
+        ? value.oneThingToImprove
+        : "Add one concrete piece of evidence for the weakest dimension.",
+    suggestedTimeMinutes: clamp(Math.round(Number(value?.suggestedTimeMinutes) || 15), 1, 240)
+  };
+}
+
+export function calculateNextReviewDate(reviewedAt, reviewAfterDays = 7) {
+  const date = new Date(reviewedAt);
+  const days = Number.isInteger(reviewAfterDays) && reviewAfterDays > 0 ? reviewAfterDays : 7;
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+export function getUserSelfScore(selfScore) {
+  if (typeof selfScore === "number" && Number.isInteger(selfScore)) {
+    return clamp(selfScore, 0, 100);
+  }
+
+  if (selfScore && typeof selfScore === "object" && typeof selfScore.overall === "number") {
+    return clamp(Math.round(selfScore.overall), 0, 100);
+  }
+
+  return undefined;
+}
+
+function getNextScoreLevel(level) {
+  const index = SCORE_LEVELS.indexOf(level);
+  return SCORE_LEVELS[Math.min(index + 1, SCORE_LEVELS.length - 1)] ?? level;
 }
 
 function coerceStringArray(value) {

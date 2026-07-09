@@ -277,13 +277,14 @@ Run:
 ```bash
 npm run paper:review -- --slug <paper-slug>
 npm run paper:review:all -- --dry-run
+npm run paper:review:validate
 ```
 
 Reviews use `OPENAI_API_KEY` and `OPENAI_MODEL` only in Node scripts or GitHub Actions. The static site never calls the API from the browser.
 
 Set `reviewVisibility: "hidden"` in paper frontmatter to keep a generated review out of public pages and dashboard averages.
 
-See `docs/ai-paper-review.md` for the score dimensions, limitations, and workflow.
+See `docs/ai-paper-review.md` for the score dimensions, limitations, and workflow. See `docs/ai-review-rubric-examples.md` for score calibration examples.
 
 Do not add these before MVP unless explicitly requested.
 

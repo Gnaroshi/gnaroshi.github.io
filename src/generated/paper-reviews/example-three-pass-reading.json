@@ -10,6 +10,19 @@
   "confidence": "medium",
   "summary": "Sample AI review for UI testing. The note gives clear evidence of a pass1-style relevance check, but it is intentionally not a real personal reading history.",
   "motivationMessage": "This is a useful starting shape: the note captures why the paper matters and leaves concrete questions for the next pass.",
+  "selfScoreComparison": {
+    "userScore": 68,
+    "aiScore": 63,
+    "difference": 5,
+    "comment": "The self-score is slightly higher than the AI score. That is reasonable because the note captures the core idea, but the written evidence still lacks real method, formula, and experiment detail."
+  },
+  "improvementTarget": {
+    "currentLevel": "solid",
+    "nextLevel": "strong",
+    "oneThingToImprove": "Add one concrete method or experiment takeaway from a real paper note.",
+    "suggestedTimeMinutes": 15
+  },
+  "nextReviewDate": "2026-07-10",
   "dimensions": {
     "problemFraming": {
       "score": 7,
@@ -123,9 +136,38 @@
   ],
   "history": [
     {
+      "reviewedAt": "2026-07-08T00:00:00.000Z",
+      "overallScore": 52,
+      "scoreLevel": "developing",
+      "dimensionScores": {
+        "problemFraming": 6,
+        "coreIdea": 6,
+        "methodUnderstanding": 4,
+        "formulaUnderstanding": 3,
+        "experimentUnderstanding": 3,
+        "criticalThinking": 5,
+        "researchConnection": 5,
+        "retrievalReadiness": 6,
+        "threePassDiscipline": 7,
+        "noteQuality": 7
+      }
+    },
+    {
       "reviewedAt": "2026-07-09T00:00:00.000Z",
       "overallScore": 63,
-      "scoreLevel": "solid"
+      "scoreLevel": "solid",
+      "dimensionScores": {
+        "problemFraming": 7,
+        "coreIdea": 8,
+        "methodUnderstanding": 5,
+        "formulaUnderstanding": 4,
+        "experimentUnderstanding": 4,
+        "criticalThinking": 6,
+        "researchConnection": 6,
+        "retrievalReadiness": 7,
+        "threePassDiscipline": 8,
+        "noteQuality": 8
+      }
     }
   ]
 }

@@ -68,7 +68,15 @@ const papers = defineCollection({
       abstract: z.string().default(""),
       sourceExcerpt: z.string().default(""),
       selfScore: z
-        .union([z.number().int().min(0).max(100), z.null()])
+        .union([
+          z.number().int().min(0).max(100),
+          z.object({
+            overall: z.number().int().min(0).max(100),
+            confidence: z.enum(["low", "medium", "high"]),
+            note: z.string()
+          }),
+          z.null()
+        ])
         .optional()
         .transform((value) => value ?? undefined),
       selfReflection: z.string().default(""),

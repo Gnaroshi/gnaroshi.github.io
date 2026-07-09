@@ -53,6 +53,7 @@ npm run preview
 npm run paper:new
 npm run paper:review -- --slug <paper-slug>
 npm run paper:review:all -- --dry-run
+npm run paper:review:validate
 ```
 
 - `npm run dev`: start local Astro dev server.
@@ -62,6 +63,7 @@ npm run paper:review:all -- --dry-run
 - `npm run paper:new`: create a draft paper log in `src/content/papers/`.
 - `npm run paper:review`: generate one AI paper review JSON from local CLI or GitHub Actions.
 - `npm run paper:review:all`: review all non-draft paper logs; use `--dry-run` before API-backed runs.
+- `npm run paper:review:validate`: validate generated AI paper review JSON.
 
 The package scripts disable Astro telemetry to avoid global config writes during local and CI checks.
 
@@ -119,6 +121,7 @@ Astro 7 content collections are defined in `src/content.config.ts` using `glob()
 - AI review scripts must run only server-side through local Node CLI or GitHub Actions.
 - Generated AI paper review files must follow the schema documented in `docs/ai-paper-review.md`.
 - AI review copy must be motivational, constructive, and evidence-based. Do not frame scores as intelligence, IQ, or personal worth.
+- Calibrate AI review scores with `docs/ai-review-rubric-examples.md`. Do not over-score vague notes.
 
 ## Design Rules
 
@@ -194,8 +197,10 @@ npm run paper:review -- --slug <paper-slug>
 ```
 
 4. Use `--force` to re-review and append score history.
-5. Set `reviewVisibility: "hidden"` in paper frontmatter if the JSON should exist but not render publicly.
-6. Do not call OpenAI from browser code. Do not commit `.env.local` or workflow secrets.
+5. Use `--dry-run` to inspect targets without API calls or file writes.
+6. Run `npm run paper:review:validate` after generated review JSON changes.
+7. Set `reviewVisibility: "hidden"` in paper frontmatter if the JSON should exist but not render publicly.
+8. Do not call OpenAI from browser code. Do not commit `.env.local` or workflow secrets.
 
 See `docs/ai-paper-review.md` for scoring dimensions and workflow details.
 

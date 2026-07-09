@@ -23,7 +23,7 @@ interface Props {
 const { papers, stats, countsByDate, tags, today, reviewStats, reviewsBySlug } = Astro.props;
 const paperRecords = papers.map((paper) => {
   const review = reviewsBySlug.get(paper.id);
-  return toPaperRecord(paper, review ? toPaperReviewSummary(review) : undefined);
+  return toPaperRecord(paper, review ? toPaperReviewSummary(review) : undefined, today);
 });
 const years = [...new Set(paperRecords.map((paper) => paper.year))].sort((a, b) => b - a);
 const countsRecord = Object.fromEntries(countsByDate.entries());
@@ -69,6 +69,18 @@ const countsRecord = Object.fromEntries(countsByDate.entries());
         <span>Average AI score</span>
       </article>
       <article class="paper-stat-card">
+        <strong>{formatScore(reviewStats.averageSelfScore)}</strong>
+        <span>Average self-score</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{formatScore(reviewStats.averageScoreGap)}</strong>
+        <span>Average AI-user score gap</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{reviewStats.papersWithNextReviewDue}</strong>
+        <span>Papers with next review due</span>
+      </article>
+      <article class="paper-stat-card">
         <strong>{formatScore(reviewStats.recentAverageScore)}</strong>
         <span>Average last 7 reviewed papers</span>
       </article>
@@ -112,6 +124,26 @@ const countsRecord = Object.fromEntries(countsByDate.entries());
           </p>
         ) : (
           <p class="metadata">No score history yet.</p>
+        )}
+      </div>
+      <div>
+        <h3>Weak dimension</h3>
+        {reviewStats.weakestDimension ? (
+          <p class="metadata">
+            {reviewStats.weakestDimension.label}: {reviewStats.weakestDimension.averageScore}/10 average.
+          </p>
+        ) : (
+          <p class="metadata">No public dimension scores yet.</p>
+        )}
+      </div>
+      <div>
+        <h3>Improved dimension</h3>
+        {reviewStats.mostImprovedDimension ? (
+          <p class="metadata">
+            {reviewStats.mostImprovedDimension.label}: +{reviewStats.mostImprovedDimension.delta} average.
+          </p>
+        ) : (
+          <p class="metadata">No dimension history yet.</p>
         )}
       </div>
     </div>

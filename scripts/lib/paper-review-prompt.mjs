@@ -11,8 +11,11 @@ If no abstract or source excerpt is provided, do not pretend you read the full p
 Be constructive, specific, and motivating.
 Reward honest partial progress and the three-pass reading method.
 Do not praise empty notes.
+Do not over-score vague notes that only restate the title, abstract, or common field names.
 Do not punish a pass1 skim note for lacking pass3 derivations.
 Do penalize mismatch between declared depth/status and the actual written evidence.
+Base every score on evidence from the note. If evidence is missing, lower the relevant dimension and say what evidence is missing.
+Set confidence to "low" when the note is very short, mostly placeholders, mostly copied text, or missing evidence for several dimensions.
 
 Return only JSON matching the provided schema.`;
 
@@ -26,6 +29,25 @@ Scoring rule:
 - overallScore must be the rounded average of the 10 dimensions multiplied by 10.
 - scoreLevel must follow: 0-39 seed, 40-59 developing, 60-74 solid, 75-89 strong, 90-100 excellent.
 - Use "Evidence of understanding" framing. Never use "intelligence score", "IQ", "smart", or "dumb".
+- Score only what is evidenced in the note. Do not infer understanding from the paper title, author reputation, venue, or broad topic.
+- Do not over-score vague notes. A note that says "good paper, important idea, need to read more" without own explanation should stay low.
+- Do not punish intentionally shallow pass1 notes too much when they clearly identify problem, claim, relevance, and next questions.
+- Penalize mismatch: status pass3/depth deep with no formula, method, or experiment detail should score much lower than the declared depth suggests.
+- Confidence must be "low" when the note is too short, mostly TODOs/placeholders, mostly copied abstract text, or missing evidence across multiple dimensions.
+
+Score anchors:
+- seed 0-39: Very shallow. Mostly copied title/abstract, TODOs, or vague claims. No own explanation, method, experiment, or questions.
+- developing 40-59: Basic summary. Some understanding of topic or claim, but method, experiment evidence, critique, or retrieval plan is missing.
+- solid 60-74: Clear problem and core idea in own words. Some method detail. Limited formula/experiment analysis or critical thinking.
+- strong 75-89: Good method explanation, formula interpretation, experiment takeaway, critique, and research connection.
+- excellent 90-100: The note supports reconstructing the paper from memory, explains formulas/experiments, critiques assumptions, and identifies concrete research actions.
+
+Dimension anchors:
+- 0-2: missing, placeholder, copied, or unsupported.
+- 3-4: present but vague or mostly restated from metadata.
+- 5-6: understandable but incomplete; useful for pass1/pass2 but missing evidence.
+- 7-8: specific, in own words, with evidence and a next step.
+- 9-10: reconstructable, precise, critical, and useful for future research.
 
 Dimension definitions:
 1. problemFraming: Does the note clearly explain what problem the paper solves and why it matters?
@@ -48,7 +70,10 @@ Limitations:
 - Base the review only on this metadata, body note, optional abstract, and optional sourceExcerpt.
 - If abstract/sourceExcerpt is missing, say that source verification was not performed.
 - Give concrete next actions with effortMinutes.
-- Include retrievalQuestions the user can use later.`;
+- Include retrievalQuestions the user can use later.
+- If frontmatter.selfScore exists, fill selfScoreComparison using that score and comment on calibration gently.
+- Fill improvementTarget with the one most useful next improvement for reaching the next score level.
+- nextReviewDate will be normalized by the writer using reviewAfterDays; still return a YYYY-MM-DD placeholder if required by schema.`;
 }
 
 export function buildManualReviewPrompt(slug) {
@@ -58,6 +83,9 @@ Use the same constructive rules:
 - Do not claim to know my true understanding beyond the note.
 - Do not pretend you read the full paper unless I provide an abstract or source excerpt.
 - Reward appropriate pass1/pass2/pass3 progress.
+- Do not over-score vague notes.
+- Set confidence low when the note is too short or missing evidence.
+- Include selfScoreComparison, improvementTarget, and nextReviewDate when the schema asks for them.
 - Return only JSON matching this schema.
 
 Paper slug: ${slug}

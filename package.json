@@ -11,7 +11,8 @@
     "paper:new": "node scripts/new-paper.mjs",
     "paper:review": "node scripts/review-paper.mjs",
     "paper:review:all": "node scripts/review-papers.mjs",
-    "paper:review:changed": "node scripts/review-papers.mjs --changed"
+    "paper:review:changed": "node scripts/review-papers.mjs --changed",
+    "paper:review:validate": "node scripts/validate-paper-reviews.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.1",

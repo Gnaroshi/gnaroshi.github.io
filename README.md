@@ -133,6 +133,7 @@ Store those values in untracked `.env.local`, then run:
 ```bash
 npm run paper:review -- --slug <paper-slug>
 npm run paper:review:all -- --dry-run
+npm run paper:review:validate
 ```
 
 Generated JSON lives in `src/generated/paper-reviews/` and renders on paper detail pages when `reviewVisibility` is `public`. Full documentation is in `docs/ai-paper-review.md`.

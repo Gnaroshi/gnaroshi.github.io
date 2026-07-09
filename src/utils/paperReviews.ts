@@ -22,6 +22,19 @@ export type PaperReview = {
   confidence: "low" | "medium" | "high";
   summary: string;
   motivationMessage: string;
+  selfScoreComparison: {
+    userScore: number;
+    aiScore: number;
+    difference: number;
+    comment: string;
+  } | null;
+  improvementTarget: {
+    currentLevel: ScoreLevel;
+    nextLevel: ScoreLevel;
+    oneThingToImprove: string;
+    suggestedTimeMinutes: number;
+  };
+  nextReviewDate: string;
   dimensions: Record<string, PaperReviewDimension>;
   threePassReview: Record<"pass1" | "pass2" | "pass3", { status: string; comment: string }>;
   strengths: string[];
@@ -30,19 +43,47 @@ export type PaperReview = {
   retrievalQuestions: string[];
   badge: { id: string; label: string; reason: string };
   limitations: string[];
-  history: Array<{ reviewedAt: string; overallScore: number; scoreLevel: ScoreLevel }>;
+  history: Array<{
+    reviewedAt: string;
+    overallScore: number;
+    scoreLevel: ScoreLevel;
+    dimensionScores: Record<string, number>;
+  }>;
 };
 
 export type PaperReviewSummary = Pick<
   PaperReview,
-  "paperSlug" | "paperTitle" | "reviewedAt" | "overallScore" | "scoreLevel" | "confidence" | "summary" | "badge"
+  | "paperSlug"
+  | "paperTitle"
+  | "reviewedAt"
+  | "overallScore"
+  | "scoreLevel"
+  | "confidence"
+  | "summary"
+  | "badge"
+  | "nextReviewDate"
+  | "improvementTarget"
 >;
 
 export type PaperReviewStats = {
   averageScore: number | null;
+  averageSelfScore: number | null;
+  averageScoreGap: number | null;
   recentAverageScore: number | null;
   reviewedCount: number;
   unreviewedCount: number;
+  papersWithNextReviewDue: number;
+  weakestDimension?: {
+    key: string;
+    label: string;
+    averageScore: number;
+    weakCount: number;
+  };
+  mostImprovedDimension?: {
+    key: string;
+    label: string;
+    delta: number;
+  };
   bestImproved?: {
     paperSlug: string;
     paperTitle: string;
@@ -67,6 +108,18 @@ export type PaperReviewStats = {
 };
 
 const reviewModules = import.meta.glob("../generated/paper-reviews/*.json", { eager: true });
+const DIMENSION_LABELS: Record<string, string> = {
+  problemFraming: "Problem framing",
+  coreIdea: "Core idea",
+  methodUnderstanding: "Method understanding",
+  formulaUnderstanding: "Formula understanding",
+  experimentUnderstanding: "Experiment understanding",
+  criticalThinking: "Critical thinking",
+  researchConnection: "Research connection",
+  retrievalReadiness: "Retrieval readiness",
+  threePassDiscipline: "Three-pass discipline",
+  noteQuality: "Note quality"
+};
 
 export function getAllPaperReviews(): PaperReview[] {
   return Object.values(reviewModules)
@@ -106,24 +159,39 @@ export function toPaperReviewSummary(review: PaperReview): PaperReviewSummary {
     scoreLevel: review.scoreLevel,
     confidence: review.confidence,
     summary: review.summary,
-    badge: review.badge
+    badge: review.badge,
+    nextReviewDate: review.nextReviewDate,
+    improvementTarget: review.improvementTarget
   };
 }
 
-export function getPaperReviewStats(papers: PaperEntry[], reviewsBySlug: Map<string, PaperReview>): PaperReviewStats {
+export function getPaperReviewStats(papers: PaperEntry[], reviewsBySlug: Map<string, PaperReview>, today = toLocalDateKey()): PaperReviewStats {
   const visibleReviews = papers
     .map((paper) => reviewsBySlug.get(paper.id))
     .filter((review): review is PaperReview => Boolean(review))
     .sort((a, b) => a.reviewedAt.localeCompare(b.reviewedAt));
+  const paperBySlug = new Map(papers.map((paper) => [paper.id, paper]));
+  const selfScoreComparisons = visibleReviews
+    .map((review) => {
+      const paper = paperBySlug.get(review.paperSlug);
+      const userScore = getPaperSelfScore(paper);
+      return userScore === null ? undefined : { userScore, aiScore: review.overallScore, gap: userScore - review.overallScore };
+    })
+    .filter((item): item is { userScore: number; aiScore: number; gap: number } => Boolean(item));
   const reviewedCount = visibleReviews.length;
   const unreviewedCount = Math.max(0, papers.length - reviewedCount);
   const recentReviews = visibleReviews.slice(-7);
 
   return {
     averageScore: averageScore(visibleReviews),
+    averageSelfScore: averageNumber(selfScoreComparisons.map((item) => item.userScore)),
+    averageScoreGap: averageNumber(selfScoreComparisons.map((item) => item.gap)),
     recentAverageScore: averageScore(recentReviews),
     reviewedCount,
     unreviewedCount,
+    papersWithNextReviewDue: visibleReviews.filter((review) => review.nextReviewDate <= today).length,
+    weakestDimension: getWeakestDimension(visibleReviews),
+    mostImprovedDimension: getMostImprovedDimension(visibleReviews),
     bestImproved: getBestImprovedPaper(visibleReviews),
     recentBadges: visibleReviews
       .slice(-5)
@@ -177,6 +245,63 @@ function averageScore(reviews: PaperReview[]): number | null {
   return Math.round(total / reviews.length);
 }
 
+function averageNumber(values: number[]): number | null {
+  if (values.length === 0) return null;
+  return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+}
+
+function getPaperSelfScore(paper?: PaperEntry): number | null {
+  const selfScore = paper?.data.selfScore;
+  if (typeof selfScore === "number") return selfScore;
+  if (selfScore && typeof selfScore === "object" && "overall" in selfScore && typeof selfScore.overall === "number") {
+    return selfScore.overall;
+  }
+  return null;
+}
+
+function getWeakestDimension(reviews: PaperReview[]): PaperReviewStats["weakestDimension"] {
+  if (reviews.length === 0) return undefined;
+
+  const dimensionStats = Object.entries(DIMENSION_LABELS).map(([key, label]) => {
+    const scores = reviews.map((review) => review.dimensions[key]?.score ?? 0);
+    return {
+      key,
+      label,
+      averageScore: Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10,
+      weakCount: scores.filter((score) => score <= 5).length
+    };
+  });
+
+  return dimensionStats.sort((a, b) => b.weakCount - a.weakCount || a.averageScore - b.averageScore)[0];
+}
+
+function getMostImprovedDimension(reviews: PaperReview[]): PaperReviewStats["mostImprovedDimension"] {
+  const improvements = new Map<string, number[]>();
+
+  for (const review of reviews) {
+    const history = [...(review.history ?? [])].sort((a, b) => a.reviewedAt.localeCompare(b.reviewedAt));
+    if (history.length < 2) continue;
+
+    const first = history[0];
+    const last = history[history.length - 1];
+    for (const key of Object.keys(DIMENSION_LABELS)) {
+      const delta = (last.dimensionScores?.[key] ?? 0) - (first.dimensionScores?.[key] ?? 0);
+      improvements.set(key, [...(improvements.get(key) ?? []), delta]);
+    }
+  }
+
+  const best = [...improvements.entries()]
+    .map(([key, deltas]) => ({
+      key,
+      label: DIMENSION_LABELS[key],
+      delta: Math.round((deltas.reduce((sum, value) => sum + value, 0) / deltas.length) * 10) / 10
+    }))
+    .filter((item) => item.delta > 0)
+    .sort((a, b) => b.delta - a.delta)[0];
+
+  return best;
+}
+
 function getBestImprovedPaper(reviews: PaperReview[]): PaperReviewStats["bestImproved"] {
   const improvements = reviews
     .map((review) => {
@@ -218,6 +343,15 @@ function isPaperReview(value: unknown): value is PaperReview {
     typeof review.reviewedAt === "string" &&
     typeof review.overallScore === "number" &&
     typeof review.scoreLevel === "string" &&
+    typeof review.nextReviewDate === "string" &&
     review.reviewVisibility !== "hidden"
   );
+}
+
+function toLocalDateKey(date = new Date()): string {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0")
+  ].join("-");
 }

@@ -109,6 +109,9 @@ relatedTopics:
 abstract: ""
 sourceExcerpt: ""
 selfScore:
+  overall: 70
+  confidence: "medium"
+  note: "I think I understood the core idea but not the formula."
 selfReflection: ""
 reviewVisibility: "public"
 oneLineSummary: "One sentence summary in my own words."
@@ -148,7 +151,7 @@ Optional AI review fields:
 
 - `abstract`: optional source text for review context.
 - `sourceExcerpt`: optional manually pasted source excerpt for review context.
-- `selfScore`: optional self-assessment from 0 to 100.
+- `selfScore`: optional self-assessment object with `overall`, `confidence`, and `note`; legacy numeric 0-100 values are still accepted.
 - `selfReflection`: optional reflection before AI review.
 - `reviewVisibility`: `public` or `hidden`; defaults to `public`.
 

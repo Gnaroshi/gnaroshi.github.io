@@ -50,6 +50,7 @@ export type PaperRecord = {
   featured: boolean;
   draft: boolean;
   review?: PaperReviewSummary;
+  reviewDue: boolean;
 };
 
 type PaperActivityOptions = {
@@ -201,7 +202,7 @@ export function getPaperLastReviewedDate(paper: PaperEntry): string | undefined 
   return paper.data.lastReviewed ? toDateKey(paper.data.lastReviewed) : undefined;
 }
 
-export function toPaperRecord(paper: PaperEntry, review?: PaperReviewSummary): PaperRecord {
+export function toPaperRecord(paper: PaperEntry, review?: PaperReviewSummary, today = getTodayKey()): PaperRecord {
   return {
     id: paper.id,
     href: `/papers/${paper.id}/`,
@@ -234,7 +235,8 @@ export function toPaperRecord(paper: PaperEntry, review?: PaperReviewSummary): P
     reviewAfterDays: paper.data.reviewAfterDays,
     featured: paper.data.featured,
     draft: paper.data.draft,
-    review
+    review,
+    reviewDue: Boolean(review?.nextReviewDate && review.nextReviewDate <= today)
   };
 }
 

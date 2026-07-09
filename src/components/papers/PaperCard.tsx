@@ -44,6 +44,7 @@ export default function PaperCard({ paper }: Props) {
           ) : (
             <span className="paper-badge paper-badge--needs-review">Needs review</span>
           )}
+          {paper.reviewDue ? <span className="paper-badge paper-badge--review-due">Review due</span> : null}
           {paper.draft ? <span className="paper-badge paper-badge--draft">Draft</span> : null}
           {paper.featured ? <span className="paper-badge paper-badge--featured">Featured</span> : null}
         </div>

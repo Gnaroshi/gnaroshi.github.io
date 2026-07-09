@@ -52,6 +52,9 @@ relatedTopics:
 abstract: ""
 sourceExcerpt: ""
 selfScore:
+#  overall: 70
+#  confidence: "medium"
+#  note: "I think I understood the core idea but not the formula."
 selfReflection: ""
 reviewVisibility: "public"
 oneLineSummary: "TODO"

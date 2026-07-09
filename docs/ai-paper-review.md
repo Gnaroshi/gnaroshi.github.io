@@ -26,6 +26,8 @@ Score levels:
 - `strong`: 75-89
 - `excellent`: 90-100
 
+Detailed calibration examples live in `docs/ai-review-rubric-examples.md`.
+
 ## Dimensions
 
 Each dimension receives a 0-10 score:
@@ -75,6 +77,7 @@ npm run paper:review:all
 Preview batch targets without calling the API:
 
 ```bash
+npm run paper:review -- --slug example-paper --dry-run
 npm run paper:review:all -- --dry-run
 ```
 
@@ -98,6 +101,9 @@ Optional review fields:
 abstract: ""
 sourceExcerpt: ""
 selfScore:
+  overall: 70
+  confidence: "medium"
+  note: "I think I understood the core idea but not the formula."
 selfReflection: ""
 reviewVisibility: "public"
 ```
@@ -105,6 +111,23 @@ reviewVisibility: "public"
 Use `abstract` or `sourceExcerpt` when you want the reviewer to compare the note against source text. The script does not fetch PDFs or scrape paper URLs.
 
 Use `reviewVisibility: "hidden"` to generate a review JSON file without rendering it publicly. Hidden reviews are excluded from public score averages.
+
+When `selfScore.overall` exists, generated reviews include `selfScoreComparison` with the user score, AI score, score gap, and a short calibration comment.
+
+Generated reviews also include:
+
+- `improvementTarget`: one concrete action for reaching the next score level.
+- `nextReviewDate`: `reviewedAt + reviewAfterDays`, stored as `YYYY-MM-DD`.
+
+## Validation
+
+Validate generated review JSON:
+
+```bash
+npm run paper:review:validate
+```
+
+This checks required review fields, score ranges, score-level consistency, `paperSlug` mapping, self-score comparison consistency, and hidden review exclusion from public aggregate stats.
 
 ## GitHub Actions
 
@@ -148,6 +171,8 @@ The fastest way to improve the score is not to write longer notes. It is to add 
 - Add a future connection to a project or research question.
 - Add retrieval questions for tomorrow.
 - Match the note depth honestly: a clear pass1 note is better than an empty pass3 note.
+- Compare self-score and AI score as calibration data, not as a win/loss signal.
+- Use `nextReviewDate` for short closed-book recall.
 
 ## Good Paper Note Example
 
