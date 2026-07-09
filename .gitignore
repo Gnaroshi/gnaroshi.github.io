@@ -3,4 +3,13 @@ dist/
 .astro/
 .DS_Store
 npm-debug.log*
-
+.env
+.env.local
+.env.*.local
+.codex/config.toml
+.codex/secrets.toml
+.codex/*.secrets.toml
+.codex/*.secret.toml
+.codex/mcp-secrets.*
+.mcp.env
+mcp-secrets.*

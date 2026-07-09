@@ -1,0 +1,40 @@
+# Example Codex/MCP configuration for this project.
+# This file is documentation only. It must not contain real secrets.
+#
+# To use it, copy the relevant parts to one of:
+#
+#   ~/.codex/config.toml
+#   .codex/config.toml
+#
+# The local .codex/config.toml file is ignored by git.
+
+# [mcp_servers.github]
+# command = "github-mcp-server"
+# args = ["stdio"]
+#
+# Use environment variables or your local secret manager for credentials.
+# Do not write tokens directly in this file.
+# env = { GITHUB_TOKEN = "replace-with-local-env-reference-only" }
+
+# [mcp_servers.local_docs]
+# command = "mcp-server-filesystem"
+# args = [
+#   "/absolute/path/to/gnaroshi.github.io/docs",
+#   "/absolute/path/to/gnaroshi.github.io/src"
+# ]
+#
+# Use this kind of server for read-only local project context.
+
+# [mcp_servers.browser_devtools]
+# command = "browser-devtools-mcp"
+# args = ["--stdio"]
+#
+# Use browser/devtools MCP only for local inspection and UI verification.
+# Do not store browser credentials or session secrets in repository files.
+
+# [mcp_servers.search]
+# command = "local-search-mcp"
+# args = ["--root", "/absolute/path/to/gnaroshi.github.io"]
+#
+# Keep paths machine-local. Prefer ~/.codex/config.toml for personal setup.
+
