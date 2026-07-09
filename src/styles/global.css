@@ -1214,9 +1214,51 @@ p {
 }
 
 .paper-review-fallback > div,
-.paper-review-fallback__prompt {
+.paper-review-fallback__prompt,
+.manual-review-prompt,
+.manual-review-prompt__panel {
   display: grid;
   gap: var(--space-2);
+}
+
+.manual-review-prompt__panel {
+  gap: var(--space-3);
+}
+
+.manual-review-prompt__header {
+  display: flex;
+  gap: var(--space-3);
+  align-items: start;
+  justify-content: space-between;
+}
+
+.manual-review-prompt__header > div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.manual-review-prompt__header p {
+  color: var(--color-text-secondary);
+}
+
+.manual-review-prompt__toggle,
+.manual-review-prompt__header button {
+  width: fit-content;
+  min-height: 2.3rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.manual-review-prompt__toggle:hover,
+.manual-review-prompt__header button:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .paper-review-fallback__prompt span {
@@ -1488,6 +1530,7 @@ p {
   .paper-heatmap__header,
   .paper-filter-panel__header,
   .paper-review-summary__header,
+  .manual-review-prompt__header,
   .paper-results__header {
     display: grid;
     align-items: start;

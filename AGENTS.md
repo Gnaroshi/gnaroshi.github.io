@@ -54,6 +54,7 @@ npm run paper:new
 npm run paper:review -- --slug <paper-slug>
 npm run paper:review:all -- --dry-run
 npm run paper:review:validate
+npm run paper:review:import -- --slug <paper-slug> --file review.json
 ```
 
 - `npm run dev`: start local Astro dev server.
@@ -64,6 +65,7 @@ npm run paper:review:validate
 - `npm run paper:review`: generate one AI paper review JSON from local CLI or GitHub Actions.
 - `npm run paper:review:all`: review all non-draft paper logs; use `--dry-run` before API-backed runs.
 - `npm run paper:review:validate`: validate generated AI paper review JSON.
+- `npm run paper:review:import`: import JSON returned by a manual ChatGPT review prompt.
 
 The package scripts disable Astro telemetry to avoid global config writes during local and CI checks.
 
@@ -201,6 +203,8 @@ npm run paper:review -- --slug <paper-slug>
 6. Run `npm run paper:review:validate` after generated review JSON changes.
 7. Set `reviewVisibility: "hidden"` in paper frontmatter if the JSON should exist but not render publicly.
 8. Do not call OpenAI from browser code. Do not commit `.env.local` or workflow secrets.
+
+Manual no-API review prompts are available on paper detail pages. Use `npm run paper:review:import -- --slug <paper-slug> --file review.json` to import returned JSON. See `docs/manual-ai-review.md`.
 
 See `docs/ai-paper-review.md` for scoring dimensions and workflow details.
 

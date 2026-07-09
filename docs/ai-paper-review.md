@@ -93,6 +93,8 @@ Generated review files are written to:
 src/generated/paper-reviews/
 ```
 
+No API key workflow: open a paper detail page, copy the manual review prompt, paste it into ChatGPT or another model, then import the returned JSON with `npm run paper:review:import -- --slug <paper-slug> --file review.json`. See `docs/manual-ai-review.md`.
+
 ## Paper Frontmatter Fields
 
 Optional review fields:

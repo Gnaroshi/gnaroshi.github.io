@@ -99,3 +99,66 @@ JSON schema:
 ${JSON.stringify(PAPER_REVIEW_SCHEMA, null, 2)}
 \`\`\``;
 }
+
+export function buildManualReviewPromptForPaper(input) {
+  return `You are an AI-assisted paper reading reviewer for a personal research notebook.
+
+Return only JSON. Do not wrap the JSON in Markdown.
+
+Purpose:
+- Evaluate evidence of understanding in the written note.
+- Give constructive next actions that help the reader improve.
+- Support motivation and calibration over time.
+
+Safety and scope:
+- Do not evaluate intelligence, IQ, worth, or potential.
+- Do not claim to know true understanding beyond the written evidence.
+- Do not overclaim objective correctness unless abstract or sourceExcerpt is provided.
+- Do not pretend you read the full paper unless source text is included below.
+- Base every score on evidence from the note.
+- Do not over-score vague notes, copied abstract text, TODOs, or generic summaries.
+- Do not punish intentionally shallow pass1 notes too much when they clearly record problem, claim, relevance, and next questions.
+- Set confidence to "low" when the note is too short or missing evidence across several dimensions.
+
+Scoring rubric:
+${buildScoringRubricText()}
+
+Paper metadata and note:
+\`\`\`json
+${JSON.stringify(input, null, 2)}
+\`\`\`
+
+Exact JSON schema:
+\`\`\`json
+${JSON.stringify(PAPER_REVIEW_SCHEMA, null, 2)}
+\`\`\`
+
+Return only one JSON object matching the schema.`;
+}
+
+export function buildScoringRubricText() {
+  return `- Assign 0-10 for each dimension: ${DIMENSION_KEYS.join(", ")}.
+- overallScore must be the rounded average of the 10 dimensions multiplied by 10.
+- scoreLevel: 0-39 seed, 40-59 developing, 60-74 solid, 75-89 strong, 90-100 excellent.
+- seed 0-39: Very shallow. Mostly copied title/abstract, TODOs, or vague claims. No own explanation, method, experiment, or questions.
+- developing 40-59: Basic summary. Some understanding of topic or claim, but method, experiment evidence, critique, or retrieval plan is missing.
+- solid 60-74: Clear problem and core idea in own words. Some method detail. Limited formula/experiment analysis or critical thinking.
+- strong 75-89: Good method explanation, formula interpretation, experiment takeaway, critique, and research connection.
+- excellent 90-100: The note supports reconstructing the paper from memory, explains formulas/experiments, critiques assumptions, and identifies concrete research actions.
+- Dimension score 0-2: missing, placeholder, copied, or unsupported.
+- Dimension score 3-4: present but vague or mostly restated from metadata.
+- Dimension score 5-6: understandable but incomplete; useful for pass1/pass2 but missing evidence.
+- Dimension score 7-8: specific, in own words, with evidence and a next step.
+- Dimension score 9-10: reconstructable, precise, critical, and useful for future research.
+- Dimensions:
+  1. problemFraming: problem and why it matters.
+  2. coreIdea: central idea in the reader's own words.
+  3. methodUnderstanding: input, output, structure, objective, training/evaluation flow, or change from prior work.
+  4. formulaUnderstanding: main formula/objective/loss in plain language.
+  5. experimentUnderstanding: experiment or result supporting the central claim.
+  6. criticalThinking: limitations, doubts, assumptions, missing ablations, or critique.
+  7. researchConnection: connection to research, projects, or future reading.
+  8. retrievalReadiness: whether the note supports later closed-book recall.
+  9. threePassDiscipline: whether the note matches its declared status/depth.
+  10. noteQuality: clarity, structure, specificity, and own-word explanation.`;
+}

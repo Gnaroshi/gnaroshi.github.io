@@ -1,12 +1,19 @@
 ---
-import { buildManualReviewPrompt } from "../../../scripts/lib/paper-review-prompt.mjs";
+import type { PaperEntry } from "../../utils/papers";
+import { buildManualReviewPromptForPaper } from "../../../scripts/lib/paper-review-prompt.mjs";
+import ManualReviewPrompt from "./ManualReviewPrompt";
 
 interface Props {
-  slug: string;
+  paper: PaperEntry;
 }
 
-const { slug } = Astro.props;
-const prompt = buildManualReviewPrompt(slug);
+const { paper } = Astro.props;
+const prompt = buildManualReviewPromptForPaper({
+  slug: paper.id,
+  frontmatter: paper.data,
+  body: paper.body
+});
+const command = `npm run paper:review -- --slug ${paper.id}`;
 ---
 
 <section class="paper-review-fallback section" aria-labelledby="paper-review-fallback-heading">
@@ -19,10 +26,7 @@ const prompt = buildManualReviewPrompt(slug);
     </p>
   </div>
 
-  <pre><code>npm run paper:review -- --slug {slug}</code></pre>
+  <pre><code>{command}</code></pre>
 
-  <label class="paper-review-fallback__prompt">
-    <span>Manual review prompt</span>
-    <textarea readonly>{prompt}</textarea>
-  </label>
+  <ManualReviewPrompt client:load prompt={prompt} command={command} initiallyOpen={true} />
 </section>

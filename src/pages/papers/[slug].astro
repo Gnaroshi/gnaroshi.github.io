@@ -5,8 +5,10 @@ import SectionHeader from "../../components/common/SectionHeader.astro";
 import PaperDetailHeader from "../../components/papers/PaperDetailHeader.astro";
 import PaperReviewCard from "../../components/papers/PaperReviewCard.astro";
 import ReviewPromptFallback from "../../components/papers/ReviewPromptFallback.astro";
+import ManualReviewPrompt from "../../components/papers/ManualReviewPrompt";
 import { getPublishedPapers, type PaperEntry } from "../../utils/papers";
 import { getPublicPaperReviewForPaper } from "../../utils/paperReviews";
+import { buildManualReviewPromptForPaper } from "../../../scripts/lib/paper-review-prompt.mjs";
 
 export async function getStaticPaths() {
   const papers = await getPublishedPapers();
@@ -30,6 +32,12 @@ interface Props {
 const { paper, newerPaper, olderPaper } = Astro.props as Props;
 const { Content } = await render(paper);
 const review = getPublicPaperReviewForPaper(paper);
+const manualPrompt = buildManualReviewPromptForPaper({
+  slug: paper.id,
+  frontmatter: paper.data,
+  body: paper.body
+});
+const reviewCommand = `npm run paper:review -- --slug ${paper.id}`;
 
 const fallback = "Not recorded yet.";
 ---
@@ -38,7 +46,20 @@ const fallback = "Not recorded yet.";
   <article class="paper-detail">
     <PaperDetailHeader paper={paper} />
 
-    {review ? <PaperReviewCard review={review} /> : <ReviewPromptFallback slug={paper.id} />}
+    {review ? (
+      <>
+        <PaperReviewCard review={review} />
+        <section class="section" aria-labelledby="manual-rereview-heading">
+          <div>
+            <p class="eyebrow">Manual review</p>
+            <h2 id="manual-rereview-heading">Re-review manually</h2>
+          </div>
+          <ManualReviewPrompt client:load prompt={manualPrompt} command={reviewCommand} triggerLabel="Re-review manually" />
+        </section>
+      </>
+    ) : (
+      <ReviewPromptFallback paper={paper} />
+    )}
 
     <section class="section" aria-labelledby="paper-summary-heading">
       <SectionHeader id="paper-summary-heading" title="Structured reading note" description="Frontmatter fields that keep the paper searchable and comparable." />

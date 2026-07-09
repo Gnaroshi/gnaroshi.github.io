@@ -18,7 +18,7 @@ export function hasExistingReview(slug) {
   return existsSync(getReviewPathForSlug(slug));
 }
 
-export function writePaperReview(rawReview, { paper, model, force = false } = {}) {
+export function writePaperReview(rawReview, { paper, model, reviewedAt, force = false } = {}) {
   mkdirSync(PAPER_REVIEWS_DIR, { recursive: true });
 
   const existingReview = readExistingReview(paper.slug);
@@ -34,6 +34,7 @@ export function writePaperReview(rawReview, { paper, model, force = false } = {}
   const review = normalizePaperReview(rawReview, {
     paper,
     model,
+    reviewedAt: reviewedAt ?? rawReview.reviewedAt,
     existingReview
   });
   validatePaperReview(review);

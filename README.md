@@ -134,6 +134,7 @@ Store those values in untracked `.env.local`, then run:
 npm run paper:review -- --slug <paper-slug>
 npm run paper:review:all -- --dry-run
 npm run paper:review:validate
+npm run paper:review:import -- --slug <paper-slug> --file review.json
 ```
 
-Generated JSON lives in `src/generated/paper-reviews/` and renders on paper detail pages when `reviewVisibility` is `public`. Full documentation is in `docs/ai-paper-review.md`.
+Generated JSON lives in `src/generated/paper-reviews/` and renders on paper detail pages when `reviewVisibility` is `public`. Full documentation is in `docs/ai-paper-review.md` and `docs/manual-ai-review.md`.
