@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { profile } from "../data/profile";
+---
+
+<BaseLayout title={profile.siteName} description={profile.shortBio} width="wide">
+  <header class="page-header">
+    <p class="eyebrow">{profile.location}</p>
+    <h1>{profile.displayName}</h1>
+    <p class="lede">{profile.headline}. {profile.shortBio}</p>
+    <div class="link-row" aria-label="Primary links">
+      <a href="/research">Research</a>
+      <a href="/blog">Blog</a>
+      <a href="/papers">Paper reading</a>
+      <a href={profile.links.github}>GitHub</a>
+    </div>
+  </header>
+
+  <section class="section" aria-labelledby="interests-heading">
+    <h2 id="interests-heading">Current Interests</h2>
+    <ul class="tag-list">
+      {profile.interests.map((interest) => <li>{interest}</li>)}
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="site-map-heading">
+    <h2 id="site-map-heading">Research Notebook</h2>
+    <div class="grid">
+      <article class="panel">
+        <h3>Blog</h3>
+        <p>Technical notes, research logs, implementation notes, and project writeups.</p>
+        <a href="/blog">Read posts</a>
+      </article>
+      <article class="panel">
+        <h3>Papers</h3>
+        <p>Daily paper reading activity, three-pass notes, questions, and reproduction attempts.</p>
+        <a href="/papers">View paper tracker</a>
+      </article>
+      <article class="panel">
+        <h3>Projects</h3>
+        <p>Software and research systems documented through problem framing and technical decisions.</p>
+        <a href="/projects">Browse projects</a>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+

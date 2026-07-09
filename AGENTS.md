@@ -16,9 +16,9 @@ This is not a corporate site and not a lab homepage.
 
 ## Current Status
 
-The repository starts with planning documents only. Do not assume the Astro app exists until Phase 1 has been completed.
+The Astro app scaffold exists. It uses Astro 7, TypeScript, MDX, React islands, static output, and `npm` scripts.
 
-Before adding application code, read:
+Before changing product, design, architecture, or content behavior, read:
 
 - `docs/product.md`
 - `docs/design.md`
@@ -53,7 +53,7 @@ npm run preview
 npm run check
 ```
 
-If `package.json` does not exist, do not invent command results. Complete or request Phase 1 scaffolding first.
+The app disables Astro telemetry in package scripts to avoid writing global config during local and CI checks.
 
 ## Expected Project Structure
 
@@ -62,10 +62,10 @@ Target structure after scaffolding:
 ```text
 src/
   components/
-    layout/
-    blog/
-    papers/
-    shared/
+    SiteFooter.astro
+    SiteHeader.astro
+    SEO.astro
+    ThemeToggle.tsx
   content/
     blog/
     papers/
@@ -73,13 +73,16 @@ src/
   data/
     profile.ts
   layouts/
-  lib/
+    BaseLayout.astro
+  utils/
   pages/
   styles/
 public/
   CNAME
 docs/
 ```
+
+Astro 7 content collections are defined in `src/content.config.ts` using `glob()` loaders. Do not reintroduce legacy `src/content/config.ts`.
 
 ## Coding Conventions
 

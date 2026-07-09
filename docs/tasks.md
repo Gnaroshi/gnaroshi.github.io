@@ -4,26 +4,26 @@
 
 - [x] Create or connect `Gnaroshi/gnaroshi.github.io`.
 - [x] Create planning documents.
-- [ ] Confirm GitHub authentication and push access.
-- [ ] Confirm default branch is `main`.
-- [ ] Confirm remote points to `Gnaroshi/gnaroshi.github.io`.
+- [x] Confirm GitHub authentication and push access.
+- [x] Confirm default branch is `main`.
+- [x] Confirm remote points to `Gnaroshi/gnaroshi.github.io`.
 - [ ] Keep repository free of old Lab-LVM code.
 
 ## Phase 1: Astro Scaffold
 
-- [ ] Scaffold Astro with TypeScript.
-- [ ] Add MDX support.
-- [ ] Configure strict TypeScript settings.
-- [ ] Configure package scripts:
+- [x] Scaffold Astro with TypeScript.
+- [x] Add MDX support.
+- [x] Configure strict TypeScript settings.
+- [x] Configure package scripts:
   - `dev`
   - `build`
   - `preview`
   - `check`
-- [ ] Add base `astro.config.mjs`.
-- [ ] Add `tsconfig.json`.
-- [ ] Add initial `src/` and `public/` structure.
-- [ ] Add `public/CNAME` with `gnaroshi.dev`.
-- [ ] Do not add visual templates beyond minimal working pages.
+- [x] Add base `astro.config.mjs`.
+- [x] Add `tsconfig.json`.
+- [x] Add initial `src/` and `public/` structure.
+- [x] Add `public/CNAME` with `gnaroshi.dev`.
+- [x] Do not add visual templates beyond minimal working pages.
 
 ## Phase 2: Design System And Layout
 

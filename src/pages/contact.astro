@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { profile } from "../data/profile";
+
+const contactLinks = [
+  { label: "GitHub", href: profile.links.github },
+  { label: "Website", href: profile.links.website },
+  profile.links.email ? { label: "Email", href: `mailto:${profile.links.email}` } : null,
+  profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar } : null,
+  profile.links.linkedin ? { label: "LinkedIn", href: profile.links.linkedin } : null,
+  profile.links.cv ? { label: "CV", href: profile.links.cv } : null
+].filter(Boolean) as Array<{ label: string; href: string }>;
+---
+
+<BaseLayout title="Contact" description="Public contact links for Gnaroshi.">
+  <header class="page-header">
+    <p class="eyebrow">Contact</p>
+    <h1>Public links</h1>
+    <p class="lede">The intentionally public places to find or contact me.</p>
+  </header>
+
+  <section class="section" aria-labelledby="links-heading">
+    <h2 id="links-heading">Links</h2>
+    <ul class="list">
+      {contactLinks.map((link) => (
+        <li class="list-item">
+          <h3><a href={link.href}>{link.label}</a></h3>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
+

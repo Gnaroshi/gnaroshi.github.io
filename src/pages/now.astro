@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Now" description="Current focus, current reading, and current projects.">
+  <header class="page-header">
+    <p class="eyebrow">Now</p>
+    <h1>Current focus</h1>
+    <p class="lede">Current reading, active research questions, and projects in progress.</p>
+  </header>
+
+  <section class="section" aria-labelledby="focus-heading">
+    <h2 id="focus-heading">Focus Areas</h2>
+    <div class="grid">
+      <article class="panel">
+        <h3>Reading</h3>
+        <p>Recent paper notes and revisits will be surfaced from the paper tracker.</p>
+      </article>
+      <article class="panel">
+        <h3>Building</h3>
+        <p>Active software and research systems will be linked from project writeups.</p>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+

@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { profile } from "../data/profile";
+---
+
+<BaseLayout title="Research" description="Research interests, questions, reading map, and open problems." width="wide">
+  <header class="page-header">
+    <p class="eyebrow">Research</p>
+    <h1>Research questions and reading map</h1>
+    <p class="lede">
+      A working map of AI systems, vision-language models, efficient research workflows,
+      and human-AI tools.
+    </p>
+  </header>
+
+  <section class="section" aria-labelledby="questions-heading">
+    <h2 id="questions-heading">Current Questions</h2>
+    <div class="grid">
+      {profile.interests.map((interest) => (
+        <article class="panel">
+          <h3>{interest}</h3>
+          <p>Notes and open problems for this area will be linked here as the research log grows.</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+

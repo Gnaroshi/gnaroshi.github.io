@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { profile } from "../data/profile";
+---
+
+<BaseLayout title="About" description={`About ${profile.displayName}, ${profile.headline}.`}>
+  <header class="page-header">
+    <p class="eyebrow">About</p>
+    <h1>{profile.displayName}</h1>
+    <p class="lede">{profile.shortBio}</p>
+  </header>
+
+  <section class="section" aria-labelledby="background-heading">
+    <h2 id="background-heading">Background</h2>
+    <p>
+      I work at the intersection of AI research, software engineering, and research workflows.
+      This page will collect biographical notes, education, skills, and public research context.
+    </p>
+  </section>
+
+  <section class="section" aria-labelledby="interests-heading">
+    <h2 id="interests-heading">Interests</h2>
+    <ul class="tag-list">
+      {profile.interests.map((interest) => <li>{interest}</li>)}
+    </ul>
+  </section>
+</BaseLayout>
+

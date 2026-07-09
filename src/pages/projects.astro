@@ -1,0 +1,36 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const projects = (await getCollection("projects")).sort((a, b) => {
+  const aTime = a.data.updatedAt?.getTime() ?? a.data.startedAt?.getTime() ?? 0;
+  const bTime = b.data.updatedAt?.getTime() ?? b.data.startedAt?.getTime() ?? 0;
+  return bTime - aTime;
+});
+---
+
+<BaseLayout title="Projects" description="Project cards and technical writeups." width="wide">
+  <header class="page-header">
+    <p class="eyebrow">Projects</p>
+    <h1>Software and research systems</h1>
+    <p class="lede">Project writeups will emphasize problem framing, technical choices, results, and lessons.</p>
+  </header>
+
+  <section class="section" aria-labelledby="projects-heading">
+    <h2 id="projects-heading">Project Index</h2>
+    {projects.length > 0 ? (
+      <ul class="list">
+        {projects.map((project) => (
+          <li class="list-item">
+            <h3>{project.data.title}</h3>
+            <p>{project.data.description}</p>
+            <p class="metadata">{project.data.status} · {project.data.tags.join(", ")}</p>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty-state">No public project writeups yet.</p>
+    )}
+  </section>
+</BaseLayout>
+

@@ -1,0 +1,35 @@
+---
+import { profile } from "../data/profile";
+import { navigation } from "../utils/navigation";
+import ThemeToggle from "./ThemeToggle";
+
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+
+const isActive = (href: string) => {
+  if (href === "/") {
+    return currentPath === "/";
+  }
+
+  return currentPath === href || currentPath.startsWith(`${href}/`);
+};
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-header__brand" href="/" aria-label={`${profile.siteName} home`}>
+      <span class="site-header__name">{profile.siteName}</span>
+      <span class="site-header__role">{profile.headline}</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Primary navigation">
+      {navigation.map((item) => (
+        <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <ThemeToggle client:load />
+  </div>
+</header>
+

@@ -1,0 +1,22 @@
+---
+import { profile } from "../data/profile";
+import { navigation } from "../utils/navigation";
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div>
+      <p class="site-footer__title">{profile.siteName}</p>
+      <p class="site-footer__text">{profile.headline}</p>
+    </div>
+
+    <nav class="site-footer__links" aria-label="Footer navigation">
+      {navigation.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
+      <a href="/rss.xml">RSS</a>
+      <a href={profile.links.github}>GitHub</a>
+    </nav>
+  </div>
+</footer>
+

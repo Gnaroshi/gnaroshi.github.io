@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+---
+
+<BaseLayout title="Blog" description="Technical notes, research logs, paper summaries, and project writeups.">
+  <header class="page-header">
+    <p class="eyebrow">Blog</p>
+    <h1>Technical notes and research logs</h1>
+    <p class="lede">Writing space for implementation notes, reading summaries, experiments, and project decisions.</p>
+  </header>
+
+  <section class="section" aria-labelledby="posts-heading">
+    <h2 id="posts-heading">Posts</h2>
+    {posts.length > 0 ? (
+      <ul class="list">
+        {posts.map((post) => (
+          <li class="list-item">
+            <h3><a href={`/blog/${post.id}/`}>{post.data.title}</a></h3>
+            <p>{post.data.description}</p>
+            <p class="metadata">
+              {post.data.publishedAt.toLocaleDateString("en", { year: "numeric", month: "short", day: "numeric" })}
+              {" · "}
+              {post.data.tags.join(", ")}
+            </p>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty-state">No public posts yet.</p>
+    )}
+  </section>
+</BaseLayout>

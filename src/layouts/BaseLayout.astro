@@ -1,0 +1,49 @@
+---
+import "katex/dist/katex.min.css";
+import "../styles/tokens.css";
+import "../styles/global.css";
+import SEO from "../components/SEO.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  type?: "website" | "article";
+  width?: "prose" | "wide" | "dashboard";
+}
+
+const { title, description, canonical, ogImage, type, width = "prose" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f7f4" />
+    <SEO title={title} description={description} canonical={canonical} ogImage={ogImage} type={type} />
+    <script is:inline>
+      (() => {
+        try {
+          const stored = window.localStorage.getItem("theme");
+          const system = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.dataset.theme = stored === "light" || stored === "dark" ? stored : system;
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <SiteHeader />
+    <main id="content" class:list={["site-main", `site-main--${width}`]}>
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>
+

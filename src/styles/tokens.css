@@ -1,0 +1,89 @@
+:root {
+  color-scheme: light;
+
+  --color-bg: #f7f7f4;
+  --color-bg-muted: #eeeeea;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f3f3ef;
+  --color-text: #171a18;
+  --color-text-secondary: #424942;
+  --color-text-muted: #687067;
+  --color-border: #d7dbd3;
+  --color-border-strong: #aeb7ad;
+  --color-accent: #116c5a;
+  --color-accent-hover: #0a4f42;
+  --color-accent-soft: #dcece7;
+  --color-code-bg: #ecefeb;
+  --color-code-text: #172018;
+  --color-focus: #2d6cdf;
+
+  --color-status-skim: #7b6c20;
+  --color-status-structured: #2463a6;
+  --color-status-deep: #7f4aa8;
+  --color-status-implemented: #18704a;
+  --color-status-blocked: #9b3d30;
+
+  --color-heatmap-0: #e8ebe5;
+  --color-heatmap-1: #bddccd;
+  --color-heatmap-2: #7fbda2;
+  --color-heatmap-3: #3e9878;
+  --color-heatmap-4: #176a50;
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono:
+    "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.35rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.35rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  --shadow-sm: 0 1px 2px rgb(23 26 24 / 8%);
+
+  --width-prose: min(100% - 32px, 760px);
+  --width-wide: min(100% - 32px, 1040px);
+  --width-dashboard: min(100% - 32px, 1180px);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: #101211;
+  --color-bg-muted: #171b19;
+  --color-surface: #151816;
+  --color-surface-muted: #1d221f;
+  --color-text: #ecefeb;
+  --color-text-secondary: #c4cbc3;
+  --color-text-muted: #9ca69b;
+  --color-border: #303831;
+  --color-border-strong: #566157;
+  --color-accent: #68d0b2;
+  --color-accent-hover: #93e0c9;
+  --color-accent-soft: #15382f;
+  --color-code-bg: #20261f;
+  --color-code-text: #edf4ee;
+  --color-focus: #8ab4ff;
+
+  --color-heatmap-0: #1b211d;
+  --color-heatmap-1: #214637;
+  --color-heatmap-2: #2a7257;
+  --color-heatmap-3: #38a47a;
+  --color-heatmap-4: #6ad7a9;
+}
+
