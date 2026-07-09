@@ -18,6 +18,10 @@ const optionalNullableNumber = z
   .union([z.number(), z.null()])
   .optional()
   .transform((value) => value ?? undefined);
+const optionalPaperDate = z.preprocess(
+  (value) => (value === null || value === "" ? undefined : value),
+  z.coerce.date().optional()
+);
 
 const blog = defineCollection({
   loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
@@ -43,28 +47,47 @@ const blog = defineCollection({
 
 const papers = defineCollection({
   loader: glob({ base: "./src/content/papers", pattern: "**/*.{md,mdx}" }),
-  schema: z.object({
-    title: z.string(),
-    slug: z.string().optional(),
-    authors: z.array(z.string()).min(1),
-    venue: z.string().optional(),
-    year: z.number().int(),
-    paperUrl: optionalUrl,
-    pdfUrl: optionalUrl,
-    codeUrl: optionalUrl,
-    projectUrl: optionalUrl,
-    readStartedAt: z.coerce.date(),
-    lastReadAt: z.coerce.date(),
-    status: z.enum(["queued", "pass-1", "pass-2", "pass-3", "paused", "done", "revisit"]),
-    depth: z.number().int().min(0).max(4),
-    difficulty: z.number().int().min(1).max(5),
-    readingMinutes: z.number().int().nonnegative(),
-    implemented: z.boolean(),
-    reproduced: z.boolean(),
-    tags: z.array(z.string()).min(1),
-    summary: z.string(),
-    keyTakeaway: z.string().optional()
-  })
+  schema: z
+    .object({
+      title: z.string(),
+      authors: z.array(z.string()).min(1),
+      venue: z.string(),
+      year: z.number().int(),
+      paperUrl: optionalNullableUrl,
+      codeUrl: optionalNullableUrl,
+      projectUrl: optionalNullableUrl,
+      readDate: optionalPaperDate,
+      lastReviewed: optionalPaperDate,
+      status: z.enum(["planned", "pass1", "pass2", "pass3", "read", "implemented", "abandoned"]),
+      depth: z.enum(["skim", "understand", "deep", "reproduce", "implement"]),
+      priority: z.enum(["low", "medium", "high"]),
+      difficulty: z.number().int().min(1).max(5),
+      readingTimeMinutes: z.number().int().nonnegative(),
+      tags: z.array(z.string()).min(1),
+      relatedTopics: z.array(z.string()).default([]),
+      oneLineSummary: z.string(),
+      coreQuestion: z.string(),
+      coreIdea: z.string(),
+      mainFormula: z.string().default(""),
+      formulaInterpretation: z.string().default(""),
+      experimentTakeaway: z.string().default(""),
+      strengths: z.array(z.string()).default([]),
+      weaknesses: z.array(z.string()).default([]),
+      myConnection: z.string().default(""),
+      nextAction: z.string().default(""),
+      reviewAfterDays: z.number().int().positive().optional(),
+      featured: z.boolean().default(false),
+      draft: z.boolean().default(false)
+    })
+    .superRefine((data, context) => {
+      if (data.status !== "planned" && !data.readDate) {
+        context.addIssue({
+          code: "custom",
+          path: ["readDate"],
+          message: "readDate is required unless status is planned"
+        });
+      }
+    })
 });
 
 const projects = defineCollection({

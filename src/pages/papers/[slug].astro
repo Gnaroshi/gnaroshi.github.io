@@ -1,0 +1,110 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Badge from "../../components/common/Badge.astro";
+import ExternalLink from "../../components/common/ExternalLink.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import { getPaperActivityDate, getPublishedPapers, type PaperEntry } from "../../utils/papers";
+
+export async function getStaticPaths() {
+  const papers = await getPublishedPapers();
+
+  return papers.map((paper) => ({
+    params: { slug: paper.id },
+    props: { paper }
+  }));
+}
+
+interface Props {
+  paper: PaperEntry;
+}
+
+const { paper } = Astro.props as Props;
+const { Content } = await render(paper);
+const links = [
+  paper.data.paperUrl ? { label: "Paper", href: paper.data.paperUrl } : null,
+  paper.data.codeUrl ? { label: "Code", href: paper.data.codeUrl } : null,
+  paper.data.projectUrl ? { label: "Project", href: paper.data.projectUrl } : null
+].filter(Boolean) as Array<{ label: string; href: string }>;
+---
+
+<BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/papers/${paper.id}/`} type="article">
+  <article class="blog-post">
+    <header class="blog-post__header">
+      <p class="eyebrow">Paper log</p>
+      <h1>{paper.data.title}</h1>
+      <p class="lede">{paper.data.oneLineSummary}</p>
+      <p class="metadata">
+        {paper.data.authors.join(", ")} · {paper.data.venue} · {paper.data.year}
+        {getPaperActivityDate(paper) && <> · read {getPaperActivityDate(paper)}</>}
+      </p>
+      <div class="badge-row">
+        <Badge tone="accent">{paper.data.status}</Badge>
+        <Badge tone="muted">{paper.data.depth}</Badge>
+        <Badge tone="muted">priority: {paper.data.priority}</Badge>
+        <Badge tone="muted">difficulty {paper.data.difficulty}/5</Badge>
+        <Badge tone="muted">{paper.data.readingTimeMinutes} min</Badge>
+        {paper.data.tags.map((tag) => <Badge>{tag}</Badge>)}
+      </div>
+      {links.length > 0 && (
+        <div class="link-row">
+          {links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
+        </div>
+      )}
+    </header>
+
+    <section class="section" aria-labelledby="paper-summary-heading">
+      <SectionHeader id="paper-summary-heading" title="Reading summary" description="Structured fields from paper frontmatter." />
+      <div class="paper-detail-grid">
+        <div>
+          <h2>Core question</h2>
+          <p>{paper.data.coreQuestion}</p>
+        </div>
+        <div>
+          <h2>Core idea</h2>
+          <p>{paper.data.coreIdea}</p>
+        </div>
+        {paper.data.mainFormula && (
+          <div>
+            <h2>Main formula</h2>
+            <p>{paper.data.mainFormula}</p>
+          </div>
+        )}
+        {paper.data.formulaInterpretation && (
+          <div>
+            <h2>Formula interpretation</h2>
+            <p>{paper.data.formulaInterpretation}</p>
+          </div>
+        )}
+        {paper.data.experimentTakeaway && (
+          <div>
+            <h2>Experiment takeaway</h2>
+            <p>{paper.data.experimentTakeaway}</p>
+          </div>
+        )}
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="paper-strengths-heading">
+      <SectionHeader id="paper-strengths-heading" title="Strengths and weaknesses" />
+      <div class="paper-detail-grid">
+        <div>
+          <h2>Strengths</h2>
+          <ul>
+            {paper.data.strengths.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+        <div>
+          <h2>Weaknesses</h2>
+          <ul>
+            {paper.data.weaknesses.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

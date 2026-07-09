@@ -81,7 +81,7 @@ Use Astro content collections for:
 - `papers`
 - `projects`
 
-Define schemas in `src/content/config.ts`. Prefer strict schemas that catch missing metadata at build time.
+Define schemas in `src/content.config.ts` for Astro 7. Prefer strict schemas that catch missing metadata at build time.
 
 ## Data Flow
 

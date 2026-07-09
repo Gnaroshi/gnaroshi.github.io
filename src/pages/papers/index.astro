@@ -1,15 +1,21 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Badge from "../../components/common/Badge.astro";
+import Card from "../../components/common/Card.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import {
+  countPapersByDate,
+  getPaperActivityDate,
+  getPaperStats,
+  getPublishedPapers,
+  normalizePaperTags
+} from "../../utils/papers";
 
-const papers = (await getCollection("papers")).sort(
-  (a, b) => b.data.lastReadAt.getTime() - a.data.lastReadAt.getTime()
-);
-
-const deepReads = papers.filter((paper) => paper.data.depth >= 3).length;
-const implementedOrReproduced = papers.filter((paper) => paper.data.implemented || paper.data.reproduced).length;
-const totalMinutes = papers.reduce((sum, paper) => sum + paper.data.readingMinutes, 0);
-const cells = Array.from({ length: 104 });
+const papers = await getPublishedPapers();
+const stats = getPaperStats(papers);
+const tags = normalizePaperTags(papers);
+const countsByDate = countPapersByDate(papers);
+const activityRows = [...countsByDate.entries()].slice(0, 10);
 ---
 
 <BaseLayout title="Papers" description="Paper reading dashboard, activity, and three-pass notes." width="dashboard">
@@ -22,34 +28,80 @@ const cells = Array.from({ length: 104 });
   </header>
 
   <section class="section" aria-labelledby="stats-heading">
-    <h2 id="stats-heading">Reading Activity</h2>
+    <SectionHeader
+      id="stats-heading"
+      title="Reading statistics"
+      description="Stats are computed from non-draft paper logs committed under src/content/papers/."
+    />
     <div class="stats-grid">
-      <div class="stat"><strong>{papers.length}</strong><span>Total papers</span></div>
-      <div class="stat"><strong>{deepReads}</strong><span>Deep reads</span></div>
-      <div class="stat"><strong>{implementedOrReproduced}</strong><span>Implemented or reproduced</span></div>
-      <div class="stat"><strong>{totalMinutes}</strong><span>Reading minutes</span></div>
-    </div>
-    <div class="heatmap-placeholder" aria-label="Paper reading heatmap placeholder">
-      {cells.map(() => <span></span>)}
+      <div class="stat"><strong>{stats.total}</strong><span>Total visible logs</span></div>
+      <div class="stat"><strong>{stats.currentStreak}</strong><span>Current streak</span></div>
+      <div class="stat"><strong>{stats.longestStreak}</strong><span>Longest streak</span></div>
+      <div class="stat"><strong>{stats.thisWeek}</strong><span>This week</span></div>
+      <div class="stat"><strong>{stats.thisMonth}</strong><span>This month</span></div>
+      <div class="stat"><strong>{stats.thisYear}</strong><span>This year</span></div>
+      <div class="stat"><strong>{stats.deepReads}</strong><span>Deep reads</span></div>
+      <div class="stat"><strong>{stats.implemented}</strong><span>Implemented</span></div>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="papers-heading">
-    <h2 id="papers-heading">Paper Notes</h2>
-    {papers.length > 0 ? (
-      <ul class="list">
-        {papers.map((paper) => (
-          <li class="list-item">
-            <h3><a href={`/papers/${paper.id}/`}>{paper.data.title}</a></h3>
-            <p>{paper.data.summary}</p>
-            <p class="metadata">
-              {paper.data.authors.join(", ")} · {paper.data.year} · depth {paper.data.depth} · {paper.data.tags.join(", ")}
-            </p>
-          </li>
+  <section class="section" aria-labelledby="activity-heading">
+    <SectionHeader
+      id="activity-heading"
+      title="Recent activity dates"
+      description="A date is active when at least one non-draft log has a non-planned, non-abandoned status and matching readDate."
+    />
+    {activityRows.length > 0 ? (
+      <div class="activity-grid">
+        {activityRows.map(([date, count]) => (
+          <div class="activity-cell">
+            <strong>{date}</strong>
+            <span>{count} paper{count === 1 ? "" : "s"}</span>
+          </div>
         ))}
-      </ul>
+      </div>
     ) : (
-      <p class="empty-state">No public paper logs yet.</p>
+      <p class="empty-state">No active paper reading dates yet.</p>
+    )}
+  </section>
+
+  <section class="section" aria-labelledby="tags-heading">
+    <SectionHeader id="tags-heading" title="Tags" description="Normalized from paper frontmatter." />
+    {tags.length > 0 ? (
+      <div class="badge-row">
+        {tags.map((tag) => <Badge>{tag}</Badge>)}
+      </div>
+    ) : (
+      <p class="empty-state">No paper tags yet.</p>
+    )}
+  </section>
+
+  <section class="section" aria-labelledby="papers-heading">
+    <SectionHeader
+      id="papers-heading"
+      title="Paper logs"
+      description="Draft logs are hidden from production builds. Example logs are marked as drafts."
+    />
+    {papers.length > 0 ? (
+      <div class="card-list">
+        {papers.map((paper) => (
+          <Card title={paper.data.title} href={`/papers/${paper.id}/`} description={paper.data.oneLineSummary}>
+            <p class="metadata">
+              {paper.data.authors.join(", ")} · {paper.data.venue} · {paper.data.year}
+            </p>
+            <div class="badge-row">
+              <Badge tone="accent">{paper.data.status}</Badge>
+              <Badge tone="muted">{paper.data.depth}</Badge>
+              <Badge tone="muted">priority: {paper.data.priority}</Badge>
+              <Badge tone="muted">difficulty {paper.data.difficulty}/5</Badge>
+              {getPaperActivityDate(paper) && <Badge>{getPaperActivityDate(paper)}</Badge>}
+            </div>
+          </Card>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-state">No public paper logs yet. Add one with <code>npm run paper:new</code>.</p>
     )}
   </section>
 </BaseLayout>
+

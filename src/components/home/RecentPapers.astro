@@ -1,12 +1,10 @@
 ---
-import { getCollection } from "astro:content";
 import Badge from "../common/Badge.astro";
 import Card from "../common/Card.astro";
 import SectionHeader from "../common/SectionHeader.astro";
+import { getPaperActivityDate, getPublishedPapers } from "../../utils/papers";
 
-const papers = (await getCollection("papers"))
-  .sort((a, b) => b.data.lastReadAt.getTime() - a.data.lastReadAt.getTime())
-  .slice(0, 3);
+const papers = (await getPublishedPapers()).slice(0, 3);
 ---
 
 <section class="section" aria-labelledby="recent-papers-heading">
@@ -14,7 +12,7 @@ const papers = (await getCollection("papers"))
     id="recent-papers-heading"
     eyebrow="Paper log"
     title="Recent paper reading"
-    description="Paper notes will use the three-pass method and reward partial progress, questions, and revisits."
+    description="Paper notes use the three-pass method and reward partial progress, questions, and revisits."
   >
     <a slot="action" href="/papers">Paper dashboard</a>
   </SectionHeader>
@@ -22,10 +20,11 @@ const papers = (await getCollection("papers"))
   {papers.length > 0 ? (
     <div class="preview-list">
       {papers.map((paper) => (
-        <Card title={paper.data.title} href={`/papers/${paper.id}/`} description={paper.data.summary}>
+        <Card title={paper.data.title} href={`/papers/${paper.id}/`} description={paper.data.oneLineSummary}>
           <div class="badge-row">
             <Badge tone="accent">{paper.data.status}</Badge>
-            <Badge tone="muted">depth {paper.data.depth}</Badge>
+            <Badge tone="muted">{paper.data.depth}</Badge>
+            {getPaperActivityDate(paper) && <Badge>{getPaperActivityDate(paper)}</Badge>}
             {paper.data.tags.slice(0, 3).map((tag) => <Badge>{tag}</Badge>)}
           </div>
         </Card>
@@ -43,10 +42,5 @@ const papers = (await getCollection("papers"))
     display: grid;
     gap: var(--space-3);
   }
-
-  .badge-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
 </style>
+

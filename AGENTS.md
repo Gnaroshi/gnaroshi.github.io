@@ -126,12 +126,13 @@ The blog system exists:
 
 ## Adding A Paper Log
 
-After the paper system exists:
+The paper system exists:
 
-1. Add a Markdown or MDX file under `src/content/papers/`.
+1. Prefer `npm run paper:new` to create a draft MDX file under `src/content/papers/`.
 2. Use the paper schema from `docs/content-model.md`.
-3. Track status, depth, difficulty, reading minutes, and dates.
-4. Use the three-pass note sections:
+3. Track `status`, `depth`, `priority`, `difficulty`, `readingTimeMinutes`, and `readDate`.
+4. Keep generated notes as `draft: true` until they should appear publicly.
+5. Use the three-pass note sections:
    - `Why I Read This`
    - `Pass 1: Skim`
    - `Pass 2: Structure`
@@ -139,7 +140,7 @@ After the paper system exists:
    - `Questions`
    - `Implementation Notes`
    - `Links`
-5. Partial progress is valid and should be represented honestly.
+6. Partial progress is valid and should be represented honestly.
 
 ## Testing And Verification
 

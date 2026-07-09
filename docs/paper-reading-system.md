@@ -74,39 +74,37 @@ Pass 3 is not required for every paper.
 
 Allowed statuses:
 
-- `queued`: saved for later.
-- `pass-1`: skimmed or currently skimming.
-- `pass-2`: structure-level reading.
-- `pass-3`: deep reading.
-- `paused`: intentionally stopped for now.
-- `done`: reading goal completed.
-- `revisit`: needs another pass later.
+- `planned`: saved for later and not counted as active reading.
+- `pass1`: skimmed or currently skimming.
+- `pass2`: structure-level reading.
+- `pass3`: deep reading.
+- `read`: reading goal completed.
+- `implemented`: implemented, reproduced, or extended.
+- `abandoned`: intentionally stopped and not counted as active reading.
 
 Status should reflect current state, not prestige.
 
 ## Depth Model
 
-Depth is numeric so it can drive sorting and stats:
+Depth is a string so it remains readable in frontmatter:
 
-- `0`: queued or metadata only.
-- `1`: pass 1 skim.
-- `2`: pass 2 structure understanding.
-- `3`: pass 3 deep dive.
-- `4`: implemented, reproduced, or extended.
+- `skim`: pass 1 relevance and summary.
+- `understand`: pass 2 structure understanding.
+- `deep`: pass 3 detailed reading.
+- `reproduce`: reproduction-oriented read.
+- `implement`: implementation or extension attempt.
 
 Depth should generally increase over time, but revisits are allowed.
 
 ## What Counts As Activity
 
-A day counts as active if at least one paper log has reading activity on that date.
+A day counts as active if at least one non-draft paper log has:
 
-Possible sources:
+- `readDate` equal to that date.
+- `status` not equal to `planned`.
+- `status` not equal to `abandoned`.
 
-- `readStartedAt`
-- `lastReadAt`
-- future optional `sessions` array
-
-For MVP, use `lastReadAt` as the primary activity date. If a future schema adds sessions, prefer session dates for heatmap precision.
+Dates are normalized to local `YYYY-MM-DD` strings without adding a timezone dependency.
 
 ## Rewarded Behaviors
 
@@ -158,7 +156,7 @@ Activity level:
 - `3`: three papers touched.
 - `4`: four or more papers touched, or one deep/implementation session if session data exists later.
 
-For MVP, level can be based on count of paper logs whose `lastReadAt` is that day.
+For MVP, level can be based on count of active paper logs whose `readDate` is that day.
 
 ## Streak Rules
 
@@ -171,7 +169,42 @@ Longest streak:
 
 - Longest consecutive run of days with activity in the available data.
 
-Use local dates consistently. The implementation should not mix UTC and local dates in a way that shifts activity across days.
+Use local date strings consistently. The implementation should not mix date formats in a way that shifts activity across days.
+
+## Adding Paper Logs
+
+Paper logs live in:
+
+```text
+src/content/papers/
+```
+
+Create a draft log with:
+
+```bash
+npm run paper:new
+```
+
+The helper creates:
+
+```text
+src/content/papers/YYYY-MM-DD-untitled-paper.mdx
+```
+
+If that file exists, it appends `-2`, `-3`, etc. It never overwrites an existing file.
+
+Generated logs default to `draft: true`. Change `draft` to `false` only when the note should appear on the public site.
+
+## Frontmatter Fields
+
+Use the schema in `docs/content-model.md`. Important fields:
+
+- `status`: `planned`, `pass1`, `pass2`, `pass3`, `read`, `implemented`, or `abandoned`.
+- `depth`: `skim`, `understand`, `deep`, `reproduce`, or `implement`.
+- `priority`: `low`, `medium`, or `high`.
+- `difficulty`: integer from `1` to `5`.
+- `readingTimeMinutes`: non-negative integer.
+- `readDate`: required unless `status` is `planned`.
 
 ## Search Rules
 

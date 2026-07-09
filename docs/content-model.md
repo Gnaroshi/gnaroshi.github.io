@@ -85,65 +85,85 @@ Blog content supports MDX, equations, code examples, table of contents, series n
 Recommended frontmatter:
 
 ```yaml
-title: "Paper title"
-slug: "optional-stable-slug"
+title: "Paper Title"
 authors:
-  - "Author One"
-  - "Author Two"
-venue: "NeurIPS"
+  - "Author A"
+  - "Author B"
+venue: "arXiv"
 year: 2026
-paperUrl: "https://arxiv.org/abs/..."
-pdfUrl: "https://arxiv.org/pdf/..."
-codeUrl: "https://github.com/..."
+paperUrl: ""
+codeUrl: ""
 projectUrl: ""
-readStartedAt: "2026-01-15"
-lastReadAt: "2026-01-15"
-status: "pass-1"
-depth: 1
+readDate: 2026-07-09
+lastReviewed:
+status: "pass1"
+depth: "skim"
+priority: "medium"
 difficulty: 3
-readingMinutes: 45
-implemented: false
-reproduced: false
+readingTimeMinutes: 60
 tags:
-  - diffusion
-  - robotics
-summary: "One or two sentence summary."
-keyTakeaway: "The main thing worth remembering."
+  - ai
+  - paper-reading
+relatedTopics:
+  - "TODO"
+oneLineSummary: "One sentence summary in my own words."
+coreQuestion: "What problem is this paper trying to solve?"
+coreIdea: "What is the key idea?"
+mainFormula: ""
+formulaInterpretation: ""
+experimentTakeaway: ""
+strengths:
+  - "TODO"
+weaknesses:
+  - "TODO"
+myConnection: ""
+nextAction: ""
+reviewAfterDays: 7
+featured: false
+draft: false
 ```
 
 Required fields:
 
 - `title`
 - `authors`
+- `venue`
 - `year`
-- `readStartedAt`
-- `lastReadAt`
 - `status`
 - `depth`
+- `priority`
 - `difficulty`
-- `readingMinutes`
-- `implemented`
-- `reproduced`
+- `readingTimeMinutes`
 - `tags`
-- `summary`
+- `oneLineSummary`
+- `coreQuestion`
+- `coreIdea`
+
+`readDate` is required unless `status` is `planned`.
 
 Allowed `status` values:
 
-- `queued`
-- `pass-1`
-- `pass-2`
-- `pass-3`
-- `paused`
-- `done`
-- `revisit`
+- `planned`
+- `pass1`
+- `pass2`
+- `pass3`
+- `read`
+- `implemented`
+- `abandoned`
 
 Allowed `depth` values:
 
-- `0`: queued or metadata only.
-- `1`: pass 1 skim.
-- `2`: pass 2 structure understanding.
-- `3`: pass 3 deep dive.
-- `4`: implemented, reproduced, or extended.
+- `skim`
+- `understand`
+- `deep`
+- `reproduce`
+- `implement`
+
+Allowed `priority` values:
+
+- `low`
+- `medium`
+- `high`
 
 Allowed `difficulty` values:
 
@@ -174,6 +194,14 @@ Use consistent headings:
 ```
 
 Not every section must be complete. Partial progress is valuable.
+
+To create a draft paper log, run:
+
+```bash
+npm run paper:new
+```
+
+This creates `src/content/papers/YYYY-MM-DD-untitled-paper.mdx` and appends `-2`, `-3`, etc. if needed. Generated logs default to `draft: true`.
 
 ## Project Schema
 

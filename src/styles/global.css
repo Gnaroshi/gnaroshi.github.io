@@ -545,6 +545,42 @@ p {
   border-bottom: 1px solid var(--color-border);
 }
 
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.activity-cell {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.activity-cell span,
+.paper-detail-grid p,
+.paper-detail-grid li {
+  color: var(--color-text-secondary);
+}
+
+.paper-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-4);
+}
+
+.paper-detail-grid > div {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.paper-detail-grid h2 {
+  font-size: var(--text-lg);
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

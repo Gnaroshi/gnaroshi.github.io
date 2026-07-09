@@ -91,3 +91,19 @@ featured: false
 ```
 
 Drafts are hidden in production builds when `draft: true`. Tags should be lowercase kebab-case and generate static tag pages under `/blog/tags/[tag]`. The blog supports MDX, code blocks, math, table of contents, series navigation, archive pages, and RSS at `/rss.xml`.
+
+## Add A Paper Log
+
+Create a new draft paper log with:
+
+```bash
+npm run paper:new
+```
+
+The helper writes a file under:
+
+```text
+src/content/papers/
+```
+
+It uses today's local date and never overwrites an existing file. Paper logs default to `draft: true`; set `draft: false` when the note should be public. The schema and status/depth definitions are documented in `docs/content-model.md` and `docs/paper-reading-system.md`.
