@@ -163,13 +163,13 @@ Deployment target is GitHub Pages with custom domain:
 gnaroshi.dev
 ```
 
-The app should eventually include:
+The app includes:
 
 - `public/CNAME`
-- GitHub Actions workflow for Pages deployment
+- `.github/workflows/deploy.yml`
 - Canonical URLs based on `https://gnaroshi.dev`
 
-Do not add deployment workflow before the app scaffold exists.
+GitHub repository Settings -> Pages should use GitHub Actions as the source, with `gnaroshi.dev` as the custom domain and HTTPS enforced after certificate provisioning.
 
 ## Commit Discipline
 

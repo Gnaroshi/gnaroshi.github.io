@@ -36,9 +36,18 @@ npm run check
 
 ## Deploy
 
-The site is configured for static output with `site` set to `https://gnaroshi.dev`.
+The site deploys to GitHub Pages through GitHub Actions.
 
-GitHub Pages deployment should build the Astro site and publish the generated `dist/` directory. The custom domain is set by `public/CNAME`.
+- Pushing to `main` triggers `.github/workflows/deploy.yml`.
+- The workflow builds the Astro static site and deploys the generated Pages artifact.
+- GitHub repository Settings -> Pages -> Build and deployment -> Source should be set to **GitHub Actions**.
+- The custom domain should be set to `gnaroshi.dev`.
+- `public/CNAME` contains `gnaroshi.dev` so the built artifact keeps the custom domain file.
+- DNS for `gnaroshi.dev` must point to GitHub Pages.
+- `www.gnaroshi.dev` can be configured separately with a CNAME record if desired.
+- Enable **Enforce HTTPS** after GitHub finishes issuing the certificate.
+
+Manual repository settings, DNS records, and troubleshooting notes are documented in `docs/deployment.md`.
 
 ## Edit Profile Data
 
