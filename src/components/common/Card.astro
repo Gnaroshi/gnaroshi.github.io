@@ -1,0 +1,62 @@
+---
+interface Props {
+  title?: string;
+  href?: string;
+  eyebrow?: string;
+  description?: string;
+}
+
+const { title, href, eyebrow, description } = Astro.props;
+const TitleTag = href ? "a" : "span";
+---
+
+<article class="card">
+  {eyebrow && <p class="card__eyebrow">{eyebrow}</p>}
+  {title && (
+    <h3 class="card__title">
+      <TitleTag href={href}>{title}</TitleTag>
+    </h3>
+  )}
+  {description && <p class="card__description">{description}</p>}
+  <slot />
+</article>
+
+<style>
+  .card {
+    display: grid;
+    gap: var(--space-3);
+    height: 100%;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card__eyebrow {
+    margin: 0;
+    color: var(--color-accent);
+    font-size: var(--text-sm);
+    font-weight: 700;
+  }
+
+  .card__title {
+    margin: 0;
+    font-size: var(--text-lg);
+  }
+
+  .card__title a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .card__title a:hover {
+    color: var(--color-accent);
+  }
+
+  .card__description {
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+</style>
+

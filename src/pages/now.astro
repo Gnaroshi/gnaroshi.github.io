@@ -1,26 +1,39 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Card from "../components/common/Card.astro";
+import SectionHeader from "../components/common/SectionHeader.astro";
+import { now } from "../data/now";
 ---
 
 <BaseLayout title="Now" description="Current focus, current reading, and current projects.">
   <header class="page-header">
     <p class="eyebrow">Now</p>
     <h1>Current focus</h1>
-    <p class="lede">Current reading, active research questions, and projects in progress.</p>
+    <p class="lede">A lightweight personal status page. Last updated {now.lastUpdated}.</p>
   </header>
 
-  <section class="section" aria-labelledby="focus-heading">
-    <h2 id="focus-heading">Focus Areas</h2>
-    <div class="grid">
-      <article class="panel">
-        <h3>Reading</h3>
-        <p>Recent paper notes and revisits will be surfaced from the paper tracker.</p>
-      </article>
-      <article class="panel">
-        <h3>Building</h3>
-        <p>Active software and research systems will be linked from project writeups.</p>
-      </article>
+  <section class="section" aria-labelledby="reading-heading">
+    <SectionHeader id="reading-heading" title="Currently reading" description="Reading topics and paper-log setup work." />
+    <div class="timeline-list">
+      {now.currentlyReading.map((item) => <Card description={item} />)}
     </div>
   </section>
-</BaseLayout>
 
+  <section class="section" aria-labelledby="building-heading">
+    <SectionHeader id="building-heading" title="Currently building" description="Active project and infrastructure work." />
+    <div class="timeline-list">
+      {now.currentlyBuilding.map((item) => <Card description={item} />)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="questions-heading">
+    <SectionHeader id="questions-heading" title="Current research questions" description="Questions that should influence future notes and project writeups." />
+    <ul class="list">
+      {now.currentQuestions.map((question) => (
+        <li class="list-item">
+          <p>{question}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

@@ -1,0 +1,48 @@
+---
+import Badge from "../common/Badge.astro";
+import Card from "../common/Card.astro";
+import ExternalLink from "../common/ExternalLink.astro";
+import SectionHeader from "../common/SectionHeader.astro";
+import { projects } from "../../data/projects";
+
+const featuredProjects = projects.filter((project) => project.featured);
+---
+
+<section class="section" aria-labelledby="featured-projects-heading">
+  <SectionHeader
+    id="featured-projects-heading"
+    eyebrow="Projects"
+    title="Featured project areas"
+    description="Current and planned project areas. Placeholder items are labeled until replaced by full writeups."
+  >
+    <a slot="action" href="/projects">All projects</a>
+  </SectionHeader>
+
+  <div class="project-grid">
+    {featuredProjects.map((project) => (
+      <Card title={project.title} description={project.summary}>
+        <div class="badge-row">
+          <Badge tone={project.status === "active" ? "accent" : "default"}>{project.status}</Badge>
+          {project.tags.map((tag) => <Badge tone="muted">{tag}</Badge>)}
+        </div>
+        <div class="link-row">
+          {project.links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
+        </div>
+      </Card>
+    ))}
+  </div>
+</section>
+
+<style>
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: var(--space-4);
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+</style>

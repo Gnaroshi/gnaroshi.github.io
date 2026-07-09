@@ -1,6 +1,21 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Badge from "../components/common/Badge.astro";
+import Card from "../components/common/Card.astro";
+import ExternalLink from "../components/common/ExternalLink.astro";
+import SectionHeader from "../components/common/SectionHeader.astro";
 import { profile } from "../data/profile";
+import { skillGroups } from "../data/skills";
+import { education, researchTimeline } from "../data/timeline";
+
+const publicLinks = [
+  { label: "GitHub", href: profile.links.github },
+  { label: "Website", href: profile.links.website },
+  profile.links.email ? { label: "Email", href: `mailto:${profile.links.email}` } : null,
+  profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar } : null,
+  profile.links.linkedin ? { label: "LinkedIn", href: profile.links.linkedin } : null,
+  profile.links.cv ? { label: "CV", href: profile.links.cv } : null
+].filter(Boolean) as Array<{ label: string; href: string }>;
 ---
 
 <BaseLayout title="About" description={`About ${profile.displayName}, ${profile.headline}.`}>
@@ -10,19 +25,62 @@ import { profile } from "../data/profile";
     <p class="lede">{profile.shortBio}</p>
   </header>
 
-  <section class="section" aria-labelledby="background-heading">
-    <h2 id="background-heading">Background</h2>
-    <p>
-      I work at the intersection of AI research, software engineering, and research workflows.
-      This page will collect biographical notes, education, skills, and public research context.
-    </p>
+  <section class="section" aria-labelledby="bio-heading">
+    <SectionHeader id="bio-heading" title="Bio" description="A concise public introduction, editable from profile data." />
+    <div class="prose-stack">
+      {profile.bio.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
   </section>
 
-  <section class="section" aria-labelledby="interests-heading">
-    <h2 id="interests-heading">Interests</h2>
-    <ul class="tag-list">
-      {profile.interests.map((interest) => <li>{interest}</li>)}
+  <section class="section" aria-labelledby="education-heading">
+    <SectionHeader id="education-heading" title="Education" description="Kept honest until formal public details are ready." />
+    <div class="timeline-list">
+      {education.map((item) => (
+        <Card title={item.label} eyebrow={item.period} description={item.description} />
+      ))}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="research-background-heading">
+    <SectionHeader id="research-background-heading" title="Research background" description="The areas and workflows this site is built around." />
+    <div class="prose-stack">
+      {profile.researchBackground.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+    <div class="timeline-list">
+      {researchTimeline.map((item) => (
+        <Card title={item.label} eyebrow={item.period} description={item.description} />
+      ))}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="skills-heading">
+    <SectionHeader id="skills-heading" title="Skills and tools" description="Practical areas used for research, writing, and software work." />
+    <div class="grid">
+      {skillGroups.map((group) => (
+        <Card title={group.title}>
+          <div class="badge-row">
+            {group.skills.map((skill) => <Badge>{skill}</Badge>)}
+          </div>
+        </Card>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="values-heading">
+    <SectionHeader id="values-heading" title="Values as a researcher" description="How I want the notes and tools on this site to behave." />
+    <ul class="list">
+      {profile.researcherValues.map((value) => (
+        <li class="list-item">
+          <p>{value}</p>
+        </li>
+      ))}
     </ul>
   </section>
-</BaseLayout>
 
+  <section class="section" aria-labelledby="links-heading">
+    <SectionHeader id="links-heading" title="Links" description="Public links only." />
+    <div class="link-row">
+      {publicLinks.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
+    </div>
+  </section>
+</BaseLayout>

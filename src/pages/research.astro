@@ -1,28 +1,67 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Badge from "../components/common/Badge.astro";
+import Card from "../components/common/Card.astro";
+import SectionHeader from "../components/common/SectionHeader.astro";
 import { profile } from "../data/profile";
+import { openProblems, paperStudyNotes, readingMap, researchQuestions } from "../data/research";
 ---
 
-<BaseLayout title="Research" description="Research interests, questions, reading map, and open problems." width="wide">
+<BaseLayout title="Research" description="Research questions, reading map, open problems, and paper study notes." width="wide">
   <header class="page-header">
     <p class="eyebrow">Research</p>
-    <h1>Research questions and reading map</h1>
+    <h1>Questions, papers, and working maps</h1>
     <p class="lede">
-      A working map of AI systems, vision-language models, efficient research workflows,
-      and human-AI tools.
+      This page is a living index of research questions and study habits rather than a polished publication list.
     </p>
   </header>
 
   <section class="section" aria-labelledby="questions-heading">
-    <h2 id="questions-heading">Current Questions</h2>
+    <SectionHeader
+      id="questions-heading"
+      title="Research questions I care about"
+      description="Questions are kept explicit so notes and projects can be organized around them."
+    />
     <div class="grid">
-      {profile.interests.map((interest) => (
-        <article class="panel">
-          <h3>{interest}</h3>
-          <p>Notes and open problems for this area will be linked here as the research log grows.</p>
-        </article>
+      {researchQuestions.map((question) => (
+        <Card title={question.title} description={question.summary} />
+      ))}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="interests-heading">
+    <SectionHeader id="interests-heading" title="Current interests" description="Top-level areas from profile data." />
+    <div class="badge-row">
+      {profile.interests.map((interest) => <Badge tone="accent">{interest}</Badge>)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="reading-map-heading">
+    <SectionHeader id="reading-map-heading" title="Reading map" description="A compact map for connecting papers, notes, and implementation attempts." />
+    <div class="grid">
+      {readingMap.map((item) => (
+        <Card title={item.area} description={item.notes} />
+      ))}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="open-problems-heading">
+    <SectionHeader id="open-problems-heading" title="Open problems" description="Practical problems this site should help clarify over time." />
+    <ul class="list">
+      {openProblems.map((problem) => (
+        <li class="list-item">
+          <p>{problem}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="study-heading">
+    <SectionHeader id="study-heading" title="How I study papers" description="The paper tracker is designed around a three-pass reading method." />
+    <div class="grid">
+      {paperStudyNotes.map((note) => (
+        <Card title={note.title} description={note.summary} />
       ))}
     </div>
   </section>
 </BaseLayout>
-

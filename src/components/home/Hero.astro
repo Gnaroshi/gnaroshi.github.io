@@ -1,0 +1,128 @@
+---
+import ExternalLink from "../common/ExternalLink.astro";
+import { profile } from "../../data/profile";
+---
+
+<section class="hero" aria-labelledby="home-title">
+  <div class="hero__copy">
+    <p class="hero__eyebrow">{profile.location}</p>
+    <h1 id="home-title">{profile.displayName}</h1>
+    <p class="hero__headline">{profile.headline}</p>
+    <p class="hero__bio">{profile.shortBio}</p>
+    <div class="hero__actions" aria-label="Primary actions">
+      <a class="button button--primary" href="/blog">Read the blog</a>
+      <a class="button" href="/papers">View paper log</a>
+      <a class="button" href="/projects">See projects</a>
+      <ExternalLink href={profile.links.github}>GitHub</ExternalLink>
+    </div>
+  </div>
+
+  <aside class="hero__note" aria-label="Site purpose">
+    <p class="hero__note-label">Research notebook</p>
+    <p>
+      Technical notes, paper logs, project writeups, and current questions collected as a static,
+      Markdown-first site.
+    </p>
+  </aside>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr);
+    gap: var(--space-6);
+    align-items: end;
+    padding: var(--space-6) 0 var(--space-7);
+  }
+
+  .hero__copy {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .hero__eyebrow,
+  .hero__note-label {
+    margin: 0;
+    color: var(--color-accent);
+    font-size: var(--text-sm);
+    font-weight: 700;
+  }
+
+  .hero h1 {
+    max-width: 18ch;
+  }
+
+  .hero__headline {
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--text-xl);
+    font-weight: 650;
+  }
+
+  .hero__bio {
+    max-width: 66ch;
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--text-lg);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+    margin-top: var(--space-3);
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .button:hover {
+    border-color: var(--color-border-strong);
+    color: var(--color-accent);
+  }
+
+  .button--primary {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  .button--primary:hover {
+    background: var(--color-accent-hover);
+    color: var(--color-bg);
+  }
+
+  .hero__note {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  .hero__note p:last-child {
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 820px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+

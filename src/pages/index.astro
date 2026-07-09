@@ -1,47 +1,49 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import FeaturedProjects from "../components/home/FeaturedProjects.astro";
+import Hero from "../components/home/Hero.astro";
+import InterestGrid from "../components/home/InterestGrid.astro";
+import RecentPapers from "../components/home/RecentPapers.astro";
+import RecentPosts from "../components/home/RecentPosts.astro";
+import Card from "../components/common/Card.astro";
+import SectionHeader from "../components/common/SectionHeader.astro";
 import { profile } from "../data/profile";
+import { now } from "../data/now";
+import { researchQuestions } from "../data/research";
 ---
 
 <BaseLayout title={profile.siteName} description={profile.shortBio} width="wide">
-  <header class="page-header">
-    <p class="eyebrow">{profile.location}</p>
-    <h1>{profile.displayName}</h1>
-    <p class="lede">{profile.headline}. {profile.shortBio}</p>
-    <div class="link-row" aria-label="Primary links">
-      <a href="/research">Research</a>
-      <a href="/blog">Blog</a>
-      <a href="/papers">Paper reading</a>
-      <a href={profile.links.github}>GitHub</a>
-    </div>
-  </header>
+  <Hero />
 
-  <section class="section" aria-labelledby="interests-heading">
-    <h2 id="interests-heading">Current Interests</h2>
-    <ul class="tag-list">
-      {profile.interests.map((interest) => <li>{interest}</li>)}
-    </ul>
+  <section class="section" aria-labelledby="focus-heading">
+    <SectionHeader
+      id="focus-heading"
+      eyebrow="Current focus"
+      title="What I am working on now"
+      description={`Last updated ${now.lastUpdated}. This is intentionally lightweight and editable in src/data/now.ts.`}
+    >
+      <a slot="action" href="/now">Now page</a>
+    </SectionHeader>
+    <div class="grid">
+      <Card title="Reading" description={now.currentlyReading[0]} />
+      <Card title="Building" description={now.currentlyBuilding[0]} />
+      <Card title="Question" description={researchQuestions[0].summary} />
+    </div>
   </section>
 
-  <section class="section" aria-labelledby="site-map-heading">
-    <h2 id="site-map-heading">Research Notebook</h2>
-    <div class="grid">
-      <article class="panel">
-        <h3>Blog</h3>
-        <p>Technical notes, research logs, implementation notes, and project writeups.</p>
-        <a href="/blog">Read posts</a>
-      </article>
-      <article class="panel">
-        <h3>Papers</h3>
-        <p>Daily paper reading activity, three-pass notes, questions, and reproduction attempts.</p>
-        <a href="/papers">View paper tracker</a>
-      </article>
-      <article class="panel">
-        <h3>Projects</h3>
-        <p>Software and research systems documented through problem framing and technical decisions.</p>
-        <a href="/projects">Browse projects</a>
-      </article>
-    </div>
+  <InterestGrid />
+  <FeaturedProjects />
+  <RecentPosts />
+  <RecentPapers />
+
+  <section class="section" aria-labelledby="contact-cta-heading">
+    <SectionHeader
+      id="contact-cta-heading"
+      eyebrow="Contact"
+      title="For research, software, and collaboration"
+      description="The best public entry point is GitHub for now. More contact links can be added in src/data/profile.ts."
+    >
+      <a slot="action" href="/contact">Contact links</a>
+    </SectionHeader>
   </section>
 </BaseLayout>
-

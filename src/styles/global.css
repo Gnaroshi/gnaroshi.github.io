@@ -267,6 +267,26 @@ p {
   gap: var(--space-4);
 }
 
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--space-4);
+}
+
+.timeline-list,
+.prose-stack {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.prose-stack {
+  max-width: 72ch;
+}
+
+.prose-stack p {
+  color: var(--color-text-secondary);
+}
+
 .panel,
 .stat {
   border: 1px solid var(--color-border);
@@ -308,6 +328,13 @@ p {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
+  align-items: center;
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
   align-items: center;
 }
 
@@ -414,4 +441,3 @@ p {
     scroll-behavior: auto;
   }
 }
-

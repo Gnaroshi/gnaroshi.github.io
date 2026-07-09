@@ -50,3 +50,14 @@ src/data/profile.ts
 
 Edit that file for display name, headline, short bio, interests, location, and public links.
 
+Additional editable page data lives in:
+
+```text
+src/data/skills.ts
+src/data/timeline.ts
+src/data/research.ts
+src/data/projects.ts
+src/data/now.ts
+```
+
+Project cards currently use `src/data/projects.ts` because the early homepage needs lightweight, editable project metadata. Longer technical project writeups can later be added under `src/content/projects/`.

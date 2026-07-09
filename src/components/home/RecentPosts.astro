@@ -1,0 +1,44 @@
+---
+import { getCollection } from "astro:content";
+import Card from "../common/Card.astro";
+import SectionHeader from "../common/SectionHeader.astro";
+
+const posts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 3);
+---
+
+<section class="section" aria-labelledby="recent-posts-heading">
+  <SectionHeader
+    id="recent-posts-heading"
+    eyebrow="Blog"
+    title="Recent technical notes"
+    description="MDX posts will appear here once public notes are committed."
+  >
+    <a slot="action" href="/blog">Blog index</a>
+  </SectionHeader>
+
+  {posts.length > 0 ? (
+    <div class="preview-list">
+      {posts.map((post) => (
+        <Card title={post.data.title} href={`/blog/${post.id}/`} description={post.data.description}>
+          <p class="metadata">
+            {post.data.publishedAt.toLocaleDateString("en", { year: "numeric", month: "short", day: "numeric" })}
+            {" · "}
+            {post.data.tags.join(", ")}
+          </p>
+        </Card>
+      ))}
+    </div>
+  ) : (
+    <p class="empty-state">No public blog posts yet. The first technical notes will appear here as MDX files.</p>
+  )}
+</section>
+
+<style>
+  .preview-list {
+    display: grid;
+    gap: var(--space-3);
+  }
+</style>

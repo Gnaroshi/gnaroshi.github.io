@@ -1,33 +1,51 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Card from "../components/common/Card.astro";
+import ExternalLink from "../components/common/ExternalLink.astro";
+import SectionHeader from "../components/common/SectionHeader.astro";
 import { profile } from "../data/profile";
 
 const contactLinks = [
-  { label: "GitHub", href: profile.links.github },
-  { label: "Website", href: profile.links.website },
-  profile.links.email ? { label: "Email", href: `mailto:${profile.links.email}` } : null,
-  profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar } : null,
-  profile.links.linkedin ? { label: "LinkedIn", href: profile.links.linkedin } : null,
-  profile.links.cv ? { label: "CV", href: profile.links.cv } : null
-].filter(Boolean) as Array<{ label: string; href: string }>;
+  { label: "GitHub", href: profile.links.github, note: "Best public place to see code and repository activity." },
+  { label: "Website", href: profile.links.website, note: "Canonical home for notes, projects, and paper logs." },
+  profile.links.email
+    ? { label: "Email", href: `mailto:${profile.links.email}`, note: "Direct contact." }
+    : { label: "Email", href: "#email-placeholder", note: "Email is not published yet." },
+  profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar, note: "Research profile." } : null,
+  profile.links.linkedin ? { label: "LinkedIn", href: profile.links.linkedin, note: "Professional profile." } : null,
+  profile.links.cv ? { label: "CV", href: profile.links.cv, note: "Public CV." } : null
+].filter(Boolean) as Array<{ label: string; href: string; note: string }>;
 ---
 
 <BaseLayout title="Contact" description="Public contact links for Gnaroshi.">
   <header class="page-header">
     <p class="eyebrow">Contact</p>
-    <h1>Public links</h1>
-    <p class="lede">The intentionally public places to find or contact me.</p>
+    <h1>Public links and collaboration</h1>
+    <p class="lede">
+      I am interested in research workflows, AI systems, paper reading tools, and software that helps people think clearly.
+    </p>
   </header>
 
+  <section class="section" aria-labelledby="collaboration-heading">
+    <SectionHeader
+      id="collaboration-heading"
+      title="Collaboration note"
+      description="The public contact surface is intentionally small for now. GitHub is the best place to start."
+    />
+  </section>
+
   <section class="section" aria-labelledby="links-heading">
-    <h2 id="links-heading">Links</h2>
-    <ul class="list">
+    <SectionHeader id="links-heading" title="Links" description="Editable in src/data/profile.ts." />
+    <div class="timeline-list">
       {contactLinks.map((link) => (
-        <li class="list-item">
-          <h3><a href={link.href}>{link.label}</a></h3>
-        </li>
+        <Card title={link.label} description={link.note}>
+          {link.href.startsWith("#") ? (
+            <p id="email-placeholder" class="metadata">Placeholder: add a public email in src/data/profile.ts.</p>
+          ) : (
+            <ExternalLink href={link.href}>{link.label}</ExternalLink>
+          )}
+        </Card>
       ))}
-    </ul>
+    </div>
   </section>
 </BaseLayout>
-

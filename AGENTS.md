@@ -92,6 +92,8 @@ Astro 7 content collections are defined in `src/content.config.ts` using `glob()
 - Use React only for isolated interactive islands.
 - Keep content and UI separate.
 - Keep personal identity data centralized in `src/data/profile.ts`.
+- Keep lightweight editable page data in `src/data/*.ts`.
+- Project cards currently come from `src/data/projects.ts`; use `src/content/projects/` later for long-form MDX writeups.
 - Keep design tokens centralized in `src/styles/tokens.css`.
 - Keep utilities in `src/lib/`.
 - Prefer semantic HTML and accessible defaults.
