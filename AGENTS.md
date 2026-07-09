@@ -174,6 +174,21 @@ Do not add deployment workflow before the app scaffold exists.
 - Do not mix app scaffolding with unrelated content changes.
 - Do not add random templates.
 - Do not reintroduce old Lab-LVM files.
+- For every future user prompt that changes files, create a git commit after verification.
+- Use clear conventional commit messages when possible.
+- Include enough detail in commit bodies or final reports for the work to be auditable later.
+- Push completed commits to GitHub unless the user explicitly asks not to push or credentials/network access are blocked.
+
+## GitHub Logging Policy
+
+Future Codex sessions should leave a clear trail on GitHub:
+
+- For small, direct changes on `main`, commit and push with a concise message plus a detailed final summary.
+- For larger work, risky changes, or multi-step features, prefer a branch and pull request when practical.
+- PR descriptions should summarize the goal, important implementation details, verification commands, and known follow-up work.
+- If a PR cannot be opened because tooling, auth, or network access is blocked, push the branch if possible and report the exact blocker.
+- If a prompt only asks a question and no files change, do not create an empty commit; instead report the commands run and findings clearly.
+- Always report the final commit hash, pushed branch, verification results, and any failed commands.
 
 ## Future Codex Workflow
 
@@ -183,4 +198,5 @@ Before making changes:
 2. Read the relevant planning document.
 3. Make the smallest complete change for the requested phase.
 4. Run appropriate checks.
-5. Report changed files, commands run, and any failures.
+5. Commit and push file changes.
+6. Report changed files, commands run, verification results, commit hash, and any failures.
