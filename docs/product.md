@@ -191,9 +191,9 @@ The project is successful when:
 
 - A visitor can understand who Gnaroshi is within 10 seconds of opening `/`.
 - A researcher can quickly find interests, papers, projects, and writing.
-- Adding a blog post requires adding one MDX file.
-- Adding a paper log requires adding one Markdown or MDX file.
-- Paper reading activity is derived from committed content.
+- Adding a blog post requires one canonical MDX record in `gnaroshi-writing`, validated and published through Studio.
+- Adding a paper log requires one canonical MDX record in `gnaroshi-paper-lab`, validated and published through Studio.
+- Paper reading activity is derived from committed public reading-session evidence in the generated feed.
 - The site builds as a static artifact.
 - Deployment to GitHub Pages is reproducible through GitHub Actions.
 - Seed, hidden, unlisted, demo, and system content never become public research metrics.

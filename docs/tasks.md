@@ -10,6 +10,7 @@
 - [x] GitHub Pages deployment
 - [x] Optional Cloudflare Worker and live oral-exam frontend scaffold
 - [x] Product-level redesign, evidence gates, accessibility, and route QA
+- [x] Multi-repository cutover to public content-feed imports
 - [ ] Future feature expansion
 
 ## Phase 0: Repository And Bootstrap
@@ -31,7 +32,8 @@
   - `build`
   - `preview`
   - `check`
-  - `paper:new`
+  - `content:pull`
+  - `content:check`
 - [x] Add base `astro.config.mjs`.
 - [x] Add `tsconfig.json`.
 - [x] Add initial `src/` and `public/` structure.
@@ -69,9 +71,9 @@
 - [x] Ensure personal data is imported from `profile.ts`.
 - [ ] Add real project writeups under `src/content/projects/`.
 
-## Phase 4: Blog System
+## Phase 4: Blog Presentation
 
-- [x] Add blog content collection schema.
+- [x] Add feed-backed blog content collection schema.
 - [x] Add `/blog`.
 - [x] Add `/blog/[slug]`.
 - [x] Add `/blog/tags/[tag]`.
@@ -89,11 +91,10 @@
 - [ ] Add deeper real posts over time.
 - [ ] Add richer blog search if content volume grows.
 
-## Phase 5: Paper Reading Tracker
+## Phase 5: Paper Reading Presentation
 
-- [x] Add paper content collection schema.
-- [x] Add paper log template.
-- [x] Add `npm run paper:new`.
+- [x] Add feed-backed paper content collection schema.
+- [x] Move paper templates and creation commands to `gnaroshi-paper-lab` and `gnaroshi-studio`.
 - [x] Add `/papers`.
 - [x] Add `/papers/[slug]`.
 - [x] Implement paper reading stats utilities.
@@ -167,16 +168,15 @@
 - [x] Add localized-ready custom 404 page.
 - [ ] Add lightweight analytics only with explicit approval.
 - [ ] Add MCP-assisted local workflow only through untracked local config.
-- [x] Add optional Cloudflare Worker API scaffold for live voice oral exams.
+- [x] Move the optional Cloudflare Worker and AI endpoints to `gnaroshi-api`.
 - [x] Add WebRTC, text, and manual oral-exam frontend fallbacks.
-- [ ] Deploy `api.gnaroshi.dev` and register `OPENAI_API_KEY` as a Worker secret.
+- [ ] Deploy `api.gnaroshi.dev` from `gnaroshi-api` and register `OPENAI_API_KEY` as a Worker secret.
 - [ ] Set the GitHub Actions variable `PUBLIC_AI_API_BASE_URL` after Worker deployment.
 
 ## Guardrails For All Phases
 
 - [ ] Do not recover or reference old Lab-LVM code.
-- [ ] Do not introduce a backend without explicit approval.
-- [ ] Do not introduce a database without explicit approval.
+- [ ] Do not introduce a backend or database into the website repository.
 - [ ] Do not add OAuth in MVP.
 - [ ] Do not commit secrets or local MCP configuration.
 - [ ] Keep content and UI separate.
@@ -196,3 +196,12 @@
 - [x] Add i18n, hardcoded-UI, and translation-link validation scripts.
 - [ ] Translate future paper notes selectively when owner review is available.
 - [ ] Review newly added Korean research claims with the owner before publication.
+
+## Phase 9: Multi-Repository Cutover
+
+- [x] Keep canonical paper content in private `gnaroshi-paper-lab`.
+- [x] Keep canonical writing in private `gnaroshi-writing`.
+- [x] Generate public projections through private `gnaroshi-studio`.
+- [x] Consume only public `gnaroshi-content-feed` in Astro and Pages Actions.
+- [x] Keep Worker code and secrets outside the website in private `gnaroshi-api`.
+- [x] Remove website authoring, AI generation, publishing, and API responsibilities.
