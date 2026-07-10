@@ -1,0 +1,34 @@
+---
+import { MOMENTUM_COMPONENT_WEIGHTS } from "../../utils/momentumScore";
+
+const weights = [
+  ["Reading consistency", MOMENTUM_COMPONENT_WEIGHTS.readingConsistency],
+  ["Understanding quality", MOMENTUM_COMPONENT_WEIGHTS.understandingQuality],
+  ["Retrieval strength", MOMENTUM_COMPONENT_WEIGHTS.retrievalStrength],
+  ["Research output", MOMENTUM_COMPONENT_WEIGHTS.researchOutput],
+  ["Revisit discipline", MOMENTUM_COMPONENT_WEIGHTS.revisitDiscipline],
+  ["Balance & integrity", MOMENTUM_COMPONENT_WEIGHTS.balanceIntegrity]
+] as const;
+---
+
+<details class="momentum-methodology">
+  <summary>How this score is calculated</summary>
+  <div class="momentum-methodology__body">
+    <p>
+      Each available component is scored from public evidence and combined by weight. A missing component is excluded from
+      the weighted score and lowers confidence instead of becoming an automatic zero.
+    </p>
+    <dl>
+      {weights.map(([label, weight]) => (
+        <div>
+          <dt>{label}</dt>
+          <dd>{weight}%</dd>
+        </div>
+      ))}
+    </dl>
+    <p>
+      Daily paper volume is capped at two for consistency, GitHub activity is capped at four units per day, and bursts or
+      unsupported deep labels are flagged. The final score is never multiplied by confidence.
+    </p>
+  </div>
+</details>

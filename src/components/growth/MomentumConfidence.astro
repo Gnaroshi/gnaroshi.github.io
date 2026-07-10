@@ -1,0 +1,25 @@
+---
+import type { MomentumResult } from "../../types/momentum";
+
+interface Props {
+  confidence: MomentumResult["confidence"];
+}
+
+const { confidence } = Astro.props;
+---
+
+<section class="momentum-confidence" aria-labelledby="momentum-confidence-heading">
+  <div class="momentum-confidence__header">
+    <div>
+      <p class="eyebrow">Evidence confidence</p>
+      <h2 id="momentum-confidence-heading">{confidence.label}</h2>
+    </div>
+    <strong aria-label={`${confidence.score} out of 100 confidence`}>{confidence.score}</strong>
+  </div>
+  <div class="momentum-meter" aria-hidden="true">
+    <span style={`width: ${confidence.score}%`}></span>
+  </div>
+  <ul>
+    {confidence.reasons.map((reason) => <li>{reason}</li>)}
+  </ul>
+</section>

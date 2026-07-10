@@ -27,6 +27,11 @@
   --color-score-solid: #2463a6;
   --color-score-strong: #18704a;
   --color-score-excellent: #116c5a;
+  --color-momentum-seed: var(--color-score-seed);
+  --color-momentum-building: var(--color-score-developing);
+  --color-momentum-steady: var(--color-score-solid);
+  --color-momentum-strong: var(--color-score-strong);
+  --color-momentum-compounding: var(--color-score-excellent);
 
   --color-heatmap-0: #e8ebe5;
   --color-heatmap-1: #bddccd;
@@ -94,6 +99,11 @@
   --color-score-solid: #8ab4ff;
   --color-score-strong: #79d6a4;
   --color-score-excellent: #68d0b2;
+  --color-momentum-seed: var(--color-score-seed);
+  --color-momentum-building: var(--color-score-developing);
+  --color-momentum-steady: var(--color-score-solid);
+  --color-momentum-strong: var(--color-score-strong);
+  --color-momentum-compounding: var(--color-score-excellent);
 
   --color-heatmap-0: #1b211d;
   --color-heatmap-1: #214637;

@@ -1729,6 +1729,259 @@ p {
   align-items: start;
 }
 
+.momentum-page,
+.momentum-score__summary,
+.momentum-confidence,
+.momentum-component,
+.momentum-notice,
+.momentum-methodology__body {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.momentum-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-5);
+  align-items: end;
+  padding-bottom: var(--space-6);
+}
+
+.momentum-hero > div {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.momentum-score {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  border: 1px solid var(--color-border);
+  border-top: 4px solid var(--momentum-level-color, var(--color-accent));
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.momentum-score--seed {
+  --momentum-level-color: var(--color-momentum-seed);
+}
+
+.momentum-score--building {
+  --momentum-level-color: var(--color-momentum-building);
+}
+
+.momentum-score--steady {
+  --momentum-level-color: var(--color-momentum-steady);
+}
+
+.momentum-score--strong {
+  --momentum-level-color: var(--color-momentum-strong);
+}
+
+.momentum-score--compounding {
+  --momentum-level-color: var(--color-momentum-compounding);
+}
+
+.momentum-score__summary,
+.momentum-confidence {
+  padding: var(--space-5);
+}
+
+.momentum-score__summary {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+}
+
+.momentum-score__summary > p {
+  grid-column: 1 / -1;
+  color: var(--color-text-secondary);
+}
+
+.momentum-score__value {
+  display: grid;
+  justify-items: end;
+  color: var(--momentum-level-color);
+}
+
+.momentum-score__value strong {
+  font-size: 3.4rem;
+  line-height: 0.9;
+}
+
+.momentum-score__value span,
+.momentum-component__confidence,
+.momentum-component__status {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.momentum-score__scope {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.momentum-confidence {
+  align-content: start;
+  border-left: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+}
+
+.momentum-confidence__header,
+.momentum-component header {
+  display: flex;
+  gap: var(--space-3);
+  align-items: start;
+  justify-content: space-between;
+}
+
+.momentum-confidence__header > div,
+.momentum-component header > div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.momentum-confidence__header strong,
+.momentum-component header > strong {
+  color: var(--color-accent);
+  font-size: var(--text-2xl);
+}
+
+.momentum-confidence ul,
+.momentum-component ul,
+.momentum-notice ul {
+  margin: 0;
+  padding-left: var(--space-5);
+  color: var(--color-text-secondary);
+}
+
+.momentum-meter {
+  overflow: hidden;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--color-bg-muted);
+}
+
+.momentum-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent);
+}
+
+.momentum-component-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.momentum-component {
+  align-content: start;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.momentum-component--unavailable {
+  border-style: dashed;
+  background: var(--color-surface-muted);
+}
+
+.momentum-component p,
+.momentum-notice p,
+.momentum-methodology p {
+  color: var(--color-text-secondary);
+}
+
+.momentum-component header span {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+}
+
+.momentum-next-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: var(--space-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.momentum-next-actions li {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4) 0;
+  border-top: 2px solid var(--color-accent);
+}
+
+.momentum-next-actions span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.momentum-evidence-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+
+.momentum-notice {
+  align-content: start;
+  padding: var(--space-4);
+  border-left: 3px solid var(--color-status-structured);
+  background: var(--color-surface-muted);
+}
+
+.momentum-notice--flag {
+  border-left-color: var(--color-status-skim);
+}
+
+.momentum-methodology {
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.momentum-methodology summary {
+  padding: var(--space-4) 0;
+  color: var(--color-text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.momentum-methodology__body {
+  max-width: 72ch;
+  padding-bottom: var(--space-5);
+}
+
+.momentum-methodology dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--space-5);
+  margin: 0;
+}
+
+.momentum-methodology dl div {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.momentum-methodology dd {
+  margin: 0;
+  font-weight: 700;
+}
+
 @media (max-width: 820px) {
   .site-header__inner {
     grid-template-columns: 1fr auto;
@@ -1757,8 +2010,17 @@ p {
   .graph-layout,
   .graph-filter-grid,
   .graph-edge-row,
-  .paper-nav {
+  .paper-nav,
+  .momentum-hero,
+  .momentum-score,
+  .momentum-component-grid,
+  .momentum-methodology dl {
     grid-template-columns: 1fr;
+  }
+
+  .momentum-confidence {
+    border-top: 1px solid var(--color-border);
+    border-left: 0;
   }
 
   .post-nav div:last-child,
@@ -1806,6 +2068,13 @@ p {
   .new-paper-template,
   .paper-card,
   .paper-stat-card {
+    padding: var(--space-3);
+  }
+
+  .momentum-score__summary,
+  .momentum-confidence,
+  .momentum-component,
+  .momentum-notice {
     padding: var(--space-3);
   }
 

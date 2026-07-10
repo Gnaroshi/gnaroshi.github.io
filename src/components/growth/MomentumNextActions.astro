@@ -1,0 +1,16 @@
+---
+interface Props {
+  actions: string[];
+}
+
+const { actions } = Astro.props;
+---
+
+<ol class="momentum-next-actions">
+  {actions.map((action, index) => (
+    <li>
+      <span>{index + 1}</span>
+      <p>{action}</p>
+    </li>
+  ))}
+</ol>

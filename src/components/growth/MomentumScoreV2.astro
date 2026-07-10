@@ -1,0 +1,35 @@
+---
+import type { MomentumResult } from "../../types/momentum";
+import MomentumConfidence from "./MomentumConfidence.astro";
+
+interface Props {
+  result: MomentumResult;
+}
+
+const { result } = Astro.props;
+const levelLabels: Record<MomentumResult["level"], string> = {
+  seed: "Seed",
+  building: "Building",
+  steady: "Steady",
+  strong: "Strong",
+  compounding: "Compounding"
+};
+---
+
+<section class:list={["momentum-score", `momentum-score--${result.level}`]} aria-labelledby="momentum-score-heading">
+  <div class="momentum-score__summary">
+    <div>
+      <p class="eyebrow">Research Momentum Score v2</p>
+      <h2 id="momentum-score-heading">Research momentum</h2>
+    </div>
+    <div class="momentum-score__value">
+      <strong aria-label={`${result.score} out of 100`}>{result.score}</strong>
+      <span>{levelLabels[result.level]}</span>
+    </div>
+    <p>{result.explanation}</p>
+    <p class="momentum-score__scope">
+      This score describes the current research loop, not ability or personal worth.
+    </p>
+  </div>
+  <MomentumConfidence confidence={result.confidence} />
+</section>

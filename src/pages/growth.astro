@@ -1,0 +1,77 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeader from "../components/common/SectionHeader.astro";
+import MomentumComponentBreakdown from "../components/growth/MomentumComponentBreakdown.astro";
+import MomentumMethodology from "../components/growth/MomentumMethodology.astro";
+import MomentumNextActions from "../components/growth/MomentumNextActions.astro";
+import MomentumScoreV2 from "../components/growth/MomentumScoreV2.astro";
+import { getMomentumInput } from "../utils/momentumData";
+import { computeResearchMomentum } from "../utils/momentumScore";
+
+const input = await getMomentumInput();
+const result = computeResearchMomentum(input);
+---
+
+<BaseLayout
+  title="Research Growth"
+  description="Evidence-based research momentum across reading, understanding, retrieval, output, and revisits."
+  width="dashboard"
+>
+  <div class="momentum-page">
+    <header class="momentum-hero">
+      <div>
+        <p class="eyebrow">Growth</p>
+        <h1>Research momentum</h1>
+        <p class="lede">
+          A long-term view of consistency, understanding, retrieval, output, and revisit discipline from public research evidence.
+        </p>
+      </div>
+      <nav class="paper-hero__actions" aria-label="Growth dashboard links">
+        <a href="/papers">Paper Log</a>
+        <a href="/reviews">Reviews</a>
+        <a href="/week">Weekly reviews</a>
+      </nav>
+    </header>
+
+    <MomentumScoreV2 result={result} />
+
+    <section class="section" aria-labelledby="momentum-components-heading">
+      <SectionHeader
+        id="momentum-components-heading"
+        title="Component breakdown"
+        description="Scores use only available evidence. Confidence shows how much weight to place on each number."
+      />
+      <MomentumComponentBreakdown components={result.components} />
+    </section>
+
+    <section class="section" aria-labelledby="momentum-actions-heading">
+      <SectionHeader
+        id="momentum-actions-heading"
+        title="Next actions"
+        description="Small actions chosen from the weakest or least-evidenced parts of the research loop."
+      />
+      <MomentumNextActions actions={result.nextActions} />
+    </section>
+
+    {(result.antiGamingFlags.length > 0 || result.missingEvidence.length > 0) && (
+      <section class="section momentum-evidence-grid" aria-label="Score evidence notes">
+        {result.antiGamingFlags.length > 0 && (
+          <article class="momentum-notice momentum-notice--flag">
+            <h2>Integrity checks</h2>
+            <p>These patterns were capped or discounted before the score was calculated.</p>
+            <ul>{result.antiGamingFlags.map((flag) => <li>{flag}</li>)}</ul>
+          </article>
+        )}
+        {result.missingEvidence.length > 0 && (
+          <article class="momentum-notice">
+            <h2>Missing evidence</h2>
+            <p>These gaps lower confidence. They do not become silent zeroes.</p>
+            <ul>{result.missingEvidence.map((item) => <li>{item}</li>)}</ul>
+          </article>
+        )}
+      </section>
+    )}
+
+    <MomentumMethodology />
+  </div>
+</BaseLayout>

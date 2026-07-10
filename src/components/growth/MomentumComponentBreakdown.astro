@@ -1,0 +1,40 @@
+---
+import type { MomentumResult } from "../../types/momentum";
+
+interface Props {
+  components: MomentumResult["components"];
+}
+
+const { components } = Astro.props;
+const entries = Object.entries(components) as Array<[keyof typeof components, (typeof components)[keyof typeof components]]>;
+---
+
+<div class="momentum-component-grid">
+  {entries.map(([, item]) => (
+    <article class:list={["momentum-component", !item.available && "momentum-component--unavailable"]}>
+      <header>
+        <div>
+          <h3>{item.label}</h3>
+          <span>{item.weight}% weight</span>
+        </div>
+        <strong aria-label={item.available ? `${item.score} out of 100` : `${item.label} unavailable`}>
+          {item.available ? item.score : "N/A"}
+        </strong>
+      </header>
+      {item.available ? (
+        <div class="momentum-meter" aria-hidden="true">
+          <span style={`width: ${item.score}%`}></span>
+        </div>
+      ) : (
+        <p class="momentum-component__status">Evidence unavailable</p>
+      )}
+      <p>{item.explanation}</p>
+      {item.evidence.length > 0 && (
+        <ul aria-label={`${item.label} evidence`}>
+          {item.evidence.map((evidence) => <li>{evidence}</li>)}
+        </ul>
+      )}
+      {item.available && <span class="momentum-component__confidence">Component confidence {item.confidence}%</span>}
+    </article>
+  ))}
+</div>

@@ -20,6 +20,7 @@ npm run dev
 
 ```bash
 npm run build
+npm run score:test
 ```
 
 Generated research outputs can be rebuilt with:
@@ -148,8 +149,21 @@ Public routes:
 - `/implementations`
 - `/week`
 - `/graph`
+- `/growth`
 
 Browser practice state is local-only until copied into Markdown frontmatter or committed generated JSON. See `docs/learning-loop-features.md`.
+
+## Research Momentum
+
+`/growth` summarizes public evidence across reading consistency, understanding, retrieval, research output, revisits, and balance. The v2 score reports confidence separately, caps same-day volume, and marks missing data as unavailable instead of silently treating it as zero.
+
+Run the deterministic score scenarios with:
+
+```bash
+npm run score:test
+```
+
+The formula and data rules are documented in `docs/research-momentum-score.md` and `docs/growth-dashboard.md`. Optional day-level GitHub contribution JSON can be committed under `src/generated/github-contributions/`; no token is used by the static dashboard.
 
 ## Research Output System
 

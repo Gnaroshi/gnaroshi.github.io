@@ -19,7 +19,8 @@
     "graph:build": "node scripts/build-research-graph.mjs",
     "week:build": "node scripts/build-weekly-review.mjs",
     "questions:build": "node scripts/build-question-bank.mjs",
-    "formula:score": "node scripts/score-formula-recall.mjs"
+    "formula:score": "node scripts/score-formula-recall.mjs",
+    "score:test": "node scripts/test-momentum-score.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.1",

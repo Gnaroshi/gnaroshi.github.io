@@ -61,6 +61,7 @@ npm run week:build
 npm run graph:build
 npm run questions:build
 npm run formula:score -- --slug <paper-slug> --file attempt.json
+npm run score:test
 ```
 
 - `npm run dev`: start local Astro dev server.
@@ -78,6 +79,7 @@ npm run formula:score -- --slug <paper-slug> --file attempt.json
 - `npm run graph:build`: rebuild `src/generated/research-graph.json`.
 - `npm run questions:build`: build `src/generated/question-bank/question-bank.json`.
 - `npm run formula:score`: score an exported formula recall attempt without an API.
+- `npm run score:test`: run deterministic Research Momentum Score v2 anti-distortion scenarios.
 
 The package scripts disable Astro telemetry to avoid global config writes during local and CI checks.
 
@@ -109,6 +111,7 @@ Main routes:
 - `/week/[weekId]`
 - `/graph`
 - `/graph/[nodeType]/[slug]`
+- `/growth`
 - `/now`
 - `/contact`
 - `/rss.xml`
@@ -137,6 +140,7 @@ Use Astro file-based routes. Use `getStaticPaths` for dynamic blog and paper pag
 - Generated oral exam data: `src/generated/oral-exams/`
 - Generated weekly reviews: `src/generated/weekly-reviews/`
 - Generated research graph: `src/generated/research-graph.json`
+- Optional generated GitHub contribution days: `src/generated/github-contributions/`
 - Manual research graph edges: `src/data/researchGraph.manual.ts`
 
 Astro 7 content collections are defined in `src/content.config.ts` using `glob()` loaders. Do not create or reintroduce legacy `src/content/config.ts`.
@@ -161,6 +165,10 @@ Astro 7 content collections are defined in `src/content.config.ts` using `glob()
 - Use `visibility: "public" | "unlisted" | "hidden"` consistently. Public content appears in indexes and public stats; unlisted detail pages may build but stay out of indexes; hidden content is excluded from production public pages and public generated stats.
 - Visibility is not privacy. Do not commit private or confidential material to this public repository.
 - Rebuild weekly reviews before the research graph when both changed, so graph nodes can include the newest weekly review.
+- Keep Research Momentum Score calculations pure in `src/utils/momentumScore.ts`; normalize Astro/build data separately in `src/utils/momentumData.ts`.
+- Treat the momentum score as research-loop evidence, never as intelligence, talent, or personal worth.
+- Do not turn missing momentum data into automatic zeroes. Mark components unavailable and lower confidence.
+- Preserve the daily caps and depth-mismatch checks documented in `docs/research-momentum-score.md`.
 
 ## Design Rules
 
@@ -302,6 +310,12 @@ For most code changes:
 ```bash
 npm run check
 npm run build
+```
+
+For momentum scoring changes, also run:
+
+```bash
+npm run score:test
 ```
 
 For UI changes, also run a local dev or preview server and inspect the affected pages in a browser when possible.
