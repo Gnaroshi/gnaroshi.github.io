@@ -58,6 +58,17 @@ const hasFutureMe =
   <article class="paper-detail">
     <PaperDetailHeader paper={paper} />
 
+    <section class="learning-panel learning-panel--accent" aria-labelledby="oral-exam-heading">
+      <div>
+        <p class="eyebrow">Retrieval practice</p>
+        <h2 id="oral-exam-heading">Explain this paper aloud</h2>
+        <p>Use live voice when the optional API is available, or continue with text and manual practice.</p>
+      </div>
+      <div class="paper-card__links">
+        <a href={`/papers/${paper.id}/exam/live/`}>Open oral exam</a>
+      </div>
+    </section>
+
     {review ? (
       <>
         <PaperReviewCard review={review} />

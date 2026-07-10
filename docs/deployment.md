@@ -37,6 +37,8 @@ The workflow:
 
 No secrets are required.
 
+The optional voice oral-exam API is deployed separately and is not required for GitHub Pages. After deploying the Worker, set the repository Actions variable `PUBLIC_AI_API_BASE_URL` to `https://api.gnaroshi.dev` and rerun the Pages workflow. Do not put `OPENAI_API_KEY` in GitHub Pages settings. See `docs/cloudflare-worker-api.md`.
+
 ## Required Repository Settings
 
 If GitHub repository settings are not already configured, set them manually:

@@ -9,7 +9,7 @@
 - CSS modules or plain CSS with shared design tokens.
 - GitHub Actions for GitHub Pages deployment.
 
-Do not add a backend, database, OAuth, or server runtime in the MVP.
+The core site must not depend on a backend, database, OAuth, or server runtime. The explicitly approved voice-exam extension is an optional Cloudflare Worker sidecar under `apps/api/`; every core route and manual exam workflow must continue to work when it is absent.
 
 ## Static-First Model
 
@@ -28,6 +28,8 @@ Astro should generate static HTML for all routes. Client JavaScript should be li
 ```text
 .
 ├── AGENTS.md
+├── apps/
+│   └── api/                  # Optional Cloudflare Worker
 ├── docs/
 ├── public/
 │   ├── CNAME
@@ -97,7 +99,20 @@ Define schemas in `src/content.config.ts` for Astro 7. Prefer strict schemas tha
 4. Astro pages render static HTML.
 5. React islands receive serialized data only when filtering or dynamic interaction is needed.
 
-AI-assisted paper reviews are generated outside the browser by local Node CLI scripts or GitHub Actions. The static site reads committed JSON review files at build time. It must not call AI APIs from client-side code or expose API keys in bundled assets.
+AI-assisted paper reviews are generated outside the browser by local Node CLI scripts or GitHub Actions. The static site reads committed JSON review files at build time. The optional voice-exam island may request a short-lived Realtime credential from `api.gnaroshi.dev` and connect to OpenAI over WebRTC. Long-lived API keys must never enter client-side code or bundled assets.
+
+## Optional Voice API
+
+`apps/api/` contains a separately installed and deployed Cloudflare Worker for live oral exams. It is not part of the GitHub Pages runtime and it does not change Astro's static output.
+
+- `gnaroshi.dev`: static Astro frontend on GitHub Pages.
+- `api.gnaroshi.dev`: optional Cloudflare Worker.
+- `OPENAI_API_KEY`: Cloudflare Worker secret only.
+- `PUBLIC_AI_API_BASE_URL`: optional public Astro build variable.
+- Session state: transient; no database or cloud persistence in MVP.
+- Browser voice path: direct OpenAI Realtime WebRTC using a short-lived credential minted by the Worker.
+
+See `docs/cloudflare-worker-api.md` for endpoints, deployment, privacy, and operational limits.
 
 ## React Island Policy
 
@@ -189,5 +204,5 @@ The implementation satisfies this architecture when:
 - Content is editable through Markdown/MDX and profile data.
 - Paper dashboard stats are derived from local content.
 - React is limited to islands.
-- No backend dependency is introduced.
+- The core site has no backend dependency; optional Worker failures degrade to manual practice.
 - Deployment works through GitHub Actions and GitHub Pages.

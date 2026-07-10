@@ -24,6 +24,8 @@ jobs:
 
       - name: Install, build, and upload site
         uses: withastro/action@v6
+        env:
+          PUBLIC_AI_API_BASE_URL: ${{ vars.PUBLIC_AI_API_BASE_URL }}
         with:
           node-version: 24
 

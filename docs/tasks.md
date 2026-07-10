@@ -8,6 +8,7 @@
 - [x] Learning-loop feature pack for queue, reviews, formula recall, Future Me, and questions
 - [x] Research-output feature pack for graph, weekly reviews, implementation attempts, visibility, and paper-to-blog drafts
 - [x] GitHub Pages deployment
+- [x] Optional Cloudflare Worker and live oral-exam frontend scaffold
 - [ ] Full polish, accessibility, SEO, and performance pass
 - [ ] Future feature expansion
 
@@ -160,6 +161,10 @@
 - [ ] Add custom 404 page.
 - [ ] Add lightweight analytics only with explicit approval.
 - [ ] Add MCP-assisted local workflow only through untracked local config.
+- [x] Add optional Cloudflare Worker API scaffold for live voice oral exams.
+- [x] Add WebRTC, text, and manual oral-exam frontend fallbacks.
+- [ ] Deploy `api.gnaroshi.dev` and register `OPENAI_API_KEY` as a Worker secret.
+- [ ] Set the GitHub Actions variable `PUBLIC_AI_API_BASE_URL` after Worker deployment.
 
 ## Guardrails For All Phases
 

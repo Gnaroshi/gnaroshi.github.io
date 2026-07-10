@@ -2,7 +2,7 @@
 
 This document describes the research cockpit features that turn the Paper Log into a daily learning system.
 
-The implementation is static-first. Content is committed as Markdown/MDX, generated artifacts are committed as JSON, and browser interactions use localStorage only for temporary drafts. No browser code calls an AI API or needs a secret.
+The implementation is static-first. Content is committed as Markdown/MDX, generated artifacts are committed as JSON, and browser interactions use localStorage only for temporary drafts. The optional live oral-exam page can use a separately deployed Worker and a short-lived Realtime WebRTC credential; no long-lived API secret is present in browser code.
 
 ## Paper Reading Queue
 
@@ -163,5 +163,6 @@ Permanent state should be copied into Markdown/MDX frontmatter or committed gene
 ## Security
 
 - No API keys are used in browser code.
-- No OpenAI requests are made from the static site.
-- AI extension points should use local CLI scripts, GitHub Actions, or manual copy/paste workflows.
+- Live voice may connect directly to OpenAI Realtime only with a short-lived credential minted by `api.gnaroshi.dev`.
+- Non-Realtime AI calls remain in local CLI scripts, GitHub Actions, the optional Worker, or manual copy/paste workflows.
+- The Worker does not persist transcripts or audio by default.

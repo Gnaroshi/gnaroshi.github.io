@@ -27,6 +27,7 @@ Before changing product, design, architecture, content behavior, or major struct
 - `docs/paper-reading-system.md`
 - `docs/tasks.md`
 - `docs/deployment.md`
+- `docs/cloudflare-worker-api.md`
 - `docs/codex-workflow.md`
 
 ## Stack
@@ -39,8 +40,9 @@ Before changing product, design, architecture, content behavior, or major struct
 - Astro content collections in `src/content.config.ts`
 - Static output
 - GitHub Pages deployment through GitHub Actions
+- Optional Cloudflare Worker under `apps/api/` for explicitly approved live oral exams
 
-Do not introduce backend dependencies, server runtimes, databases, OAuth, CMS infrastructure, or secret-dependent services without explicit user approval.
+Do not introduce additional backend dependencies, server runtimes, databases, OAuth, CMS infrastructure, or secret-dependent services without explicit user approval. The existing Worker is optional and must never become a prerequisite for the static site.
 
 ## Commands
 
@@ -62,6 +64,10 @@ npm run graph:build
 npm run questions:build
 npm run formula:score -- --slug <paper-slug> --file attempt.json
 npm run score:test
+cd apps/api && npm run typecheck
+cd apps/api && npm test
+cd apps/api && npm run dev
+cd apps/api && npm run deploy
 ```
 
 - `npm run dev`: start local Astro dev server.
@@ -80,6 +86,10 @@ npm run score:test
 - `npm run questions:build`: build `src/generated/question-bank/question-bank.json`.
 - `npm run formula:score`: score an exported formula recall attempt without an API.
 - `npm run score:test`: run deterministic Research Momentum Score v2 anti-distortion scenarios.
+- `cd apps/api && npm run typecheck`: type-check the optional Cloudflare Worker.
+- `cd apps/api && npm test`: run Worker router, CORS, mock, and secret-safety tests without OpenAI calls.
+- `cd apps/api && npm run dev`: run the Worker locally with values from untracked `.dev.vars`.
+- `cd apps/api && npm run deploy`: deploy the Worker after its Cloudflare secret is configured.
 
 The package scripts disable Astro telemetry to avoid global config writes during local and CI checks.
 
@@ -97,6 +107,7 @@ Main routes:
 - `/blog/archive`
 - `/papers`
 - `/papers/[slug]`
+- `/papers/[slug]/exam/live`
 - `/papers/[slug]/formula`
 - `/queue`
 - `/queue/[slug]`
@@ -142,6 +153,8 @@ Use Astro file-based routes. Use `getStaticPaths` for dynamic blog and paper pag
 - Generated research graph: `src/generated/research-graph.json`
 - Optional generated GitHub contribution days: `src/generated/github-contributions/`
 - Manual research graph edges: `src/data/researchGraph.manual.ts`
+- Optional Cloudflare Worker: `apps/api/`
+- Worker deployment and security guide: `docs/cloudflare-worker-api.md`
 
 Astro 7 content collections are defined in `src/content.config.ts` using `glob()` loaders. Do not create or reintroduce legacy `src/content/config.ts`.
 
@@ -158,6 +171,9 @@ Astro 7 content collections are defined in `src/content.config.ts` using `glob()
 - Avoid unnecessary dependencies.
 - Do not commit generated `dist/`, local caches, or machine-specific files.
 - Never expose `OPENAI_API_KEY`, `OPENAI_MODEL`, or any API secret in client-side code.
+- The live oral-exam browser may use only a short-lived Realtime credential returned by the Worker; never send the Worker API key to the browser.
+- Keep `apps/api/.dev.vars` and all local Worker secret files untracked.
+- Keep voice transcripts transient by default. Do not add cloud persistence without explicit approval.
 - AI review scripts must run only server-side through local Node CLI or GitHub Actions.
 - Generated AI paper review files must follow the schema documented in `docs/ai-paper-review.md`.
 - AI review copy must be motivational, constructive, and evidence-based. Do not frame scores as intelligence, IQ, or personal worth.
@@ -347,6 +363,8 @@ GitHub repository Settings -> Pages should use GitHub Actions as the source, wit
 
 See `docs/deployment.md` for DNS, HTTPS, and 404 troubleshooting.
 
+The optional Worker deploys separately to `api.gnaroshi.dev`. Configure `OPENAI_API_KEY` with `npx wrangler secret put`, never in `wrangler.jsonc`. After the Worker is healthy, set the public repository variable `PUBLIC_AI_API_BASE_URL=https://api.gnaroshi.dev` and rebuild Pages. See `docs/cloudflare-worker-api.md`.
+
 ## Codex And MCP Notes
 
 - Future Codex sessions should start with this file and the relevant docs under `docs/`.
@@ -360,7 +378,7 @@ See `docs/deployment.md` for DNS, HTTPS, and 404 troubleshooting.
 - Do not recover, reference, or migrate old Lab-LVM code.
 - Do not add backend services, databases, OAuth, or server runtimes without explicit approval.
 - Do not commit secrets, API keys, OAuth tokens, personal credentials, or local MCP configs.
-- Do not add browser-side AI API calls or expose OpenAI API keys in bundled JavaScript.
+- Do not add key-authenticated browser-side AI calls or expose OpenAI API keys in bundled JavaScript. The approved exception is direct Realtime WebRTC using a short-lived Worker-issued credential.
 - Do not treat visibility fields as privacy controls.
 - Do not set `base: "/gnaroshi.github.io/"`; this is a user site with a custom root domain.
 - Do not use a `gh-pages` branch unless the deployment strategy is explicitly changed.

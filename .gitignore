@@ -13,3 +13,7 @@ npm-debug.log*
 .codex/mcp-secrets.*
 .mcp.env
 mcp-secrets.*
+apps/api/.dev.vars
+apps/api/.env
+apps/api/.env.local
+apps/api/.wrangler/

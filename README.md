@@ -57,6 +57,31 @@ The site deploys to GitHub Pages through GitHub Actions.
 
 Manual repository settings, DNS records, and troubleshooting notes are documented in `docs/deployment.md`.
 
+## Optional Voice Oral Exam API
+
+Live paper oral exams use an optional Cloudflare Worker at `api.gnaroshi.dev`. The Astro site remains static and works without it: paper exam pages keep a copyable manual practice prompt when `PUBLIC_AI_API_BASE_URL` is absent.
+
+Develop and verify the Worker separately:
+
+```bash
+cd apps/api
+npm install
+cp .dev.vars.example .dev.vars
+npm run typecheck
+npm test
+npm run dev
+```
+
+Deploy only after adding the OpenAI key as a Worker secret:
+
+```bash
+cd apps/api
+npx wrangler secret put OPENAI_API_KEY
+npm run deploy
+```
+
+Then set the GitHub Actions repository variable `PUBLIC_AI_API_BASE_URL=https://api.gnaroshi.dev` and rebuild Pages. Never expose `OPENAI_API_KEY` through Astro, browser JavaScript, GitHub Pages variables, or committed files. Architecture, endpoint, privacy, cost, and failure-mode details are in `docs/cloudflare-worker-api.md`.
+
 ## Edit Profile Data
 
 Primary identity data lives in:
