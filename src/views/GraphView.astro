@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ResearchGraphExplorer from "../components/graph/ResearchGraphExplorer";
+import { evidenceGates } from "../config/evidenceGates";
+import type { Locale } from "../i18n/types";
+import { getLocalePath, translate } from "../i18n/utils";
+import { getIslandMessages } from "../i18n/islands";
+import { researchGraph } from "../utils/researchGraph";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const ready = Boolean(researchGraph.eligible ?? ((researchGraph.stats.meaningfulNodeCount ?? 0) >= evidenceGates.researchGraph.minimumMeaningfulNodes && (researchGraph.stats.nonTagEdgeCount ?? 0) >= evidenceGates.researchGraph.minimumNonTagEdges));
+const messages = getIslandMessages(locale).graph;
+---
+<BaseLayout locale={locale} title={translate(locale, "paperLab.researchGraph")} description={translate(locale, "graph.subtitle")} width="dashboard" mode="application"><div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><p class="eyebrow">{translate(locale, "paperLab.researchGraph")}</p><h1>{translate(locale, "graph.title")}</h1><p class="lede">{translate(locale, "graph.subtitle")}</p></div><a class="button button--primary" href={ready ? "#graph-explorer" : getLocalePath(locale, "/papers/#new-paper-template")}>{ready ? translate(locale, "common.open") : translate(locale, "graph.action")}</a></header>{ready ? <div id="graph-explorer"><ResearchGraphExplorer client:visible graph={researchGraph} locale={locale} messages={messages} /></div> : <section class="app-empty-state" aria-labelledby="graph-empty"><h2 id="graph-empty">{translate(locale, "graph.empty")}</h2><p>{translate(locale, "graph.emptyBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/#new-paper-template")}>{translate(locale, "graph.action")}</a></section>}</div></BaseLayout>

@@ -1,15 +1,19 @@
 import { useMemo, useState } from "react";
 import type { ResearchGraph, ResearchGraphEdge, ResearchGraphNode } from "../../utils/researchGraph";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
 
 interface Props {
   graph: ResearchGraph;
+  locale: Locale;
+  messages: IslandMessages["graph"];
 }
 
 function labelForType(value: string) {
   return value.replaceAll("-", " ");
 }
 
-export default function ResearchGraphExplorer({ graph }: Props) {
+export default function ResearchGraphExplorer({ graph, locale, messages }: Props) {
   const [query, setQuery] = useState("");
   const [nodeType, setNodeType] = useState("");
   const [edgeType, setEdgeType] = useState("");
@@ -52,21 +56,21 @@ export default function ResearchGraphExplorer({ graph }: Props) {
   }
 
   return (
-    <div className="graph-explorer">
+    <div className="graph-explorer" lang={locale}>
       <section className="graph-controls" aria-labelledby="graph-controls-heading">
         <div>
-          <p className="eyebrow">Explorer</p>
-          <h2 id="graph-controls-heading">Search the research graph</h2>
+          <p className="eyebrow">{messages.explorer}</p>
+          <h2 id="graph-controls-heading">{messages.title}</h2>
         </div>
         <div className="graph-filter-grid">
           <label className="paper-field paper-field--wide">
-            <span>Search</span>
+            <span>{messages.search}</span>
             <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} />
           </label>
           <label className="paper-field">
-            <span>Node type</span>
+            <span>{messages.nodeType}</span>
             <select value={nodeType} onChange={(event) => setNodeType(event.target.value)}>
-              <option value="">All node types</option>
+              <option value="">{messages.allNodeTypes}</option>
               {nodeTypes.map((type) => (
                 <option key={type} value={type}>
                   {labelForType(type)}
@@ -75,9 +79,9 @@ export default function ResearchGraphExplorer({ graph }: Props) {
             </select>
           </label>
           <label className="paper-field">
-            <span>Edge type</span>
+            <span>{messages.edgeType}</span>
             <select value={edgeType} onChange={(event) => setEdgeType(event.target.value)}>
-              <option value="">All edge types</option>
+              <option value="">{messages.allEdgeTypes}</option>
               {edgeTypes.map((type) => (
                 <option key={type} value={type}>
                   {labelForType(type)}
@@ -86,7 +90,7 @@ export default function ResearchGraphExplorer({ graph }: Props) {
             </select>
           </label>
           <button type="button" className="paper-filter-panel__reset" onClick={clearFilters}>
-            Reset
+            {messages.reset}
           </button>
         </div>
       </section>
@@ -94,8 +98,8 @@ export default function ResearchGraphExplorer({ graph }: Props) {
       <div className="graph-layout">
         <section className="graph-node-list" aria-labelledby="graph-nodes-heading">
           <div className="graph-section-header">
-            <h2 id="graph-nodes-heading">Nodes</h2>
-            <p>{filteredNodes.length} shown</p>
+            <h2 id="graph-nodes-heading">{messages.nodes}</h2>
+            <p>{format(messages.shown, { count: filteredNodes.length })}</p>
           </div>
           {filteredNodes.length > 0 ? (
             <div className="graph-node-buttons">
@@ -112,32 +116,32 @@ export default function ResearchGraphExplorer({ graph }: Props) {
               ))}
             </div>
           ) : (
-            <p className="empty-state">No nodes match these filters.</p>
+            <p className="empty-state">{messages.noNodes}</p>
           )}
         </section>
 
         <section className="graph-detail-panel" aria-labelledby="graph-detail-heading">
           <div className="graph-section-header">
-            <h2 id="graph-detail-heading">Node detail</h2>
-            {selectedNode && <a href={`/graph/${selectedNode.type}/${selectedNode.slug}/`}>Open detail</a>}
+            <h2 id="graph-detail-heading">{messages.detail}</h2>
+            {selectedNode && <a href={`${locale === "ko" ? "/ko" : ""}/graph/${selectedNode.type}/${selectedNode.slug}/`}>{messages.openDetail}</a>}
           </div>
-          {selectedNode ? <NodeDetail node={selectedNode} edges={selectedEdges} nodeById={nodeById} /> : <p>No node selected.</p>}
+          {selectedNode ? <NodeDetail node={selectedNode} edges={selectedEdges} nodeById={nodeById} messages={messages} /> : <p>{messages.noSelection}</p>}
         </section>
       </div>
 
       <section className="graph-edge-table" aria-labelledby="graph-edges-heading">
         <div className="graph-section-header">
-          <h2 id="graph-edges-heading">Edges</h2>
-          <p>{filteredEdges.length} relation{filteredEdges.length === 1 ? "" : "s"}</p>
+          <h2 id="graph-edges-heading">{messages.edges}</h2>
+          <p>{format(messages.relations, { count: filteredEdges.length })}</p>
         </div>
         {filteredEdges.length > 0 ? (
           <div className="graph-edge-list">
             {filteredEdges.slice(0, 120).map((edge) => (
-              <EdgeRow edge={edge} nodeById={nodeById} key={edge.id} />
+              <EdgeRow edge={edge} nodeById={nodeById} messages={messages} key={edge.id} />
             ))}
           </div>
         ) : (
-          <p className="empty-state">No relations match these filters.</p>
+          <p className="empty-state">{messages.noRelations}</p>
         )}
       </section>
     </div>
@@ -147,11 +151,13 @@ export default function ResearchGraphExplorer({ graph }: Props) {
 function NodeDetail({
   node,
   edges,
-  nodeById
+  nodeById,
+  messages
 }: {
   node: ResearchGraphNode;
   edges: ResearchGraphEdge[];
   nodeById: Map<string, ResearchGraphNode>;
+  messages: IslandMessages["graph"];
 }) {
   return (
     <div className="graph-node-detail">
@@ -166,25 +172,25 @@ function NodeDetail({
         ))}
       </div>
       <div className="link-row">
-        <a href={node.href}>Open connected page</a>
+        <a href={node.href}>{messages.openPage}</a>
       </div>
       <div>
-        <h4>Connected relations</h4>
+        <h4>{messages.connected}</h4>
         {edges.length > 0 ? (
           <div className="graph-edge-list graph-edge-list--compact">
             {edges.slice(0, 12).map((edge) => (
-              <EdgeRow edge={edge} nodeById={nodeById} key={edge.id} />
+              <EdgeRow edge={edge} nodeById={nodeById} messages={messages} key={edge.id} />
             ))}
           </div>
         ) : (
-          <p className="empty-state">No connected relations yet.</p>
+          <p className="empty-state">{messages.noConnected}</p>
         )}
       </div>
     </div>
   );
 }
 
-function EdgeRow({ edge, nodeById }: { edge: ResearchGraphEdge; nodeById: Map<string, ResearchGraphNode> }) {
+function EdgeRow({ edge, nodeById, messages }: { edge: ResearchGraphEdge; nodeById: Map<string, ResearchGraphNode>; messages: IslandMessages["graph"] }) {
   const source = nodeById.get(edge.source);
   const target = nodeById.get(edge.target);
 
@@ -193,7 +199,11 @@ function EdgeRow({ edge, nodeById }: { edge: ResearchGraphEdge; nodeById: Map<st
       <a href={source?.href ?? "#"}>{source?.label ?? edge.source}</a>
       <span>{labelForType(edge.type)}</span>
       <a href={target?.href ?? "#"}>{target?.label ?? edge.target}</a>
-      <small>{edge.inferred ? "inferred" : "manual"}</small>
+      <small>{edge.inferred ? messages.inferred : messages.manual}</small>
     </article>
   );
+}
+
+function format(template: string, values: Record<string, string | number>): string {
+  return Object.entries(values).reduce((result, [key, value]) => result.replaceAll(`{${key}}`, String(value)), template);
 }

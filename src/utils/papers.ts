@@ -2,6 +2,9 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import type { PaperReviewSummary } from "./paperReviews";
 import { isReviewDue } from "./reviewDue";
 import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
+import type { Locale } from "../i18n/types";
+import { getLocalePath } from "../i18n/utils";
+import { getContentSlug } from "./localizedContent";
 
 export type PaperEntry = CollectionEntry<"papers">;
 
@@ -71,20 +74,20 @@ const ACTIVE_STATUSES = new Set(["pass1", "pass2", "pass3", "read", "implemented
 const DEEP_DEPTHS = new Set(["deep", "reproduce", "implement"]);
 const futureMeWarningSlugs = new Set<string>();
 
-export async function getAllPapers(): Promise<PaperEntry[]> {
+export async function getAllPapers(locale: Locale = "en"): Promise<PaperEntry[]> {
   const papers = await getCollection("papers");
-  return sortPapersByReadDate(papers.filter((paper) => !paper.id.startsWith("_")));
+  return sortPapersByReadDate(papers.filter((paper) => !getContentSlug(paper.id).startsWith("_") && paper.data.locale === locale));
 }
 
-export async function getPublishedPapers(): Promise<PaperEntry[]> {
-  const papers = await getAllPapers();
+export async function getPublishedPapers(locale: Locale = "en"): Promise<PaperEntry[]> {
+  const papers = await getAllPapers(locale);
   const publishedPapers = papers.filter((paper) => shouldShowInIndex(paper.data, { includeDrafts: !import.meta.env.PROD }));
   warnForMissingFutureMe(publishedPapers);
   return publishedPapers;
 }
 
-export async function getBuildablePapers(): Promise<PaperEntry[]> {
-  const papers = await getAllPapers();
+export async function getBuildablePapers(locale: Locale = "en"): Promise<PaperEntry[]> {
+  const papers = await getAllPapers(locale);
   return papers.filter((paper) =>
     shouldBuildDetailPage(paper.data, {
       includeDrafts: !import.meta.env.PROD,
@@ -227,8 +230,8 @@ export function getPaperLastReviewedDate(paper: PaperEntry): string | undefined 
 
 export function toPaperRecord(paper: PaperEntry, review?: PaperReviewSummary, today = getTodayKey()): PaperRecord {
   return {
-    id: paper.id,
-    href: `/papers/${paper.id}/`,
+    id: getContentSlug(paper.id),
+    href: getLocalePath(paper.data.locale, `/papers/${getContentSlug(paper.id)}/`),
     title: paper.data.title,
     authors: paper.data.authors,
     venue: paper.data.venue,

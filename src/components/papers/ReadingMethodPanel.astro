@@ -1,39 +1,40 @@
 ---
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
+interface Props { locale?: Locale }
+const { locale = "en" } = Astro.props;
 const passes = [
   {
-    title: "Pass 1",
-    detail: "20-minute relevance check",
-    description: "Skim the abstract, figures, claims, and immediate connection to current questions."
+    title: translate(locale, "papers.pass1"),
+    description: translate(locale, "papers.pass1Body")
   },
   {
-    title: "Pass 2",
-    detail: "Core structure understanding",
-    description: "Map the method, assumptions, experiments, baselines, and main weaknesses."
+    title: translate(locale, "papers.pass2"),
+    description: translate(locale, "papers.pass2Body")
   },
   {
-    title: "Pass 3",
-    detail: "Equation, reproduction, implementation",
-    description: "Derive details, trace implementation choices, reproduce results, or build a small extension."
+    title: translate(locale, "papers.pass3"),
+    description: translate(locale, "papers.pass3Body")
   }
 ];
 
 const principles = [
-  "Do not read every paper at the same depth.",
-  "Track questions, not only summaries.",
-  "Reward consistency.",
-  "Revisit important papers."
+  translate(locale, "papers.principleDepth"),
+  translate(locale, "papers.principleQuestions"),
+  translate(locale, "papers.principleConsistency"),
+  translate(locale, "papers.principleRevisit")
 ];
 ---
 
 <section id="reading-method" class="paper-method-panel" aria-labelledby="reading-method-heading">
   <div class="paper-method-panel__header">
-    <p class="eyebrow">Method</p>
-    <h2 id="reading-method-heading">Three-pass reading</h2>
+    <p class="eyebrow">{translate(locale, "papers.method")}</p>
+    <h2 id="reading-method-heading">{translate(locale, "papers.threePass")}</h2>
   </div>
   <div class="paper-method-panel__passes">
     {passes.map((pass) => (
       <article>
-        <h3>{pass.title} — {pass.detail}</h3>
+        <h3>{pass.title}</h3>
         <p>{pass.description}</p>
       </article>
     ))}
@@ -42,4 +43,3 @@ const principles = [
     {principles.map((principle) => <li>{principle}</li>)}
   </ul>
 </section>
-

@@ -13,6 +13,7 @@ import { getPublicPaperReviewMap } from "./paperReviews";
 import { getPublishedPapers, getTodayKey, toDateKey } from "./papers";
 import { getQuestionBank } from "./questionBank";
 import { getNextReviewDate } from "./reviewDue";
+import { getContentSlug } from "./localizedContent";
 import { shouldShowInIndex } from "./visibility";
 
 const oralExamModules = import.meta.glob("../generated/oral-exams/*.json", { eager: true });
@@ -65,7 +66,7 @@ export async function getMomentumInput(today = getTodayKey()): Promise<MomentumI
     oralExams: loadGeneratedValues(oralExamModules).map(toOralExam).filter(isDefined),
     githubContributions: loadGeneratedValues(githubContributionModules).flatMap(toGitHubDays),
     blogPosts: blogEntries.map((post) => ({
-      slug: post.id,
+      slug: getContentSlug(post.id),
       pubDate: toDateKey(post.data.pubDate),
       draft: post.data.draft,
       visibility: post.data.visibility,

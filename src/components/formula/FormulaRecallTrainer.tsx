@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
 
 export type FormulaRecallPaper = {
   id: string;
@@ -15,11 +17,13 @@ type Props = {
   papers: FormulaRecallPaper[];
   initialSlug?: string;
   today: string;
+  locale: Locale;
+  messages: IslandMessages["formula"];
 };
 
 const storageKey = "gnaroshi.formula-recall.v1";
 
-export default function FormulaRecallTrainer({ papers, initialSlug, today }: Props) {
+export default function FormulaRecallTrainer({ papers, initialSlug, today, locale, messages }: Props) {
   const [activeSlug, setActiveSlug] = useState(initialSlug ?? papers[0]?.id ?? "");
   const [formulaText, setFormulaText] = useState("");
   const [interpretation, setInterpretation] = useState("");
@@ -57,20 +61,20 @@ export default function FormulaRecallTrainer({ papers, initialSlug, today }: Pro
     if (!activePaper) return;
     const existing = loadAttempts();
     window.localStorage.setItem(storageKey, JSON.stringify([...existing, JSON.parse(attemptJson)]));
-    setSavedMessage("Saved locally in this browser. Copy the JSON if you want to commit it later.");
+    setSavedMessage(messages.saved);
   }
 
   async function copyAttempt() {
     if (!attemptJson) return;
     await navigator.clipboard.writeText(attemptJson);
-    setSavedMessage("Copied recall attempt JSON.");
+    setSavedMessage(messages.copied);
   }
 
   async function copyManualScoringPrompt() {
     if (!activePaper) return;
     await navigator.clipboard.writeText(
       [
-        "Evaluate this formula recall attempt. Return concise JSON only.",
+        locale === "ko" ? "이 수식 회상 시도를 평가하고 간결한 JSON만 반환하세요." : "Evaluate this formula recall attempt. Return concise JSON only.",
         "",
         `Paper: ${activePaper.title}`,
         `Saved formula: ${activePaper.mainFormula || "No formula recorded."}`,
@@ -82,29 +86,29 @@ export default function FormulaRecallTrainer({ papers, initialSlug, today }: Pro
         "Score evidence of recall, term understanding, interpretation, and uncertainty. Do not overclaim correctness."
       ].join("\n")
     );
-    setSavedMessage("Copied manual scoring prompt.");
+    setSavedMessage(messages.promptCopied);
   }
 
   if (papers.length === 0) {
     return (
-      <div className="paper-empty-state">
-        <h2>No formulas ready for recall yet.</h2>
-        <p>Add a main formula or recall prompt to a paper note, then revisit this trainer.</p>
+      <div className="paper-empty-state" lang={locale}>
+        <h2>{messages.noMaterial}</h2>
+        <p>{messages.noMaterialBody}</p>
       </div>
     );
   }
 
   return (
-    <section className="learning-panel" aria-labelledby="formula-trainer-heading">
+    <section className="learning-panel" aria-labelledby="formula-trainer-heading" lang={locale}>
       <div className="paper-filter-panel__header">
         <div>
-          <p className="eyebrow">Formula recall</p>
-          <h2 id="formula-trainer-heading">Reconstruct before revealing</h2>
+          <p className="eyebrow">{messages.title}</p>
+          <h2 id="formula-trainer-heading">{messages.heading}</h2>
         </div>
       </div>
 
       <label className="paper-field">
-        <span>Paper</span>
+        <span>{messages.select}</span>
         <select value={activePaper.id} onChange={(event) => setActiveSlug(event.target.value)}>
           {papers.map((paper) => (
             <option value={paper.id} key={paper.id}>
@@ -116,7 +120,7 @@ export default function FormulaRecallTrainer({ papers, initialSlug, today }: Pro
 
       {activePaper.formulaRecallPrompts.length > 0 ? (
         <div className="learning-card">
-          <h3>Prompts</h3>
+          <h3>{messages.prompts}</h3>
           <ul>
             {activePaper.formulaRecallPrompts.map((prompt) => (
               <li key={prompt}>{prompt}</li>
@@ -125,49 +129,49 @@ export default function FormulaRecallTrainer({ papers, initialSlug, today }: Pro
         </div>
       ) : (
         <div className="learning-card">
-          <h3>Prompt</h3>
-          <p>Write the main formula from memory and explain what each term does.</p>
+          <h3>{messages.prompt}</h3>
+          <p>{messages.defaultPrompt}</p>
         </div>
       )}
 
       <label className="learning-field">
-        <span>Formula from memory</span>
+        <span>{messages.answer}</span>
         <textarea value={formulaText} onChange={(event) => setFormulaText(event.target.value)} rows={5} />
       </label>
       <label className="learning-field">
-        <span>Plain-language interpretation</span>
+        <span>{messages.interpretation}</span>
         <textarea value={interpretation} onChange={(event) => setInterpretation(event.target.value)} rows={5} />
       </label>
       <label className="paper-field">
-        <span>Confidence</span>
+        <span>{messages.confidence}</span>
         <select value={confidence} onChange={(event) => setConfidence(event.target.value)}>
-          <option value="low">low</option>
-          <option value="medium">medium</option>
-          <option value="high">high</option>
+          <option value="low">{messages.low}</option>
+          <option value="medium">{messages.medium}</option>
+          <option value="high">{messages.high}</option>
         </select>
       </label>
 
       <div className="paper-card__links">
         <button type="button" onClick={() => setShowAnswer((value) => !value)}>
-          {showAnswer ? "Hide saved formula" : "Show saved formula"}
+          {showAnswer ? messages.hide : messages.reveal}
         </button>
         <button type="button" onClick={saveLocalAttempt}>
-          Save locally
+          {messages.save}
         </button>
         <button type="button" onClick={copyAttempt}>
-          Copy attempt JSON
+          {messages.copy}
         </button>
         <button type="button" onClick={copyManualScoringPrompt}>
-          Copy manual AI scoring prompt
+          {messages.copyPrompt}
         </button>
-        <a href={activePaper.href}>Open paper note</a>
+        <a href={activePaper.href}>{messages.openPaper}</a>
       </div>
 
       {showAnswer ? (
         <div className="learning-card learning-card--answer">
-          <h3>Saved formula</h3>
-          <pre><code>{activePaper.mainFormula || "No formula recorded."}</code></pre>
-          <p>{activePaper.formulaInterpretation || "No interpretation recorded."}</p>
+          <h3>{messages.savedFormula}</h3>
+          <pre><code>{activePaper.mainFormula || messages.noFormula}</code></pre>
+          <p>{activePaper.formulaInterpretation || messages.noInterpretation}</p>
           {activePaper.formulaTerms.length > 0 ? (
             <dl className="formula-term-list">
               {activePaper.formulaTerms.map((term) => (
@@ -182,12 +186,9 @@ export default function FormulaRecallTrainer({ papers, initialSlug, today }: Pro
       ) : null}
 
       <div className="learning-card">
-        <h3>Self-check</h3>
+        <h3>{messages.selfCheck}</h3>
         <ul>
-          <li>Did I write the formula before revealing it?</li>
-          <li>Can I explain each term without rereading?</li>
-          <li>Can I say when this formula is useful?</li>
-          <li>Can I name one assumption or failure mode?</li>
+          {messages.checks.map((check) => <li key={check}>{check}</li>)}
         </ul>
       </div>
 

@@ -1,10 +1,14 @@
 import { useMemo, useState } from "react";
 import type { QueueRecord } from "../../utils/queue";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
 
 type Props = {
   items: QueueRecord[];
   topics: string[];
   tags: string[];
+  locale: Locale;
+  messages: IslandMessages["queue"];
 };
 
 const priorities: Array<QueueRecord["priority"]> = ["urgent", "high", "medium", "low"];
@@ -42,7 +46,7 @@ function conversionCommand(slug: string) {
   return `npm run paper:from-queue -- --slug ${slug}`;
 }
 
-export default function QueueDashboard({ items, topics, tags }: Props) {
+export default function QueueDashboard({ items, topics, tags, locale, messages }: Props) {
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState("");
   const [tag, setTag] = useState("");
@@ -77,56 +81,56 @@ export default function QueueDashboard({ items, topics, tags }: Props) {
   }
 
   return (
-    <div className="learning-dashboard-island">
+    <div className="learning-dashboard-island" lang={locale}>
       <section className="paper-filter-panel" aria-labelledby="queue-filter-heading">
         <div className="paper-filter-panel__header">
           <div>
-            <p className="eyebrow">Queue</p>
-            <h2 id="queue-filter-heading">Filter reading queue</h2>
+            <p className="eyebrow">{messages.controls}</p>
+            <h2 id="queue-filter-heading">{messages.filter}</h2>
           </div>
         </div>
         <div className="paper-filter-grid">
           <label className="paper-field paper-field--wide">
-            <span>Search</span>
+            <span>{messages.search}</span>
             <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} />
           </label>
           <label className="paper-field">
-            <span>Priority</span>
+            <span>{messages.priority}</span>
             <select value={priority} onChange={(event) => setPriority(event.target.value)}>
-              <option value="">All priorities</option>
+              <option value="">{messages.allPriorities}</option>
               {priorities.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {messages.priorities[value]}
                 </option>
               ))}
             </select>
           </label>
           <label className="paper-field">
-            <span>Source</span>
+            <span>{messages.source}</span>
             <select value={source} onChange={(event) => setSource(event.target.value)}>
-              <option value="">All sources</option>
+              <option value="">{messages.allSources}</option>
               {sources.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {messages.sources[value]}
                 </option>
               ))}
             </select>
           </label>
           <label className="paper-field">
-            <span>Status</span>
+            <span>{messages.status}</span>
             <select value={status} onChange={(event) => setStatus(event.target.value)}>
-              <option value="">All statuses</option>
+              <option value="">{messages.allStatuses}</option>
               {statuses.map((value) => (
                 <option key={value} value={value}>
-                  {value}
+                  {messages.statuses[value]}
                 </option>
               ))}
             </select>
           </label>
           <label className="paper-field">
-            <span>Topic</span>
+            <span>{messages.topic}</span>
             <select value={topic} onChange={(event) => setTopic(event.target.value)}>
-              <option value="">All topics</option>
+              <option value="">{messages.allTopics}</option>
               {topics.map((value) => (
                 <option key={value} value={value}>
                   {value}
@@ -135,9 +139,9 @@ export default function QueueDashboard({ items, topics, tags }: Props) {
             </select>
           </label>
           <label className="paper-field">
-            <span>Tag</span>
+            <span>{messages.tag}</span>
             <select value={tag} onChange={(event) => setTag(event.target.value)}>
-              <option value="">All tags</option>
+              <option value="">{messages.allTags}</option>
               {tags.map((value) => (
                 <option key={value} value={value}>
                   {value}
@@ -150,15 +154,15 @@ export default function QueueDashboard({ items, topics, tags }: Props) {
 
       <section className="paper-results" aria-labelledby="queue-results-heading">
         <div className="paper-results__header">
-          <h2 id="queue-results-heading">Queued papers</h2>
+          <h2 id="queue-results-heading">{messages.results}</h2>
           <p>
-            {filteredItems.length} of {items.length} shown
+            {messages.shown.replace("{shown}", String(filteredItems.length)).replace("{total}", String(items.length))}
           </p>
         </div>
         {items.length === 0 ? (
           <div className="paper-empty-state">
-            <h3>No queued papers yet.</h3>
-            <p>Add a short queue note when a paper is worth tracking before it becomes a full reading log.</p>
+            <h3>{messages.empty}</h3>
+            <p>{messages.emptyBody}</p>
           </div>
         ) : filteredItems.length > 0 ? (
           <div className="queue-list">
@@ -170,14 +174,14 @@ export default function QueueDashboard({ items, topics, tags }: Props) {
                       <a href={item.href}>{item.title}</a>
                     </h3>
                     <span className={`paper-badge paper-badge--${item.priority === "urgent" ? "review-due" : "muted"}`}>
-                      {item.priority}
+                      {messages.priorities[item.priority]}
                     </span>
-                    <span className="paper-badge paper-badge--muted">{item.status}</span>
+                    <span className="paper-badge paper-badge--muted">{messages.statuses[item.status]}</span>
                   </div>
                   <p>{item.reasonToRead}</p>
                   <p className="metadata">
-                    {item.authors.join(", ")} · {item.venue} · {item.year} · added {item.addedDate}
-                    {item.targetDate ? ` · target ${item.targetDate}` : ""}
+                    {item.authors.join(", ")} · {item.venue} · {item.year} · {messages.added} {item.addedDate}
+                    {item.targetDate ? ` · ${messages.target} ${item.targetDate}` : ""}
                   </p>
                 </div>
                 <div className="paper-card__tags">
@@ -193,19 +197,19 @@ export default function QueueDashboard({ items, topics, tags }: Props) {
                   ))}
                 </div>
                 <div className="paper-card__links">
-                  <a href={item.href}>Detail page</a>
+                  <a href={item.href}>{messages.open}</a>
                   {item.paperUrl ? (
                     <a href={item.paperUrl} target="_blank" rel="noreferrer">
-                      Paper
+                      {messages.paper}
                     </a>
                   ) : null}
                   {item.codeUrl ? (
                     <a href={item.codeUrl} target="_blank" rel="noreferrer">
-                      Code
+                      {messages.code}
                     </a>
                   ) : null}
                   <button type="button" onClick={() => copyCommand(item.id)}>
-                    {copiedSlug === item.id ? "Copied" : "Copy conversion command"}
+                    {copiedSlug === item.id ? messages.copied : messages.copyCommand}
                   </button>
                 </div>
               </article>
@@ -213,8 +217,8 @@ export default function QueueDashboard({ items, topics, tags }: Props) {
           </div>
         ) : (
           <div className="paper-empty-state">
-            <h3>No queued papers match these filters.</h3>
-            <p>Adjust the filters to return to the full reading queue.</p>
+            <h3>{messages.empty}</h3>
+            <p>{messages.emptyBody}</p>
           </div>
         )}
       </section>

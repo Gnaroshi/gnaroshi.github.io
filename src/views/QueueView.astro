@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import QueueDashboard from "../components/queue/QueueDashboard";
+import type { Locale } from "../i18n/types";
+import { getLocalePath, translate } from "../i18n/utils";
+import { getPublishedQueueItems, getQueueTags, getQueueTopics, toQueueRecord } from "../utils/queue";
+import { getIslandMessages } from "../i18n/islands";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const items = await getPublishedQueueItems(locale);
+const records = items.map(toQueueRecord);
+const topics = getQueueTopics(items);
+const tags = getQueueTags(items);
+const messages = getIslandMessages(locale);
+---
+<BaseLayout locale={locale} title={translate(locale, "paperLab.readingQueue")} description={translate(locale, "queue.subtitle")} width="dashboard" mode="application"><div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><p class="eyebrow">{translate(locale, "paperLab.readingQueue")}</p><h1>{translate(locale, "queue.title")}</h1><p class="lede">{translate(locale, "queue.subtitle")}</p></div><a class="button button--primary" href={items.length ? "#queue-list" : getLocalePath(locale, "/papers/#new-paper-template")}>{items.length ? translate(locale, "common.open") : translate(locale, "queue.action")}</a></header>{items.length ? <div id="queue-list"><QueueDashboard client:visible items={records} topics={topics} tags={tags} locale={locale} messages={messages.queue} /></div> : <section class="app-empty-state" aria-labelledby="queue-empty"><p class="eyebrow">{translate(locale, "common.notReady")}</p><h2 id="queue-empty">{translate(locale, "queue.empty")}</h2><p>{translate(locale, "queue.emptyBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/#new-paper-template")}>{translate(locale, "queue.action")}</a></section>}</div></BaseLayout>

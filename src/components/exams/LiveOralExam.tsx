@@ -18,6 +18,8 @@ import {
 import ExamExportResult from "./ExamExportResult";
 import ExamTranscriptPanel, { type ExamTranscriptEntry } from "./ExamTranscriptPanel";
 import RealtimeExamSetup from "./RealtimeExamSetup";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
 
 type Props = {
   apiBaseUrl: string;
@@ -26,6 +28,8 @@ type Props = {
   paperContext: ApiPaperContext;
   initialTargetDepth: ApiTargetDepth;
   manualPrompt: string;
+  locale: Locale;
+  messages: IslandMessages["exam"];
 };
 
 type Phase = "idle" | "connecting" | "live" | "generating" | "answering" | "scoring" | "scored" | "stopped" | "error";
@@ -36,14 +40,16 @@ export default function LiveOralExam({
   paperTitle,
   paperContext,
   initialTargetDepth,
-  manualPrompt
+  manualPrompt,
+  locale,
+  messages
 }: Props) {
   const [targetDepth, setTargetDepth] = useState<ApiTargetDepth>(initialTargetDepth);
-  const [language, setLanguage] = useState<ApiExamLanguage>("ko-KR");
+  const [language, setLanguage] = useState<ApiExamLanguage>(locale === "ko" ? "ko-KR" : "en-US");
   const [questionCount, setQuestionCount] = useState(6);
   const [phase, setPhase] = useState<Phase>("idle");
   const [apiConfig, setApiConfig] = useState<ResearchApiConfig>();
-  const [apiStatus, setApiStatus] = useState(apiBaseUrl ? "Checking live voice availability…" : "Live voice is unavailable in this deployment.");
+  const [apiStatus, setApiStatus] = useState(apiBaseUrl ? messages.checking : messages.unavailable);
   const [errorMessage, setErrorMessage] = useState("");
   const [transcript, setTranscript] = useState<ExamTranscriptEntry[]>([]);
   const [generatedExam, setGeneratedExam] = useState<GeneratedOralExam>();
@@ -74,11 +80,11 @@ export default function LiveOralExam({
       .then((config) => {
         if (!active) return;
         setApiConfig(config);
-        setApiStatus(config.realtimeEnabled ? "Live voice is ready." : "Live voice is currently unavailable. Manual practice remains available.");
+        setApiStatus(config.realtimeEnabled ? messages.ready : messages.manualAvailable);
       })
       .catch((error) => {
         if (!active) return;
-        setApiStatus(toMessage(error));
+        setApiStatus(toMessage(error, messages));
       });
     return () => {
       active = false;
@@ -90,8 +96,8 @@ export default function LiveOralExam({
   const busy = ["connecting", "generating", "scoring"].includes(phase);
   const live = phase === "connecting" || phase === "live";
   const transcriptText = useMemo(
-    () => transcript.map((entry) => `${entry.role === "examiner" ? "Examiner" : "User"}: ${entry.text}`).join("\n\n"),
-    [transcript]
+    () => transcript.map((entry) => `${entry.role === "examiner" ? messages.examiner : messages.you}: ${entry.text}`).join("\n\n"),
+    [messages.examiner, messages.you, transcript]
   );
 
   async function startLiveExam() {
@@ -121,14 +127,14 @@ export default function LiveOralExam({
       };
       peer.onconnectionstatechange = () => {
         if (["failed", "disconnected", "closed"].includes(peer.connectionState)) {
-          setApiStatus(`Realtime connection ${peer.connectionState}.`);
+          setApiStatus(format(messages.connection, { state: peer.connectionState }));
         }
       };
       media.getTracks().forEach((track) => peer.addTrack(track, media));
       const channel = peer.createDataChannel("oai-events");
       channelRef.current = channel;
       channel.onmessage = handleRealtimeEvent;
-      channel.onerror = () => setErrorMessage("The realtime event channel reported an error.");
+      channel.onerror = () => setErrorMessage(messages.eventError);
       channel.onopen = () => {
         channel.send(JSON.stringify({
           type: "response.create",
@@ -138,7 +144,7 @@ export default function LiveOralExam({
 
       const offer = await peer.createOffer();
       await peer.setLocalDescription(offer);
-      if (!offer.sdp) throw new Error("The browser did not create a WebRTC offer.");
+      if (!offer.sdp) throw new Error(messages.noOffer);
       const sdpResponse = await fetch("https://api.openai.com/v1/realtime/calls", {
         method: "POST",
         body: offer.sdp,
@@ -147,20 +153,20 @@ export default function LiveOralExam({
           "Content-Type": "application/sdp"
         }
       });
-      if (!sdpResponse.ok) throw new Error("OpenAI rejected the WebRTC session offer.");
+      if (!sdpResponse.ok) throw new Error(messages.rejectedOffer);
       await peer.setRemoteDescription({ type: "answer", sdp: await sdpResponse.text() });
-      setApiStatus(`Live session connected · about ${session.examPlan.estimatedMinutes} minutes`);
+      setApiStatus(format(messages.connectedMinutes, { minutes: session.examPlan.estimatedMinutes }));
       setPhase("live");
     } catch (error) {
       closeRealtime();
-      setErrorMessage(toMessage(error));
+      setErrorMessage(toMessage(error, messages));
       setPhase("error");
     }
   }
 
   function stopLiveExam() {
     closeRealtime();
-    setApiStatus("Live session stopped. The transcript remains only in this browser tab.");
+    setApiStatus(messages.stopped);
     setPhase("stopped");
   }
 
@@ -170,7 +176,7 @@ export default function LiveOralExam({
       const type = String(event.type ?? "");
       const text = typeof event.transcript === "string" ? event.transcript : typeof event.text === "string" ? event.text : "";
       if (!text.trim()) {
-        if (type === "error") setErrorMessage("The realtime examiner returned an error event.");
+        if (type === "error") setErrorMessage(messages.examinerError);
         return;
       }
       if (type === "conversation.item.input_audio_transcription.completed") {
@@ -179,7 +185,7 @@ export default function LiveOralExam({
         appendTranscript("examiner", text, event);
       }
     } catch {
-      setErrorMessage("A realtime event could not be read.");
+      setErrorMessage(messages.unreadable);
     }
   }
 
@@ -206,10 +212,10 @@ export default function LiveOralExam({
       setGeneratedExam(exam);
       setAnswers(exam.questions.map(() => ""));
       setTranscript([]);
-      setApiStatus(exam.mock ? "Development mock questions loaded." : "Text exam loaded.");
+      setApiStatus(exam.mock ? messages.mockLoaded : messages.textLoaded);
       setPhase("answering");
     } catch (error) {
-      setErrorMessage(toMessage(error));
+      setErrorMessage(toMessage(error, messages));
       setPhase("error");
     }
   }
@@ -221,7 +227,7 @@ export default function LiveOralExam({
       { id: `answer-${question.id}`, role: "user", text: answers[index] ?? "" }
     ]);
     setTranscript(entries);
-    await requestScore(generatedExam.examId, generatedExam.questions, answers, formatTranscript(entries));
+    await requestScore(generatedExam.examId, generatedExam.questions, answers, formatTranscript(entries, messages));
   }
 
   async function scoreLiveExam() {
@@ -258,7 +264,7 @@ export default function LiveOralExam({
       setScore(result);
       setPhase("scored");
     } catch (error) {
-      setErrorMessage(toMessage(error));
+      setErrorMessage(toMessage(error, messages));
       setPhase("error");
     }
   }
@@ -280,24 +286,21 @@ export default function LiveOralExam({
         manualPromptRef.current.focus();
         manualPromptRef.current.select();
         manualPromptRef.current.setSelectionRange(0, manualPrompt.length);
-        setManualCopyState("Automatic copy was blocked. The full prompt is selected; press Ctrl+C or Cmd+C.");
+        setManualCopyState(messages.copyBlocked);
         return;
       }
 
       if (!copied) throw new Error("Copy unavailable");
-      setManualCopyState("Manual oral exam prompt copied.");
+      setManualCopyState(messages.promptCopied);
     } catch {
-      setManualCopyState("Automatic copy was blocked. The full prompt is selected; press Ctrl+C or Cmd+C.");
+      setManualCopyState(messages.copyBlocked);
     }
   }
 
   return (
-    <div className="live-exam">
-      <section className="live-exam-principles" aria-label="Live oral exam principles">
-        <p>This score measures retrieval evidence, not intelligence.</p>
-        <p>You can stop anytime and export your transcript.</p>
-        <p>The examiner asks one question at a time.</p>
-        <p>Use Korean or English.</p>
+    <div className="live-exam" lang={locale}>
+      <section className="live-exam-principles" aria-label={messages.principlesLabel}>
+        {messages.principles.map((principle) => <p key={principle}>{principle}</p>)}
       </section>
 
       <RealtimeExamSetup
@@ -308,6 +311,7 @@ export default function LiveOralExam({
         apiConfigured={Boolean(apiBaseUrl)}
         busy={busy}
         live={live}
+        messages={messages}
         onTargetDepthChange={setTargetDepth}
         onLanguageChange={setLanguage}
         onQuestionCountChange={(value) => setQuestionCount(Math.min(12, Math.max(3, value || 3)))}
@@ -318,17 +322,17 @@ export default function LiveOralExam({
 
       <p className="live-exam-status" aria-live="polite">{apiStatus}</p>
       {errorMessage ? <p className="live-exam-error" role="alert">{errorMessage}</p> : null}
-      <audio ref={audioRef} autoPlay aria-label="AI-generated examiner voice" />
-      <p className="metadata">The examiner voice is AI-generated, not a human voice. Audio and transcript are not persisted by this page.</p>
+      <audio ref={audioRef} autoPlay aria-label={messages.voiceLabel} />
+      <p className="metadata">{messages.privacy}</p>
 
       {generatedExam ? (
         <section className="text-exam" aria-labelledby="text-exam-heading">
           <header>
             <div>
-              <p className="eyebrow">Text fallback</p>
-              <h2 id="text-exam-heading">Answer from memory</h2>
+              <p className="eyebrow">{messages.textFallback}</p>
+              <h2 id="text-exam-heading">{messages.answerMemory}</h2>
             </div>
-            {generatedExam.mock ? <span>Development mock</span> : null}
+            {generatedExam.mock ? <span>{messages.developmentMock}</span> : null}
           </header>
           <ol>
             {generatedExam.questions.map((question, index) => (
@@ -344,27 +348,27 @@ export default function LiveOralExam({
               </li>
             ))}
           </ol>
-          <button type="button" onClick={scoreTextExam} disabled={busy}>Score text answers</button>
+          <button type="button" onClick={scoreTextExam} disabled={busy}>{messages.scoreText}</button>
         </section>
       ) : null}
 
-      {(transcript.length > 0 || live) ? <ExamTranscriptPanel entries={transcript} live={live} /> : null}
+      {(transcript.length > 0 || live) ? <ExamTranscriptPanel entries={transcript} live={live} messages={messages} /> : null}
       {!live && transcript.length > 0 && !generatedExam && !score ? (
-        <button type="button" onClick={scoreLiveExam} disabled={busy}>Score stopped live exam</button>
+        <button type="button" onClick={scoreLiveExam} disabled={busy}>{messages.scoreStopped}</button>
       ) : null}
-      {score ? <ExamExportResult paperSlug={paperSlug} result={score} transcript={transcript} /> : null}
+      {score ? <ExamExportResult paperSlug={paperSlug} result={score} transcript={transcript} messages={messages} /> : null}
 
       <section className="manual-exam" aria-labelledby="manual-exam-heading">
         <div>
-          <p className="eyebrow">No-API workflow</p>
-          <h2 id="manual-exam-heading">Run the exam manually</h2>
-          <p>Copy the prompt into ChatGPT or another model. Keep the transcript local, then add returned score JSON to the research record.</p>
+          <p className="eyebrow">{messages.noApi}</p>
+          <h2 id="manual-exam-heading">{messages.manualTitle}</h2>
+          <p>{messages.manualBody}</p>
         </div>
         <div className="paper-card__links">
-          <button type="button" onClick={copyManualPrompt}>Copy manual oral exam prompt</button>
+          <button type="button" onClick={copyManualPrompt}>{messages.copyManual}</button>
         </div>
         <label className="learning-field">
-          <span>Manual exam prompt</span>
+          <span>{messages.manualPrompt}</span>
           <textarea ref={manualPromptRef} readOnly rows={14} value={manualPrompt} />
         </label>
         {manualCopyState ? <p className="metadata" aria-live="polite">{manualCopyState}</p> : null}
@@ -373,12 +377,16 @@ export default function LiveOralExam({
   );
 }
 
-function formatTranscript(entries: ExamTranscriptEntry[]): string {
-  return entries.map((entry) => `${entry.role === "examiner" ? "Examiner" : "User"}: ${entry.text}`).join("\n\n");
+function formatTranscript(entries: ExamTranscriptEntry[], messages: IslandMessages["exam"]): string {
+  return entries.map((entry) => `${entry.role === "examiner" ? messages.examiner : messages.you}: ${entry.text}`).join("\n\n");
 }
 
-function toMessage(error: unknown): string {
+function toMessage(error: unknown, messages: IslandMessages["exam"]): string {
   if (error instanceof ResearchApiError) return error.message;
-  if (error instanceof DOMException && error.name === "NotAllowedError") return "Microphone permission was not granted.";
-  return error instanceof Error ? error.message : "The oral exam could not be started.";
+  if (error instanceof DOMException && error.name === "NotAllowedError") return messages.microphoneDenied;
+  return error instanceof Error ? error.message : messages.startError;
+}
+
+function format(template: string, values: Record<string, string | number>): string {
+  return Object.entries(values).reduce((result, [key, value]) => result.replaceAll(`{${key}}`, String(value)), template);
 }

@@ -17,10 +17,12 @@ interface Props {
 const { item } = Astro.props as Props;
 const { Content } = await render(item);
 const convertCommand = `npm run paper:from-queue -- --slug ${item.id}`;
+const alternateUrls = { en: `/queue/${item.id}/`, ko: "/ko/queue/", xDefault: `/queue/${item.id}/`, translationAvailable: false } as const;
 ---
 
-<BaseLayout title={item.data.title} description={item.data.reasonToRead} canonical={`/queue/${item.id}/`} type="article" mode="application">
+<BaseLayout title={item.data.title} description={item.data.reasonToRead} canonical={`/queue/${item.id}/`} alternateUrls={alternateUrls} type="article" mode="application">
   <article class="paper-detail">
+    <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/queue">Back to queue</a>
       <div class="paper-detail-header__title">

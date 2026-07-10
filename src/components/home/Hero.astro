@@ -1,23 +1,28 @@
 ---
-import { now } from "../../data/now";
 import { profile } from "../../data/profile";
+import { getLocalizedData } from "../../data/locales";
+import type { Locale } from "../../i18n/types";
+import { getLocalePath, translate } from "../../i18n/utils";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const data = getLocalizedData(locale);
 ---
 
 <section class="identity-hero" aria-labelledby="home-title">
   <div class="identity-hero__copy">
-    <p class="eyebrow">{profile.location}</p>
+    <p class="eyebrow">{data.profile.location}</p>
     <h1 id="home-title">{profile.displayName}</h1>
-    <p class="identity-hero__headline">{profile.headline}</p>
-    <p class="identity-hero__bio">{profile.shortBio}</p>
-    <div class="identity-hero__actions" aria-label="Primary actions">
-      <a class="button button--primary" href="/blog">Read writing</a>
-      <a class="button" href="/research">View research</a>
+    <p class="identity-hero__headline">{data.profile.headline}</p>
+    <p class="identity-hero__bio">{data.profile.shortBio}</p>
+    <div class="identity-hero__actions" aria-label={translate(locale, "a11y.primaryNavigation")}>
+      <a class="button button--primary" href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.readWriting")}</a>
+      <a class="button" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewResearch")}</a>
     </div>
   </div>
-  <aside class="identity-hero__current" aria-label="Current research focus">
-    <span>Currently exploring</span>
-    <strong>{now.currentQuestions[0]}</strong>
-    <a href="/now">Current focus</a>
+  <aside class="identity-hero__current" aria-label={translate(locale, "home.currentFocus")}>
+    <span>{translate(locale, "home.exploring")}</span>
+    <strong>{data.now.currentQuestions[0]}</strong>
+    <a href={getLocalePath(locale, "/now/")}>{translate(locale, "home.currentFocus")}</a>
   </aside>
 </section>
 

@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getLocalizedData } from "../data/locales";
+import type { Locale } from "../i18n/types";
+import { translate } from "../i18n/utils";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const data = getLocalizedData(locale);
+---
+
+<BaseLayout locale={locale} title={translate(locale, "nav.research")} description={translate(locale, "research.intro")} width="wide">
+  <header class="page-header"><p class="eyebrow">{translate(locale, "research.eyebrow")}</p><h1>{translate(locale, "research.title")}</h1><p class="lede">{translate(locale, "research.intro")}</p></header>
+  <div class="research-area-list">{data.researchAreas.map((area, index) => <article id={area.slug} class="research-area"><p class="eyebrow">{String(index + 1).padStart(2, "0")}</p><h2>{area.question}</h2><p class="research-area__motivation">{area.motivation}</p><dl><div><dt>{translate(locale, "research.hypothesis")}</dt><dd>{area.hypothesis}</dd></div><div><dt>{translate(locale, "research.reading")}</dt><dd>{area.currentReading}</dd></div><div><dt>{translate(locale, "research.build")}</dt><dd>{area.currentBuild}</dd></div><div><dt>{translate(locale, "research.uncertainty")}</dt><dd>{area.uncertainty}</dd></div></dl><div class="link-row">{area.related.map((link) => <a href={link.href}>{link.label}</a>)}</div></article>)}</div>
+</BaseLayout>

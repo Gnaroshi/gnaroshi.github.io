@@ -10,6 +10,9 @@ import PaperScoreBadge from "./PaperScoreBadge.astro";
 import PaperScoreTrend from "./PaperScoreTrend.astro";
 import PaperStats from "./PaperStats.astro";
 import ReadingMethodPanel from "./ReadingMethodPanel.astro";
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
+import { getIslandMessages } from "../../i18n/islands";
 
 interface Props {
   papers: PaperEntry[];
@@ -19,9 +22,10 @@ interface Props {
   today: string;
   reviewStats: PaperReviewStatsData;
   reviewsBySlug: Map<string, PaperReview>;
+  locale?: Locale;
 }
 
-const { papers, stats, countsByDate, tags, today, reviewStats, reviewsBySlug } = Astro.props;
+const { papers, stats, countsByDate, tags, today, reviewStats, reviewsBySlug, locale = "en" } = Astro.props;
 const records = papers.map((paper) => {
   const review = reviewsBySlug.get(paper.id);
   return toPaperRecord(paper, review ? toPaperReviewSummary(review) : undefined, today);
@@ -30,44 +34,42 @@ const years = [...new Set(records.map((paper) => paper.year))].sort((a, b) => b 
 const countsRecord = Object.fromEntries(countsByDate.entries());
 const hasAdvancedNotebook = papers.length >= evidenceGates.paperLab.filtersAt;
 const hasReviewSummary = reviewStats.reviewedCount >= evidenceGates.paperLab.aiReviewSummaryAt;
+const islandMessages = getIslandMessages(locale);
 ---
 
 <div class="paper-dashboard">
   <header class="paper-hero paper-hero--focused">
     <div class="paper-hero__copy">
-      <p class="eyebrow">Paper Lab</p>
-      <h1>Paper Log</h1>
-      <p class="lede">A record of papers I skim, question, revisit, and connect to research work.</p>
+      <p class="eyebrow">{translate(locale, "nav.paperLab")}</p>
+      <h1>{translate(locale, "papers.title")}</h1>
+      <p class="lede">{translate(locale, "papers.subtitle")}</p>
     </div>
-    <a class="button button--primary" href="#new-paper-template">Add a paper note</a>
+    <a class="button button--primary" href="#new-paper-template">{translate(locale, "papers.add")}</a>
   </header>
 
   {papers.length === 0 ? (
     <>
       <section class="paper-onboarding" aria-labelledby="paper-onboarding-heading">
         <div>
-          <p class="eyebrow">Start small</p>
-          <h2 id="paper-onboarding-heading">One useful note is enough to begin</h2>
-          <p>
-            Start with a 20-minute relevance pass. Record the paper's question, core idea, why it matters now,
-            and whether it deserves another pass.
-          </p>
+          <p class="eyebrow">{translate(locale, "papers.startSmall")}</p>
+          <h2 id="paper-onboarding-heading">{translate(locale, "papers.firstEnough")}</h2>
+          <p>{translate(locale, "papers.firstDescription")}</p>
         </div>
-        <a class="button button--primary" href="#new-paper-template">Add the first paper note</a>
+        <a class="button button--primary" href="#new-paper-template">{translate(locale, "home.addFirstPaper")}</a>
       </section>
-      <ReadingMethodPanel />
-      <section class="paper-workflow-notes" aria-label="Paper Lab workflows">
+      <ReadingMethodPanel locale={locale} />
+      <section class="paper-workflow-notes" aria-label={translate(locale, "nav.paperLab")}>
         <article id="ai-review-workflow">
-          <h2>AI review</h2>
-          <p>Each paper note can produce an evidence-based review manually or through the local CLI.</p>
+          <h2>{translate(locale, "papers.aiReview")}</h2>
+          <p>{translate(locale, "papers.aiReviewBody")}</p>
         </article>
         <article id="oral-exam-entry">
-          <h2>Oral exam</h2>
-          <p>Oral practice becomes available from an individual paper note after the note exists.</p>
+          <h2>{translate(locale, "papers.oralExam")}</h2>
+          <p>{translate(locale, "papers.oralExamBody")}</p>
         </article>
         <article id="paper-to-blog">
-          <h2>Paper-to-Blog</h2>
-          <p>A substantive paper note can later become a private writing draft without publishing automatically.</p>
+          <h2>{translate(locale, "papers.paperToBlog")}</h2>
+          <p>{translate(locale, "papers.paperToBlogBody")}</p>
         </article>
       </section>
     </>
@@ -115,6 +117,8 @@ const hasReviewSummary = reviewStats.reviewedCount >= evidenceGates.paperLab.aiR
             tags={tags}
             years={years}
             today={today}
+            locale={locale}
+            messages={islandMessages.paper}
           />
         ) : (
           <div class="paper-note-list">
@@ -132,7 +136,7 @@ const hasReviewSummary = reviewStats.reviewedCount >= evidenceGates.paperLab.aiR
     </>
   )}
 
-  <NewPaperTemplate />
+  <NewPaperTemplate locale={locale} />
 </div>
 
 <style>

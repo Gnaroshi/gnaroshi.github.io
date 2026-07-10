@@ -19,6 +19,31 @@ body {
   color: var(--color-text);
 }
 
+:lang(en) body {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+:lang(ko) body {
+  font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  word-break: keep-all;
+}
+
+:lang(ko) :where(code, pre, .technical-token, a) {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+:lang(ko) :where(h1, h2, h3) {
+  max-width: none;
+  letter-spacing: 0;
+  overflow-wrap: break-word;
+}
+
+:lang(ko) :where(.eyebrow, [class*="badge"], [class*="status"]) {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 body,
 button,
 input,
@@ -368,6 +393,15 @@ p {
 }
 
 .metadata {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.content-language-badge {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }

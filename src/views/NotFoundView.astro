@@ -1,0 +1,11 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import type { Locale } from "../i18n/types";
+import { getLocalePath, translate } from "../i18n/utils";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const links = [["nav.home", "/"], ["nav.research", "/research/"], ["nav.writing", "/blog/"], ["nav.paperLab", "/papers/"], ["nav.projects", "/projects/"], ["nav.about", "/about/"]] as const;
+const alternateUrls = { en: "/404.html", ko: "/ko/404/", xDefault: "/404.html", translationAvailable: true };
+---
+<BaseLayout locale={locale} title={translate(locale, "notFound.title")} description={translate(locale, "notFound.body")} canonical={locale === "ko" ? "/ko/404/" : "/404.html"} alternateUrls={alternateUrls}><header class="page-header"><p class="eyebrow">{translate(locale, "notFound.eyebrow")}</p><h1>{translate(locale, "notFound.title")}</h1><p class="lede">{translate(locale, "notFound.body")}</p></header><section class="section" aria-labelledby="not-found-links"><h2 id="not-found-links">{translate(locale, "notFound.links")}</h2><div class="not-found-links">{links.map(([key, href]) => <a href={getLocalePath(locale, href)}>{translate(locale, key)}</a>)}</div></section></BaseLayout>
+<style>.not-found-links{display:flex;flex-wrap:wrap;gap:var(--space-3)}.not-found-links a{padding:.65rem .85rem;border:1px solid var(--color-border);border-radius:var(--radius-sm);color:var(--color-text);text-decoration:none}.not-found-links a:hover,.not-found-links a:focus-visible{border-color:var(--color-accent);color:var(--color-accent)}</style>

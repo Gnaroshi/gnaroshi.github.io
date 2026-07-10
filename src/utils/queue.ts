@@ -1,5 +1,8 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
+import type { Locale } from "../i18n/types";
+import { getLocalePath } from "../i18n/utils";
+import { getContentSlug } from "./localizedContent";
 
 export type QueueEntry = CollectionEntry<"queue">;
 
@@ -41,18 +44,18 @@ const STATUS_RANK: Record<QueueEntry["data"]["status"], number> = {
   archived: 1
 };
 
-export async function getAllQueueItems(): Promise<QueueEntry[]> {
+export async function getAllQueueItems(locale: Locale = "en"): Promise<QueueEntry[]> {
   const items = await getCollection("queue");
-  return sortQueueItems(items.filter((item) => !item.id.startsWith("_")));
+  return sortQueueItems(items.filter((item) => !getContentSlug(item.id).startsWith("_") && item.data.locale === locale));
 }
 
-export async function getPublishedQueueItems(): Promise<QueueEntry[]> {
-  const items = await getAllQueueItems();
+export async function getPublishedQueueItems(locale: Locale = "en"): Promise<QueueEntry[]> {
+  const items = await getAllQueueItems(locale);
   return items.filter((item) => shouldShowInIndex(item.data));
 }
 
-export async function getBuildableQueueItems(): Promise<QueueEntry[]> {
-  const items = await getAllQueueItems();
+export async function getBuildableQueueItems(locale: Locale = "en"): Promise<QueueEntry[]> {
+  const items = await getAllQueueItems(locale);
   return items.filter((item) => shouldBuildDetailPage(item.data, { includeHidden: !import.meta.env.PROD }));
 }
 
@@ -88,8 +91,8 @@ export function getQueueTopics(items: QueueEntry[]): string[] {
 
 export function toQueueRecord(item: QueueEntry): QueueRecord {
   return {
-    id: item.id,
-    href: `/queue/${item.id}/`,
+    id: getContentSlug(item.id),
+    href: getLocalePath(item.data.locale, `/queue/${getContentSlug(item.id)}/`),
     title: item.data.title,
     authors: item.data.authors,
     venue: item.data.venue,

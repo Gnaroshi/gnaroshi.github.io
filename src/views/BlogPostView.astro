@@ -1,0 +1,21 @@
+---
+import { render } from "astro:content";
+import BlogPostLayout from "../layouts/BlogPostLayout.astro";
+import type { Locale } from "../i18n/types";
+import { getAdjacentPosts, getAllBlogPostsAcrossLocales, getBlogPostSlug, getBlogTranslation, getPublishedBlogPosts, getSeriesPosts, type BlogPost } from "../utils/content";
+interface Props { locale: Locale; post: BlogPost }
+const { locale, post } = Astro.props;
+const [posts, allPosts] = await Promise.all([getPublishedBlogPosts(locale), getAllBlogPostsAcrossLocales()]);
+const { Content, headings } = await render(post);
+const seriesPosts = getSeriesPosts(posts, post.data.series);
+const { previous, next } = getAdjacentPosts(posts, post);
+const english = getBlogTranslation(allPosts, post, "en");
+const korean = getBlogTranslation(allPosts, post, "ko");
+const alternateUrls = {
+  en: english ? `/blog/${getBlogPostSlug(english)}/` : "/blog/",
+  ko: korean ? `/ko/blog/${getBlogPostSlug(korean)}/` : "/ko/blog/",
+  xDefault: english ? `/blog/${getBlogPostSlug(english)}/` : "/blog/",
+  translationAvailable: Boolean(english && korean)
+};
+---
+<BlogPostLayout post={post} headings={headings} seriesPosts={seriesPosts} previous={previous} next={next} locale={locale} alternateUrls={alternateUrls}><Content /></BlogPostLayout>

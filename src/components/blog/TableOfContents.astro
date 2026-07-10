@@ -4,18 +4,21 @@ interface Heading {
   slug: string;
   text: string;
 }
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
 
 interface Props {
   headings: Heading[];
+  locale?: Locale;
 }
 
-const { headings } = Astro.props;
+const { headings, locale = "en" } = Astro.props;
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 ---
 
 {tocHeadings.length > 0 && (
   <nav class="toc" aria-labelledby="toc-heading">
-    <h2 id="toc-heading">Contents</h2>
+    <h2 id="toc-heading">{translate(locale, "writing.tableOfContents")}</h2>
     <ol>
       {tocHeadings.map((heading) => (
         <li class:list={[`toc__item`, `toc__item--depth-${heading.depth}`]}>
@@ -62,4 +65,3 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
     color: var(--color-accent);
   }
 </style>
-

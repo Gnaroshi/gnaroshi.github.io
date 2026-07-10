@@ -1,19 +1,21 @@
 ---
-import { isNavigationActive, utilityNavigation } from "../../utils/navigation";
+import { getUtilityNavigation, isNavigationActive } from "../../i18n/routes";
+import type { AlternateUrls, Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
+import LanguageSwitcher from "../LanguageSwitcher.astro";
 import ThemeToggle from "../ThemeToggle.astro";
 
-interface Props { currentPath: string }
-const { currentPath } = Astro.props;
+interface Props { currentPath: string; locale: Locale; alternateUrls?: AlternateUrls }
+const { currentPath, locale, alternateUrls } = Astro.props;
+const utilityNavigation = getUtilityNavigation(locale);
 ---
 
-<div class="utility-nav" aria-label="Site utilities">
+<div class="utility-nav" aria-label={translate(locale, "a11y.siteUtilities")}>
   {utilityNavigation.map((item) => (
     <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
       {item.label}
     </a>
   ))}
-  <button class="locale-status" type="button" disabled aria-label="English and Korean language support is planned">
-    EN / KO
-  </button>
-  <ThemeToggle />
+  <LanguageSwitcher locale={locale} currentPath={currentPath} alternateUrls={alternateUrls} />
+  <ThemeToggle locale={locale} />
 </div>

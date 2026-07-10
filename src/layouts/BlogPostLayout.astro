@@ -5,6 +5,9 @@ import SeriesNav from "../components/blog/SeriesNav.astro";
 import TableOfContents from "../components/blog/TableOfContents.astro";
 import TagList from "../components/blog/TagList.astro";
 import type { BlogPost } from "../utils/content";
+import { getBlogPostHref } from "../utils/content";
+import type { AlternateUrls, Locale } from "../i18n/types";
+import { translate } from "../i18n/utils";
 
 interface Heading {
   depth: number;
@@ -18,64 +21,67 @@ interface Props {
   seriesPosts: BlogPost[];
   previous?: BlogPost;
   next?: BlogPost;
+  locale: Locale;
+  alternateUrls: AlternateUrls;
 }
 
-const { post, headings, seriesPosts, previous, next } = Astro.props;
+const { post, headings, seriesPosts, previous, next, locale, alternateUrls } = Astro.props;
 ---
 
 <BaseLayout
   title={post.data.title}
   description={post.data.description}
-  canonical={`/blog/${post.id}/`}
+  canonical={getBlogPostHref(post)}
   ogImage={post.data.ogImage ?? post.data.heroImage}
   type="article"
+  locale={locale}
+  alternateUrls={alternateUrls}
 >
   <article class="blog-post">
     <header class="blog-post__header">
-      <p class="eyebrow">Blog</p>
+      <p class="eyebrow">{translate(locale, "nav.writing")}</p>
       <h1>{post.data.title}</h1>
       <p class="lede">{post.data.description}</p>
-      <BlogMeta post={post} />
-      <TagList tags={post.data.tags} />
+      <BlogMeta post={post} locale={locale} />
+      <TagList tags={post.data.tags} locale={locale} />
     </header>
 
-    <SeriesNav posts={seriesPosts} currentId={post.id} />
-    <TableOfContents headings={headings} />
+    <SeriesNav posts={seriesPosts} currentId={post.id} locale={locale} />
+    <TableOfContents headings={headings} locale={locale} />
 
     <div class="prose">
       <slot />
     </div>
 
-    <nav class="post-nav" aria-label="Post navigation">
+    <nav class="post-nav" aria-label={translate(locale, "nav.writing")}>
       <div>
         {previous && (
           <>
-            <span>Previous</span>
-            <a href={`/blog/${previous.id}/`}>{previous.data.title}</a>
+            <span>{translate(locale, "common.previous")}</span>
+            <a href={getBlogPostHref(previous)}>{previous.data.title}</a>
           </>
         )}
       </div>
       <div>
         {next && (
           <>
-            <span>Next</span>
-            <a href={`/blog/${next.id}/`}>{next.data.title}</a>
+            <span>{translate(locale, "common.next")}</span>
+            <a href={getBlogPostHref(next)}>{next.data.title}</a>
           </>
         )}
       </div>
     </nav>
   </article>
 
-  <script>
+  <script is:inline define:vars={{ linkLabel: locale === "ko" ? "제목 링크" : "Link to heading" }}>
     for (const heading of document.querySelectorAll(".prose :is(h2, h3, h4)[id]")) {
       if (heading.querySelector(".heading-anchor")) continue;
       const anchor = document.createElement("a");
       anchor.className = "heading-anchor";
       anchor.href = `#${heading.id}`;
-      anchor.setAttribute("aria-label", `Link to ${heading.textContent}`);
+      anchor.setAttribute("aria-label", `${linkLabel}: ${heading.textContent}`);
       anchor.textContent = "#";
       heading.append(anchor);
     }
   </script>
 </BaseLayout>
-

@@ -45,12 +45,23 @@ npm run check:public-copy
 npm run check:content-metrics
 npm run check:links
 npm run check:empty-shells
+npm run check:i18n
+npm run check:hardcoded-ui
+npm run check:translation-links
 npm run test:e2e
 npm run test:a11y
 npm run test:visual
 ```
 
 Run `npm run build` before the `check:*` scripts. The checks scan the generated public site for developer-facing copy, misleading evidence metrics, broken internal links, and empty application shells. Playwright covers routes, mobile navigation, 390px overflow, focused empty states, axe accessibility rules, and the light/dark visual matrix.
+
+## English And Korean
+
+English remains the default at unprefixed URLs. Korean pages live under `/ko/`; `/en/` and `/kr/` are not used. Shared views in `src/views/` render both route sets, while typed dictionaries and locale helpers live in `src/i18n/`.
+
+Locale-aware profile and project copy lives in `src/data/locales/`. Blog translations live under `src/content/blog/en/` and `src/content/blog/ko/`, paired by `translationKey`. Add `locale`, `translationKey`, and `translationStatus` to every content entry; paper entries also require `paperId`. See `docs/i18n.md` and `docs/i18n-terminology.md` before adding or translating public content.
+
+Localized feeds are available at `/rss.xml` and `/ko/rss.xml`.
 
 ## Deploy
 
@@ -119,13 +130,16 @@ Project cards currently use `src/data/projects.ts` because the early homepage ne
 Add an MDX file under:
 
 ```text
-src/content/blog/
+src/content/blog/en/
 ```
 
 Use this frontmatter:
 
 ```yaml
 ---
+locale: "en"
+translationKey: "post-title"
+translationStatus: "complete"
 title: "Post title"
 description: "Short description"
 pubDate: 2026-07-09

@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import QuestionPractice from "../components/questions/QuestionPractice";
+import type { Locale } from "../i18n/types";
+import { getLocalePath, translate } from "../i18n/utils";
+import { getIslandMessages } from "../i18n/islands";
+import { getActiveQuestions, getTodayKey } from "../utils/questionBank";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const questions = getActiveQuestions().filter((question) => (question as { locale?: Locale }).locale ? (question as { locale?: Locale }).locale === locale : locale === "en");
+const today = getTodayKey();
+const messages = getIslandMessages(locale).question;
+---
+<BaseLayout locale={locale} title={translate(locale, "paperLab.questionBank")} description={translate(locale, "questions.subtitle")} width="dashboard" mode="application"><div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><p class="eyebrow">{translate(locale, "paperLab.questionBank")}</p><h1>{translate(locale, "questions.title")}</h1><p class="lede">{translate(locale, "questions.subtitle")}</p></div><a class="button button--primary" href={questions.length ? "#question-session" : getLocalePath(locale, "/papers/#new-paper-template")}>{questions.length ? translate(locale, "common.open") : translate(locale, "questions.action")}</a></header>{questions.length ? <div id="question-session"><QuestionPractice client:visible questions={questions} today={today} locale={locale} messages={messages} /></div> : <section class="app-empty-state" aria-labelledby="questions-empty"><h2 id="questions-empty">{translate(locale, "questions.empty")}</h2><p>{translate(locale, "questions.emptyBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/#new-paper-template")}>{translate(locale, "questions.action")}</a></section>}</div></BaseLayout>

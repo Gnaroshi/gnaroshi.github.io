@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import FormulaRecallTrainer from "../../../components/formula/FormulaRecallTrainer";
+import { getIslandMessages } from "../../../i18n/islands";
 import { getPublishedPapers, getTodayKey, type PaperEntry } from "../../../utils/papers";
 import { toFormulaRecallRecord } from "../../../utils/formulaRecall";
 
@@ -17,10 +18,13 @@ interface Props {
 const { paper, papers } = Astro.props as Props;
 const records = papers.map(toFormulaRecallRecord);
 const today = getTodayKey();
+const messages = getIslandMessages("en").formula;
+const alternateUrls = { en: `/papers/${paper.id}/formula/`, ko: "/ko/formula/", xDefault: `/papers/${paper.id}/formula/`, translationAvailable: false } as const;
 ---
 
-<BaseLayout title={`${paper.data.title} Formula Recall`} description={`Formula recall practice for ${paper.data.title}.`} canonical={`/papers/${paper.id}/formula/`} width="dashboard" mode="application">
+<BaseLayout title={`${paper.data.title} Formula Recall`} description={`Formula recall practice for ${paper.data.title}.`} canonical={`/papers/${paper.id}/formula/`} alternateUrls={alternateUrls} width="dashboard" mode="application">
   <div class="paper-dashboard">
+    <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <header class="paper-hero">
       <div class="paper-hero__copy">
         <p class="eyebrow">Formula recall</p>
@@ -32,6 +36,6 @@ const today = getTodayKey();
         <a href="/formula">All formulas</a>
       </nav>
     </header>
-    <FormulaRecallTrainer client:visible papers={records} initialSlug={paper.id} today={today} />
+    <FormulaRecallTrainer client:visible papers={records} initialSlug={paper.id} today={today} locale="en" messages={messages} />
   </div>
 </BaseLayout>

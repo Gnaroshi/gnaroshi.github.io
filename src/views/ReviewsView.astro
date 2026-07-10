@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ReviewSession from "../components/reviews/ReviewSession";
+import type { Locale } from "../i18n/types";
+import { getLocalePath, translate } from "../i18n/utils";
+import { getPublishedPapers, getTodayKey } from "../utils/papers";
+import { getDueReviews, toReviewDueRecord } from "../utils/reviewDue";
+import { getIslandMessages } from "../i18n/islands";
+interface Props { locale: Locale; dueOnly?: boolean }
+const { locale, dueOnly = false } = Astro.props;
+const papers = await getPublishedPapers(locale);
+const today = getTodayKey();
+const due = getDueReviews(papers, today).map((paper) => toReviewDueRecord(paper, today));
+const title = dueOnly ? translate(locale, "reviews.todayTitle") : translate(locale, "reviews.title");
+const empty = dueOnly ? translate(locale, "reviews.todayEmpty") : translate(locale, "reviews.empty");
+const messages = getIslandMessages(locale);
+---
+<BaseLayout locale={locale} title={title} description={translate(locale, "reviews.subtitle")} width="dashboard" mode="application"><div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><p class="eyebrow">{translate(locale, "paperLab.reviewsDue")}</p><h1>{title}</h1><p class="lede">{translate(locale, "reviews.subtitle")}</p></div><a class="button button--primary" href={due.length ? "#review-session" : getLocalePath(locale, "/papers/#new-paper-template")}>{due.length ? translate(locale, "common.open") : translate(locale, "reviews.action")}</a></header>{due.length ? <div id="review-session"><ReviewSession client:visible papers={due} today={today} locale={locale} messages={messages.review} /></div> : <section class="app-empty-state" aria-labelledby="reviews-empty"><h2 id="reviews-empty">{empty}</h2><p>{translate(locale, "reviews.emptyBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/#new-paper-template")}>{translate(locale, "reviews.action")}</a></section>}</div></BaseLayout>

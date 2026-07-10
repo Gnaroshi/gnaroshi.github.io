@@ -1,35 +1,39 @@
 ---
 import type { MomentumResult } from "../../types/momentum";
 import MomentumConfidence from "./MomentumConfidence.astro";
+import type { Locale } from "../../i18n/types";
 
 interface Props {
   result: MomentumResult;
+  locale: Locale;
 }
 
-const { result } = Astro.props;
-const levelLabels: Record<MomentumResult["level"], string> = {
+const { result, locale } = Astro.props;
+const enLevelLabels: Record<MomentumResult["level"], string> = {
   seed: "Seed",
   building: "Building",
   steady: "Steady",
   strong: "Strong",
   compounding: "Compounding"
 };
+const koLevelLabels: Record<MomentumResult["level"], string> = { seed: "시작", building: "쌓는 중", steady: "꾸준함", strong: "탄탄함", compounding: "축적됨" };
+const levelLabels = locale === "ko" ? koLevelLabels : enLevelLabels;
 ---
 
 <section class:list={["momentum-score", `momentum-score--${result.level}`]} aria-labelledby="momentum-score-heading">
   <div class="momentum-score__summary">
     <div>
-      <p class="eyebrow">Research Momentum Score v2</p>
-      <h2 id="momentum-score-heading">Research momentum</h2>
+      <p class="eyebrow">{locale === "ko" ? "연구 흐름 점수 v2" : "Research Momentum Score v2"}</p>
+      <h2 id="momentum-score-heading">{locale === "ko" ? "연구 흐름" : "Research momentum"}</h2>
     </div>
     <div class="momentum-score__value">
-      <strong aria-label={`${result.score} out of 100`}>{result.score}</strong>
+      <strong aria-label={locale === "ko" ? `100점 만점에 ${result.score}점` : `${result.score} out of 100`}>{result.score}</strong>
       <span>{levelLabels[result.level]}</span>
     </div>
-    <p>{result.explanation}</p>
+    <p>{locale === "ko" ? "공개 연구 기록에서 읽기, 회상, 구현, 글쓰기의 균형을 계산한 결과입니다." : result.explanation}</p>
     <p class="momentum-score__scope">
-      This score describes the current research loop, not ability or personal worth.
+      {locale === "ko" ? "이 점수는 현재 연구 흐름을 설명하며 능력이나 개인의 가치를 평가하지 않습니다." : "This score describes the current research loop, not ability or personal worth."}
     </p>
   </div>
-  <MomentumConfidence confidence={result.confidence} />
+  <MomentumConfidence confidence={result.confidence} locale={locale} />
 </section>

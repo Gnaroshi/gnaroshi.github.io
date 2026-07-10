@@ -2,12 +2,16 @@
 import type { PaperEntry } from "../../utils/papers";
 import { buildManualReviewPromptForPaper } from "../../../scripts/lib/paper-review-prompt.mjs";
 import ManualReviewPrompt from "./ManualReviewPrompt";
+import { getIslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
 
 interface Props {
   paper: PaperEntry;
+  locale?: Locale;
 }
 
-const { paper } = Astro.props;
+const { paper, locale = "en" } = Astro.props;
+const messages = getIslandMessages(locale).manualReview;
 const prompt = buildManualReviewPromptForPaper({
   slug: paper.id,
   frontmatter: paper.data,
@@ -28,5 +32,5 @@ const command = `npm run paper:review -- --slug ${paper.id}`;
 
   <pre><code>{command}</code></pre>
 
-  <ManualReviewPrompt client:load prompt={prompt} command={command} initiallyOpen={true} />
+  <ManualReviewPrompt client:load prompt={prompt} command={command} initiallyOpen={true} locale={locale} messages={messages} />
 </section>

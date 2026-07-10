@@ -4,7 +4,7 @@ import { join, relative } from "node:path";
 import { loadPaperBySlug } from "./lib/paper-content-loader.mjs";
 
 const root = process.cwd();
-const blogDir = join(root, "src", "content", "blog");
+const blogDir = join(root, "src", "content", "blog", "en");
 const args = parseArgs(process.argv.slice(2));
 
 if (args.help) {
@@ -69,6 +69,13 @@ function buildBlogDraft(paper, today) {
 
   return `---
 title: "Notes on ${escapeYamlString(data.title)}"
+locale: "en"
+translationKey: "${today}-${paper.slug}-notes"
+translationStatus: "source-only"
+contentStage: "working"
+metricEligible: false
+graphEligible: false
+weeklyReviewEligible: false
 description: "${escapeYamlString(data.oneLineSummary || `A paper note on ${data.title}.`)}"
 pubDate: ${today}
 updatedDate:

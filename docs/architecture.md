@@ -157,6 +157,14 @@ Use file-based Astro routes:
 
 Use `getStaticPaths` for dynamic blog and paper pages.
 
+## Localization Architecture
+
+English is the unprefixed default locale; Korean uses `/ko/`. Astro i18n routing is configured with `prefixDefaultLocale: false`. Thin files under `src/pages/` and `src/pages/ko/` call the same locale-aware views under `src/views/`; do not fork page business logic by language.
+
+Typed page dictionaries, island messages, URL helpers, localized dates/numbers, and tag labels live in `src/i18n/`. Locale-aware static data lives in `src/data/locales/`. Content translations are paired by `translationKey`, and locale folders are stripped from public content slugs. Generated research metrics consume language-neutral evidence and must not count a translated copy as a second research event.
+
+Every localized page emits its own canonical URL plus `en`, `ko`, and English `x-default` alternates. A missing content translation links to the corresponding localized collection index instead of rendering a silent fallback.
+
 ## SEO And Feeds
 
 Each public content page should have:

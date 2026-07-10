@@ -8,21 +8,31 @@ type PostPreview = {
   tags: string[];
   series?: string;
   readingTime: string;
+  locale: "en" | "ko";
 };
 
 type Props = {
   posts: PostPreview[];
   tags: string[];
+  locale: "en" | "ko";
+  messages: {
+    searchPosts: string;
+    filterByTag: string;
+    all: string;
+    resultCount: string;
+    noMatch: string;
+  };
+  tagLabels: Record<string, string>;
 };
 
-const formatDate = (value: string) =>
-  new Intl.DateTimeFormat("en", {
+const formatDate = (value: string, locale: "en" | "ko") =>
+  new Intl.DateTimeFormat(locale === "ko" ? "ko-KR" : "en-US", {
     year: "numeric",
     month: "short",
     day: "numeric"
   }).format(new Date(value));
 
-export default function BlogSearch({ posts, tags }: Props) {
+export default function BlogSearch({ posts, tags, locale, messages, tagLabels }: Props) {
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState("");
 
@@ -48,7 +58,7 @@ export default function BlogSearch({ posts, tags }: Props) {
     <div className="blog-search">
       <div className="blog-search__controls">
         <label>
-          <span>Search posts</span>
+          <span>{messages.searchPosts}</span>
           <input
             type="search"
             value={query}
@@ -56,13 +66,13 @@ export default function BlogSearch({ posts, tags }: Props) {
           />
         </label>
 
-        <div className="blog-search__tags" aria-label="Filter by tag">
+        <div className="blog-search__tags" aria-label={messages.filterByTag}>
           <button
             type="button"
             className={!activeTag ? "is-active" : ""}
             onClick={() => setActiveTag("")}
           >
-            All
+            {messages.all}
           </button>
           {tags.map((tag) => (
             <button
@@ -71,28 +81,28 @@ export default function BlogSearch({ posts, tags }: Props) {
               className={activeTag === tag ? "is-active" : ""}
               onClick={() => setActiveTag(tag)}
             >
-              {tag}
+              {tagLabels[tag] ?? tag}
             </button>
           ))}
         </div>
       </div>
 
       <div className="blog-search__results" aria-live="polite">
-        <p className="metadata">{filteredPosts.length} post{filteredPosts.length === 1 ? "" : "s"}</p>
+        <p className="metadata">{messages.resultCount.replace("{count}", String(filteredPosts.length))}</p>
         {filteredPosts.length > 0 ? (
           <ul className="list">
             {filteredPosts.map((post) => (
               <li className="list-item" key={post.slug}>
-                <h3><a href={`/blog/${post.slug}/`}>{post.title}</a></h3>
+                <h3><a href={`${locale === "ko" ? "/ko" : ""}/blog/${post.slug}/`}>{post.title}</a></h3>
                 <p>{post.description}</p>
                 <p className="metadata">
-                  {formatDate(post.pubDate)} · {post.readingTime} · {post.tags.join(", ")}
+                  {formatDate(post.pubDate, locale)} · {post.readingTime} · {post.tags.map((tag) => tagLabels[tag] ?? tag).join(", ")}
                 </p>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="empty-state">No posts match the current filters.</p>
+          <p className="empty-state">{messages.noMatch}</p>
         )}
       </div>
     </div>

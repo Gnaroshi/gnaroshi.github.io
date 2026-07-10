@@ -3,18 +3,22 @@ import { profile } from "../data/profile";
 import DesktopNav from "./navigation/DesktopNav.astro";
 import MobileNav from "./navigation/MobileNav.astro";
 import UtilityNav from "./navigation/UtilityNav.astro";
+import type { AlternateUrls, Locale } from "../i18n/types";
+import { getLocalePath, translate } from "../i18n/utils";
 
-const currentPath = Astro.url.pathname;
+const currentPath = `${Astro.url.pathname}${Astro.url.search}`;
+interface Props { locale: Locale; alternateUrls?: AlternateUrls }
+const { locale, alternateUrls } = Astro.props;
 ---
 
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="site-header__brand" href="/" aria-label={`${profile.siteName} home`}>
+    <a class="site-header__brand" href={getLocalePath(locale, "/")} aria-label={`${profile.siteName} ${translate(locale, "nav.home")}`}>
       <span class="site-header__name">{profile.siteName}</span>
-      <span class="site-header__role">{profile.headline}</span>
+      <span class="site-header__role">{translate(locale, "site.role")}</span>
     </a>
-    <DesktopNav currentPath={currentPath} />
-    <UtilityNav currentPath={currentPath} />
-    <MobileNav currentPath={currentPath} />
+    <DesktopNav currentPath={currentPath} locale={locale} />
+    <UtilityNav currentPath={currentPath} locale={locale} alternateUrls={alternateUrls} />
+    <MobileNav currentPath={currentPath} locale={locale} alternateUrls={alternateUrls} />
   </div>
 </header>

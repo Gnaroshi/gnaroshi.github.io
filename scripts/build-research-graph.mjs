@@ -173,7 +173,12 @@ function loadContentItems(collection) {
         body: parsed.content.trim()
       };
     })
-    .filter((item) => isPublicContent(item.data) && item.data.graphEligible !== false && item.data.contentStage !== "seed");
+    .filter((item) =>
+      isPublicContent(item.data) &&
+      item.data.graphEligible !== false &&
+      item.data.contentStage !== "seed" &&
+      (item.data.locale ?? "en") === "en"
+    );
 }
 
 function loadWeeklyReviews() {

@@ -207,7 +207,7 @@ function isPaperActive(paper) {
 }
 
 function isWeeklyReviewEligible(item) {
-  return item.data.weeklyReviewEligible !== false && item.data.contentStage !== "seed";
+  return item.data.weeklyReviewEligible !== false && item.data.contentStage !== "seed" && (item.data.locale ?? "en") === "en";
 }
 
 function isGeneratedWeeklyReviewEligible(item) {

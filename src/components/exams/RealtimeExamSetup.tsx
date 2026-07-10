@@ -1,4 +1,5 @@
 import type { ApiExamLanguage, ApiTargetDepth, ResearchApiConfig } from "../../types/api";
+import type { IslandMessages } from "../../i18n/islands";
 
 type Props = {
   targetDepth: ApiTargetDepth;
@@ -8,6 +9,7 @@ type Props = {
   apiConfigured: boolean;
   busy: boolean;
   live: boolean;
+  messages: IslandMessages["exam"];
   onTargetDepthChange(value: ApiTargetDepth): void;
   onLanguageChange(value: ApiExamLanguage): void;
   onQuestionCountChange(value: number): void;
@@ -24,6 +26,7 @@ export default function RealtimeExamSetup({
   apiConfigured,
   busy,
   live,
+  messages,
   onTargetDepthChange,
   onLanguageChange,
   onQuestionCountChange,
@@ -36,28 +39,28 @@ export default function RealtimeExamSetup({
   return (
     <section className="live-exam-setup" aria-labelledby="live-exam-setup-heading">
       <div>
-        <p className="eyebrow">Exam setup</p>
-        <h2 id="live-exam-setup-heading">Choose the evidence depth</h2>
+        <p className="eyebrow">{messages.setup}</p>
+        <h2 id="live-exam-setup-heading">{messages.setupHeading}</h2>
       </div>
 
       <div className="live-exam-control-grid">
         <label className="paper-field">
-          <span>Target depth</span>
+          <span>{messages.targetDepth}</span>
           <select value={targetDepth} onChange={(event) => onTargetDepthChange(event.target.value as ApiTargetDepth)} disabled={live || busy}>
-            <option value="pass1">Pass 1 — relevance</option>
-            <option value="pass2">Pass 2 — structure</option>
-            <option value="pass3">Pass 3 — deep understanding</option>
+            <option value="pass1">{messages.pass1}</option>
+            <option value="pass2">{messages.pass2}</option>
+            <option value="pass3">{messages.pass3}</option>
           </select>
         </label>
         <label className="paper-field">
-          <span>Language</span>
+          <span>{messages.language}</span>
           <select value={language} onChange={(event) => onLanguageChange(event.target.value as ApiExamLanguage)} disabled={live || busy}>
-            <option value="ko-KR">Korean</option>
-            <option value="en-US">English</option>
+            <option value="ko-KR">{messages.korean}</option>
+            <option value="en-US">{messages.english}</option>
           </select>
         </label>
         <label className="paper-field">
-          <span>Questions</span>
+          <span>{messages.questions}</span>
           <input
             type="number"
             min={3}
@@ -71,23 +74,23 @@ export default function RealtimeExamSetup({
 
       <div className="paper-card__links">
         {live ? (
-          <button type="button" onClick={onStopLive}>Stop live exam</button>
+          <button type="button" onClick={onStopLive}>{messages.stopLive}</button>
         ) : (
           <button type="button" onClick={onStartLive} disabled={!realtimeReady || busy}>
-            Start live oral exam
+            {messages.startLive}
           </button>
         )}
         <button type="button" onClick={onGenerateText} disabled={!apiConfigured || busy || live}>
-          Generate text exam
+          {messages.generateText}
         </button>
       </div>
 
       <p className="metadata">
         {!apiConfigured
-          ? "Live voice is unavailable in this deployment. Manual practice remains available below."
+          ? messages.voiceUnavailable
           : config?.realtimeEnabled
-            ? "Live voice is available. Microphone access is requested only when the exam starts."
-            : "Live voice is currently unavailable. Text or manual practice can still be used."}
+            ? messages.microphoneReady
+            : messages.textOrManual}
       </p>
     </section>
   );

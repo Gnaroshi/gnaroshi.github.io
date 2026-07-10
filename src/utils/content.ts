@@ -1,5 +1,9 @@
 import { getCollection, type CollectionEntry } from "astro:content";
-import { formatMonth, getYearMonthKey } from "./date";
+import { getYearMonthKey } from "./date";
+import { formatLocalizedMonth } from "../i18n/date";
+import type { Locale } from "../i18n/types";
+import { getLocalePath } from "../i18n/utils";
+import { getContentSlug, getTranslationEntry } from "./localizedContent";
 import { getReadingTime } from "./readingTime";
 import { slugify } from "./slug";
 import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
@@ -14,6 +18,7 @@ export type BlogPostPreview = {
   tags: string[];
   series?: string;
   readingTime: string;
+  locale: Locale;
 };
 
 export type ArchiveGroup = {
@@ -22,18 +27,22 @@ export type ArchiveGroup = {
   posts: BlogPost[];
 };
 
-export async function getAllBlogPosts(): Promise<BlogPost[]> {
+export async function getAllBlogPosts(locale: Locale = "en"): Promise<BlogPost[]> {
   const posts = await getCollection("blog");
-  return sortBlogPosts(posts);
+  return sortBlogPosts(posts.filter((post) => post.data.locale === locale));
 }
 
-export async function getPublishedBlogPosts(): Promise<BlogPost[]> {
-  const posts = await getAllBlogPosts();
+export async function getAllBlogPostsAcrossLocales(): Promise<BlogPost[]> {
+  return sortBlogPosts(await getCollection("blog"));
+}
+
+export async function getPublishedBlogPosts(locale: Locale = "en"): Promise<BlogPost[]> {
+  const posts = await getAllBlogPosts(locale);
   return posts.filter((post) => shouldShowInIndex(post.data, { includeDrafts: !import.meta.env.PROD }));
 }
 
-export async function getBuildableBlogPosts(): Promise<BlogPost[]> {
-  const posts = await getAllBlogPosts();
+export async function getBuildableBlogPosts(locale: Locale = "en"): Promise<BlogPost[]> {
+  const posts = await getAllBlogPosts(locale);
   return posts.filter((post) =>
     shouldBuildDetailPage(post.data, {
       includeDrafts: !import.meta.env.PROD,
@@ -59,7 +68,7 @@ export function getPostsByTag(posts: BlogPost[], tag: string): BlogPost[] {
   return posts.filter((post) => post.data.tags.some((postTag) => slugify(postTag) === tag));
 }
 
-export function getArchiveGroups(posts: BlogPost[]): ArchiveGroup[] {
+export function getArchiveGroups(posts: BlogPost[], locale: Locale = "en"): ArchiveGroup[] {
   const groups = new Map<string, BlogPost[]>();
 
   for (const post of posts) {
@@ -69,7 +78,7 @@ export function getArchiveGroups(posts: BlogPost[]): ArchiveGroup[] {
 
   return [...groups.entries()].map(([key, groupPosts]) => ({
     key,
-    label: formatMonth(groupPosts[0].data.pubDate),
+    label: formatLocalizedMonth(groupPosts[0].data.pubDate, locale),
     posts: sortBlogPosts(groupPosts)
   }));
 }
@@ -99,12 +108,25 @@ export function getPostReadingTime(post: BlogPost): string {
 
 export function toBlogPostPreview(post: BlogPost): BlogPostPreview {
   return {
-    slug: post.id,
+    slug: getContentSlug(post.id),
     title: post.data.title,
     description: post.data.description,
     pubDate: post.data.pubDate.toISOString(),
     tags: post.data.tags,
     series: post.data.series,
-    readingTime: getPostReadingTime(post)
+    readingTime: getPostReadingTime(post),
+    locale: post.data.locale
   };
+}
+
+export function getBlogPostSlug(post: BlogPost): string {
+  return getContentSlug(post.id);
+}
+
+export function getBlogPostHref(post: BlogPost): string {
+  return getLocalePath(post.data.locale, `/blog/${getBlogPostSlug(post)}/`);
+}
+
+export function getBlogTranslation(posts: BlogPost[], post: BlogPost, locale: Locale): BlogPost | undefined {
+  return getTranslationEntry(posts, post, locale);
 }

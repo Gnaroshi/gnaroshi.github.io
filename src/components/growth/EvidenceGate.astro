@@ -1,29 +1,36 @@
 ---
 import type { EvidenceEligibility } from "../../utils/evidenceEligibility";
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
 
 interface Props {
   eligibility: EvidenceEligibility;
   compact?: boolean;
   headingLevel?: "h2" | "h3";
+  locale?: Locale;
 }
 
-const { eligibility, compact = false, headingLevel = "h2" } = Astro.props;
+const { eligibility, compact = false, headingLevel = "h2", locale = "en" } = Astro.props;
 const Heading = headingLevel;
 const progress = Math.min(100, Math.round((eligibility.eventCount / 5) * 100));
+function criterionKey(label: string) {
+  if (label === "Meaningful evidence events") return "evidence.events" as const;
+  if (label === "Distinct active dates") return "evidence.dates" as const;
+  if (label === "Activity categories") return "evidence.categories" as const;
+  return "evidence.coreCategory" as const;
+}
 ---
 
 <section class:list={["evidence-gate", compact && "evidence-gate--compact"]} aria-labelledby="evidence-gate-heading">
   <div class="evidence-gate__intro">
-    <p class="eyebrow">Evidence status</p>
-    <Heading id="evidence-gate-heading">Collecting evidence</Heading>
-    <p>
-      A public score will appear after the research record is large and varied enough to support one.
-    </p>
+    <p class="eyebrow">{translate(locale, "evidence.status")}</p>
+    <Heading id="evidence-gate-heading">{translate(locale, "evidence.collecting")}</Heading>
+    <p>{translate(locale, "evidence.description")}</p>
   </div>
   <div
     class="evidence-gate__progress"
     role="progressbar"
-    aria-label="Minimum evidence collected"
+    aria-label={translate(locale, "evidence.status")}
     aria-valuemin="0"
     aria-valuemax="100"
     aria-valuenow={progress}
@@ -34,7 +41,7 @@ const progress = Math.min(100, Math.round((eligibility.eventCount / 5) * 100));
     {eligibility.criteria.map((criterion) => (
       <li class:list={[criterion.complete && "is-complete"]}>
         <span aria-hidden="true">{criterion.complete ? "✓" : "·"}</span>
-        <span>{criterion.label}</span>
+        <span>{translate(locale, criterionKey(criterion.label))}</span>
         <strong>{criterion.current}/{criterion.required}</strong>
       </li>
     ))}

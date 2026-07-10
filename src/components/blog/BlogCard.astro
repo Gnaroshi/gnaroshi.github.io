@@ -3,16 +3,18 @@ import Card from "../common/Card.astro";
 import BlogMeta from "./BlogMeta.astro";
 import TagList from "./TagList.astro";
 import type { BlogPost } from "../../utils/content";
+import type { Locale } from "../../i18n/types";
+import { getBlogPostHref } from "../../utils/content";
 
 interface Props {
   post: BlogPost;
+  locale?: Locale;
 }
 
-const { post } = Astro.props;
+const { post, locale = post.data.locale } = Astro.props;
 ---
 
-<Card title={post.data.title} href={`/blog/${post.id}/`} description={post.data.description}>
-  <BlogMeta post={post} />
-  <TagList tags={post.data.tags} />
+<Card title={post.data.title} href={getBlogPostHref(post)} description={post.data.description}>
+  <BlogMeta post={post} locale={locale} />
+  <TagList tags={post.data.tags} locale={locale} />
 </Card>
-

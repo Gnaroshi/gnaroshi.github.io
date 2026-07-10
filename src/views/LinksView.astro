@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ExternalLink from "../components/common/ExternalLink.astro";
+import { profile } from "../data/profile";
+import type { Locale } from "../i18n/types";
+import { translate } from "../i18n/utils";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+---
+<BaseLayout locale={locale} title={translate(locale, "links.title")} description={translate(locale, "links.body")}><header class="page-header"><p class="eyebrow">{translate(locale, "links.eyebrow")}</p><h1>{translate(locale, "links.title")}</h1><p class="lede">{translate(locale, "links.body")}</p></header><section class="section"><div class="link-row"><ExternalLink href={profile.links.github}>GitHub</ExternalLink>{profile.links.email && <ExternalLink href={`mailto:${profile.links.email}`}>Email</ExternalLink>}{profile.links.scholar && <ExternalLink href={profile.links.scholar}>Google Scholar</ExternalLink>}{profile.links.cv && <ExternalLink href={profile.links.cv}>CV</ExternalLink>}</div></section></BaseLayout>

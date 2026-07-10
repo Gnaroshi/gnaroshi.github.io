@@ -4,6 +4,7 @@ import LiveOralExam from "../../../../components/exams/LiveOralExam";
 import { getBuildablePapers, type PaperEntry } from "../../../../utils/papers";
 import { getResearchApiBaseUrl } from "../../../../utils/researchApiClient";
 import type { ApiPaperContext, ApiTargetDepth } from "../../../../types/api";
+import { getIslandMessages } from "../../../../i18n/islands";
 
 export async function getStaticPaths() {
   const papers = await getBuildablePapers();
@@ -30,6 +31,8 @@ const initialTargetDepth: ApiTargetDepth = paper.data.status === "pass3" || ["de
     ? "pass2"
     : "pass1";
 const manualPrompt = buildManualExamPrompt(paper, initialTargetDepth);
+const messages = getIslandMessages("en").exam;
+const alternateUrls = { en: `/papers/${paper.id}/exam/live/`, ko: "/ko/papers/", xDefault: `/papers/${paper.id}/exam/live/`, translationAvailable: false } as const;
 
 function buildManualExamPrompt(entry: PaperEntry, targetDepth: ApiTargetDepth): string {
   return [
@@ -60,9 +63,11 @@ function buildManualExamPrompt(entry: PaperEntry, targetDepth: ApiTargetDepth): 
   title={`Live oral exam · ${paper.data.title}`}
   description={`A local-first voice and text retrieval exam for ${paper.data.title}.`}
   canonical={`/papers/${paper.id}/exam/live/`}
+  alternateUrls={alternateUrls}
   width="dashboard"
   mode="application"
 >
+  <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
   <header class="page-header">
     <a class="paper-detail-header__back" href={`/papers/${paper.id}/`}>Back to paper note</a>
     <p class="eyebrow">Oral exam</p>
@@ -77,5 +82,7 @@ function buildManualExamPrompt(entry: PaperEntry, targetDepth: ApiTargetDepth): 
     paperContext={paperContext}
     initialTargetDepth={initialTargetDepth}
     manualPrompt={manualPrompt}
+    locale="en"
+    messages={messages}
   />
 </BaseLayout>

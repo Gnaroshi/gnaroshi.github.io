@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ExternalLink from "../components/common/ExternalLink.astro";
+import { getLocalizedData } from "../data/locales";
+import { formatLocalizedDate } from "../i18n/date";
+import type { Locale } from "../i18n/types";
+import { getLocalePath, translate } from "../i18n/utils";
+import { getPublishedBlogPosts, getBlogPostHref } from "../utils/content";
+interface Props { locale: Locale; slug: string }
+const { locale, slug } = Astro.props;
+const data = getLocalizedData(locale);
+const project = data.projects.find((item) => item.slug === slug);
+if (!project) throw new Error(`Unknown localized project: ${slug}`);
+const posts = await getPublishedBlogPosts(locale);
+const relatedKeys = new Set<string>(project.relatedWriting);
+const related = posts.filter((post) => relatedKeys.has(post.data.translationKey));
+---
+<BaseLayout locale={locale} title={project.title} description={project.summary} canonical={getLocalePath(locale, `/projects/${project.slug}/`)} type="article" width="wide"><article class="project-case"><header class="page-header"><a href={getLocalePath(locale, "/projects/")}>{translate(locale, "common.back")}</a><p class="eyebrow">{translate(locale, "nav.projects")}</p><h1>{project.title}</h1><p class="lede">{project.summary}</p><p class="metadata">{project.status} · {translate(locale, "common.updated")} {formatLocalizedDate(project.updatedAt, locale)}</p></header><section><h2>{translate(locale, "projects.problem")}</h2><p>{project.problem}</p></section><section><h2>{translate(locale, "projects.role")}</h2><p>{project.role}</p></section><section><h2>{translate(locale, "projects.decisions")}</h2><ul>{project.decisions.map((item) => <li>{item}</li>)}</ul></section><section><h2>{translate(locale, "projects.architecture")}</h2><ul>{project.architecture.map((item) => <li>{item}</li>)}</ul></section><section><h2>{translate(locale, "projects.implementation")}</h2><ul>{project.implementation.map((item) => <li>{item}</li>)}</ul></section><section><h2>{translate(locale, "projects.result")}</h2><p>{project.result}</p></section><section><h2>{translate(locale, "projects.lessons")}</h2><ul>{project.lessons.map((item) => <li>{item}</li>)}</ul></section>{related.length > 0 && <section><h2>{translate(locale, "projects.relatedWriting")}</h2><ul>{related.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a></li>)}</ul></section>}<footer class="link-row">{project.links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}</footer></article></BaseLayout>
+<style>.project-case{display:grid;gap:var(--space-7)}.project-case>section{display:grid;gap:var(--space-3);padding-top:var(--space-5);border-top:1px solid var(--color-border)}.project-case>section p,.project-case>section li{max-width:72ch;color:var(--color-text-secondary);line-height:1.75}</style>

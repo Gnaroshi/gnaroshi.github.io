@@ -12,10 +12,12 @@ interface Props {
 }
 
 const { question } = Astro.props as Props;
+const alternateUrls = { en: `/questions/${question.id}/`, ko: "/ko/questions/", xDefault: `/questions/${question.id}/`, translationAvailable: false } as const;
 ---
 
-<BaseLayout title="Question" description={question.question} canonical={`/questions/${question.id}/`} mode="application">
+<BaseLayout title="Question" description={question.question} canonical={`/questions/${question.id}/`} alternateUrls={alternateUrls} mode="application">
   <article class="paper-detail">
+    <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/questions">Back to questions</a>
       <div class="paper-detail-header__title">

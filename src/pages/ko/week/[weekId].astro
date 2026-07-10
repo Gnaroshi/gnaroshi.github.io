@@ -1,0 +1,8 @@
+---
+import WeekDetailView from "../../../views/WeekDetailView.astro";
+import { getAllWeeklyReviews, type WeeklyReview } from "../../../utils/weeklyReviews";
+export function getStaticPaths() { return getAllWeeklyReviews().map((review) => ({ params: { weekId: review.weekId }, props: { review } })); }
+interface Props { review: WeeklyReview }
+const { review } = Astro.props;
+---
+<WeekDetailView locale="ko" review={review} />

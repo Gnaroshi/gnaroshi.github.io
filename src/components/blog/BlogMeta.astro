@@ -1,26 +1,30 @@
 ---
 import type { BlogPost } from "../../utils/content";
-import { formatDate } from "../../utils/date";
+import { formatLocalizedDate } from "../../i18n/date";
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
 import { getPostReadingTime } from "../../utils/content";
 
 interface Props {
   post: BlogPost;
+  locale?: Locale;
 }
 
-const { post } = Astro.props;
+const { post, locale = post.data.locale } = Astro.props;
 const readingTime = getPostReadingTime(post);
+const readingMinutes = Number.parseInt(readingTime, 10) || 1;
 ---
 
 <p class="blog-meta">
-  <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+  <time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time>
   {post.data.updatedDate && (
     <>
       <span aria-hidden="true">·</span>
-      <span>Updated <time datetime={post.data.updatedDate.toISOString()}>{formatDate(post.data.updatedDate)}</time></span>
+      <span>{translate(locale, "writing.updated")} <time datetime={post.data.updatedDate.toISOString()}>{formatLocalizedDate(post.data.updatedDate, locale)}</time></span>
     </>
   )}
   <span aria-hidden="true">·</span>
-  <span>{readingTime}</span>
+  <span>{translate(locale, "writing.readingTime", { count: readingMinutes })}</span>
   {post.data.series && (
     <>
       <span aria-hidden="true">·</span>
@@ -40,4 +44,3 @@ const readingTime = getPostReadingTime(post);
     font-size: var(--text-sm);
   }
 </style>
-

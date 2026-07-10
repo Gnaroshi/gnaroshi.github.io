@@ -1,21 +1,27 @@
 ---
 import { profile } from "../data/profile";
-import { footerNavigation } from "../utils/navigation";
+import { getFooterNavigation } from "../i18n/routes";
+import type { Locale } from "../i18n/types";
+import { getLocalePath, translate } from "../i18n/utils";
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const footerNavigation = getFooterNavigation(locale);
 ---
 
 <footer class="site-footer">
   <div class="site-footer__inner">
     <div>
       <p class="site-footer__title">{profile.siteName}</p>
-      <p class="site-footer__text">{profile.headline}</p>
+      <p class="site-footer__text">{translate(locale, "site.role")}</p>
     </div>
 
-    <nav class="site-footer__links" aria-label="Footer navigation">
+    <nav class="site-footer__links" aria-label={translate(locale, "a11y.footerNavigation")}>
       {footerNavigation.map((item) => (
         <a href={item.href}>{item.label}</a>
       ))}
-      <a href="/rss.xml">RSS</a>
-      <a href={profile.links.github}>GitHub</a>
+      <a href={getLocalePath(locale, "/rss.xml")}>{translate(locale, "nav.rss")}</a>
+      <a href={profile.links.github}>{translate(locale, "nav.github")}</a>
     </nav>
   </div>
 </footer>

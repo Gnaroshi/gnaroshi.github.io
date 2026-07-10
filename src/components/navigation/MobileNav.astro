@@ -1,8 +1,12 @@
 ---
-import { footerNavigation, isNavigationActive } from "../../utils/navigation";
+import { getFooterNavigation, isNavigationActive } from "../../i18n/routes";
+import type { AlternateUrls, Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
+import LanguageSwitcher from "../LanguageSwitcher.astro";
 
-interface Props { currentPath: string }
-const { currentPath } = Astro.props;
+interface Props { currentPath: string; locale: Locale; alternateUrls?: AlternateUrls }
+const { currentPath, locale, alternateUrls } = Astro.props;
+const footerNavigation = getFooterNavigation(locale);
 ---
 
 <div class="mobile-nav" data-mobile-nav>
@@ -14,16 +18,17 @@ const { currentPath } = Astro.props;
     data-mobile-nav-trigger
   >
     <span aria-hidden="true"></span>
-    <span>Menu</span>
+    <span>{translate(locale, "nav.menu")}</span>
   </button>
   <div class="mobile-nav__panel" id="mobile-navigation-panel" hidden data-mobile-nav-panel>
-    <nav aria-label="Mobile navigation">
+    <nav aria-label={translate(locale, "a11y.mobileNavigation")}>
       {footerNavigation.map((item) => (
         <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
           {item.label}
         </a>
       ))}
     </nav>
+    <LanguageSwitcher locale={locale} currentPath={currentPath} alternateUrls={alternateUrls} mobile />
   </div>
 </div>
 

@@ -11,6 +11,7 @@ import { getBuildablePapers, getPublishedPapers, type PaperEntry } from "../../u
 import { getImplementationAttemptsForPaper, getPublishedImplementationAttempts } from "../../utils/implementations";
 import { getVisiblePaperReviewForPaper } from "../../utils/paperReviews";
 import { buildManualReviewPromptForPaper } from "../../../scripts/lib/paper-review-prompt.mjs";
+import { getIslandMessages } from "../../i18n/islands";
 
 export async function getStaticPaths() {
   const papers = await getBuildablePapers();
@@ -48,6 +49,8 @@ const reviewCommand = `npm run paper:review -- --slug ${paper.id}`;
 const promoteCommand = `npm run paper:promote -- --slug ${paper.id}`;
 const showAuthorTools = import.meta.env.DEV;
 const implementationAttempts = getImplementationAttemptsForPaper(await getPublishedImplementationAttempts(), paper.id);
+const manualReviewMessages = getIslandMessages("en").manualReview;
+const alternateUrls = { en: `/papers/${paper.id}/`, ko: "/ko/papers/", xDefault: `/papers/${paper.id}/`, translationAvailable: false } as const;
 
 const fallback = "Not recorded yet.";
 const futureMe = paper.data.futureMe;
@@ -55,8 +58,9 @@ const hasFutureMe =
   futureMe.oneThingToRemember || futureMe.whyItMatters || futureMe.whenToUseThis || futureMe.whatToRevisit || futureMe.warning;
 ---
 
-<BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/papers/${paper.id}/`} type="article" paperLab>
+<BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/papers/${paper.id}/`} alternateUrls={alternateUrls} type="article" paperLab>
   <article class="paper-detail">
+    <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <PaperDetailHeader paper={paper} />
 
     <section class="learning-panel learning-panel--accent" aria-labelledby="oral-exam-heading">
@@ -78,7 +82,7 @@ const hasFutureMe =
             <p class="eyebrow">Manual review</p>
             <h2 id="manual-rereview-heading">Re-review manually</h2>
           </div>
-          <ManualReviewPrompt client:load prompt={manualPrompt} command={reviewCommand} triggerLabel="Re-review manually" />
+          <ManualReviewPrompt client:load prompt={manualPrompt} command={reviewCommand} locale="en" messages={manualReviewMessages} />
         </section>
       </>
     ) : (

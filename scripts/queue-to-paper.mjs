@@ -143,6 +143,10 @@ function buildPaperLog(queueItem, today) {
 
   return `---
 title: "${escapeYamlString(data.title ?? "Untitled Paper")}"
+locale: "${data.locale === "ko" ? "ko" : "en"}"
+translationKey: "${escapeYamlString(data.translationKey || queueItem.slug)}"
+translationStatus: "source-only"
+paperId: "${escapeYamlString(data.translationKey || queueItem.slug)}"
 authors:
 ${authors}
 venue: "${escapeYamlString(data.venue ?? "")}"

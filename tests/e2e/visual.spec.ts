@@ -19,7 +19,13 @@ const routes = [
   "/implementations",
   "/graph",
   "/week",
-  "/404.html"
+  "/404.html",
+  "/ko/",
+  "/ko/research",
+  "/ko/blog",
+  "/ko/papers",
+  "/ko/growth",
+  "/ko/404"
 ];
 
 const viewports = [

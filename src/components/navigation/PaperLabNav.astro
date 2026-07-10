@@ -1,12 +1,15 @@
 ---
-import { isNavigationActive, paperLabNavigation } from "../../utils/navigation";
+import { getPaperLabNavigation, isNavigationActive } from "../../i18n/routes";
+import type { Locale } from "../../i18n/types";
+import { getLocalePath, translate } from "../../i18n/utils";
 
-interface Props { currentPath: string }
-const { currentPath } = Astro.props;
+interface Props { currentPath: string; locale: Locale }
+const { currentPath, locale } = Astro.props;
+const paperLabNavigation = getPaperLabNavigation(locale);
 ---
 
-<nav class="paper-lab-nav" aria-label="Paper Lab navigation">
-  <a class="paper-lab-nav__brand" href="/papers">Paper Lab</a>
+<nav class="paper-lab-nav" aria-label={translate(locale, "a11y.paperLabNavigation")}>
+  <a class="paper-lab-nav__brand" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a>
   <div class="paper-lab-nav__groups">
     {paperLabNavigation.map((group) => (
       <details>

@@ -28,6 +28,8 @@ Before changing product, design, architecture, content behavior, or major struct
 - `docs/tasks.md`
 - `docs/deployment.md`
 - `docs/cloudflare-worker-api.md`
+- `docs/i18n.md`
+- `docs/i18n-terminology.md`
 - `docs/codex-workflow.md`
 
 ## Stack
@@ -54,6 +56,9 @@ npm run check:public-copy
 npm run check:content-metrics
 npm run check:links
 npm run check:empty-shells
+npm run check:i18n
+npm run check:hardcoded-ui
+npm run check:translation-links
 npm run build
 npm run preview
 npm run test:e2e
@@ -83,6 +88,9 @@ cd apps/api && npm run deploy
 - `npm run check:content-metrics`: validate evidence eligibility, weekly review, graph, and public score gates.
 - `npm run check:links`: validate internal links in `dist/`.
 - `npm run check:empty-shells`: report primary pages or empty tools that expose zero dashboards or unnecessary islands.
+- `npm run check:i18n`: enforce exact English/Korean dictionary and island-message parity.
+- `npm run check:hardcoded-ui`: catch untranslated labels in interactive components and Korean output.
+- `npm run check:translation-links`: validate built route pairs, canonical/hreflang links, RSS, and sitemap.
 - `npm run build`: build the static site into `dist/`.
 - `npm run preview`: preview the built static site.
 - `npm run test:e2e`: verify public routes, mobile navigation, overflow, and empty states with Playwright.
@@ -110,6 +118,8 @@ The package scripts disable Astro telemetry to avoid global config writes during
 ## Routing
 
 Main routes:
+
+English uses these unprefixed routes. Every core route also has a Korean wrapper under `/ko/`.
 
 - `/`
 - `/about`
@@ -140,12 +150,16 @@ Main routes:
 - `/now`
 - `/contact`
 - `/rss.xml`
+- `/ko/rss.xml`
 
 Use Astro file-based routes. Use `getStaticPaths` for dynamic blog and paper pages.
 
 ## Content And Data Locations
 
 - Blog posts: `src/content/blog/`
+- English/Korean dictionaries and helpers: `src/i18n/`
+- Locale-aware static data: `src/data/locales/`
+- Shared English/Korean page views: `src/views/`
 - Paper logs: `src/content/papers/`
 - Paper reading queue: `src/content/queue/`
 - Future long-form project writeups: `src/content/projects/`
@@ -175,6 +189,11 @@ Astro 7 content collections are defined in `src/content.config.ts` using `glob()
 ## Coding Rules
 
 - Use TypeScript.
+- Keep English as the unprefixed default locale and Korean under `/ko/`; never add `/en/` or `/kr/` routes.
+- Keep English and Korean dictionary keys in exact parity and pass typed message subsets into React islands.
+- Keep route wrappers thin and business logic in shared locale-aware views.
+- Pair translated content with `translationKey`; never render silent English fallback content at a Korean URL.
+- Do not machine-translate research claims without owner review. Preserve proper nouns, paper titles, code, formulas, model names, and dataset names.
 - Keep content and UI separate.
 - Keep personal identity data centralized in `src/data/profile.ts`.
 - Prefer editable data files over hardcoding repeated personal data in components.

@@ -1,9 +1,18 @@
+---
+import type { Locale } from "../i18n/types";
+import { translate } from "../i18n/utils";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+---
+
 <button
   type="button"
   class="theme-toggle"
   data-theme-toggle
-  aria-label="Switch theme"
-  title="Switch theme"
+  aria-label={translate(locale, "theme.switchToDark")}
+  title={translate(locale, "theme.switchToDark")}
+  data-light-label={translate(locale, "theme.switchToLight")}
+  data-dark-label={translate(locale, "theme.switchToDark")}
 >
   <span data-theme-toggle-icon aria-hidden="true">☾</span>
 </button>
@@ -30,8 +39,13 @@
     const theme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
     const nextTheme = theme === "dark" ? "light" : "dark";
     const icon = button.querySelector("[data-theme-toggle-icon]");
-    button.setAttribute("aria-label", `Switch to ${nextTheme} theme`);
-    button.setAttribute("title", `Switch to ${nextTheme} theme`);
+    const label = nextTheme === "dark"
+      ? button.getAttribute("data-dark-label")
+      : button.getAttribute("data-light-label");
+    if (label) {
+      button.setAttribute("aria-label", label);
+      button.setAttribute("title", label);
+    }
     if (icon) icon.textContent = theme === "dark" ? "☀" : "☾";
   };
 

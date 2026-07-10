@@ -1,39 +1,9 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
-import BlogCard from "../../../components/blog/BlogCard.astro";
-import SectionHeader from "../../../components/common/SectionHeader.astro";
+import BlogTagView from "../../../views/BlogTagView.astro";
 import { getAllBlogTags, getPostsByTag, getPublishedBlogPosts, type BlogPost } from "../../../utils/content";
 import { slugify } from "../../../utils/slug";
-
-export async function getStaticPaths() {
-  const posts = await getPublishedBlogPosts();
-  const tags = getAllBlogTags(posts);
-
-  return tags.map((tag) => ({
-    params: { tag: slugify(tag) },
-    props: { tag, posts: getPostsByTag(posts, slugify(tag)) }
-  }));
-}
-
-interface Props {
-  tag: string;
-  posts: BlogPost[];
-}
-
+export async function getStaticPaths() { const posts = await getPublishedBlogPosts("en"); return getAllBlogTags(posts).map((tag) => ({ params: { tag: slugify(tag) }, props: { tag, posts: getPostsByTag(posts, slugify(tag)) } })); }
+interface Props { tag: string; posts: BlogPost[] }
 const { tag, posts } = Astro.props;
 ---
-
-<BaseLayout title={`Tag: ${tag}`} description={`Blog posts tagged ${tag}.`} width="wide">
-  <header class="page-header">
-    <p class="eyebrow">Tag</p>
-    <h1>{tag}</h1>
-    <p class="lede">{posts.length} post{posts.length === 1 ? "" : "s"} tagged with {tag}.</p>
-  </header>
-
-  <section class="section" aria-labelledby="tag-posts-heading">
-    <SectionHeader id="tag-posts-heading" title="Posts" description="Writing connected by this topic." />
-    <div class="card-list">
-      {posts.map((post) => <BlogCard post={post} />)}
-    </div>
-  </section>
-</BaseLayout>
+<BlogTagView locale="en" tag={tag} posts={posts} />

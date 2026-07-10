@@ -1,0 +1,8 @@
+---
+import BlogPostView from "../../../views/BlogPostView.astro";
+import { getBuildableBlogPosts, getBlogPostSlug, type BlogPost } from "../../../utils/content";
+export async function getStaticPaths() { return (await getBuildableBlogPosts("ko")).map((post) => ({ params: { slug: getBlogPostSlug(post) }, props: { post } })); }
+interface Props { post: BlogPost }
+const { post } = Astro.props;
+---
+<BlogPostView locale="ko" post={post} />

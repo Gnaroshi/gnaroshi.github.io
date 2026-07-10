@@ -31,6 +31,10 @@ mkdirSync(papersDir, { recursive: true });
 const targetPath = getAvailablePath(today);
 const content = `---
 title: "Untitled Paper"
+locale: "en"
+translationKey: "${today}-untitled-paper"
+translationStatus: "source-only"
+paperId: "${today}-untitled-paper"
 authors:
   - "TODO"
 venue: "TODO"

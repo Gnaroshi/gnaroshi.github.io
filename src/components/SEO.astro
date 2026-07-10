@@ -1,5 +1,8 @@
 ---
 import { profile } from "../data/profile";
+import { ogLocales } from "../i18n/config";
+import type { AlternateUrls, Locale } from "../i18n/types";
+import { getLocalePath } from "../i18n/utils";
 
 interface Props {
   title?: string;
@@ -10,6 +13,10 @@ interface Props {
   ogDescription?: string;
   absoluteTitle?: boolean;
   type?: "website" | "article";
+  locale?: Locale;
+  alternateUrls?: AlternateUrls;
+  ogLocale?: string;
+  ogLocaleAlternate?: string;
 }
 
 const {
@@ -20,7 +27,11 @@ const {
   ogTitle,
   ogDescription,
   absoluteTitle = false,
-  type = "website"
+  type = "website",
+  locale = "en",
+  alternateUrls,
+  ogLocale = ogLocales[locale],
+  ogLocaleAlternate = ogLocales[locale === "en" ? "ko" : "en"]
 } = Astro.props;
 
 const pageTitle = absoluteTitle || title === profile.siteName ? title : `${title} | ${profile.siteName}`;
@@ -28,11 +39,17 @@ const socialTitle = ogTitle ?? pageTitle;
 const socialDescription = ogDescription ?? description;
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, profile.domain).toString();
 const imageUrl = new URL(ogImage ?? "/og/default.svg", profile.domain).toString();
+const englishAlternate = new URL(alternateUrls?.en ?? getLocalePath("en", Astro.url.pathname), profile.domain).toString();
+const koreanAlternate = new URL(alternateUrls?.ko ?? getLocalePath("ko", Astro.url.pathname), profile.domain).toString();
+const xDefaultAlternate = new URL(alternateUrls?.xDefault ?? englishAlternate, profile.domain).toString();
 ---
 
 <title>{pageTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalUrl} />
+<link rel="alternate" hreflang="en" href={englishAlternate} />
+<link rel="alternate" hreflang="ko" href={koreanAlternate} />
+<link rel="alternate" hreflang="x-default" href={xDefaultAlternate} />
 
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content={profile.siteName} />
@@ -40,6 +57,8 @@ const imageUrl = new URL(ogImage ?? "/og/default.svg", profile.domain).toString(
 <meta property="og:description" content={socialDescription} />
 <meta property="og:url" content={canonicalUrl} />
 <meta property="og:image" content={imageUrl} />
+<meta property="og:locale" content={ogLocale} />
+<meta property="og:locale:alternate" content={ogLocaleAlternate} />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={socialTitle} />

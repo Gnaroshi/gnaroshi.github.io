@@ -182,3 +182,17 @@
 - [ ] Keep content and UI separate.
 - [ ] Keep the site static-export compatible.
 - [ ] Prefer simple, maintainable implementation over clever abstractions.
+
+## Phase 8: English And Korean Localization
+
+- [x] Configure Astro for unprefixed English and `/ko/` Korean routes.
+- [x] Add typed page and React-island dictionaries with parity validation.
+- [x] Refactor core routes to shared locale-aware views.
+- [x] Localize the global shell, Paper Lab navigation, themes, and interactive dashboards.
+- [x] Add locale-aware static profile, research, project, skill, and current-focus data.
+- [x] Pair English and Korean blog content with stable translation keys.
+- [x] Add localized dates, numbers, tag labels, RSS, canonical URLs, and `hreflang` metadata.
+- [x] Add Korean typography and 390px overflow checks.
+- [x] Add i18n, hardcoded-UI, and translation-link validation scripts.
+- [ ] Translate future paper notes selectively when owner review is available.
+- [ ] Review newly added Korean research claims with the owner before publication.

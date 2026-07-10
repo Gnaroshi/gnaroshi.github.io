@@ -1,11 +1,14 @@
 ---
-import { isNavigationActive, primaryNavigation } from "../../utils/navigation";
+import { getPrimaryNavigation, isNavigationActive } from "../../i18n/routes";
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
 
-interface Props { currentPath: string }
-const { currentPath } = Astro.props;
+interface Props { currentPath: string; locale: Locale }
+const { currentPath, locale } = Astro.props;
+const primaryNavigation = getPrimaryNavigation(locale);
 ---
 
-<nav class="desktop-nav" aria-label="Primary navigation">
+<nav class="desktop-nav" aria-label={translate(locale, "a11y.primaryNavigation")}>
   {primaryNavigation.map((item) => (
     <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
       {item.label}

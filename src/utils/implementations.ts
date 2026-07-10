@@ -1,5 +1,7 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
+import type { Locale } from "../i18n/types";
+import { getContentSlug } from "./localizedContent";
 
 export type ImplementationEntry = CollectionEntry<"implementations">;
 
@@ -15,18 +17,18 @@ export const implementationStatusLabels: Record<ImplementationStatus, string> = 
   shipped: "Shipped"
 };
 
-export async function getAllImplementationAttempts(): Promise<ImplementationEntry[]> {
+export async function getAllImplementationAttempts(locale: Locale = "en"): Promise<ImplementationEntry[]> {
   const attempts = await getCollection("implementations");
-  return sortImplementationAttempts(attempts.filter((attempt) => !attempt.id.startsWith("_")));
+  return sortImplementationAttempts(attempts.filter((attempt) => !getContentSlug(attempt.id).startsWith("_") && attempt.data.locale === locale));
 }
 
-export async function getPublishedImplementationAttempts(): Promise<ImplementationEntry[]> {
-  const attempts = await getAllImplementationAttempts();
+export async function getPublishedImplementationAttempts(locale: Locale = "en"): Promise<ImplementationEntry[]> {
+  const attempts = await getAllImplementationAttempts(locale);
   return attempts.filter((attempt) => shouldShowInIndex(attempt.data));
 }
 
-export async function getBuildableImplementationAttempts(): Promise<ImplementationEntry[]> {
-  const attempts = await getAllImplementationAttempts();
+export async function getBuildableImplementationAttempts(locale: Locale = "en"): Promise<ImplementationEntry[]> {
+  const attempts = await getAllImplementationAttempts(locale);
   return attempts.filter((attempt) =>
     shouldBuildDetailPage(attempt.data, {
       includeHidden: !import.meta.env.PROD

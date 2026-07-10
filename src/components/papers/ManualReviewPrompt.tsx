@@ -1,17 +1,23 @@
 import { useRef, useState } from "react";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
 
 interface Props {
   prompt: string;
   command: string;
   initiallyOpen?: boolean;
   triggerLabel?: string;
+  locale: Locale;
+  messages: IslandMessages["manualReview"];
 }
 
 export default function ManualReviewPrompt({
   prompt,
   command,
+  locale,
+  messages,
   initiallyOpen = false,
-  triggerLabel = "Re-review manually"
+  triggerLabel
 }: Props) {
   const [isOpen, setIsOpen] = useState(initiallyOpen);
   const [copyState, setCopyState] = useState<"idle" | "copied" | "selected" | "failed">("idle");
@@ -46,10 +52,10 @@ export default function ManualReviewPrompt({
   }
 
   return (
-    <div className="manual-review-prompt">
+    <div className="manual-review-prompt" lang={locale}>
       {!initiallyOpen ? (
         <button type="button" className="manual-review-prompt__toggle" onClick={() => setIsOpen((value) => !value)}>
-          {isOpen ? "Hide manual prompt" : triggerLabel}
+          {isOpen ? messages.hide : (triggerLabel ?? messages.rereview)}
         </button>
       ) : null}
 
@@ -57,29 +63,29 @@ export default function ManualReviewPrompt({
         <div className="manual-review-prompt__panel">
           <div className="manual-review-prompt__header">
             <div>
-              <h3>Or copy manual review prompt</h3>
-              <p>Paste this into ChatGPT or another model, then save the returned JSON review.</p>
+              <h3>{messages.title}</h3>
+              <p>{messages.body}</p>
             </div>
             <button type="button" onClick={copyPrompt}>
-              Copy AI Review Prompt
+              {messages.copy}
             </button>
           </div>
 
           <p className="metadata">
-            CLI option: <code>{command}</code>
+            {messages.cli}: <code>{command}</code>
           </p>
 
           <label className="paper-review-fallback__prompt">
-            <span>Manual review prompt</span>
+            <span>{messages.prompt}</span>
             <textarea ref={promptRef} readOnly value={prompt} />
           </label>
 
-          {copyState === "copied" ? <p className="metadata">Prompt copied.</p> : null}
+          {copyState === "copied" ? <p className="metadata">{messages.copied}</p> : null}
           {copyState === "selected" ? (
-            <p className="metadata">Automatic copy was blocked. The full prompt is selected; press Ctrl+C or Cmd+C.</p>
+            <p className="metadata">{messages.selected}</p>
           ) : null}
           {copyState === "failed" ? (
-            <p className="metadata">Copy is unavailable. Select the prompt text manually.</p>
+            <p className="metadata">{messages.failed}</p>
           ) : null}
         </div>
       ) : null}

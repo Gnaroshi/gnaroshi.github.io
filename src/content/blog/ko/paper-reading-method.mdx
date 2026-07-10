@@ -1,0 +1,61 @@
+---
+title: "논문을 3단계로 읽는 방법"
+locale: "ko"
+translationKey: "paper-reading-method"
+translationStatus: "complete"
+contentStage: "seed"
+metricEligible: false
+graphEligible: false
+weeklyReviewEligible: false
+description: "논문마다 필요한 깊이를 정하고, 불완전한 읽기도 다음 연구에 도움이 되도록 기록하는 방법입니다."
+pubDate: 2026-07-08
+updatedDate:
+draft: false
+tags:
+  - paper-reading
+  - research-method
+  - notes
+series:
+seriesOrder:
+heroImage:
+readingTime:
+featured: true
+---
+
+## 1단계: 훑어보고 결정하기
+
+첫 단계에서는 몇 가지 질문에만 답합니다.
+
+- 이 논문은 어떤 문제를 푼다고 주장하는가?
+- 핵심 기여는 무엇인가?
+- 지금 살펴보는 연구 질문과 관련이 있는가?
+- 중요하다면 다음에 무엇을 읽어야 하는가?
+
+빠르게 끝내도 괜찮습니다. 관련성을 판단하는 일도 연구의 일부이므로 이 단계 역시 의미 있는 진전입니다.
+
+## 2단계: 구조 이해하기
+
+두 번째 단계에서는 논문의 논리 구조를 파악합니다.
+
+1. 방법의 전체 모습
+2. 핵심 가정
+3. 주요 실험
+4. 비교 기준
+5. 실패 사례와 부족한 근거
+
+이 단계가 끝나면 논문을 처음부터 한 줄씩 따라가지 않고도 다른 기술 독자에게 핵심을 설명할 수 있어야 합니다.
+
+## 3단계: 깊이 파고들기
+
+더 많은 시간을 들일 가치가 있는 논문만 세 번째 단계로 넘어갑니다. 수식을 직접 유도하거나 코드를 읽고, 결과를 재현하거나 아이디어의 작은 버전을 구현할 수 있습니다.
+
+```python
+def reading_depth(pass_number: int, implemented: bool = False) -> int:
+    if implemented:
+        return 4
+    return min(max(pass_number, 0), 3)
+```
+
+## 기록이 보상해야 할 것
+
+논문 기록은 완독만이 아니라 꾸준함과 질문, 다시 읽기, 구현 시도를 드러내야 합니다. 날카로운 질문이 담긴 짧은 노트가 언젠가 읽겠다는 빈 약속보다 유용할 때가 많습니다.

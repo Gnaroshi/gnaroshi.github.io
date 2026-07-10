@@ -1,9 +1,13 @@
 import { useMemo, useState } from "react";
 import type { QuestionBankItem } from "../../utils/questionBank";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
 
 type Props = {
   questions: QuestionBankItem[];
   today: string;
+  locale: Locale;
+  messages: IslandMessages["question"];
 };
 
 const storageKey = "gnaroshi.question-practice.v1";
@@ -16,7 +20,7 @@ type LocalQuestionState = {
   lastAnswer: string;
 };
 
-export default function QuestionPractice({ questions, today }: Props) {
+export default function QuestionPractice({ questions, today, locale, messages }: Props) {
   const [activeType, setActiveType] = useState("");
   const [activeQuestionId, setActiveQuestionId] = useState(questions[0]?.id ?? "");
   const [answer, setAnswer] = useState("");
@@ -50,7 +54,7 @@ export default function QuestionPractice({ questions, today }: Props) {
       lastAnswer: answer
     };
     window.localStorage.setItem(storageKey, JSON.stringify([...existing.filter((item) => item.id !== activeQuestion.id), nextItem]));
-    setMessage("Saved locally in this browser.");
+    setMessage(messages.saved);
   }
 
   async function copyQuizPrompt() {
@@ -67,33 +71,33 @@ export default function QuestionPractice({ questions, today }: Props) {
         "After I answer, grade only the evidence in my answer and give one next action."
       ].join("\n")
     );
-    setMessage("Copied manual AI quiz prompt.");
+    setMessage(messages.copied);
   }
 
   if (questions.length === 0) {
     return (
-      <div className="paper-empty-state">
-        <h2>No questions yet.</h2>
-        <p>Questions will appear here as paper reviews, oral exams, and formula practice accumulate.</p>
+      <div className="paper-empty-state" lang={locale}>
+        <h2>{messages.empty}</h2>
+        <p>{messages.emptyBody}</p>
       </div>
     );
   }
 
   return (
-    <section className="learning-panel" aria-labelledby="question-practice-heading">
+    <section className="learning-panel" aria-labelledby="question-practice-heading" lang={locale}>
       <div className="paper-filter-panel__header">
         <div>
-          <p className="eyebrow">Practice</p>
-          <h2 id="question-practice-heading">Random practice mode</h2>
+          <p className="eyebrow">{messages.eyebrow}</p>
+          <h2 id="question-practice-heading">{messages.title}</h2>
         </div>
         <button type="button" onClick={pickRandom}>
-          Random question
+          {messages.random}
         </button>
       </div>
 
       <div className="paper-filter-grid">
         <label className="paper-field">
-          <span>Type</span>
+          <span>{messages.type}</span>
           <select
             value={activeType}
             onChange={(event) => {
@@ -101,7 +105,7 @@ export default function QuestionPractice({ questions, today }: Props) {
               setActiveQuestionId("");
             }}
           >
-            <option value="">All types</option>
+            <option value="">{messages.allTypes}</option>
             {types.map((type) => (
               <option value={type} key={type}>
                 {type}
@@ -110,7 +114,7 @@ export default function QuestionPractice({ questions, today }: Props) {
           </select>
         </label>
         <label className="paper-field paper-field--wide">
-          <span>Question</span>
+          <span>{messages.select}</span>
           <select value={activeQuestion?.id ?? ""} onChange={(event) => setActiveQuestionId(event.target.value)}>
             {filteredQuestions.map((question) => (
               <option value={question.id} key={question.id}>
@@ -126,15 +130,15 @@ export default function QuestionPractice({ questions, today }: Props) {
           <div className="learning-card">
             <h3>{activeQuestion.question}</h3>
             <p className="metadata">
-              {activeQuestion.type} · difficulty {activeQuestion.difficulty}/5 · {activeQuestion.source}
+              {activeQuestion.type} · {messages.difficulty} {activeQuestion.difficulty}/5 · {activeQuestion.source}
             </p>
           </div>
           <label className="learning-field">
-            <span>Answer from memory</span>
+            <span>{messages.answer}</span>
             <textarea value={answer} onChange={(event) => setAnswer(event.target.value)} rows={6} />
           </label>
           <label className="paper-field">
-            <span>Self score</span>
+            <span>{messages.selfScore}</span>
             <select value={score} onChange={(event) => setScore(event.target.value)}>
               {[1, 2, 3, 4, 5].map((value) => (
                 <option value={value} key={value}>
@@ -144,7 +148,7 @@ export default function QuestionPractice({ questions, today }: Props) {
             </select>
           </label>
           <div className="learning-card">
-            <h3>Expected signals</h3>
+            <h3>{messages.evidence}</h3>
             {activeQuestion.expectedSignals.length > 0 ? (
               <ul>
                 {activeQuestion.expectedSignals.map((signal) => (
@@ -152,17 +156,17 @@ export default function QuestionPractice({ questions, today }: Props) {
                 ))}
               </ul>
             ) : (
-              <p>No expected signals recorded yet.</p>
+              <p>{messages.noEvidence}</p>
             )}
           </div>
           <div className="paper-card__links">
             <button type="button" onClick={saveLocalPractice}>
-              Save locally
+              {messages.save}
             </button>
             <button type="button" onClick={copyQuizPrompt}>
-              Copy manual AI quiz prompt
+              {messages.copy}
             </button>
-            <a href={`/papers/${activeQuestion.paperSlug}/`}>Open paper</a>
+            <a href={`${locale === "ko" ? "/ko" : ""}/papers/${activeQuestion.paperSlug}/`}>{messages.openPaper}</a>
           </div>
         </>
       ) : null}

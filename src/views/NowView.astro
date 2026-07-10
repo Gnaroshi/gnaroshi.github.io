@@ -1,0 +1,11 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getLocalizedData } from "../data/locales";
+import { formatLocalizedDate } from "../i18n/date";
+import type { Locale } from "../i18n/types";
+import { translate } from "../i18n/utils";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const data = getLocalizedData(locale);
+---
+<BaseLayout locale={locale} title={translate(locale, "now.title")} description={data.now.currentlyBuilding[0]}><header class="page-header"><p class="eyebrow">{translate(locale, "now.eyebrow")}</p><h1>{translate(locale, "now.title")}</h1><p class="metadata">{translate(locale, "now.updated")} {formatLocalizedDate(data.now.lastUpdated, locale)}</p></header><section class="section"><h2>{translate(locale, "now.reading")}</h2><ul>{data.now.currentlyReading.map((item) => <li>{item}</li>)}</ul></section><section class="section"><h2>{translate(locale, "now.building")}</h2><ul>{data.now.currentlyBuilding.map((item) => <li>{item}</li>)}</ul></section><section class="section"><h2>{translate(locale, "now.questions")}</h2><ul>{data.now.currentQuestions.map((item) => <li>{item}</li>)}</ul></section></BaseLayout>

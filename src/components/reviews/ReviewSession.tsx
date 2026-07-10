@@ -1,9 +1,13 @@
 import { useMemo, useState } from "react";
 import type { ReviewDueRecord } from "../../utils/reviewDue";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
 
 type Props = {
   papers: ReviewDueRecord[];
   today: string;
+  locale: Locale;
+  messages: IslandMessages["review"];
 };
 
 type LocalReview = {
@@ -43,7 +47,7 @@ function buildSnippet(review: LocalReview) {
     note: "${note.replaceAll('"', "'") || "Reviewed from memory."}"`;
 }
 
-export default function ReviewSession({ papers, today }: Props) {
+export default function ReviewSession({ papers, today, locale, messages }: Props) {
   const [activeSlug, setActiveSlug] = useState(papers[0]?.id ?? "");
   const [summaryRecall, setSummaryRecall] = useState("");
   const [formulaRecall, setFormulaRecall] = useState("");
@@ -84,23 +88,23 @@ export default function ReviewSession({ papers, today }: Props) {
   if (papers.length === 0) {
     return (
       <div className="paper-empty-state">
-        <h2>No reviews due right now.</h2>
-        <p>When a paper reaches its next spaced-review date, it will appear here.</p>
+        <h2>{messages.empty}</h2>
+        <p>{messages.emptyBody}</p>
       </div>
     );
   }
 
   return (
-    <section className="learning-panel" aria-labelledby="quick-review-heading">
+    <section className="learning-panel" aria-labelledby="quick-review-heading" lang={locale}>
       <div className="paper-filter-panel__header">
         <div>
-          <p className="eyebrow">Quick review</p>
-          <h2 id="quick-review-heading">Recall before looking</h2>
+          <p className="eyebrow">{messages.quick}</p>
+          <h2 id="quick-review-heading">{messages.recallFirst}</h2>
         </div>
       </div>
 
       <label className="paper-field">
-        <span>Paper</span>
+        <span>{messages.paper}</span>
         <select value={activePaper.id} onChange={(event) => setActiveSlug(event.target.value)}>
           {papers.map((paper) => (
             <option value={paper.id} key={paper.id}>
@@ -114,37 +118,37 @@ export default function ReviewSession({ papers, today }: Props) {
         <h3>{activePaper.title}</h3>
         <p>{activePaper.oneLineSummary}</p>
         <p className="metadata">
-          Next review {activePaper.nextReviewDate} · {activePaper.isOverdue ? "overdue" : "due"}
+          {messages.nextReview} {activePaper.nextReviewDate} · {activePaper.isOverdue ? messages.overdue : messages.due}
         </p>
       </div>
 
       <label className="learning-field">
-        <span>Rewrite one-line summary from memory</span>
+        <span>{messages.rewriteSummary}</span>
         <textarea value={summaryRecall} onChange={(event) => setSummaryRecall(event.target.value)} rows={4} />
       </label>
       <label className="learning-field">
-        <span>Rewrite main formula from memory</span>
+        <span>{messages.rewriteFormula}</span>
         <textarea value={formulaRecall} onChange={(event) => setFormulaRecall(event.target.value)} rows={4} />
       </label>
       <label className="learning-field">
-        <span>Answer retrieval question</span>
+        <span>{messages.answerQuestion}</span>
         <strong>{activePaper.retrievalQuestion}</strong>
         <textarea value={questionAnswer} onChange={(event) => setQuestionAnswer(event.target.value)} rows={4} />
       </label>
 
       <div className="paper-card__links">
         <button type="button" onClick={markReviewedLocally}>
-          Mark reviewed locally
+          {messages.markLocal}
         </button>
         <button type="button" onClick={copySnippet}>
-          Copy review update snippet
+          {messages.copySnippet}
         </button>
-        <a href={activePaper.href}>Open paper note</a>
+        <a href={activePaper.href}>{messages.openPaper}</a>
       </div>
 
       <pre><code>{snippet}</code></pre>
       {saved.some((review) => review.paperSlug === activePaper.id) ? (
-        <p className="metadata">Saved locally in this browser. Paste the snippet into the paper note to make it permanent.</p>
+        <p className="metadata">{messages.savedLocal}</p>
       ) : null}
     </section>
   );

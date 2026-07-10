@@ -23,6 +23,13 @@ const optionalPaperDate = z.preprocess(
   z.coerce.date().optional()
 );
 const visibilitySchema = z.enum(["public", "unlisted", "hidden"]).default("public");
+const localeSchema = z.enum(["en", "ko"]);
+const translationStatusSchema = z.enum(["complete", "partial", "source-only"]).default("complete");
+const localizationFields = {
+  locale: localeSchema,
+  translationKey: z.string().min(1),
+  translationStatus: translationStatusSchema
+};
 const contentStageSchema = z.enum(["seed", "working", "substantive"]);
 const evidenceFields = (defaults: { stage: "seed" | "working" | "substantive"; eligible: boolean }) => ({
   contentStage: contentStageSchema.default(defaults.stage),
@@ -61,6 +68,7 @@ const futureMeSchema = z.preprocess(
 const blog = defineCollection({
   loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    ...localizationFields,
     ...evidenceFields({ stage: "substantive", eligible: true }),
     title: z.string(),
     description: z.string(),
@@ -87,6 +95,8 @@ const papers = defineCollection({
   loader: glob({ base: "./src/content/papers", pattern: "**/*.{md,mdx}" }),
   schema: z
     .object({
+      ...localizationFields,
+      paperId: z.string().min(1),
       ...evidenceFields({ stage: "working", eligible: true }),
       title: z.string(),
       authors: z.array(z.string()).min(1),
@@ -154,6 +164,7 @@ const papers = defineCollection({
 const queue = defineCollection({
   loader: glob({ base: "./src/content/queue", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    ...localizationFields,
     ...evidenceFields({ stage: "working", eligible: false }),
     title: z.string(),
     authors: z.array(z.string()).min(1),
@@ -179,6 +190,7 @@ const queue = defineCollection({
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    ...localizationFields,
     ...evidenceFields({ stage: "working", eligible: true }),
     title: z.string(),
     description: z.string(),
@@ -197,6 +209,7 @@ const projects = defineCollection({
 const implementations = defineCollection({
   loader: glob({ base: "./src/content/implementations", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    ...localizationFields,
     ...evidenceFields({ stage: "working", eligible: true }),
     title: z.string(),
     date: z.coerce.date(),

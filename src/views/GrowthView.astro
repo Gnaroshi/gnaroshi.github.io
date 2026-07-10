@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import EvidenceGate from "../components/growth/EvidenceGate.astro";
+import MomentumComponentBreakdown from "../components/growth/MomentumComponentBreakdown.astro";
+import MomentumScoreV2 from "../components/growth/MomentumScoreV2.astro";
+import MomentumNextActions from "../components/growth/MomentumNextActions.astro";
+import SectionHeader from "../components/common/SectionHeader.astro";
+import type { Locale } from "../i18n/types";
+import { getLocalePath, translate } from "../i18n/utils";
+import { getEvidenceEligibility } from "../utils/evidenceEligibility";
+import { getMomentumInput } from "../utils/momentumData";
+import { computeResearchMomentum } from "../utils/momentumScore";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const input = await getMomentumInput();
+const result = computeResearchMomentum(input);
+const eligibility = getEvidenceEligibility(input);
+const loops = [
+  { key: "growth.read", body: locale === "ko" ? "논문의 질문과 다음 읽기 결정을 기록합니다." : "Record one paper question and the next reading decision.", href: "/papers/" },
+  { key: "growth.recall", body: locale === "ko" ? "노트를 보지 않고 논문을 설명한 뒤 확신을 기록합니다." : "Explain a saved paper without looking before scoring confidence.", href: "/reviews/" },
+  { key: "growth.build", body: locale === "ko" ? "아이디어를 코드나 재현, 실패한 시도와 연결합니다." : "Connect an idea to code, a reproduction, or a failed attempt.", href: "/implementations/" },
+  { key: "growth.write", body: locale === "ko" ? "근거가 쌓인 노트를 실질적인 글로 발전시킵니다." : "Develop a substantive note after evidence exists.", href: "/blog/" }
+] as const;
+const koActions = ["읽은 날짜와 핵심 질문, 다음 행동이 있는 20분 읽기 기록을 하나 남깁니다.", "노트를 보지 않고 설명하는 회상 기록을 하나 남깁니다.", "예정된 복습이나 수식 회상, 질문 연습을 하나 완료합니다."];
+---
+<BaseLayout locale={locale} title={translate(locale, "growth.title")} description={translate(locale, "growth.intro")} width="dashboard" mode="application"><div class="momentum-page"><header class="momentum-hero"><div><p class="eyebrow">{translate(locale, "growth.eyebrow")}</p><h1>{translate(locale, "growth.title")}</h1><p class="lede">{translate(locale, "growth.intro")}</p></div></header>{eligibility.eligible ? <MomentumScoreV2 result={result} locale={locale} /> : <EvidenceGate eligibility={eligibility} locale={locale} />}{eligibility.eligible ? <section class="section" aria-labelledby="momentum-components-heading"><SectionHeader id="momentum-components-heading" title={locale === "ko" ? "구성 요소" : "Components"} /><MomentumComponentBreakdown components={result.components} locale={locale} /></section> : <section class="section" aria-labelledby="research-loop-heading"><SectionHeader id="research-loop-heading" title={translate(locale, "growth.loopTitle")} description={translate(locale, "growth.loopDescription")} /><div class="research-loop-grid">{loops.map((loop) => <article><h3>{translate(locale, loop.key)}</h3><p>{loop.body}</p><a href={getLocalePath(locale, loop.href)}>{translate(locale, "common.open")}</a></article>)}</div></section>}<section class="section" aria-labelledby="momentum-actions-heading"><SectionHeader id="momentum-actions-heading" title={translate(locale, "growth.nextActions")} description={translate(locale, "growth.nextActionsDescription")} /><MomentumNextActions actions={(locale === "ko" ? koActions : result.nextActions).slice(0, 3)} /></section><details class="momentum-methodology"><summary>{locale === "ko" ? "계산 방법" : "How this score is calculated"}</summary><p>{locale === "ko" ? "점수는 공개 가능한 읽기, 이해, 회상, 결과물, 다시 보기 기록만 사용하며 신뢰도는 별도로 표시합니다." : "The score uses eligible public reading, understanding, retrieval, output, and revisit evidence. Confidence is reported separately."}</p></details></div></BaseLayout>
+
+<style>.research-loop-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-5)}.research-loop-grid article{display:grid;gap:var(--space-3);align-content:start;padding-top:var(--space-4);border-top:2px solid var(--color-border-strong)}.research-loop-grid p{color:var(--color-text-secondary)}@media(max-width:760px){.research-loop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:460px){.research-loop-grid{grid-template-columns:1fr}}</style>

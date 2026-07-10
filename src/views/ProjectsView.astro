@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeader from "../components/common/SectionHeader.astro";
+import { getLocalizedData } from "../data/locales";
+import { formatLocalizedDate } from "../i18n/date";
+import type { Locale } from "../i18n/types";
+import { getLocalePath, translate } from "../i18n/utils";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const data = getLocalizedData(locale);
+---
+
+<BaseLayout locale={locale} title={translate(locale, "nav.projects")} description={translate(locale, "projects.intro")} width="wide">
+  <header class="page-header"><p class="eyebrow">{translate(locale, "projects.eyebrow")}</p><h1>{translate(locale, "projects.title")}</h1><p class="lede">{translate(locale, "projects.intro")}</p></header>
+  <section class="section" aria-labelledby="projects-heading"><SectionHeader id="projects-heading" title={translate(locale, "projects.selected")} description={translate(locale, "projects.selectedDescription")} /><div class="project-grid">{data.projects.map((project) => <article id={project.slug} class="project-entry"><div class="project-entry__meta"><span>{project.status}</span><span>{translate(locale, "common.updated")} {formatLocalizedDate(project.updatedAt, locale)}</span></div><h2><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{project.title}</a></h2><p>{project.summary}</p><ul class="tag-row" aria-label={project.title}>{project.tags.map((tag) => <li>{tag}</li>)}</ul><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{translate(locale, "projects.caseStudy")}</a></article>)}</div></section>
+</BaseLayout>

@@ -9,6 +9,13 @@ import remarkMath from "remark-math";
 export default defineConfig({
   site: "https://gnaroshi.dev",
   output: "static",
+  i18n: {
+    locales: ["en", "ko"],
+    defaultLocale: "en",
+    routing: {
+      prefixDefaultLocale: false
+    }
+  },
   integrations: [mdx(), react(), sitemap()],
   markdown: {
     processor: unified({

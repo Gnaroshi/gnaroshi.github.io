@@ -12,6 +12,16 @@ Primary content locations:
 - Implementation attempts: `src/content/implementations/`
 - Static profile data: `src/data/profile.ts`
 
+All collection entries require localization metadata:
+
+```yaml
+locale: "en"
+translationKey: "stable-entry-key"
+translationStatus: "complete" # complete | partial | source-only
+```
+
+Store translated blog posts under `src/content/blog/en/` and `src/content/blog/ko/`. The locale folder is not part of the public slug. Pair translations by `translationKey`. Papers additionally require a language-neutral `paperId`; a paper note does not need a Korean translation, but any source-only state must remain explicit. See `docs/i18n.md`.
+
 ## Slug Rules
 
 Prefer explicit slugs in frontmatter when the URL should be stable. Otherwise derive slugs from filenames.

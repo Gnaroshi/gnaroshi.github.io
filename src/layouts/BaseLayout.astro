@@ -13,6 +13,9 @@ import SEO from "../components/SEO.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import PaperLabNav from "../components/navigation/PaperLabNav.astro";
+import { ogLocales } from "../i18n/config";
+import type { AlternateUrls, Locale } from "../i18n/types";
+import { getLocaleFromUrl, getLocalePath, translate } from "../i18n/utils";
 
 interface Props {
   title: string;
@@ -26,6 +29,10 @@ interface Props {
   width?: "prose" | "wide" | "dashboard";
   mode?: "editorial" | "application";
   paperLab?: boolean;
+  locale?: Locale;
+  alternateUrls?: AlternateUrls;
+  ogLocale?: string;
+  ogLocaleAlternate?: string;
 }
 
 const {
@@ -39,19 +46,24 @@ const {
   type,
   width = "prose",
   mode = "editorial",
-  paperLab = mode === "application"
+  paperLab = mode === "application",
+  locale = getLocaleFromUrl(Astro.url),
+  alternateUrls,
+  ogLocale = ogLocales[locale],
+  ogLocaleAlternate = ogLocales[locale === "en" ? "ko" : "en"]
 } = Astro.props;
+const rssPath = getLocalePath(locale, "/rss.xml");
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#101211" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="alternate" href="/rss.xml" type="application/rss+xml" title="Gnaroshi Blog" />
+    <link rel="alternate" href={rssPath} type="application/rss+xml" title={translate(locale, "site.rssTitle")} />
     <SEO
       title={title}
       description={description}
@@ -61,6 +73,10 @@ const {
       ogDescription={ogDescription}
       absoluteTitle={absoluteTitle}
       type={type}
+      locale={locale}
+      alternateUrls={alternateUrls}
+      ogLocale={ogLocale}
+      ogLocaleAlternate={ogLocaleAlternate}
     />
     <script is:inline>
       (() => {
@@ -75,12 +91,12 @@ const {
     </script>
   </head>
   <body data-mode={mode}>
-    <a class="skip-link" href="#content">Skip to content</a>
-    <SiteHeader />
-    {paperLab && <PaperLabNav currentPath={Astro.url.pathname} />}
+    <a class="skip-link" href="#content">{translate(locale, "a11y.skipToContent")}</a>
+    <SiteHeader locale={locale} alternateUrls={alternateUrls} />
+    {paperLab && <PaperLabNav currentPath={Astro.url.pathname} locale={locale} />}
     <main id="content" class:list={["site-main", `site-main--${width}`]}>
       <slot />
     </main>
-    <SiteFooter />
+    <SiteFooter locale={locale} />
   </body>
 </html>

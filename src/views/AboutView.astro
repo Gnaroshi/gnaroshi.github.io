@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ExternalLink from "../components/common/ExternalLink.astro";
+import { getLocalizedData } from "../data/locales";
+import { profile } from "../data/profile";
+import type { Locale } from "../i18n/types";
+import { translate } from "../i18n/utils";
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const data = getLocalizedData(locale);
+const links = [
+  { label: "GitHub", href: profile.links.github },
+  profile.links.email ? { label: "Email", href: `mailto:${profile.links.email}` } : null,
+  profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar } : null,
+  profile.links.linkedin ? { label: "LinkedIn", href: profile.links.linkedin } : null,
+  profile.links.cv ? { label: "CV", href: profile.links.cv } : null
+].filter(Boolean) as Array<{ label: string; href: string }>;
+---
+
+<BaseLayout locale={locale} title={translate(locale, "about.title")} description={`${profile.displayName}, ${data.profile.headline}.`}>
+  <header class="page-header"><p class="eyebrow">{translate(locale, "about.title")}</p><h1>{profile.displayName}</h1><p class="lede">{data.profile.shortBio}</p><dl class="profile-facts"><div><dt>{translate(locale, "about.role")}</dt><dd>{data.profile.currentRole}</dd></div><div><dt>{translate(locale, "about.location")}</dt><dd>{data.profile.location}</dd></div></dl></header>
+  <section class="section" aria-labelledby="about-bio"><h2 id="about-bio">{translate(locale, "about.bio")}</h2>{data.profile.bio.map((paragraph) => <p>{paragraph}</p>)}</section>
+  <section class="section" aria-labelledby="about-background"><h2 id="about-background">{translate(locale, "about.background")}</h2>{data.profile.researchBackground.map((paragraph) => <p>{paragraph}</p>)}</section>
+  <section class="section" aria-labelledby="about-skills"><h2 id="about-skills">{translate(locale, "about.skills")}</h2><div class="plain-groups">{data.skillGroups.map((group) => <div><h3>{group.title}</h3><p>{group.skills.join(" · ")}</p></div>)}</div></section>
+  <section class="section" aria-labelledby="about-values"><h2 id="about-values">{translate(locale, "about.values")}</h2><ul>{data.profile.researcherValues.map((value) => <li>{value}</li>)}</ul></section>
+  {links.length > 0 && <section class="section" aria-labelledby="about-links"><h2 id="about-links">{translate(locale, "about.links")}</h2><div class="link-row">{links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}</div></section>}
+</BaseLayout>

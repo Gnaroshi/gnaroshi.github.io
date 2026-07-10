@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import type { PaperRecord } from "../../utils/papers";
 import PaperCard from "./PaperCard";
 import PaperHeatmap from "./PaperHeatmap";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
 
 interface Props {
   papers: PaperRecord[];
@@ -9,6 +11,8 @@ interface Props {
   tags: string[];
   years: number[];
   today: string;
+  locale: Locale;
+  messages: IslandMessages["paper"];
 }
 
 const statuses: Array<PaperRecord["status"]> = ["planned", "pass1", "pass2", "pass3", "read", "implemented", "abandoned"];
@@ -54,7 +58,7 @@ function sortPapers(papers: PaperRecord[], sortBy: string): PaperRecord[] {
   });
 }
 
-export default function PaperFilters({ papers, countsByDate, tags, years, today }: Props) {
+export default function PaperFilters({ papers, countsByDate, tags, years, today, locale, messages }: Props) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");
   const [depth, setDepth] = useState("");
@@ -100,24 +104,24 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today 
 
   return (
     <div className="paper-dashboard-island">
-      <PaperHeatmap countsByDate={countsByDate} selectedDate={selectedDate} today={today} onSelectDate={setSelectedDate} />
+      <PaperHeatmap countsByDate={countsByDate} selectedDate={selectedDate} today={today} onSelectDate={setSelectedDate} locale={locale} messages={messages} />
 
       <section className="paper-filter-panel" aria-labelledby="paper-filter-heading">
         <div className="paper-filter-panel__header">
           <div>
-            <p className="eyebrow">Notebook</p>
-            <h2 id="paper-filter-heading">Search and filter</h2>
+            <p className="eyebrow">{messages.notebook}</p>
+            <h2 id="paper-filter-heading">{messages.searchAndFilter}</h2>
           </div>
           {hasFilters ? (
             <button type="button" className="paper-filter-panel__reset" onClick={resetFilters}>
-              Reset filters
+              {messages.resetFilters}
             </button>
           ) : null}
         </div>
 
         <div className="paper-filter-grid">
           <label className="paper-field paper-field--wide">
-            <span>Search</span>
+            <span>{messages.search}</span>
             <input
               type="search"
               value={query}
@@ -126,33 +130,33 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today 
           </label>
 
           <label className="paper-field">
-            <span>Status</span>
+            <span>{messages.status}</span>
             <select value={status} onChange={(event) => setStatus(event.target.value)}>
-              <option value="">All statuses</option>
+              <option value="">{messages.allStatuses}</option>
               {statuses.map((item) => (
                 <option value={item} key={item}>
-                  {item}
+                  {messages.statuses[item]}
                 </option>
               ))}
             </select>
           </label>
 
           <label className="paper-field">
-            <span>Depth</span>
+            <span>{messages.depth}</span>
             <select value={depth} onChange={(event) => setDepth(event.target.value)}>
-              <option value="">All depths</option>
+              <option value="">{messages.allDepths}</option>
               {depths.map((item) => (
                 <option value={item} key={item}>
-                  {item}
+                  {messages.depths[item]}
                 </option>
               ))}
             </select>
           </label>
 
           <label className="paper-field">
-            <span>Tag</span>
+            <span>{messages.tag}</span>
             <select value={tag} onChange={(event) => setTag(event.target.value)}>
-              <option value="">All tags</option>
+              <option value="">{messages.allTags}</option>
               {tags.map((item) => (
                 <option value={item} key={item}>
                   {item}
@@ -162,9 +166,9 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today 
           </label>
 
           <label className="paper-field">
-            <span>Year</span>
+            <span>{messages.year}</span>
             <select value={year} onChange={(event) => setYear(event.target.value)}>
-              <option value="">All years</option>
+              <option value="">{messages.allYears}</option>
               {years.map((item) => (
                 <option value={item} key={item}>
                   {item}
@@ -174,9 +178,9 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today 
           </label>
 
           <label className="paper-field">
-            <span>Difficulty</span>
+            <span>{messages.difficulty}</span>
             <select value={difficulty} onChange={(event) => setDifficulty(event.target.value)}>
-              <option value="">All levels</option>
+              <option value="">{messages.allLevels}</option>
               {[1, 2, 3, 4, 5].map((item) => (
                 <option value={item} key={item}>
                   {item}/5
@@ -186,27 +190,27 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today 
           </label>
 
           <label className="paper-field">
-            <span>Sort</span>
+            <span>{messages.sort}</span>
             <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
-              <option value="latest">Latest read date</option>
-              <option value="title">Title</option>
-              <option value="difficulty">Difficulty</option>
-              <option value="reading-time">Reading time</option>
-              <option value="depth">Depth</option>
+              <option value="latest">{messages.latest}</option>
+              <option value="title">{messages.title}</option>
+              <option value="difficulty">{messages.difficulty}</option>
+              <option value="reading-time">{messages.readingTime}</option>
+              <option value="depth">{messages.depth}</option>
             </select>
           </label>
 
           <label className="paper-check">
             <input type="checkbox" checked={featuredOnly} onChange={(event) => setFeaturedOnly(event.target.checked)} />
-            <span>Featured only</span>
+            <span>{messages.featuredOnly}</span>
           </label>
         </div>
 
         {selectedDate ? (
           <p className="paper-selected-date">
-            Filtering by <strong>{selectedDate}</strong>
+            {messages.filteringBy} <strong>{selectedDate}</strong>
             <button type="button" onClick={() => setSelectedDate("")}>
-              Clear date
+              {messages.clearDate}
             </button>
           </p>
         ) : null}
@@ -214,27 +218,27 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today 
 
       <section className="paper-results" aria-labelledby="paper-results-heading">
         <div className="paper-results__header">
-          <h2 id="paper-results-heading">Paper cards</h2>
+          <h2 id="paper-results-heading">{messages.cards}</h2>
           <p>
-            {filteredPapers.length} of {papers.length} shown
+            {messages.shown.replace("{shown}", String(filteredPapers.length)).replace("{total}", String(papers.length))}
           </p>
         </div>
 
         {papers.length === 0 ? (
           <div className="paper-empty-state">
-            <h3>No paper logs yet. Start with one 20-minute pass.</h3>
-            <p>Begin with a short note that records the paper's question, core idea, and next reading decision.</p>
+            <h3>{messages.noLogs}</h3>
+            <p>{messages.noLogsBody}</p>
           </div>
         ) : filteredPapers.length > 0 ? (
           <div className="paper-card-list">
             {filteredPapers.map((paper) => (
-              <PaperCard paper={paper} key={paper.id} />
+              <PaperCard paper={paper} key={paper.id} locale={locale} messages={messages} />
             ))}
           </div>
         ) : (
           <div className="paper-empty-state">
-            <h3>No papers match these filters.</h3>
-            <p>Adjust the filters or reset them to return to the full paper log.</p>
+            <h3>{messages.noMatches}</h3>
+            <p>{messages.noMatchesBody}</p>
           </div>
         )}
       </section>

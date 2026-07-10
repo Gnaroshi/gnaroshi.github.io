@@ -17,10 +17,12 @@ interface Props {
 const { node } = Astro.props as Props;
 const edges = getConnectedEdges(node.id);
 const labelForType = (value: string) => value.replaceAll("-", " ");
+const alternateUrls = { en: `/graph/${node.type}/${node.slug}/`, ko: "/ko/graph/", xDefault: `/graph/${node.type}/${node.slug}/`, translationAvailable: false } as const;
 ---
 
-<BaseLayout title={node.label} description={node.description || `Research graph node: ${node.label}`} canonical={`/graph/${node.type}/${node.slug}/`} mode="application">
+<BaseLayout title={node.label} description={node.description || `Research graph node: ${node.label}`} canonical={`/graph/${node.type}/${node.slug}/`} alternateUrls={alternateUrls} mode="application">
   <article class="paper-detail">
+    <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/graph/">Back to graph</a>
       <div class="paper-detail-header__title">

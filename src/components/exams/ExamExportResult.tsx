@@ -1,14 +1,16 @@
 import { useMemo, useState } from "react";
 import type { ScoredOralExam } from "../../types/api";
 import type { ExamTranscriptEntry } from "./ExamTranscriptPanel";
+import type { IslandMessages } from "../../i18n/islands";
 
 type Props = {
   paperSlug: string;
   result: ScoredOralExam;
   transcript: ExamTranscriptEntry[];
+  messages: IslandMessages["exam"];
 };
 
-export default function ExamExportResult({ paperSlug, result, transcript }: Props) {
+export default function ExamExportResult({ paperSlug, result, transcript, messages }: Props) {
   const [message, setMessage] = useState("");
   const resultJson = useMemo(() => JSON.stringify(result, null, 2), [result]);
   const transcriptText = useMemo(
@@ -19,9 +21,9 @@ export default function ExamExportResult({ paperSlug, result, transcript }: Prop
   async function copy(value: string, label: string) {
     try {
       await navigator.clipboard.writeText(value);
-      setMessage(`${label} copied.`);
+      setMessage(messages.copied.replace("{label}", label));
     } catch {
-      setMessage(`Could not copy ${label.toLowerCase()}. Select it manually below.`);
+      setMessage(messages.copyFailed.replace("{label}", label.toLowerCase()));
     }
   }
 
@@ -32,7 +34,7 @@ export default function ExamExportResult({ paperSlug, result, transcript }: Prop
     anchor.download = filename;
     anchor.click();
     URL.revokeObjectURL(url);
-    setMessage(`${filename} prepared locally.`);
+    setMessage(messages.prepared.replace("{filename}", filename));
   }
 
   const date = result.scoredAt.slice(0, 10);
@@ -40,12 +42,12 @@ export default function ExamExportResult({ paperSlug, result, transcript }: Prop
     <section className="exam-result" aria-labelledby="exam-result-heading">
       <header>
         <div>
-          <p className="eyebrow">Exam result</p>
-          <h2 id="exam-result-heading">Retrieval evidence: {result.overallScore}/100</h2>
+          <p className="eyebrow">{messages.result}</p>
+          <h2 id="exam-result-heading">{messages.retrievalEvidence.replace("{score}", String(result.overallScore))}</h2>
         </div>
-        <span>{result.confidence} confidence</span>
+        <span>{messages.confidence.replace("{value}", result.confidence)}</span>
       </header>
-      {result.mock ? <p className="exam-result__warning">Development mock. This score did not evaluate correctness.</p> : null}
+      {result.mock ? <p className="exam-result__warning">{messages.mockWarning}</p> : null}
       <p>{result.summary}</p>
       <div className="exam-result__dimensions">
         {Object.entries(result.scores).map(([name, dimension]) => (
@@ -56,17 +58,17 @@ export default function ExamExportResult({ paperSlug, result, transcript }: Prop
         ))}
       </div>
       <div className="paper-card__links">
-        <button type="button" onClick={() => copy(resultJson, "Score JSON")}>Copy score JSON</button>
-        <button type="button" onClick={() => copy(transcriptText, "Transcript")}>Copy transcript</button>
-        <button type="button" onClick={() => download(resultJson, `${date}-${paperSlug}-oral-exam.json`, "application/json")}>Export score JSON</button>
-        <button type="button" onClick={() => download(transcriptText, `${date}-${paperSlug}-transcript.txt`, "text/plain")}>Export transcript</button>
+        <button type="button" onClick={() => copy(resultJson, "Score JSON")}>{messages.copyScore}</button>
+        <button type="button" onClick={() => copy(transcriptText, "Transcript")}>{messages.copyTranscript}</button>
+        <button type="button" onClick={() => download(resultJson, `${date}-${paperSlug}-oral-exam.json`, "application/json")}>{messages.exportScore}</button>
+        <button type="button" onClick={() => download(transcriptText, `${date}-${paperSlug}-transcript.txt`, "text/plain")}>{messages.exportTranscript}</button>
       </div>
       <p className="metadata">
-        Keep the result local, or add it to the research record before the next update.
+        {messages.keepLocal}
       </p>
       {message ? <p className="metadata" aria-live="polite">{message}</p> : null}
       <details>
-        <summary>Review score JSON</summary>
+        <summary>{messages.reviewJson}</summary>
         <pre><code>{resultJson}</code></pre>
       </details>
     </section>

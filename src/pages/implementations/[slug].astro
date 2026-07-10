@@ -46,10 +46,12 @@ const links = [
   attempt.data.demoUrl ? { label: "Demo", href: attempt.data.demoUrl } : null,
   attempt.data.paperUrl ? { label: "Paper", href: attempt.data.paperUrl } : null
 ].filter(Boolean) as Array<{ label: string; href: string }>;
+const alternateUrls = { en: `/implementations/${attempt.id}/`, ko: "/ko/implementations/", xDefault: `/implementations/${attempt.id}/`, translationAvailable: false } as const;
 ---
 
-<BaseLayout title={attempt.data.title} description={attempt.data.goal} canonical={`/implementations/${attempt.id}/`} type="article" mode="application">
+<BaseLayout title={attempt.data.title} description={attempt.data.goal} canonical={`/implementations/${attempt.id}/`} alternateUrls={alternateUrls} type="article" mode="application">
   <article class="paper-detail">
+    <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/implementations/">Back to implementations</a>
       <div class="paper-detail-header__title">

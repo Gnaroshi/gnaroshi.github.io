@@ -1,4 +1,6 @@
 import type { KeyboardEvent } from "react";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
 
 type CountsByDate = Record<string, number>;
 
@@ -7,6 +9,8 @@ interface Props {
   selectedDate: string;
   today: string;
   onSelectDate: (date: string) => void;
+  locale: Locale;
+  messages: IslandMessages["paper"];
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -29,7 +33,7 @@ function getLevel(count: number): number {
   return Math.min(count, 4);
 }
 
-export default function PaperHeatmap({ countsByDate, selectedDate, today, onSelectDate }: Props) {
+export default function PaperHeatmap({ countsByDate, selectedDate, today, onSelectDate, locale, messages }: Props) {
   const end = parseDateKey(today);
   const start = new Date(end.getTime() - 364 * DAY_MS);
   const leadingBlanks = start.getUTCDay();
@@ -64,27 +68,27 @@ export default function PaperHeatmap({ countsByDate, selectedDate, today, onSele
     <section className="paper-heatmap" aria-labelledby="paper-heatmap-heading">
       <div className="paper-heatmap__header">
         <div>
-          <p className="eyebrow">Activity</p>
-          <h2 id="paper-heatmap-heading">Last 365 days</h2>
+          <p className="eyebrow">{messages.activity}</p>
+          <h2 id="paper-heatmap-heading">{messages.last365}</h2>
         </div>
-        <div className="paper-heatmap__legend" aria-label="Heatmap intensity legend">
-          <span>Less</span>
+        <div className="paper-heatmap__legend" aria-label={messages.intensity}>
+          <span>{messages.less}</span>
           {[0, 1, 2, 3, 4].map((level) => (
             <span className={`paper-heatmap__legend-cell paper-heatmap-cell--level-${level}`} key={level} />
           ))}
-          <span>More</span>
+          <span>{messages.more}</span>
         </div>
       </div>
 
       <div className="paper-heatmap__scroller">
-        <div className="paper-heatmap__grid" role="group" aria-label="Paper reading activity by date">
+        <div className="paper-heatmap__grid" role="group" aria-label={messages.activityByDate} lang={locale}>
           {Array.from({ length: leadingBlanks }, (_, index) => (
             <span className="paper-heatmap__blank" aria-hidden="true" key={`blank-${index}`} />
           ))}
           {days.map((date, index) => {
             const count = countsByDate[date] ?? 0;
             const level = getLevel(count);
-            const label = `${date}: ${count} paper${count === 1 ? "" : "s"}`;
+            const label = messages.papersOnDate.replace("{date}", date).replace("{count}", String(count));
             const isSelected = selectedDate === date;
 
             return (

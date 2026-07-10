@@ -1,0 +1,13 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import BlogCard from "../components/blog/BlogCard.astro";
+import SectionHeader from "../components/common/SectionHeader.astro";
+import type { Locale } from "../i18n/types";
+import { translate } from "../i18n/utils";
+import { getArchiveGroups, getPublishedBlogPosts } from "../utils/content";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const posts = await getPublishedBlogPosts(locale);
+const groups = getArchiveGroups(posts, locale);
+---
+<BaseLayout locale={locale} title={translate(locale, "writing.archive")} description={translate(locale, "writing.intro")} width="wide"><header class="page-header"><p class="eyebrow">{translate(locale, "writing.archive")}</p><h1>{translate(locale, "writing.archive")}</h1><p class="lede">{translate(locale, "writing.intro")}</p></header><section class="section" aria-labelledby="archive-heading"><SectionHeader id="archive-heading" title={translate(locale, "writing.archive")} description={translate(locale, "common.items", { count: posts.length })} /><div class="archive-list">{groups.map((group) => <section class="archive-group" aria-labelledby={`archive-${group.key}`}><h2 id={`archive-${group.key}`}>{group.label}</h2><div class="card-list">{group.posts.map((post) => <BlogCard post={post} locale={locale} />)}</div></section>)}</div></section></BaseLayout>
