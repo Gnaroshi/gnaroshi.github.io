@@ -1,52 +1,29 @@
-import { mkdir } from "node:fs/promises";
+import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { test } from "@playwright/test";
+import { qaRoutes, qaViewports } from "./qa-routes";
 
-const routes = [
-  "/",
-  "/about",
-  "/research",
-  "/projects",
-  "/blog",
-  "/papers",
-  "/growth",
-  "/now",
-  "/contact",
-  "/queue",
-  "/reviews",
-  "/formula",
-  "/questions",
-  "/implementations",
-  "/graph",
-  "/week",
-  "/404.html",
-  "/ko/",
-  "/ko/research",
-  "/ko/blog",
-  "/ko/papers",
-  "/ko/growth",
-  "/ko/404"
-];
+const visualSet = process.env.VISUAL_SET ?? "final";
+const visualRoot = path.join("artifacts", "design-audit-v2", visualSet);
 
-const viewports = [
-  { name: "desktop", width: 1440, height: 1000 },
-  { name: "tablet", width: 1024, height: 768 },
-  { name: "mobile", width: 390, height: 844 }
-] as const;
+test.beforeAll(async () => {
+  await rm(visualRoot, { recursive: true, force: true });
+  await mkdir(visualRoot, { recursive: true });
+});
 
-for (const viewport of viewports) {
+for (const viewport of qaViewports) {
   for (const theme of ["light", "dark"] as const) {
     test(`@visual ${theme} ${viewport.name} route audit`, async ({ page }) => {
       await page.setViewportSize(viewport);
       await page.addInitScript((selectedTheme) => localStorage.setItem("theme", selectedTheme), theme);
-      const visualSet = process.env.VISUAL_SET ?? "final";
-      const directory = path.join("artifacts", "design-audit-v2", visualSet, `${viewport.name}-${theme}`);
+      const directory = path.join(visualRoot, `${viewport.name}-${theme}`);
+      await rm(directory, { recursive: true, force: true });
       await mkdir(directory, { recursive: true });
 
-      for (const route of routes) {
+      for (const route of qaRoutes) {
         await page.goto(route);
         await page.waitForLoadState("networkidle");
-        const filename = route === "/" ? "home" : route.replace(/^\//, "").replaceAll("/", "-").replace(/\.html$/, "");
+        const filename = route === "/" ? "en-home" : route === "/ko/" ? "ko-home" : route.replace(/^\//, "").replaceAll("/", "-");
         await page.screenshot({ path: path.join(directory, `${filename}.png`), fullPage: true });
       }
     });

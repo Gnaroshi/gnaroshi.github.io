@@ -1,11 +1,16 @@
 ---
 import type { PaperReviewStats } from "../../utils/paperReviews";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
+import { getLocalePath } from "../../i18n/utils";
 
 interface Props {
   trend: PaperReviewStats["trend"];
+  locale: Locale;
+  messages: IslandMessages["paper"];
 }
 
-const { trend } = Astro.props;
+const { trend, locale, messages } = Astro.props;
 const width = 420;
 const height = 120;
 const padding = 12;
@@ -20,16 +25,16 @@ const path = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x}
 
 <div class="paper-score-trend">
   {points.length > 0 ? (
-    <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="AI review score trend over time">
+    <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={messages.trendLabel}>
       <path class="paper-score-trend__grid" d={`M ${padding} ${height - padding} H ${width - padding}`} />
       {path && <path class="paper-score-trend__line" d={path} />}
       {points.map((point) => (
-        <a href={`/papers/${point.paperSlug}/`} aria-label={`${point.paperTitle}: ${point.overallScore} on ${point.reviewedAt.slice(0, 10)}`}>
+        <a href={getLocalePath(locale, `/papers/${point.paperSlug}/`)} aria-label={messages.trendPoint.replace("{title}", point.paperTitle).replace("{score}", String(point.overallScore)).replace("{date}", point.reviewedAt.slice(0, 10))}>
           <circle class="paper-score-trend__point" cx={point.x} cy={point.y} r="4" />
         </a>
       ))}
     </svg>
   ) : (
-    <p class="metadata">No public review trend yet.</p>
+    <p class="metadata">{messages.noTrend}</p>
   )}
 </div>

@@ -4,8 +4,10 @@ import ImplementationCard from "../components/implementations/ImplementationCard
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getPublishedImplementationAttempts } from "../utils/implementations";
+import { getIslandMessages } from "../i18n/islands";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const attempts = await getPublishedImplementationAttempts(locale);
+const messages = getIslandMessages(locale).implementation;
 ---
-<BaseLayout locale={locale} title={translate(locale, "paperLab.implementations")} description={translate(locale, "implementations.subtitle")} width="wide" mode="application"><header class="page-header"><p class="eyebrow">{translate(locale, "paperLab.implementations")}</p><h1>{translate(locale, "implementations.title")}</h1><p class="lede">{translate(locale, "implementations.subtitle")}</p></header>{attempts.length ? <div class="implementation-grid">{attempts.map((attempt) => <ImplementationCard attempt={attempt} />)}</div> : <section class="app-empty-state" aria-labelledby="implementations-empty"><h2 id="implementations-empty">{translate(locale, "implementations.empty")}</h2><p>{translate(locale, "implementations.emptyBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/#new-paper-template")}>{translate(locale, "implementations.action")}</a></section>}</BaseLayout>
+<BaseLayout locale={locale} title={translate(locale, "paperLab.implementations")} description={translate(locale, "implementations.subtitle")} width="wide" mode="application"><header class="page-header"><p class="eyebrow">{translate(locale, "paperLab.implementations")}</p><h1>{translate(locale, "implementations.title")}</h1><p class="lede">{translate(locale, "implementations.subtitle")}</p></header>{attempts.length ? <div class="implementation-grid">{attempts.map((attempt) => <ImplementationCard attempt={attempt} locale={locale} messages={messages} />)}</div> : <section class="app-empty-state" aria-labelledby="implementations-empty"><h2 id="implementations-empty">{translate(locale, "implementations.empty")}</h2><p>{translate(locale, "implementations.emptyBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/#new-paper-template")}>{translate(locale, "implementations.action")}</a></section>}</BaseLayout>

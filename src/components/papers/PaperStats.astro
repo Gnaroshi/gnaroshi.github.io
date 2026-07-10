@@ -1,25 +1,27 @@
 ---
 import type { PaperStats as PaperStatsData } from "../../utils/papers";
+import type { IslandMessages } from "../../i18n/islands";
 
 interface Props {
   stats: PaperStatsData;
+  messages: IslandMessages["paper"];
 }
 
-const { stats } = Astro.props;
+const { stats, messages } = Astro.props;
 
 const items = [
-  { label: "Papers today", value: stats.today },
-  { label: "Current streak", value: stats.currentStreak },
-  { label: "Longest streak", value: stats.longestStreak },
-  { label: "This week", value: stats.thisWeek },
-  { label: "This month", value: stats.thisMonth },
-  { label: "This year", value: stats.thisYear },
-  { label: "Deep reads", value: stats.deepReads },
-  { label: "Implemented/reproduced", value: stats.implemented }
+  { label: messages.papersToday, value: stats.today },
+  { label: messages.currentStreak, value: stats.currentStreak },
+  { label: messages.longestStreak, value: stats.longestStreak },
+  { label: messages.thisWeek, value: stats.thisWeek },
+  { label: messages.thisMonth, value: stats.thisMonth },
+  { label: messages.thisYear, value: stats.thisYear },
+  { label: messages.deepReads, value: stats.deepReads },
+  { label: messages.implementedReproduced, value: stats.implemented }
 ];
 ---
 
-<section class="paper-stats" aria-label="Paper reading statistics">
+<section class="paper-stats" aria-label={messages.statistics}>
   {items.map((item) => (
     <article class="paper-stat-card">
       <strong>{item.value}</strong>
@@ -27,4 +29,3 @@ const items = [
     </article>
   ))}
 </section>
-

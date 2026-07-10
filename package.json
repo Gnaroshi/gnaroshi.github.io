@@ -22,7 +22,7 @@
     "questions:build": "node scripts/build-question-bank.mjs",
     "formula:score": "node scripts/score-formula-recall.mjs",
     "score:test": "node scripts/test-momentum-score.mjs",
-    "test:e2e": "playwright test tests/e2e/routes.spec.ts tests/e2e/navigation.spec.ts tests/e2e/empty-states.spec.ts tests/e2e/i18n.spec.ts tests/e2e/korean-layout.spec.ts",
+    "test:e2e": "playwright test tests/e2e/routes.spec.ts tests/e2e/navigation.spec.ts tests/e2e/empty-states.spec.ts tests/e2e/i18n.spec.ts tests/e2e/korean-layout.spec.ts tests/e2e/final-qa.spec.ts",
     "test:a11y": "playwright test tests/e2e/accessibility.spec.ts",
     "test:visual": "playwright test tests/e2e/visual.spec.ts",
     "check:links": "node scripts/check-links.mjs",

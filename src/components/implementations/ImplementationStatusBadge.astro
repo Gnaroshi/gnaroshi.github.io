@@ -1,13 +1,24 @@
 ---
-import { implementationStatusLabels, type ImplementationStatus } from "../../utils/implementations";
+import type { ImplementationStatus } from "../../utils/implementations";
+import type { IslandMessages } from "../../i18n/islands";
 
 interface Props {
   status: ImplementationStatus;
+  messages: IslandMessages["implementation"];
 }
 
-const { status } = Astro.props;
+const { status, messages } = Astro.props;
+const labels = {
+  planned: messages.statuses.planned,
+  "in-progress": messages.statuses.inProgress,
+  reproduced: messages.statuses.reproduced,
+  "partially-reproduced": messages.statuses.partiallyReproduced,
+  failed: messages.statuses.failed,
+  abandoned: messages.statuses.abandoned,
+  shipped: messages.statuses.shipped
+} satisfies Record<ImplementationStatus, string>;
 ---
 
 <span class:list={["paper-badge", "implementation-status", `implementation-status--${status}`]}>
-  {implementationStatusLabels[status]}
+  {labels[status]}
 </span>

@@ -7,6 +7,6 @@
     "paths": {
       "@/*": ["src/*"]
     }
-  }
+  },
+  "exclude": ["dist", "artifacts", "playwright-report", "test-results"]
 }
-

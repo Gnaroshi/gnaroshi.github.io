@@ -49,7 +49,9 @@ const reviewCommand = `npm run paper:review -- --slug ${paper.id}`;
 const promoteCommand = `npm run paper:promote -- --slug ${paper.id}`;
 const showAuthorTools = import.meta.env.DEV;
 const implementationAttempts = getImplementationAttemptsForPaper(await getPublishedImplementationAttempts(), paper.id);
-const manualReviewMessages = getIslandMessages("en").manualReview;
+const islandMessages = getIslandMessages("en");
+const manualReviewMessages = islandMessages.manualReview;
+const implementationMessages = islandMessages.implementation;
 const alternateUrls = { en: `/papers/${paper.id}/`, ko: "/ko/papers/", xDefault: `/papers/${paper.id}/`, translationAvailable: false } as const;
 
 const fallback = "Not recorded yet.";
@@ -216,7 +218,7 @@ const hasFutureMe =
           description="Code attempts connected to this paper, including partial and failed reproductions."
         />
         <div class="implementation-grid">
-          {implementationAttempts.map((attempt) => <ImplementationCard attempt={attempt} />)}
+          {implementationAttempts.map((attempt) => <ImplementationCard attempt={attempt} locale="en" messages={implementationMessages} />)}
         </div>
       </section>
     )}

@@ -2,12 +2,14 @@
 import type { PaperReview } from "../../utils/paperReviews";
 import PaperReviewBreakdown from "./PaperReviewBreakdown.astro";
 import PaperScoreBadge from "./PaperScoreBadge.astro";
+import { getIslandMessages } from "../../i18n/islands";
 
 interface Props {
   review: PaperReview;
 }
 
 const { review } = Astro.props;
+const messages = getIslandMessages("en").paper;
 const passLabels = {
   pass1: "Pass 1",
   pass2: "Pass 2",
@@ -22,7 +24,7 @@ const passLabels = {
       <h2 id="paper-review-heading">Evidence of understanding</h2>
       <p>{review.summary}</p>
     </div>
-    <PaperScoreBadge score={review.overallScore} level={review.scoreLevel} label="Reading process score" />
+    <PaperScoreBadge score={review.overallScore} level={review.scoreLevel} label="Reading process score" messages={messages} />
   </div>
 
   <p class="paper-review-card__motivation">{review.motivationMessage}</p>

@@ -12,6 +12,7 @@ import {
   type ImplementationEntry
 } from "../../utils/implementations";
 import { getBuildablePapers } from "../../utils/papers";
+import { getIslandMessages } from "../../i18n/islands";
 
 export async function getStaticPaths() {
   const attempts = await getBuildableImplementationAttempts();
@@ -46,6 +47,7 @@ const links = [
   attempt.data.demoUrl ? { label: "Demo", href: attempt.data.demoUrl } : null,
   attempt.data.paperUrl ? { label: "Paper", href: attempt.data.paperUrl } : null
 ].filter(Boolean) as Array<{ label: string; href: string }>;
+const implementationMessages = getIslandMessages("en").implementation;
 const alternateUrls = { en: `/implementations/${attempt.id}/`, ko: "/ko/implementations/", xDefault: `/implementations/${attempt.id}/`, translationAvailable: false } as const;
 ---
 
@@ -61,7 +63,7 @@ const alternateUrls = { en: `/implementations/${attempt.id}/`, ko: "/ko/implemen
       </div>
       <p class="paper-detail-header__meta">{toImplementationDateKey(attempt.data.date)}</p>
       <div class="paper-detail-header__badges">
-        <ImplementationStatusBadge status={attempt.data.status} />
+        <ImplementationStatusBadge status={attempt.data.status} messages={implementationMessages} />
         {attempt.data.tags.map((tag) => <span class="paper-tag">{tag}</span>)}
       </div>
       {links.length > 0 && (

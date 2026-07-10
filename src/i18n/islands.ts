@@ -13,6 +13,14 @@ export const enIslandMessages = {
     activityByDate: "Paper reading activity by date", papersOnDate: "{date}: {count} papers", aiReview: "AI review", needsReview: "Needs review",
     reviewDue: "Review due", draft: "Draft", featured: "Featured", futureMe: "Future me", read: "read", metadata: "Paper metadata",
     priority: "Priority", minutes: "{count} min", tags: "Paper tags", detail: "Detail page", paper: "Paper", code: "Code", project: "Project",
+    statistics: "Paper reading statistics", papersToday: "Papers today", currentStreak: "Current streak", longestStreak: "Longest streak",
+    thisWeek: "This week", thisMonth: "This month", thisYear: "This year", deepReads: "Deep reads", implementedReproduced: "Implemented/reproduced",
+    publicNotes: "Public paper notes: {count}. More activity views appear after three notes.", readingProcessEvidence: "Reading process evidence",
+    scoreScope: "Scores reflect evidence in written notes and three-pass discipline, not intelligence.", average: "Average", averageAi: "Average AI score",
+    averageSelf: "Average self-score", averageGap: "Average score gap", reviewsDue: "Reviews due", scoreTrend: "Score trend",
+    weakDimension: "Weak dimension", dimensionAverage: "{label}: {score}/10 average.", paperNotes: "Paper notes",
+    trendLabel: "AI review score trend over time", trendPoint: "{title}: {score} on {date}", noTrend: "No public review trend yet.",
+    scoreLevels: { seed: "Seed", developing: "Developing", solid: "Solid", strong: "Strong", excellent: "Excellent" },
     statuses: { planned: "Planned", pass1: "Pass 1", pass2: "Pass 2", pass3: "Pass 3", read: "Read", implemented: "Implemented", abandoned: "Abandoned" },
     depths: { skim: "Skim", understand: "Understand", deep: "Deep", reproduce: "Reproduce", implement: "Implement" },
     priorities: { low: "Low", medium: "Medium", high: "High" }
@@ -87,6 +95,10 @@ export const enIslandMessages = {
     body: "Paste this into ChatGPT or another model, then save the returned JSON review.", copy: "Copy AI Review Prompt", cli: "CLI option",
     prompt: "Manual review prompt", copied: "Prompt copied.", selected: "Automatic copy was blocked. The full prompt is selected; press Ctrl+C or Cmd+C.",
     failed: "Copy is unavailable. Select the prompt text manually."
+  },
+  implementation: {
+    statuses: { planned: "Planned", inProgress: "In progress", reproduced: "Reproduced", partiallyReproduced: "Partially reproduced", failed: "Failed", abandoned: "Abandoned", shipped: "Shipped" },
+    repo: "Repo", demo: "Demo", paper: "Paper", failed: "What failed", tags: "Implementation tags", read: "Read attempt"
   }
 } as const;
 
@@ -106,6 +118,14 @@ export const koIslandMessages = {
     activityByDate: "날짜별 논문 읽기 활동", papersOnDate: "{date}: 논문 {count}편", aiReview: "AI 리뷰", needsReview: "리뷰 필요",
     reviewDue: "복습 예정", draft: "초안", featured: "선택", futureMe: "미래의 나", read: "읽음", metadata: "논문 정보",
     priority: "우선순위", minutes: "{count}분", tags: "논문 태그", detail: "상세 노트", paper: "논문", code: "코드", project: "프로젝트",
+    statistics: "논문 읽기 통계", papersToday: "오늘 읽은 논문", currentStreak: "현재 연속 기록", longestStreak: "최장 연속 기록",
+    thisWeek: "이번 주", thisMonth: "이번 달", thisYear: "올해", deepReads: "깊이 읽기", implementedReproduced: "구현·재현",
+    publicNotes: "공개 논문 노트 {count}개. 노트가 3개 이상 쌓이면 활동 보기가 열립니다.", readingProcessEvidence: "읽기 과정의 근거",
+    scoreScope: "점수는 지능이 아니라 글로 남긴 이해의 근거와 3단계 읽기 과정을 반영합니다.", average: "평균", averageAi: "AI 점수 평균",
+    averageSelf: "자기 평가 평균", averageGap: "AI-자기 평가 차이", reviewsDue: "복습 예정", scoreTrend: "점수 추이",
+    weakDimension: "보완할 영역", dimensionAverage: "{label}: 평균 {score}/10", paperNotes: "논문 노트",
+    trendLabel: "시간에 따른 AI 리뷰 점수", trendPoint: "{title}: {date}에 {score}점", noTrend: "공개 리뷰 추이가 아직 없습니다.",
+    scoreLevels: { seed: "시작", developing: "발전 중", solid: "탄탄함", strong: "강함", excellent: "매우 탄탄함" },
     statuses: { planned: "읽을 예정", pass1: "1차 읽기", pass2: "2차 읽기", pass3: "3차 읽기", read: "읽음", implemented: "구현 완료", abandoned: "중단" },
     depths: { skim: "훑어보기", understand: "구조 이해", deep: "깊이 읽기", reproduce: "재현", implement: "구현" },
     priorities: { low: "낮음", medium: "보통", high: "높음" }
@@ -180,6 +200,10 @@ export const koIslandMessages = {
     body: "ChatGPT나 다른 모델에 붙여 넣은 뒤 반환된 JSON 리뷰를 저장하세요.", copy: "AI 리뷰 프롬프트 복사", cli: "CLI 명령",
     prompt: "수동 리뷰 프롬프트", copied: "프롬프트를 복사했습니다.", selected: "자동 복사가 차단되었습니다. 전체 프롬프트를 선택했으니 Ctrl+C 또는 Cmd+C를 누르세요.",
     failed: "복사 기능을 사용할 수 없습니다. 프롬프트를 직접 선택하세요."
+  },
+  implementation: {
+    statuses: { planned: "계획", inProgress: "진행 중", reproduced: "재현 완료", partiallyReproduced: "일부 재현", failed: "실패", abandoned: "중단", shipped: "배포 완료" },
+    repo: "저장소", demo: "데모", paper: "논문", failed: "실패한 부분", tags: "구현 태그", read: "구현 기록 읽기"
   }
 } satisfies IslandMessages;
 

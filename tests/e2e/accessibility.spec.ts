@@ -1,9 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { qaRoutes } from "./qa-routes";
 
-const routes = ["/", "/about", "/blog", "/papers", "/growth", "/graph", "/ko/", "/ko/blog", "/ko/papers", "/ko/growth"];
-
-for (const route of routes) {
+for (const route of qaRoutes) {
   test(`${route} has no automatically detectable accessibility violations`, async ({ page }) => {
     await page.goto(route);
     const results = await new AxeBuilder({ page }).analyze();

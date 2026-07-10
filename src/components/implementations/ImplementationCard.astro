@@ -1,47 +1,54 @@
 ---
 import type { ImplementationEntry } from "../../utils/implementations";
-import { toImplementationDateKey } from "../../utils/implementations";
 import ExternalLink from "../common/ExternalLink.astro";
 import ImplementationStatusBadge from "./ImplementationStatusBadge.astro";
+import type { IslandMessages } from "../../i18n/islands";
+import type { Locale } from "../../i18n/types";
+import { formatLocalizedDate } from "../../i18n/date";
+import { getLocalePath } from "../../i18n/utils";
+import { getContentSlug } from "../../utils/localizedContent";
 
 interface Props {
   attempt: ImplementationEntry;
+  locale: Locale;
+  messages: IslandMessages["implementation"];
 }
 
-const { attempt } = Astro.props;
+const { attempt, locale, messages } = Astro.props;
+const slug = getContentSlug(attempt.id);
 const links = [
-  attempt.data.repoUrl ? { label: "Repo", href: attempt.data.repoUrl } : null,
-  attempt.data.demoUrl ? { label: "Demo", href: attempt.data.demoUrl } : null,
-  attempt.data.paperUrl ? { label: "Paper", href: attempt.data.paperUrl } : null
+  attempt.data.repoUrl ? { label: messages.repo, href: attempt.data.repoUrl } : null,
+  attempt.data.demoUrl ? { label: messages.demo, href: attempt.data.demoUrl } : null,
+  attempt.data.paperUrl ? { label: messages.paper, href: attempt.data.paperUrl } : null
 ].filter(Boolean) as Array<{ label: string; href: string }>;
 ---
 
 <article class="implementation-card">
   <div class="implementation-card__header">
     <div>
-      <h3><a href={`/implementations/${attempt.id}/`}>{attempt.data.title}</a></h3>
-      <p class="metadata">{toImplementationDateKey(attempt.data.date)}</p>
+      <h3><a href={getLocalePath(locale, `/implementations/${slug}/`)}>{attempt.data.title}</a></h3>
+      <p class="metadata">{formatLocalizedDate(attempt.data.date, locale)}</p>
     </div>
-    <ImplementationStatusBadge status={attempt.data.status} />
+    <ImplementationStatusBadge status={attempt.data.status} messages={messages} />
   </div>
 
   <p>{attempt.data.goal}</p>
 
   {attempt.data.failureReason && (
     <div class="implementation-card__failure">
-      <strong>What failed</strong>
+      <strong>{messages.failed}</strong>
       <p>{attempt.data.failureReason}</p>
     </div>
   )}
 
   {attempt.data.tags.length > 0 && (
-    <div class="badge-row" aria-label="Implementation tags">
+    <div class="badge-row" aria-label={messages.tags}>
       {attempt.data.tags.map((tag) => <span class="paper-tag">{tag}</span>)}
     </div>
   )}
 
   <div class="link-row">
-    <a href={`/implementations/${attempt.id}/`}>Read attempt</a>
+    <a href={getLocalePath(locale, `/implementations/${slug}/`)}>{messages.read}</a>
     {links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
   </div>
 </article>

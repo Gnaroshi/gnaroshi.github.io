@@ -35,6 +35,7 @@ const countsRecord = Object.fromEntries(countsByDate.entries());
 const hasAdvancedNotebook = papers.length >= evidenceGates.paperLab.filtersAt;
 const hasReviewSummary = reviewStats.reviewedCount >= evidenceGates.paperLab.aiReviewSummaryAt;
 const islandMessages = getIslandMessages(locale);
+const messages = islandMessages.paper;
 ---
 
 <div class="paper-dashboard">
@@ -44,7 +45,7 @@ const islandMessages = getIslandMessages(locale);
       <h1>{translate(locale, "papers.title")}</h1>
       <p class="lede">{translate(locale, "papers.subtitle")}</p>
     </div>
-    <a class="button button--primary" href="#new-paper-template">{translate(locale, "papers.add")}</a>
+    {papers.length > 0 && <a class="button button--primary" href="#new-paper-template">{translate(locale, "papers.add")}</a>}
   </header>
 
   {papers.length === 0 ? (
@@ -75,9 +76,9 @@ const islandMessages = getIslandMessages(locale);
     </>
   ) : (
     <>
-      {hasAdvancedNotebook ? <PaperStats stats={stats} /> : (
+      {hasAdvancedNotebook ? <PaperStats stats={stats} messages={messages} /> : (
         <p class="paper-compact-activity">
-          <strong>{papers.length}</strong> public paper note{papers.length === 1 ? "" : "s"}. More activity views appear after three notes.
+          {messages.publicNotes.replace("{count}", String(papers.length))}
         </p>
       )}
 
@@ -85,30 +86,30 @@ const islandMessages = getIslandMessages(locale);
         <section id="ai-review-workflow" class="paper-review-summary" aria-labelledby="paper-review-summary-heading">
           <div class="paper-review-summary__header">
             <div>
-              <p class="eyebrow">AI Review</p>
-              <h2 id="paper-review-summary-heading">Reading process evidence</h2>
-              <p>Scores reflect evidence in written notes and three-pass discipline, not intelligence.</p>
+              <p class="eyebrow">{messages.aiReview}</p>
+              <h2 id="paper-review-summary-heading">{messages.readingProcessEvidence}</h2>
+              <p>{messages.scoreScope}</p>
             </div>
             {reviewStats.averageScore !== null && (
-              <PaperScoreBadge score={reviewStats.averageScore} level={scoreLevelForScore(reviewStats.averageScore)} label="Average" />
+              <PaperScoreBadge score={reviewStats.averageScore} level={scoreLevelForScore(reviewStats.averageScore)} label={messages.average} messages={messages} />
             )}
           </div>
           <div class="paper-review-summary__grid">
-            <article class="paper-stat-card"><strong>{formatScore(reviewStats.averageScore)}</strong><span>Average AI score</span></article>
-            <article class="paper-stat-card"><strong>{formatScore(reviewStats.averageSelfScore)}</strong><span>Average self-score</span></article>
-            <article class="paper-stat-card"><strong>{formatScore(reviewStats.averageScoreGap)}</strong><span>Average score gap</span></article>
-            <article class="paper-stat-card"><strong>{reviewStats.papersWithNextReviewDue}</strong><span>Reviews due</span></article>
+            <article class="paper-stat-card"><strong>{formatScore(reviewStats.averageScore)}</strong><span>{messages.averageAi}</span></article>
+            <article class="paper-stat-card"><strong>{formatScore(reviewStats.averageSelfScore)}</strong><span>{messages.averageSelf}</span></article>
+            <article class="paper-stat-card"><strong>{formatScore(reviewStats.averageScoreGap)}</strong><span>{messages.averageGap}</span></article>
+            <article class="paper-stat-card"><strong>{reviewStats.papersWithNextReviewDue}</strong><span>{messages.reviewsDue}</span></article>
           </div>
           <div class="paper-review-summary__body">
-            <div><h3>Score trend</h3><PaperScoreTrend trend={reviewStats.trend} /></div>
+            <div><h3>{messages.scoreTrend}</h3><PaperScoreTrend trend={reviewStats.trend} locale={locale} messages={messages} /></div>
             {reviewStats.weakestDimension && (
-              <div><h3>Weak dimension</h3><p class="metadata">{reviewStats.weakestDimension.label}: {reviewStats.weakestDimension.averageScore}/10 average.</p></div>
+              <div><h3>{messages.weakDimension}</h3><p class="metadata">{messages.dimensionAverage.replace("{label}", reviewStats.weakestDimension.label).replace("{score}", String(reviewStats.weakestDimension.averageScore))}</p></div>
             )}
           </div>
         </section>
       )}
 
-      <section id="paper-notes" aria-label="Paper notes">
+      <section id="paper-notes" aria-label={messages.paperNotes}>
         {hasAdvancedNotebook ? (
           <PaperFilters
             client:visible
@@ -118,13 +119,13 @@ const islandMessages = getIslandMessages(locale);
             years={years}
             today={today}
             locale={locale}
-            messages={islandMessages.paper}
+            messages={messages}
           />
         ) : (
           <div class="paper-note-list">
             {records.map((paper) => (
               <article>
-                <div><span>{paper.status}</span><span>{paper.depth}</span></div>
+                <div><span>{messages.statuses[paper.status]}</span><span>{messages.depths[paper.depth]}</span></div>
                 <h2><a href={paper.href}>{paper.title}</a></h2>
                 <p>{paper.oneLineSummary}</p>
                 <small>{paper.venue} · {paper.year}{paper.readDate ? ` · ${paper.readDate}` : ""}</small>

@@ -1,17 +1,19 @@
 ---
-import { scoreLevelLabel, type ScoreLevel } from "../../utils/paperReviews";
+import type { ScoreLevel } from "../../utils/paperReviews";
+import type { IslandMessages } from "../../i18n/islands";
 
 interface Props {
   score: number;
   level: ScoreLevel;
   label?: string;
+  messages: IslandMessages["paper"];
 }
 
-const { score, level, label = "AI review" } = Astro.props;
+const { score, level, messages, label = messages.aiReview } = Astro.props;
 ---
 
 <span class:list={["paper-score-badge", `paper-score-badge--${level}`]}>
   <span>{label}</span>
   <strong>{score}</strong>
-  <span>{scoreLevelLabel(level)}</span>
+  <span>{messages.scoreLevels[level]}</span>
 </span>
