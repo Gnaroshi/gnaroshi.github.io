@@ -15,6 +15,7 @@ const forbidden = [
   { label: "to be updated", pattern: /to\s+be\s+updated/i },
   { label: "lorem ipsum", pattern: /lorem\s+ipsum/i }
 ];
+const today = getTodayKey();
 
 let files;
 try {
@@ -35,6 +36,10 @@ for (const file of files) {
       findings.push({ file: path.relative(root, file), term: rule.label });
     }
   }
+  const futureDates = [...new Set(content.match(/\b20\d{2}-\d{2}-\d{2}\b/g) ?? [])].filter((date) => date > today);
+  for (const date of futureDates) {
+    findings.push({ file: path.relative(root, file), term: `future date ${date}` });
+  }
 }
 
 if (findings.length > 0) {
@@ -53,4 +58,16 @@ async function collectTextFiles(directory) {
     return textExtensions.has(path.extname(entry.name)) ? [target] : [];
   }));
   return nested.flat();
+}
+
+function getTodayKey(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+  return ["year", "month", "day"]
+    .map((type) => parts.find((part) => part.type === type)?.value)
+    .join("-");
 }

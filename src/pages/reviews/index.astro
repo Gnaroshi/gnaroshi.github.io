@@ -60,7 +60,7 @@ const completionStreak = getReviewCompletionStreak(papers, today);
     <ReviewSession client:load papers={dueRecords} today={today} />
 
     <section class="section" aria-labelledby="upcoming-reviews-heading">
-      <SectionHeader id="upcoming-reviews-heading" title="Upcoming review load" description="Next scheduled paper reviews from committed paper notes." />
+      <SectionHeader id="upcoming-reviews-heading" title="Upcoming review load" description="Next scheduled revisits from the paper reading record." />
       {loadByDay.length > 0 ? (
         <div class="activity-grid">
           {loadByDay.map(([date, count]) => (

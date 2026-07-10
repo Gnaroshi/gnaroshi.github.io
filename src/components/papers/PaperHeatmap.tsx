@@ -1,3 +1,5 @@
+import type { KeyboardEvent } from "react";
+
 type CountsByDate = Record<string, number>;
 
 interface Props {
@@ -36,6 +38,28 @@ export default function PaperHeatmap({ countsByDate, selectedDate, today, onSele
     return toDateKey(date);
   });
 
+  function moveFocus(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    const offsets: Record<string, number> = {
+      ArrowLeft: -1,
+      ArrowRight: 1,
+      ArrowUp: -7,
+      ArrowDown: 7
+    };
+    const offset = offsets[event.key];
+    const targetIndex = event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? days.length - 1
+        : offset === undefined
+          ? index
+          : Math.min(days.length - 1, Math.max(0, index + offset));
+    if (targetIndex === index && offset === undefined && !["Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    event.currentTarget.parentElement
+      ?.querySelector<HTMLButtonElement>(`button[data-day-index="${targetIndex}"]`)
+      ?.focus();
+  }
+
   return (
     <section className="paper-heatmap" aria-labelledby="paper-heatmap-heading">
       <div className="paper-heatmap__header">
@@ -53,11 +77,11 @@ export default function PaperHeatmap({ countsByDate, selectedDate, today, onSele
       </div>
 
       <div className="paper-heatmap__scroller">
-        <div className="paper-heatmap__grid" role="grid" aria-label="Paper reading activity by date">
+        <div className="paper-heatmap__grid" role="group" aria-label="Paper reading activity by date">
           {Array.from({ length: leadingBlanks }, (_, index) => (
             <span className="paper-heatmap__blank" aria-hidden="true" key={`blank-${index}`} />
           ))}
-          {days.map((date) => {
+          {days.map((date, index) => {
             const count = countsByDate[date] ?? 0;
             const level = getLevel(count);
             const label = `${date}: ${count} paper${count === 1 ? "" : "s"}`;
@@ -70,7 +94,10 @@ export default function PaperHeatmap({ countsByDate, selectedDate, today, onSele
                 aria-label={label}
                 aria-pressed={isSelected}
                 title={label}
+                data-day-index={index}
+                tabIndex={isSelected || (!selectedDate && date === today) ? 0 : -1}
                 onClick={() => onSelectDate(isSelected ? "" : date)}
+                onKeyDown={(event) => moveFocus(event, index)}
                 key={date}
               />
             );
@@ -80,4 +107,3 @@ export default function PaperHeatmap({ countsByDate, selectedDate, today, onSele
     </section>
   );
 }
-

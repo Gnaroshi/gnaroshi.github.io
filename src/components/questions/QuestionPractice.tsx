@@ -73,8 +73,8 @@ export default function QuestionPractice({ questions, today }: Props) {
   if (questions.length === 0) {
     return (
       <div className="paper-empty-state">
-        <h3>No questions yet.</h3>
-        <p>Build the question bank after paper reviews, oral exams, or formula prompts exist.</p>
+        <h2>No questions yet.</h2>
+        <p>Questions will appear here as paper reviews, oral exams, and formula practice accumulate.</p>
       </div>
     );
   }

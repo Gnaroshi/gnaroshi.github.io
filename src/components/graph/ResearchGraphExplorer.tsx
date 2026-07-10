@@ -40,7 +40,7 @@ export default function ResearchGraphExplorer({ graph }: Props) {
     });
   }, [graph.edges, edgeType, visibleNodeIds]);
 
-  const selectedNode = nodeById.get(selectedNodeId) ?? filteredNodes[0];
+  const selectedNode = filteredNodes.find((node) => node.id === selectedNodeId) ?? filteredNodes[0];
   const selectedEdges = selectedNode
     ? graph.edges.filter((edge) => edge.source === selectedNode.id || edge.target === selectedNode.id)
     : [];
@@ -166,7 +166,7 @@ function NodeDetail({
         ))}
       </div>
       <div className="link-row">
-        <a href={node.href}>Open source page</a>
+        <a href={node.href}>Open connected page</a>
       </div>
       <div>
         <h4>Connected relations</h4>

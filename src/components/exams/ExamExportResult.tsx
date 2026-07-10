@@ -62,7 +62,7 @@ export default function ExamExportResult({ paperSlug, result, transcript }: Prop
         <button type="button" onClick={() => download(transcriptText, `${date}-${paperSlug}-transcript.txt`, "text/plain")}>Export transcript</button>
       </div>
       <p className="metadata">
-        Keep the result local, or place the score JSON under <code>src/generated/oral-exams/</code> before rebuilding the site.
+        Keep the result local, or add it to the research record before the next update.
       </p>
       {message ? <p className="metadata" aria-live="polite">{message}</p> : null}
       <details>

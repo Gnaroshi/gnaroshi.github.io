@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export type FormulaRecallPaper = {
   id: string;
@@ -26,7 +26,10 @@ export default function FormulaRecallTrainer({ papers, initialSlug, today }: Pro
   const [confidence, setConfidence] = useState("medium");
   const [showAnswer, setShowAnswer] = useState(false);
   const [savedMessage, setSavedMessage] = useState("");
+  const [attemptedAt, setAttemptedAt] = useState("");
   const activePaper = papers.find((paper) => paper.id === activeSlug) ?? papers[0];
+
+  useEffect(() => setAttemptedAt(new Date().toISOString()), []);
 
   const attemptJson = useMemo(() => {
     if (!activePaper) return "";
@@ -34,7 +37,7 @@ export default function FormulaRecallTrainer({ papers, initialSlug, today }: Pro
       {
         schemaVersion: "1.0.0",
         paperSlug: activePaper.id,
-        attemptedAt: new Date().toISOString(),
+        attemptedAt,
         localDate: today,
         formulaText,
         interpretation,
@@ -48,7 +51,7 @@ export default function FormulaRecallTrainer({ papers, initialSlug, today }: Pro
       null,
       2
     );
-  }, [activePaper, confidence, formulaText, interpretation, showAnswer, today]);
+  }, [activePaper, attemptedAt, confidence, formulaText, interpretation, showAnswer, today]);
 
   function saveLocalAttempt() {
     if (!activePaper) return;
@@ -85,7 +88,7 @@ export default function FormulaRecallTrainer({ papers, initialSlug, today }: Pro
   if (papers.length === 0) {
     return (
       <div className="paper-empty-state">
-        <h3>No formulas ready for recall yet.</h3>
+        <h2>No formulas ready for recall yet.</h2>
         <p>Add a main formula or recall prompt to a paper note, then revisit this trainer.</p>
       </div>
     );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface Props {
   prompt: string;
@@ -14,11 +14,31 @@ export default function ManualReviewPrompt({
   triggerLabel = "Re-review manually"
 }: Props) {
   const [isOpen, setIsOpen] = useState(initiallyOpen);
-  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "selected" | "failed">("idle");
+  const promptRef = useRef<HTMLTextAreaElement>(null);
 
   async function copyPrompt() {
+    let copied = false;
+
     try {
-      await navigator.clipboard.writeText(prompt);
+      if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(prompt);
+          copied = true;
+        } catch {
+          // Fall through to selection-based copying for restricted browsers.
+        }
+      }
+
+      if (!copied && promptRef.current) {
+        promptRef.current.focus();
+        promptRef.current.select();
+        promptRef.current.setSelectionRange(0, prompt.length);
+        setCopyState("selected");
+        return;
+      }
+
+      if (!copied) throw new Error("Copy unavailable");
       setCopyState("copied");
     } catch {
       setCopyState("failed");
@@ -51,11 +71,16 @@ export default function ManualReviewPrompt({
 
           <label className="paper-review-fallback__prompt">
             <span>Manual review prompt</span>
-            <textarea readOnly value={prompt} />
+            <textarea ref={promptRef} readOnly value={prompt} />
           </label>
 
           {copyState === "copied" ? <p className="metadata">Prompt copied.</p> : null}
-          {copyState === "failed" ? <p className="metadata">Copy failed. Select the prompt text manually.</p> : null}
+          {copyState === "selected" ? (
+            <p className="metadata">Automatic copy was blocked. The full prompt is selected; press Ctrl+C or Cmd+C.</p>
+          ) : null}
+          {copyState === "failed" ? (
+            <p className="metadata">Copy is unavailable. Select the prompt text manually.</p>
+          ) : null}
         </div>
       ) : null}
     </div>

@@ -1,16 +1,17 @@
 ---
 interface Props {
+  id?: string;
   title?: string;
   href?: string;
   eyebrow?: string;
   description?: string;
 }
 
-const { title, href, eyebrow, description } = Astro.props;
+const { id, title, href, eyebrow, description } = Astro.props;
 const TitleTag = href ? "a" : "span";
 ---
 
-<article class="card">
+<article id={id} class="card">
   {eyebrow && <p class="card__eyebrow">{eyebrow}</p>}
   {title && (
     <h3 class="card__title">
@@ -59,4 +60,3 @@ const TitleTag = href ? "a" : "span";
     color: var(--color-text-secondary);
   }
 </style>
-

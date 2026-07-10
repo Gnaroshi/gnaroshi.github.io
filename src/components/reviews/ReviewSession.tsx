@@ -84,7 +84,7 @@ export default function ReviewSession({ papers, today }: Props) {
   if (papers.length === 0) {
     return (
       <div className="paper-empty-state">
-        <h3>No reviews due right now.</h3>
+        <h2>No reviews due right now.</h2>
         <p>When a paper reaches its next spaced-review date, it will appear here.</p>
       </div>
     );

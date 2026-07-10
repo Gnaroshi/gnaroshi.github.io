@@ -61,7 +61,9 @@ export function getReviewCompletionRate(papers: PaperEntry[], windowDays: number
   const start = addDays(today, -windowDays + 1);
   const histories = papers.flatMap((paper) => getReviewHistoryDates(paper));
   const completedInWindow = histories.filter((date) => date >= start && date <= today).length;
-  const dueInWindow = [...getReviewLoadByDay(papers).keys()].filter((date) => date >= start && date <= today).length;
+  const dueInWindow = [...getReviewLoadByDay(papers).entries()]
+    .filter(([date]) => date >= start && date <= today)
+    .reduce((sum, [, count]) => sum + count, 0);
   const denominator = completedInWindow + dueInWindow;
   return denominator === 0 ? 0 : Math.round((completedInWindow / denominator) * 100);
 }

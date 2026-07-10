@@ -46,6 +46,7 @@ const manualPrompt = buildManualReviewPromptForPaper({
 });
 const reviewCommand = `npm run paper:review -- --slug ${paper.id}`;
 const promoteCommand = `npm run paper:promote -- --slug ${paper.id}`;
+const showAuthorTools = import.meta.env.DEV;
 const implementationAttempts = getImplementationAttemptsForPaper(await getPublishedImplementationAttempts(), paper.id);
 
 const fallback = "Not recorded yet.";
@@ -93,31 +94,31 @@ const hasFutureMe =
         <div class="paper-detail-grid">
           {futureMe.oneThingToRemember && (
             <div>
-              <h2>One thing to remember</h2>
+              <h3>One thing to remember</h3>
               <p>{futureMe.oneThingToRemember}</p>
             </div>
           )}
           {futureMe.whyItMatters && (
             <div>
-              <h2>Why it matters</h2>
+              <h3>Why it matters</h3>
               <p>{futureMe.whyItMatters}</p>
             </div>
           )}
           {futureMe.whenToUseThis && (
             <div>
-              <h2>When to use this</h2>
+              <h3>When to use this</h3>
               <p>{futureMe.whenToUseThis}</p>
             </div>
           )}
           {futureMe.whatToRevisit && (
             <div>
-              <h2>Revisit action</h2>
+              <h3>Revisit action</h3>
               <p>{futureMe.whatToRevisit}</p>
             </div>
           )}
           {futureMe.warning && (
             <div>
-              <h2>Warning</h2>
+              <h3>Warning</h3>
               <p>{futureMe.warning}</p>
             </div>
           )}
@@ -126,30 +127,30 @@ const hasFutureMe =
     )}
 
     <section class="section" aria-labelledby="paper-summary-heading">
-      <SectionHeader id="paper-summary-heading" title="Structured reading note" description="Frontmatter fields that keep the paper searchable and comparable." />
+      <SectionHeader id="paper-summary-heading" title="Structured reading note" description="The central ideas, evidence, and interpretation captured during reading." />
       <div class="paper-detail-grid">
         <div>
-          <h2>One-line summary</h2>
+          <h3>One-line summary</h3>
           <p>{paper.data.oneLineSummary || fallback}</p>
         </div>
         <div>
-          <h2>Core question</h2>
+          <h3>Core question</h3>
           <p>{paper.data.coreQuestion || fallback}</p>
         </div>
         <div>
-          <h2>Core idea</h2>
+          <h3>Core idea</h3>
           <p>{paper.data.coreIdea || fallback}</p>
         </div>
         <div>
-          <h2>Main formula</h2>
+          <h3>Main formula</h3>
           <p>{paper.data.mainFormula || fallback}</p>
         </div>
         <div>
-          <h2>Formula interpretation</h2>
+          <h3>Formula interpretation</h3>
           <p>{paper.data.formulaInterpretation || fallback}</p>
         </div>
         <div>
-          <h2>Experiment takeaway</h2>
+          <h3>Experiment takeaway</h3>
           <p>{paper.data.experimentTakeaway || fallback}</p>
         </div>
       </div>
@@ -159,7 +160,7 @@ const hasFutureMe =
       <SectionHeader id="paper-critique-heading" title="Critique and follow-up" />
       <div class="paper-detail-grid">
         <div>
-          <h2>Strengths</h2>
+          <h3>Strengths</h3>
           {paper.data.strengths.length > 0 ? (
             <ul>
               {paper.data.strengths.map((item) => <li>{item}</li>)}
@@ -169,7 +170,7 @@ const hasFutureMe =
           )}
         </div>
         <div>
-          <h2>Weaknesses</h2>
+          <h3>Weaknesses</h3>
           {paper.data.weaknesses.length > 0 ? (
             <ul>
               {paper.data.weaknesses.map((item) => <li>{item}</li>)}
@@ -179,11 +180,11 @@ const hasFutureMe =
           )}
         </div>
         <div>
-          <h2>My connection</h2>
+          <h3>My connection</h3>
           <p>{paper.data.myConnection || fallback}</p>
         </div>
         <div>
-          <h2>Next action</h2>
+          <h3>Next action</h3>
           <p>{paper.data.nextAction || fallback}</p>
         </div>
       </div>
@@ -216,17 +217,19 @@ const hasFutureMe =
       </section>
     )}
 
-    <section class="section" aria-labelledby="paper-promotion-heading">
-      <SectionHeader
-        id="paper-promotion-heading"
-        title="Promote to blog"
-        description="Turn this structured paper note into a draft essay when it is ready for a wider explanation."
-      />
-      <pre><code>{promoteCommand}</code></pre>
-    </section>
+    {showAuthorTools && (
+      <section class="section" aria-labelledby="paper-promotion-heading">
+        <SectionHeader
+          id="paper-promotion-heading"
+          title="Promote to blog"
+          description="Turn this structured paper note into a private draft essay."
+        />
+        <pre><code>{promoteCommand}</code></pre>
+      </section>
+    )}
 
     <section class="section" aria-labelledby="paper-body-heading">
-      <SectionHeader id="paper-body-heading" title="Full note" description="MDX body from the paper log file." />
+      <SectionHeader id="paper-body-heading" title="Full note" description="Pass-by-pass observations, questions, and implementation notes." />
       <div class="prose">
         <Content />
       </div>

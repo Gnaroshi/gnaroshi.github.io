@@ -47,7 +47,7 @@ const generatedAt = new Date(researchGraph.generatedAt).toLocaleString("en", {
       </article>
       <article class="paper-stat-card">
         <strong>{generatedAt}</strong>
-        <span>Last generated</span>
+        <span>Updated</span>
       </article>
     </section>
 
@@ -55,7 +55,7 @@ const generatedAt = new Date(researchGraph.generatedAt).toLocaleString("en", {
       <SectionHeader
         id="graph-model-heading"
         title="Graph model"
-        description="The graph is rebuilt from committed Markdown, MDX, generated weekly review JSON, and manual edge declarations."
+        description="A connected view of papers, notes, projects, implementation attempts, questions, and weekly reviews."
       />
       <div class="graph-type-grid">
         {Object.entries(researchGraph.stats.nodesByType).map(([type, count]) => (
@@ -68,5 +68,21 @@ const generatedAt = new Date(researchGraph.generatedAt).toLocaleString("en", {
     </section>
 
     <ResearchGraphExplorer client:load graph={researchGraph} />
+    <noscript>
+      <section class="section" aria-labelledby="graph-fallback-heading">
+        <SectionHeader
+          id="graph-fallback-heading"
+          title="Research graph index"
+          description="Open any node directly when interactive filtering is unavailable."
+        />
+        <ul class="list">
+          {researchGraph.nodes.map((node) => (
+            <li class="list-item">
+              <a href={`/graph/${node.type}/${node.slug}/`}>{node.label}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </noscript>
   </div>
 </BaseLayout>

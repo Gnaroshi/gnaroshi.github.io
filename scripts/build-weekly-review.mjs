@@ -13,7 +13,15 @@ if (args.help) {
 }
 
 try {
-  const week = args.week ? weekInfoFromId(args.week) : getIsoWeekInfo(new Date());
+  const requestedWeek = args.week ? weekInfoFromId(args.week) : getIsoWeekInfo(new Date());
+  const today = getTodayKey();
+  if (requestedWeek.startDate > today) {
+    throw new Error(`Cannot build future week ${requestedWeek.weekId}.`);
+  }
+  const week = {
+    ...requestedWeek,
+    endDate: requestedWeek.endDate > today ? today : requestedWeek.endDate
+  };
   const review = buildWeeklyReview(week);
   writeWeeklyReview(review, args.force);
   console.log(`Weekly review ${review.weekId}: ${review.summary}`);
@@ -276,6 +284,14 @@ function toDateKey(date) {
     date.getUTCFullYear(),
     String(date.getUTCMonth() + 1).padStart(2, "0"),
     String(date.getUTCDate()).padStart(2, "0")
+  ].join("-");
+}
+
+function getTodayKey(date = new Date()) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0")
   ].join("-");
 }
 

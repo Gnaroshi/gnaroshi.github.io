@@ -31,10 +31,9 @@ const { tag, posts } = Astro.props;
   </header>
 
   <section class="section" aria-labelledby="tag-posts-heading">
-    <SectionHeader id="tag-posts-heading" title="Posts" description="Tag pages are statically generated from MDX frontmatter." />
+    <SectionHeader id="tag-posts-heading" title="Posts" description="Writing connected by this topic." />
     <div class="card-list">
       {posts.map((post) => <BlogCard post={post} />)}
     </div>
   </section>
 </BaseLayout>
-

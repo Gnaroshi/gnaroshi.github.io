@@ -29,7 +29,7 @@ const implementationAttempts = await getPublishedImplementationAttempts();
     />
     <div class="project-grid">
       {sortedProjects.map((project) => (
-        <Card title={project.title} description={project.summary}>
+        <Card id={project.slug} title={project.title} description={project.summary}>
           <div class="badge-row">
             <Badge tone={project.featured ? "accent" : "default"}>{project.status}</Badge>
             {project.tags.map((tag) => <Badge tone="muted">{tag}</Badge>)}

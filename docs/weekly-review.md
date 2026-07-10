@@ -39,6 +39,8 @@ Use `--force` to overwrite a changed generated review:
 npm run week:build -- --force
 ```
 
+For the current week, `endDate` is capped at the local build date so the public review never presents future days as completed. Explicitly requested future weeks are rejected.
+
 ## Schema
 
 Each review includes:

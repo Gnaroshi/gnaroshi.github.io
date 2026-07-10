@@ -63,9 +63,9 @@ const dueQuestions = getDueQuestions(questions, today);
     </section>
 
     <section class="section" aria-labelledby="question-bank-meta-heading">
-      <SectionHeader id="question-bank-meta-heading" title="Generated source" />
+      <SectionHeader id="question-bank-meta-heading" title="Question bank status" />
       <p class="metadata">
-        {bank.generatedAt ? `Question bank generated ${bank.generatedAt}.` : "Question bank has not been generated yet."}
+        {bank.generatedAt ? `Last updated ${bank.generatedAt}.` : "The question bank is ready for its first entry."}
       </p>
     </section>
   </div>

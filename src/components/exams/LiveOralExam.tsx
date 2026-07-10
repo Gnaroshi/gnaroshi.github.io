@@ -54,6 +54,7 @@ export default function LiveOralExam({
   const channelRef = useRef<RTCDataChannel | null>(null);
   const mediaRef = useRef<MediaStream | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const manualPromptRef = useRef<HTMLTextAreaElement>(null);
   const liveExamIdRef = useRef("");
 
   const closeRealtime = useCallback(() => {
@@ -263,11 +264,30 @@ export default function LiveOralExam({
   }
 
   async function copyManualPrompt() {
+    let copied = false;
+
     try {
-      await navigator.clipboard.writeText(manualPrompt);
+      if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(manualPrompt);
+          copied = true;
+        } catch {
+          // Fall through to selection-based copying for restricted browsers.
+        }
+      }
+
+      if (!copied && manualPromptRef.current) {
+        manualPromptRef.current.focus();
+        manualPromptRef.current.select();
+        manualPromptRef.current.setSelectionRange(0, manualPrompt.length);
+        setManualCopyState("Automatic copy was blocked. The full prompt is selected; press Ctrl+C or Cmd+C.");
+        return;
+      }
+
+      if (!copied) throw new Error("Copy unavailable");
       setManualCopyState("Manual oral exam prompt copied.");
     } catch {
-      setManualCopyState("Copy failed. Select the prompt manually below.");
+      setManualCopyState("Automatic copy was blocked. The full prompt is selected; press Ctrl+C or Cmd+C.");
     }
   }
 
@@ -338,14 +358,14 @@ export default function LiveOralExam({
         <div>
           <p className="eyebrow">No-API workflow</p>
           <h2 id="manual-exam-heading">Run the exam manually</h2>
-          <p>Copy the prompt into ChatGPT or another model. Keep the transcript local, then export returned score JSON into the repository workflow.</p>
+          <p>Copy the prompt into ChatGPT or another model. Keep the transcript local, then add returned score JSON to the research record.</p>
         </div>
         <div className="paper-card__links">
           <button type="button" onClick={copyManualPrompt}>Copy manual oral exam prompt</button>
         </div>
         <label className="learning-field">
           <span>Manual exam prompt</span>
-          <textarea readOnly rows={14} value={manualPrompt} />
+          <textarea ref={manualPromptRef} readOnly rows={14} value={manualPrompt} />
         </label>
         {manualCopyState ? <p className="metadata" aria-live="polite">{manualCopyState}</p> : null}
       </section>
