@@ -15,6 +15,7 @@ const tags = getImplementationTags(attempts);
   title="Implementation Attempts"
   description="Research implementation attempts connected to papers, projects, and follow-up notes."
   width="wide"
+  mode="application"
 >
   <header class="page-header">
     <p class="eyebrow">Implementations</p>
@@ -24,7 +25,7 @@ const tags = getImplementationTags(attempts);
     </p>
   </header>
 
-  <section class="paper-stats" aria-label="Implementation stats">
+  {attempts.length > 0 ? <section class="paper-stats" aria-label="Implementation stats">
     <article class="paper-stat-card">
       <strong>{attempts.length}</strong>
       <span>Total attempts</span>
@@ -41,9 +42,16 @@ const tags = getImplementationTags(attempts);
       <strong>{failedAttempts.length}</strong>
       <span>Failed or abandoned</span>
     </article>
-  </section>
+  </section> : (
+    <section class="app-empty-state" aria-labelledby="implementation-empty-heading">
+      <p class="eyebrow">Build state</p>
+      <h2 id="implementation-empty-heading">No public implementation attempt yet</h2>
+      <p>Start from a paper question, test one concrete claim in code, and record the result even when it fails.</p>
+      <a class="button button--primary" href="/papers#new-paper-template">Start with a paper note</a>
+    </section>
+  )}
 
-  <section class="section" aria-labelledby="implementation-list-heading">
+  {attempts.length > 0 && <section class="section" aria-labelledby="implementation-list-heading">
     <SectionHeader
       id="implementation-list-heading"
       title="Attempt log"
@@ -59,7 +67,7 @@ const tags = getImplementationTags(attempts);
     ) : (
       <p class="empty-state">No public implementation logs yet. When a paper becomes code, the attempt will appear here.</p>
     )}
-  </section>
+  </section>}
 
   {tags.length > 0 && (
     <section class="section" aria-labelledby="implementation-tags-heading">

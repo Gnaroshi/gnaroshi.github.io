@@ -130,17 +130,26 @@ function buildResearchGraph() {
   inferImplementationEdges(edges, implementationAttempts, papers, [...dataProjects, ...contentProjects]);
   addManualEdges(nodes, edges);
 
+  collapseLowValueTopics(nodes, edges);
   const nodeList = [...nodes.values()].sort((a, b) => a.type.localeCompare(b.type) || a.label.localeCompare(b.label));
   const edgeList = [...edges.values()].filter((edge) => nodes.has(edge.source) && nodes.has(edge.target));
+  const meaningfulNodeCount = nodeList.filter((node) => node.type !== "topic").length;
+  const nonTagEdgeCount = edgeList.filter(
+    (edge) => !edge.source.startsWith("topic:") && !edge.target.startsWith("topic:")
+  ).length;
+  const eligible = meaningfulNodeCount >= 5 && nonTagEdgeCount >= 3;
 
   return {
     schemaVersion: "1.0.0",
     generatedAt: new Date().toISOString(),
+    eligible,
     nodes: nodeList,
     edges: edgeList.sort((a, b) => a.type.localeCompare(b.type) || a.source.localeCompare(b.source) || a.target.localeCompare(b.target)),
     stats: {
       nodeCount: nodeList.length,
       edgeCount: edgeList.length,
+      meaningfulNodeCount,
+      nonTagEdgeCount,
       nodesByType: countBy(nodeList, "type"),
       edgesByType: countBy(edgeList, "type")
     }
@@ -164,7 +173,7 @@ function loadContentItems(collection) {
         body: parsed.content.trim()
       };
     })
-    .filter((item) => isPublicContent(item.data));
+    .filter((item) => isPublicContent(item.data) && item.data.graphEligible !== false && item.data.contentStage !== "seed");
 }
 
 function loadWeeklyReviews() {
@@ -181,7 +190,12 @@ function loadWeeklyReviews() {
         relativePath: relative(root, filePath)
       };
     })
-    .filter((review) => (review.visibility ?? "public") === "public");
+    .filter(
+      (review) =>
+        (review.visibility ?? "public") === "public" &&
+        review.graphEligible !== false &&
+        review.contentStage !== "seed"
+    );
 }
 
 function loadProjectDataCards() {
@@ -190,10 +204,11 @@ function loadProjectDataCards() {
 
   const raw = readFileSync(filePath, "utf8");
   const cards = [];
-  const blockPattern = /\{\s*slug:\s*"([^"]+)",[\s\S]*?title:\s*"([^"]+)",[\s\S]*?summary:\s*"([^"]+)",[\s\S]*?status:\s*"([^"]+)",[\s\S]*?tags:\s*\[([^\]]*)\]/g;
+  const blockPattern = /\{\s*slug:\s*"([^"]+)",[\s\S]*?title:\s*"([^"]+)",[\s\S]*?summary:\s*"([^"]+)",[\s\S]*?status:\s*"([^"]+)",[\s\S]*?graphEligible:\s*(true|false),[\s\S]*?tags:\s*\[([^\]]*)\]/g;
   let match;
 
   while ((match = blockPattern.exec(raw))) {
+    if (match[5] !== "true") continue;
     cards.push({
       slug: match[1],
       relativePath: "src/data/projects.ts",
@@ -201,7 +216,8 @@ function loadProjectDataCards() {
         title: match[2],
         summary: match[3],
         status: match[4],
-        tags: [...match[5].matchAll(/"([^"]+)"/g)].map((tagMatch) => tagMatch[1])
+        graphEligible: true,
+        tags: [...match[6].matchAll(/"([^"]+)"/g)].map((tagMatch) => tagMatch[1])
       },
       body: ""
     });
@@ -270,6 +286,23 @@ function addTopicEdges(nodes, edges, type, slug, tags) {
       label: tag,
       inferred: true
     });
+  }
+}
+
+function collapseLowValueTopics(nodes, edges) {
+  const degree = new Map();
+  for (const edge of edges.values()) {
+    degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1);
+    degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1);
+  }
+  const collapsed = new Set(
+    [...nodes.values()]
+      .filter((node) => node.type === "topic" && (degree.get(node.id) ?? 0) <= 1)
+      .map((node) => node.id)
+  );
+  for (const id of collapsed) nodes.delete(id);
+  for (const [id, edge] of edges) {
+    if (collapsed.has(edge.source) || collapsed.has(edge.target)) edges.delete(id);
   }
 }
 

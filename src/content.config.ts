@@ -23,6 +23,13 @@ const optionalPaperDate = z.preprocess(
   z.coerce.date().optional()
 );
 const visibilitySchema = z.enum(["public", "unlisted", "hidden"]).default("public");
+const contentStageSchema = z.enum(["seed", "working", "substantive"]);
+const evidenceFields = (defaults: { stage: "seed" | "working" | "substantive"; eligible: boolean }) => ({
+  contentStage: contentStageSchema.default(defaults.stage),
+  metricEligible: z.boolean().default(defaults.eligible),
+  graphEligible: z.boolean().default(defaults.eligible),
+  weeklyReviewEligible: z.boolean().default(defaults.eligible)
+});
 const optionalDateArray = z.preprocess(
   (value) => (value === null || value === "" || value === undefined ? [] : value),
   z.array(
@@ -54,6 +61,7 @@ const futureMeSchema = z.preprocess(
 const blog = defineCollection({
   loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    ...evidenceFields({ stage: "substantive", eligible: true }),
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),
@@ -79,6 +87,7 @@ const papers = defineCollection({
   loader: glob({ base: "./src/content/papers", pattern: "**/*.{md,mdx}" }),
   schema: z
     .object({
+      ...evidenceFields({ stage: "working", eligible: true }),
       title: z.string(),
       authors: z.array(z.string()).min(1),
       venue: z.string(),
@@ -145,6 +154,7 @@ const papers = defineCollection({
 const queue = defineCollection({
   loader: glob({ base: "./src/content/queue", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    ...evidenceFields({ stage: "working", eligible: false }),
     title: z.string(),
     authors: z.array(z.string()).min(1),
     venue: z.string(),
@@ -169,6 +179,7 @@ const queue = defineCollection({
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    ...evidenceFields({ stage: "working", eligible: true }),
     title: z.string(),
     description: z.string(),
     startedAt: z.coerce.date().optional(),
@@ -186,6 +197,7 @@ const projects = defineCollection({
 const implementations = defineCollection({
   loader: glob({ base: "./src/content/implementations", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    ...evidenceFields({ stage: "working", eligible: true }),
     title: z.string(),
     date: z.coerce.date(),
     status: z.enum(["planned", "in-progress", "reproduced", "partially-reproduced", "failed", "abandoned", "shipped"]),

@@ -1,67 +1,64 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Badge from "../components/common/Badge.astro";
-import Card from "../components/common/Card.astro";
-import SectionHeader from "../components/common/SectionHeader.astro";
 import { profile } from "../data/profile";
-import { openProblems, paperStudyNotes, readingMap, researchQuestions } from "../data/research";
+import { researchAreas } from "../data/research";
 ---
 
-<BaseLayout title="Research" description="Research questions, reading map, open problems, and paper study notes." width="wide">
-  <header class="page-header">
+<BaseLayout title="Research" description="Current research questions, hypotheses, reading directions, and open uncertainty." width="wide">
+  <header class="editorial-page-header">
     <p class="eyebrow">Research</p>
-    <h1>Questions, papers, and working maps</h1>
+    <h1>Questions under active investigation</h1>
     <p class="lede">
-      This page is a living index of research questions and study habits rather than a polished publication list.
+      My current work sits around {profile.interests.slice(0, 3).join(", ").toLowerCase()}, with an emphasis on questions that can connect reading to software and evidence.
     </p>
   </header>
 
-  <section class="section" aria-labelledby="questions-heading">
-    <SectionHeader
-      id="questions-heading"
-      title="Research questions I care about"
-      description="Questions are kept explicit so notes and projects can be organized around them."
-    />
-    <div class="grid">
-      {researchQuestions.map((question) => (
-        <Card title={question.title} description={question.summary} />
-      ))}
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="interests-heading">
-    <SectionHeader id="interests-heading" title="Current interests" description="Research areas that shape the reading map and project work." />
-    <div class="badge-row">
-      {profile.interests.map((interest) => <Badge tone="accent">{interest}</Badge>)}
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="reading-map-heading">
-    <SectionHeader id="reading-map-heading" title="Reading map" description="A compact map for connecting papers, notes, and implementation attempts." />
-    <div class="grid">
-      {readingMap.map((item) => (
-        <Card title={item.area} description={item.notes} />
-      ))}
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="open-problems-heading">
-    <SectionHeader id="open-problems-heading" title="Open problems" description="Practical problems this site should help clarify over time." />
-    <ul class="list">
-      {openProblems.map((problem) => (
-        <li class="list-item">
-          <p>{problem}</p>
-        </li>
-      ))}
-    </ul>
-  </section>
-
-  <section class="section" aria-labelledby="study-heading">
-    <SectionHeader id="study-heading" title="How I study papers" description="The paper tracker is designed around a three-pass reading method." />
-    <div class="grid">
-      {paperStudyNotes.map((note) => (
-        <Card title={note.title} description={note.summary} />
-      ))}
-    </div>
-  </section>
+  <div class="research-area-list">
+    {researchAreas.map((area, index) => (
+      <article id={area.slug} class="research-area">
+        <header>
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <h2>{area.question}</h2>
+          <p>{area.motivation}</p>
+        </header>
+        <dl>
+          <div><dt>Current hypothesis</dt><dd>{area.hypothesis}</dd></div>
+          <div><dt>Current reading</dt><dd>{area.currentReading}</dd></div>
+          <div><dt>Current build</dt><dd>{area.currentBuild}</dd></div>
+          <div><dt>Open uncertainty</dt><dd>{area.uncertainty}</dd></div>
+        </dl>
+        <div class="research-area__links" aria-label={`Related work for ${area.question}`}>
+          {area.related.map((item) => <a href={item.href}>{item.label}</a>)}
+        </div>
+      </article>
+    ))}
+  </div>
 </BaseLayout>
+
+<style>
+  .editorial-page-header {
+    display: grid;
+    max-width: 52rem;
+    gap: var(--space-4);
+    padding: var(--space-7) 0 var(--space-8);
+  }
+
+  .research-area-list { display: grid; }
+  .research-area { display: grid; grid-template-columns: minmax(260px, 0.75fr) minmax(0, 1.25fr); gap: var(--space-7); padding: var(--space-7) 0; border-top: 1px solid var(--color-border); }
+  .research-area header { display: grid; gap: var(--space-3); align-content: start; }
+  .research-area header > span { color: var(--color-text-muted); font-family: var(--font-mono); font-size: var(--text-xs); }
+  .research-area header p { color: var(--color-text-secondary); line-height: 1.75; }
+  .research-area dl { display: grid; margin: 0; }
+  .research-area dl > div { display: grid; grid-template-columns: 10rem minmax(0, 1fr); gap: var(--space-4); padding: var(--space-4) 0; border-top: 1px solid var(--color-border); }
+  .research-area dt { color: var(--color-text-muted); font-size: var(--text-sm); font-weight: 700; }
+  .research-area dd { margin: 0; color: var(--color-text-secondary); }
+  .research-area__links { grid-column: 2; display: flex; flex-wrap: wrap; gap: var(--space-4); }
+
+  @media (max-width: 760px) {
+    .research-area { grid-template-columns: 1fr; gap: var(--space-5); }
+    .research-area__links { grid-column: auto; }
+  }
+  @media (max-width: 520px) {
+    .research-area dl > div { grid-template-columns: 1fr; gap: var(--space-2); }
+  }
+</style>

@@ -1,9 +1,17 @@
 export type MomentumVisibility = "public" | "unlisted" | "hidden";
+export type ContentStage = "seed" | "working" | "substantive";
+
+export type EvidenceMetadata = {
+  contentStage?: ContentStage;
+  metricEligible?: boolean;
+  graphEligible?: boolean;
+  weeklyReviewEligible?: boolean;
+};
 
 export type MomentumPaperStatus = "planned" | "pass1" | "pass2" | "pass3" | "read" | "implemented" | "abandoned";
 export type MomentumPaperDepth = "skim" | "understand" | "deep" | "reproduce" | "implement";
 
-export type Paper = {
+export type Paper = EvidenceMetadata & {
   slug: string;
   title: string;
   readDate?: string;
@@ -23,7 +31,7 @@ export type PaperReviewDimension = {
   evidence?: string;
 };
 
-export type PaperReview = {
+export type PaperReview = EvidenceMetadata & {
   paperSlug: string;
   reviewedAt: string;
   overallScore: number;
@@ -37,7 +45,7 @@ export type PaperReview = {
   } | null;
 };
 
-export type OralExamScore = {
+export type OralExamScore = EvidenceMetadata & {
   paperSlug?: string;
   date: string;
   overallScore?: number;
@@ -52,13 +60,13 @@ export type OralExamScore = {
   visibility?: MomentumVisibility;
 };
 
-export type GitHubContributionDay = {
+export type GitHubContributionDay = EvidenceMetadata & {
   date: string;
   count: number;
   visibility?: MomentumVisibility;
 };
 
-export type BlogPost = {
+export type BlogPost = EvidenceMetadata & {
   slug: string;
   pubDate: string;
   draft?: boolean;
@@ -66,14 +74,14 @@ export type BlogPost = {
   sourcePaper?: string;
 };
 
-export type Project = {
+export type Project = EvidenceMetadata & {
   slug: string;
   updatedAt?: string;
   status?: string;
   visibility?: MomentumVisibility;
 };
 
-export type Implementation = {
+export type Implementation = EvidenceMetadata & {
   slug: string;
   date: string;
   status: string;
@@ -85,14 +93,14 @@ export type Implementation = {
   visibility?: MomentumVisibility;
 };
 
-export type ReviewDueItem = {
+export type ReviewDueItem = EvidenceMetadata & {
   paperSlug: string;
   dueDate?: string;
   completedAt?: string;
   visibility?: MomentumVisibility;
 };
 
-export type FormulaRecallAttempt = {
+export type FormulaRecallAttempt = EvidenceMetadata & {
   paperSlug?: string;
   date: string;
   score?: number;
@@ -100,7 +108,7 @@ export type FormulaRecallAttempt = {
   visibility?: MomentumVisibility;
 };
 
-export type QuestionPracticeAttempt = {
+export type QuestionPracticeAttempt = EvidenceMetadata & {
   questionId?: string;
   questionType?: string;
   date: string;

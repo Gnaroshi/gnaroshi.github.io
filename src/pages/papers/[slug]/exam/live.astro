@@ -61,6 +61,7 @@ function buildManualExamPrompt(entry: PaperEntry, targetDepth: ApiTargetDepth): 
   description={`A local-first voice and text retrieval exam for ${paper.data.title}.`}
   canonical={`/papers/${paper.id}/exam/live/`}
   width="dashboard"
+  mode="application"
 >
   <header class="page-header">
     <a class="paper-detail-header__back" href={`/papers/${paper.id}/`}>Back to paper note</a>

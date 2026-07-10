@@ -3,17 +3,24 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import SectionHeader from "../../components/common/SectionHeader.astro";
 import ResearchGraphExplorer from "../../components/graph/ResearchGraphExplorer";
 import { researchGraph } from "../../utils/researchGraph";
+import { evidenceGates } from "../../config/evidenceGates";
 
 const generatedAt = new Date(researchGraph.generatedAt).toLocaleString("en", {
   dateStyle: "medium",
   timeStyle: "short"
 });
+const graphReady = Boolean(
+  researchGraph.eligible ??
+  ((researchGraph.stats.meaningfulNodeCount ?? 0) >= evidenceGates.researchGraph.minimumMeaningfulNodes &&
+    (researchGraph.stats.nonTagEdgeCount ?? 0) >= evidenceGates.researchGraph.minimumNonTagEdges)
+);
 ---
 
 <BaseLayout
   title="Research Graph"
   description="A static graph connecting papers, posts, projects, implementations, questions, topics, formulas, and weekly reviews."
   width="dashboard"
+  mode="application"
 >
   <div class="paper-dashboard">
     <header class="paper-hero">
@@ -24,14 +31,12 @@ const generatedAt = new Date(researchGraph.generatedAt).toLocaleString("en", {
           A map of how reading notes, blog posts, implementation attempts, projects, questions, formulas, and weekly reviews relate.
         </p>
       </div>
-      <nav class="paper-hero__actions" aria-label="Research graph actions">
-        <a href="/papers">Papers</a>
-        <a href="/blog">Blog</a>
-        <a href="/implementations">Implementations</a>
-        <a href="/week">Weekly reviews</a>
-      </nav>
+      <a class="button button--primary" href={graphReady ? "#graph-explorer" : "/papers#new-paper-template"}>
+        {graphReady ? "Explore connections" : "Add meaningful evidence"}
+      </a>
     </header>
 
+    {graphReady ? <>
     <section class="paper-stats" aria-label="Graph stats">
       <article class="paper-stat-card">
         <strong>{researchGraph.stats.nodeCount}</strong>
@@ -67,7 +72,7 @@ const generatedAt = new Date(researchGraph.generatedAt).toLocaleString("en", {
       </div>
     </section>
 
-    <ResearchGraphExplorer client:load graph={researchGraph} />
+    <div id="graph-explorer"><ResearchGraphExplorer client:visible graph={researchGraph} /></div>
     <noscript>
       <section class="section" aria-labelledby="graph-fallback-heading">
         <SectionHeader
@@ -84,5 +89,16 @@ const generatedAt = new Date(researchGraph.generatedAt).toLocaleString("en", {
         </ul>
       </section>
     </noscript>
+    </> : (
+      <section class="app-empty-state" aria-labelledby="graph-onboarding-heading">
+        <p class="eyebrow">Graph state</p>
+        <h2 id="graph-onboarding-heading">The research graph is not ready yet</h2>
+        <p>
+          A public graph will appear after at least {evidenceGates.researchGraph.minimumMeaningfulNodes} meaningful items
+          form {evidenceGates.researchGraph.minimumNonTagEdges} direct research connections. Seed posts and isolated tags do not count.
+        </p>
+        <a class="button button--primary" href="/papers#new-paper-template">Add meaningful evidence</a>
+      </section>
+    )}
   </div>
 </BaseLayout>

@@ -1,0 +1,24 @@
+---
+import { isNavigationActive, paperLabNavigation } from "../../utils/navigation";
+
+interface Props { currentPath: string }
+const { currentPath } = Astro.props;
+---
+
+<nav class="paper-lab-nav" aria-label="Paper Lab navigation">
+  <a class="paper-lab-nav__brand" href="/papers">Paper Lab</a>
+  <div class="paper-lab-nav__groups">
+    {paperLabNavigation.map((group) => (
+      <details>
+        <summary>{group.label}</summary>
+        <div>
+          {group.items.map((item) => (
+            <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </details>
+    ))}
+  </div>
+</nav>

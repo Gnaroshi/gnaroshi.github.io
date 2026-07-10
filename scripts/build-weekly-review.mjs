@@ -20,7 +20,8 @@ try {
   }
   const week = {
     ...requestedWeek,
-    endDate: requestedWeek.endDate > today ? today : requestedWeek.endDate
+    endDate: requestedWeek.endDate > today ? today : requestedWeek.endDate,
+    inProgress: requestedWeek.endDate > today
   };
   const review = buildWeeklyReview(week);
   writeWeeklyReview(review, args.force);
@@ -62,15 +63,15 @@ The script reads public Markdown/MDX content and generated review JSON. It does 
 }
 
 function buildWeeklyReview(week) {
-  const papers = loadContentItems("papers");
-  const blogPosts = loadContentItems("blog");
-  const implementations = loadContentItems("implementations");
+  const papers = loadContentItems("papers").filter(isWeeklyReviewEligible);
+  const blogPosts = loadContentItems("blog").filter(isWeeklyReviewEligible);
+  const implementations = loadContentItems("implementations").filter(isWeeklyReviewEligible);
   const publicPaperSlugs = new Set(papers.map((paper) => paper.slug));
   const paperReviews = loadGeneratedJson("paper-reviews").filter(
     (review) => (review.reviewVisibility ?? "public") === "public" && publicPaperSlugs.has(review.paperSlug)
   );
-  const oralExams = loadGeneratedJson("oral-exams");
-  const formulaRecalls = loadGeneratedJson("formula-recall");
+  const oralExams = loadGeneratedJson("oral-exams").filter(isGeneratedWeeklyReviewEligible);
+  const formulaRecalls = loadGeneratedJson("formula-recall").filter(isGeneratedWeeklyReviewEligible);
 
   const papersThisWeek = papers.filter((paper) => isPaperActive(paper) && dateInWeek(paper.data.readDate, week));
   const deepReads = papersThisWeek.filter((paper) => ["deep", "reproduce", "implement"].includes(paper.data.depth)).length;
@@ -90,14 +91,27 @@ function buildWeeklyReview(week) {
     projectUpdates: implementationThisWeek.length,
     githubContributions: 0
   };
+  const meaningfulEventCount =
+    metrics.papersRead +
+    metrics.aiReviews +
+    metrics.oralExams +
+    metrics.formulaRecalls +
+    metrics.blogPosts +
+    metrics.projectUpdates;
+  const hasSufficientEvidence = meaningfulEventCount >= 2;
+  const status = week.inProgress ? "in-progress" : hasSufficientEvidence ? "complete" : "insufficient-evidence";
   const dimensions = [
     { key: "paper reading", value: metrics.papersRead + metrics.deepReads },
     { key: "writing", value: metrics.blogPosts },
     { key: "implementation", value: metrics.projectUpdates },
     { key: "review", value: metrics.aiReviews + metrics.oralExams + metrics.formulaRecalls }
   ];
-  const strongestDimension = [...dimensions].sort((a, b) => b.value - a.value || a.key.localeCompare(b.key))[0]?.key ?? "paper reading";
-  const weakestDimension = [...dimensions].sort((a, b) => a.value - b.value || a.key.localeCompare(b.key))[0]?.key ?? "implementation";
+  const strongestDimension = hasSufficientEvidence
+    ? [...dimensions].sort((a, b) => b.value - a.value || a.key.localeCompare(b.key))[0]?.key ?? null
+    : null;
+  const weakestDimension = hasSufficientEvidence
+    ? [...dimensions].sort((a, b) => a.value - b.value || a.key.localeCompare(b.key))[0]?.key ?? null
+    : null;
   const featuredItems = [
     ...blogThisWeek.map((post) => ({ type: "blog", slug: post.slug, title: post.data.title, href: `/blog/${post.slug}/` })),
     ...papersThisWeek.map((paper) => ({ type: "paper", slug: paper.slug, title: paper.data.title, href: `/papers/${paper.slug}/` })),
@@ -116,7 +130,13 @@ function buildWeeklyReview(week) {
     endDate: week.endDate,
     generatedAt: new Date().toISOString(),
     visibility: "public",
-    summary: buildSummary(metrics),
+    status,
+    meaningfulEventCount,
+    contentStage: hasSufficientEvidence ? "working" : "seed",
+    metricEligible: hasSufficientEvidence,
+    graphEligible: hasSufficientEvidence,
+    weeklyReviewEligible: hasSufficientEvidence,
+    summary: buildSummary(metrics, status, meaningfulEventCount),
     metrics,
     strongestDimension,
     weakestDimension,
@@ -186,13 +206,27 @@ function isPaperActive(paper) {
   return Boolean(paper.data.readDate) && !["planned", "abandoned"].includes(paper.data.status);
 }
 
-function buildSummary(metrics) {
+function isWeeklyReviewEligible(item) {
+  return item.data.weeklyReviewEligible !== false && item.data.contentStage !== "seed";
+}
+
+function isGeneratedWeeklyReviewEligible(item) {
+  return item.weeklyReviewEligible !== false && item.contentStage !== "seed" && item.mock !== true;
+}
+
+function buildSummary(metrics, status, meaningfulEventCount) {
+  if (status === "in-progress") {
+    return meaningfulEventCount > 0
+      ? `In progress: ${meaningfulEventCount} meaningful event${meaningfulEventCount === 1 ? "" : "s"} recorded.`
+      : "In progress: no meaningful research events recorded yet.";
+  }
+  if (status === "insufficient-evidence") return "Not enough meaningful evidence for a completed weekly review.";
   const parts = [];
   if (metrics.papersRead > 0) parts.push(`${metrics.papersRead} paper${metrics.papersRead === 1 ? "" : "s"} read`);
   if (metrics.blogPosts > 0) parts.push(`${metrics.blogPosts} blog post${metrics.blogPosts === 1 ? "" : "s"} published`);
   if (metrics.projectUpdates > 0) parts.push(`${metrics.projectUpdates} implementation update${metrics.projectUpdates === 1 ? "" : "s"}`);
   if (metrics.aiReviews > 0) parts.push(`${metrics.aiReviews} AI review${metrics.aiReviews === 1 ? "" : "s"}`);
-  return parts.length > 0 ? parts.join(", ") : "A quiet week with no public research outputs recorded yet.";
+  return parts.join(", ");
 }
 
 function buildWins({ papersThisWeek, blogThisWeek, implementationThisWeek }) {
@@ -201,7 +235,7 @@ function buildWins({ papersThisWeek, blogThisWeek, implementationThisWeek }) {
     ...papersThisWeek.map((paper) => `Logged paper: ${paper.data.title}`),
     ...implementationThisWeek.map((attempt) => `Recorded implementation attempt: ${attempt.data.title}`)
   ];
-  return wins.length > 0 ? wins.slice(0, 6) : ["Kept the weekly review loop available for the next recorded output."];
+  return wins.slice(0, 6);
 }
 
 function buildOpenLoops({ papersThisWeek, implementationThisWeek, weakestDimension }) {
@@ -210,10 +244,11 @@ function buildOpenLoops({ papersThisWeek, implementationThisWeek, weakestDimensi
     ...implementationThisWeek.map((attempt) => attempt.data.failureReason || attempt.data.result).filter(Boolean)
   ];
   if (loops.length > 0) return loops.slice(0, 6);
-  return [`Strengthen the ${weakestDimension} loop with one concrete public note next week.`];
+  return weakestDimension ? [`Strengthen the ${weakestDimension} loop with one concrete public note next week.`] : [];
 }
 
 function buildNextWeekFocus(weakestDimension) {
+  if (!weakestDimension) return "Record one meaningful reading, retrieval, revisit, or implementation event.";
   if (weakestDimension === "implementation") return "Turn one paper note into a small implementation attempt.";
   if (weakestDimension === "writing") return "Promote one structured note into a short public post.";
   if (weakestDimension === "review") return "Review one existing note and add retrieval questions.";

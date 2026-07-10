@@ -48,7 +48,7 @@ const links = [
 ].filter(Boolean) as Array<{ label: string; href: string }>;
 ---
 
-<BaseLayout title={attempt.data.title} description={attempt.data.goal} canonical={`/implementations/${attempt.id}/`} type="article">
+<BaseLayout title={attempt.data.title} description={attempt.data.goal} canonical={`/implementations/${attempt.id}/`} type="article" mode="application">
   <article class="paper-detail">
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/implementations/">Back to implementations</a>

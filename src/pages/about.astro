@@ -1,88 +1,100 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Badge from "../components/common/Badge.astro";
-import Card from "../components/common/Card.astro";
 import ExternalLink from "../components/common/ExternalLink.astro";
-import SectionHeader from "../components/common/SectionHeader.astro";
 import { profile } from "../data/profile";
 import { skillGroups } from "../data/skills";
 import { education, researchTimeline } from "../data/timeline";
 
 const publicLinks = [
   { label: "GitHub", href: profile.links.github },
-  { label: "Website", href: profile.links.website },
   profile.links.email ? { label: "Email", href: `mailto:${profile.links.email}` } : null,
   profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar } : null,
   profile.links.linkedin ? { label: "LinkedIn", href: profile.links.linkedin } : null,
   profile.links.cv ? { label: "CV", href: profile.links.cv } : null
 ].filter(Boolean) as Array<{ label: string; href: string }>;
+const alternateNames = [profile.koreanName, profile.englishName].filter(Boolean);
 ---
 
 <BaseLayout title="About" description={`About ${profile.displayName}, ${profile.headline}.`}>
-  <header class="page-header">
-    <p class="eyebrow">About</p>
-    <h1>{profile.displayName}</h1>
-    <p class="lede">{profile.shortBio}</p>
+  <header class="about-header">
+    {profile.profileImage && <img src={profile.profileImage} alt={`${profile.displayName} portrait`} />}
+    <div>
+      <p class="eyebrow">About</p>
+      <h1>{profile.displayName}</h1>
+      {alternateNames.length > 0 && <p class="about-header__names">{alternateNames.join(" · ")}</p>}
+      <p class="lede">{profile.shortBio}</p>
+      <dl class="about-facts">
+        {profile.currentRole && <div><dt>Role</dt><dd>{profile.currentRole}</dd></div>}
+        {profile.affiliation && <div><dt>Affiliation</dt><dd>{profile.affiliation}</dd></div>}
+        {profile.location && <div><dt>Location</dt><dd>{profile.location}</dd></div>}
+      </dl>
+    </div>
   </header>
 
   <section class="section" aria-labelledby="bio-heading">
-    <SectionHeader id="bio-heading" title="Bio" description="A concise public introduction to the work and questions behind this site." />
-    <div class="prose-stack">
-      {profile.bio.map((paragraph) => <p>{paragraph}</p>)}
-    </div>
+    <h2 id="bio-heading">Bio</h2>
+    <div class="prose-stack">{profile.bio.map((paragraph) => <p>{paragraph}</p>)}</div>
   </section>
 
   {education.length > 0 && (
     <section class="section" aria-labelledby="education-heading">
-      <SectionHeader id="education-heading" title="Education" description="Formal academic background and training." />
-      <div class="timeline-list">
-        {education.map((item) => (
-          <Card title={item.label} eyebrow={item.period} description={item.description} />
-        ))}
-      </div>
+      <h2 id="education-heading">Education</h2>
+      <ol class="plain-record-list">
+        {education.map((item) => <li><time>{item.period}</time><strong>{item.label}</strong><p>{item.description}</p></li>)}
+      </ol>
     </section>
   )}
 
   <section class="section" aria-labelledby="research-background-heading">
-    <SectionHeader id="research-background-heading" title="Research background" description="The areas and workflows this site is built around." />
-    <div class="prose-stack">
-      {profile.researchBackground.map((paragraph) => <p>{paragraph}</p>)}
-    </div>
-    <div class="timeline-list">
-      {researchTimeline.map((item) => (
-        <Card title={item.label} eyebrow={item.period} description={item.description} />
-      ))}
-    </div>
+    <h2 id="research-background-heading">Research background</h2>
+    <div class="prose-stack">{profile.researchBackground.map((paragraph) => <p>{paragraph}</p>)}</div>
+    {researchTimeline.length > 0 && (
+      <ol class="plain-record-list">
+        {researchTimeline.map((item) => <li><time>{item.period}</time><strong>{item.label}</strong><p>{item.description}</p></li>)}
+      </ol>
+    )}
   </section>
 
   <section class="section" aria-labelledby="skills-heading">
-    <SectionHeader id="skills-heading" title="Skills and tools" description="Practical areas used for research, writing, and software work." />
-    <div class="grid">
-      {skillGroups.map((group) => (
-        <Card title={group.title}>
-          <div class="badge-row">
-            {group.skills.map((skill) => <Badge>{skill}</Badge>)}
-          </div>
-        </Card>
-      ))}
-    </div>
+    <h2 id="skills-heading">Skills and tools</h2>
+    <dl class="about-skill-list">
+      {skillGroups.map((group) => <div><dt>{group.title}</dt><dd>{group.skills.join(" · ")}</dd></div>)}
+    </dl>
   </section>
 
   <section class="section" aria-labelledby="values-heading">
-    <SectionHeader id="values-heading" title="Values as a researcher" description="How I want the notes and tools on this site to behave." />
-    <ul class="list">
-      {profile.researcherValues.map((value) => (
-        <li class="list-item">
-          <p>{value}</p>
-        </li>
-      ))}
-    </ul>
+    <h2 id="values-heading">Research values</h2>
+    <ul class="editorial-list">{profile.researcherValues.map((value) => <li>{value}</li>)}</ul>
   </section>
 
   <section class="section" aria-labelledby="links-heading">
-    <SectionHeader id="links-heading" title="Links" description="Public links only." />
-    <div class="link-row">
-      {publicLinks.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
-    </div>
+    <h2 id="links-heading">Links</h2>
+    <div class="link-row">{publicLinks.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}</div>
   </section>
 </BaseLayout>
+
+<style>
+  .about-header { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-6); padding: var(--space-7) 0; }
+  .about-header > div { display: grid; gap: var(--space-3); }
+  .about-header img { width: 9rem; aspect-ratio: 1; object-fit: cover; }
+  .about-header__names { color: var(--color-text-muted); }
+  .about-facts { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-6); margin: var(--space-3) 0 0; }
+  .about-facts div { display: flex; gap: var(--space-2); }
+  .about-facts dt { color: var(--color-text-muted); }
+  .about-facts dd { margin: 0; font-weight: 700; }
+  .plain-record-list { display: grid; padding: 0; margin: 0; list-style: none; }
+  .plain-record-list li { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: var(--space-2) var(--space-4); padding: var(--space-4) 0; border-top: 1px solid var(--color-border); }
+  .plain-record-list time { grid-row: span 2; color: var(--color-text-muted); }
+  .plain-record-list p { color: var(--color-text-secondary); }
+  .about-skill-list { display: grid; margin: 0; }
+  .about-skill-list > div { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: var(--space-4); padding: var(--space-3) 0; border-top: 1px solid var(--color-border); }
+  .about-skill-list dt { font-weight: 700; }
+  .about-skill-list dd { margin: 0; color: var(--color-text-secondary); }
+  .editorial-list { display: grid; gap: var(--space-3); padding-left: 1.25rem; }
+  @media (max-width: 560px) {
+    .about-header { grid-template-columns: 1fr; }
+    .plain-record-list li,
+    .about-skill-list > div { grid-template-columns: 1fr; }
+    .plain-record-list time { grid-row: auto; }
+  }
+</style>

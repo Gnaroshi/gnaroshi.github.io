@@ -5,9 +5,11 @@ import { formatMetricLabel, getAllWeeklyReviews } from "../../utils/weeklyReview
 
 const reviews = getAllWeeklyReviews();
 const latestReview = reviews[0];
+const meaningfulReviews = reviews.filter((review) => (review.meaningfulEventCount ?? 0) >= 2);
+const latestMeaningfulReview = meaningfulReviews[0];
 ---
 
-<BaseLayout title="Weekly Research Reviews" description="Weekly summaries of papers, writing, reviews, and implementation progress." width="wide">
+<BaseLayout title="Weekly Research Reviews" description="Weekly summaries of papers, writing, reviews, and implementation progress." width="wide" mode="application">
   <header class="page-header">
     <p class="eyebrow">Weekly review</p>
     <h1>Research weeks</h1>
@@ -16,20 +18,29 @@ const latestReview = reviews[0];
     </p>
   </header>
 
-  {latestReview && (
+  {latestReview?.status === "in-progress" && (
+    <section class="weekly-progress-state" aria-labelledby="current-week-heading">
+      <p class="eyebrow">{latestReview.weekId}</p>
+      <h2 id="current-week-heading">In progress</h2>
+      <p>{latestReview.summary}</p>
+      <a href="/papers#new-paper-template">Record a meaningful event</a>
+    </section>
+  )}
+
+  {latestMeaningfulReview && (
     <section class="section" aria-labelledby="latest-week-heading">
-      <SectionHeader id="latest-week-heading" title="Latest week" description={`${latestReview.startDate} to ${latestReview.endDate}`} />
+      <SectionHeader id="latest-week-heading" title="Latest completed week" description={`${latestMeaningfulReview.startDate} to ${latestMeaningfulReview.endDate}`} />
       <article class="weekly-review-card weekly-review-card--featured">
         <div>
-          <p class="eyebrow">{latestReview.weekId}</p>
-          <h2><a href={`/week/${latestReview.weekId}/`}>{latestReview.summary}</a></h2>
+          <p class="eyebrow">{latestMeaningfulReview.weekId}</p>
+          <h2><a href={`/week/${latestMeaningfulReview.weekId}/`}>{latestMeaningfulReview.summary}</a></h2>
         </div>
         <div class="weekly-review-metrics">
-          {Object.entries(latestReview.metrics).map(([key, value]) => (
+          {Object.entries(latestMeaningfulReview.metrics).map(([key, value]) => (
             <span><strong>{value}</strong>{formatMetricLabel(key)}</span>
           ))}
         </div>
-        <p><strong>Next focus:</strong> {latestReview.nextWeekFocus}</p>
+        <p><strong>Next focus:</strong> {latestMeaningfulReview.nextWeekFocus}</p>
       </article>
     </section>
   )}
@@ -42,21 +53,35 @@ const latestReview = reviews[0];
     >
       <a slot="action" href="/graph">Research graph</a>
     </SectionHeader>
-    {reviews.length > 0 ? (
+    {meaningfulReviews.length > 0 ? (
       <div class="weekly-review-list">
-        {reviews.map((review) => (
+        {meaningfulReviews.map((review) => (
           <article class="weekly-review-card">
             <div>
               <p class="eyebrow">{review.weekId}</p>
               <h2><a href={`/week/${review.weekId}/`}>{review.summary}</a></h2>
               <p class="metadata">{review.startDate} to {review.endDate}</p>
             </div>
-            <p><strong>Weak loop:</strong> {review.weakestDimension}</p>
+            {review.weakestDimension && <p><strong>Weak loop:</strong> {review.weakestDimension}</p>}
           </article>
         ))}
       </div>
     ) : (
-      <p class="empty-state">No weekly reviews yet.</p>
+      <div class="app-empty-state">
+        <h2>No completed weekly review yet</h2>
+        <p>A completed week needs at least two meaningful reading, retrieval, revisit, implementation, or substantive writing events.</p>
+      </div>
     )}
   </section>
 </BaseLayout>
+
+<style>
+  .weekly-progress-state {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border-left: 3px solid var(--color-review-due);
+    background: var(--color-surface-quiet);
+  }
+  .weekly-progress-state p { color: var(--color-text-secondary); }
+</style>

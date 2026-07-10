@@ -1,59 +1,52 @@
-export const researchQuestions = [
+export const researchAreas = [
   {
-    title: "How can paper reading become a reliable research loop?",
-    summary:
-      "I want a workflow where skimming, deep reading, implementation attempts, and revisits are all visible and useful."
+    slug: "research-reading-loop",
+    question: "How can paper reading become a reliable research loop?",
+    motivation:
+      "A useful reading record should preserve relevance decisions, uncertainty, retrieval failures, and implementation ideas instead of only marking papers as finished.",
+    hypothesis:
+      "A small sequence of skim, structure, retrieval, and revisit records can make paper knowledge easier to recover without forcing every paper into a deep read.",
+    currentReading: "Paper reading methods, retrieval practice, and lightweight knowledge workflows.",
+    currentBuild: "A static Paper Lab that reveals activity and analysis only when enough meaningful evidence exists.",
+    uncertainty:
+      "The right amount of structure is still unclear: too little loses context, while too much makes daily notes expensive.",
+    related: [
+      { label: "Three-pass paper reading", href: "/blog/paper-reading-method/" },
+      { label: "Paper Lab", href: "/papers" }
+    ]
   },
   {
-    title: "What makes vision-language systems practically useful?",
-    summary:
-      "I am interested in how multimodal systems are evaluated, debugged, and connected to real software workflows."
+    slug: "practical-vlm-systems",
+    question: "What makes vision-language systems practically useful?",
+    motivation:
+      "Benchmark scores alone do not explain grounding failures, data assumptions, interaction costs, or whether a multimodal system fits a real software workflow.",
+    hypothesis:
+      "Evaluation becomes more useful when model behavior is connected to task framing, failure analysis, implementation constraints, and the decisions a user must make.",
+    currentReading: "Vision-language evaluation, grounding, multimodal reasoning, and failure analysis.",
+    currentBuild: "A reading map for connecting model claims to evaluation questions and implementation attempts.",
+    uncertainty:
+      "It remains difficult to separate genuine multimodal capability from benchmark-specific prompting, preprocessing, and data effects.",
+    related: [{ label: "Research map", href: "/research" }]
   },
   {
-    title: "How should AI tools support researchers without replacing judgment?",
-    summary:
-      "The goal is to make reading, retrieval, comparison, and implementation faster while keeping uncertainty explicit."
+    slug: "human-ai-research-tools",
+    question: "How should AI tools support researchers without replacing judgment?",
+    motivation:
+      "AI can accelerate summarization and questioning, but research still depends on evidence, calibrated uncertainty, and decisions the researcher can inspect.",
+    hypothesis:
+      "AI is most useful as a retrieval examiner, comparison aid, and prompt generator when every output stays tied to source notes and an explicit confidence boundary.",
+    currentReading: "Human-AI workflows, evidence calibration, retrieval practice, and research tooling.",
+    currentBuild: "Manual and optional API-assisted paper reviews and oral exams that work without exposing long-lived credentials.",
+    uncertainty:
+      "The boundary between helpful friction and unnecessary workflow overhead needs evidence from repeated real use.",
+    related: [
+      { label: "Research workflow with Markdown and Git", href: "/blog/research-workflow/" },
+      { label: "gnaroshi.dev project", href: "/projects/gnaroshi-dev/" }
+    ]
   }
 ] as const;
 
-export const readingMap = [
-  {
-    area: "Vision-language models",
-    notes: "Model behavior, evaluation, grounding, multimodal reasoning, and practical failure cases."
-  },
-  {
-    area: "Machine learning systems",
-    notes: "Training and inference workflows, evaluation infrastructure, and implementation tradeoffs."
-  },
-  {
-    area: "Research tooling",
-    notes: "Tools for managing papers, notes, experiments, code, and long-running questions."
-  },
-  {
-    area: "Human-AI workflows",
-    notes: "Interfaces that help people think, read, write, and build with AI while preserving agency."
-  }
-] as const;
-
-export const openProblems = [
-  "Designing paper logs that reward partial progress without becoming noisy.",
-  "Connecting paper notes to implementation attempts and project artifacts.",
-  "Keeping research maps small enough to maintain but structured enough to be useful.",
-  "Tracking uncertainty, questions, and revisits as first-class research outputs."
-] as const;
-
-export const paperStudyNotes = [
-  {
-    title: "Pass 1: decide relevance",
-    summary: "Capture the claim, problem, contribution, and whether the paper deserves another pass."
-  },
-  {
-    title: "Pass 2: understand structure",
-    summary: "Map the method, assumptions, experiments, baselines, and key figures."
-  },
-  {
-    title: "Pass 3: go deep",
-    summary: "Derive formulas, inspect implementation details, reproduce results, or build a small extension."
-  }
-] as const;
-
+export const researchQuestions = researchAreas.map((area) => ({
+  title: area.question,
+  summary: area.motivation
+}));

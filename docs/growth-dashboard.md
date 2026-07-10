@@ -4,7 +4,7 @@
 
 `/growth` is the public research momentum dashboard. It renders statically during the Astro build and does not call a backend, GitHub API, or AI API in the browser.
 
-The page shows:
+After public score eligibility, the page shows:
 
 - Research Momentum Score v2 and level.
 - Separate confidence score and reasons.
@@ -14,6 +14,14 @@ The page shows:
 - Missing evidence without converting it to hidden zeroes.
 - Up to three concrete next actions.
 - An expandable calculation summary.
+
+Before eligibility it instead shows:
+
+- `Collecting evidence`;
+- progress toward five events, three dates, two categories, and one core research-loop category;
+- Read / Recall / Build / Write paths;
+- up to three evidence-producing next actions;
+- no numeric score or level.
 
 ## Data Flow
 
@@ -41,6 +49,8 @@ Public aggregate rules are strict:
 - `hidden` content does not contribute.
 - Draft paper and blog content does not contribute.
 - A public AI review must map to a public paper log.
+- `contentStage: "seed"` never contributes.
+- `metricEligible: false` never contributes.
 
 Visibility is not privacy. Never commit confidential research data to this public repository.
 

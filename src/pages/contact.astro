@@ -1,47 +1,34 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Card from "../components/common/Card.astro";
 import ExternalLink from "../components/common/ExternalLink.astro";
-import SectionHeader from "../components/common/SectionHeader.astro";
 import { profile } from "../data/profile";
 
-const contactLinks = [
-  { label: "GitHub", href: profile.links.github, note: "Best public place to see code and repository activity." },
-  { label: "Website", href: profile.links.website, note: "Canonical home for notes, projects, and paper logs." },
-  profile.links.email
-    ? { label: "Email", href: `mailto:${profile.links.email}`, note: "Direct contact." }
-    : null,
+const links = [
+  { label: "GitHub", href: profile.links.github, note: "Code, repositories, and public project history." },
+  profile.links.email ? { label: "Email", href: `mailto:${profile.links.email}`, note: "Direct contact." } : null,
   profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar, note: "Research profile." } : null,
   profile.links.linkedin ? { label: "LinkedIn", href: profile.links.linkedin, note: "Professional profile." } : null,
-  profile.links.cv ? { label: "CV", href: profile.links.cv, note: "Public CV." } : null
+  profile.links.cv ? { label: "CV", href: profile.links.cv, note: "Public curriculum vitae." } : null
 ].filter(Boolean) as Array<{ label: string; href: string; note: string }>;
 ---
 
-<BaseLayout title="Contact" description="Public contact links for Gnaroshi.">
+<BaseLayout title="Links" description="Public links for Gnaroshi.">
   <header class="page-header">
-    <p class="eyebrow">Contact</p>
-    <h1>Public links and collaboration</h1>
-    <p class="lede">
-      I am interested in research workflows, AI systems, paper reading tools, and software that helps people think clearly.
-    </p>
+    <p class="eyebrow">Links</p>
+    <h1>Public links</h1>
+    <p class="lede">GitHub is currently the clearest public place to follow code and project work.</p>
   </header>
 
-  <section class="section" aria-labelledby="collaboration-heading">
-    <SectionHeader
-      id="collaboration-heading"
-      title="Collaboration note"
-      description="The public contact surface is intentionally small for now. GitHub is the best place to start."
-    />
-  </section>
-
-  <section class="section" aria-labelledby="links-heading">
-    <SectionHeader id="links-heading" title="Links" description="Public places to follow the work." />
-    <div class="timeline-list">
-      {contactLinks.map((link) => (
-        <Card title={link.label} description={link.note}>
-          <ExternalLink href={link.href}>{link.label}</ExternalLink>
-        </Card>
-      ))}
-    </div>
+  <section class="section" aria-labelledby="public-links-heading">
+    <h2 id="public-links-heading">Find the work</h2>
+    <ul class="public-link-list">
+      {links.map((link) => <li><div><strong>{link.label}</strong><p>{link.note}</p></div><ExternalLink href={link.href}>Open</ExternalLink></li>)}
+    </ul>
   </section>
 </BaseLayout>
+
+<style>
+  .public-link-list { display: grid; padding: 0; margin: 0; list-style: none; }
+  .public-link-list li { display: flex; gap: var(--space-4); align-items: center; justify-content: space-between; padding: var(--space-4) 0; border-top: 1px solid var(--color-border); }
+  .public-link-list p { color: var(--color-text-secondary); }
+</style>

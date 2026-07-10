@@ -54,6 +54,8 @@ Avoid:
 
 ## Main Routes
 
+Primary navigation contains Home, Research, Projects, Writing, Paper Lab, and About. Growth is a utility. Now and Links remain public but do not compete in the primary navigation. Existing learning-loop routes are grouped under Paper Lab.
+
 ### `/`
 
 Personal landing page.
@@ -62,7 +64,7 @@ Must include:
 
 - Short identity statement.
 - Current research/software focus.
-- Links to About, Research, Projects, Blog, Papers, Now, Contact.
+- Direct links to writing and research, with Now and public links available in the page body or footer.
 - Recent blog posts.
 - Recent paper notes or reading activity.
 - Selected projects or research interests.
@@ -81,9 +83,9 @@ This page should feel like a working research map rather than a polished lab sta
 
 ### `/projects`
 
-Project cards and technical writeups.
+Selected projects and technical case studies.
 
-Each project should be content-driven from `src/content/projects/`.
+Do not split one system into several projects unless each item has a distinct repository, artifact, or outcome. Lightweight project metadata can live in `src/data/projects.ts`; substantial writeups should have detail routes or MDX content.
 
 ### `/blog`
 
@@ -112,9 +114,9 @@ Must support:
 
 ### `/papers`
 
-Paper reading dashboard.
+Progressive paper reading workspace.
 
-Must include:
+At sufficient data volume it can include:
 
 - Daily activity heatmap.
 - Current streak.
@@ -126,6 +128,8 @@ Must include:
 - Filters.
 - Sorting.
 - Paper cards or rows.
+
+At zero papers it must not show zero-filled stats, heatmaps, filters, AI aggregates, or hydrated empty islands. It should explain the first useful note and keep the full template collapsed.
 
 ### `/papers/[slug]`
 
@@ -192,3 +196,6 @@ The project is successful when:
 - Paper reading activity is derived from committed content.
 - The site builds as a static artifact.
 - Deployment to GitHub Pages is reproducible through GitHub Actions.
+- Seed, hidden, unlisted, demo, and system content never become public research metrics.
+- A numeric Research Momentum score appears only after the evidence gate passes.
+- Empty Paper Lab tools remain useful without dominating the public site.

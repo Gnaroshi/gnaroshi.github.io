@@ -1,0 +1,451 @@
+.implementation-grid,
+.weekly-review-list,
+.graph-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-4);
+}
+
+.implementation-card,
+.weekly-review-card,
+.graph-controls,
+.graph-node-list,
+.graph-detail-panel,
+.graph-edge-table,
+.graph-type-card,
+.weekly-featured-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.implementation-card,
+.weekly-review-card,
+.graph-controls,
+.graph-node-list,
+.graph-detail-panel,
+.graph-edge-table {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.implementation-card__header,
+.graph-section-header {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.implementation-card p,
+.weekly-review-card p,
+.graph-node-detail p {
+  color: var(--color-text-secondary);
+}
+
+.implementation-card__failure {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-left: 3px solid var(--color-status-blocked);
+  background: color-mix(in srgb, var(--color-status-blocked) 8%, var(--color-surface));
+}
+
+.implementation-card__related {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.implementation-card__related ul {
+  display: grid;
+  gap: var(--space-1);
+  padding-left: var(--space-4);
+  margin: 0;
+}
+
+.implementation-status--planned,
+.implementation-status--in-progress {
+  border-color: color-mix(in srgb, var(--color-status-structured) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-status-structured) 13%, var(--color-surface));
+}
+
+.implementation-status--reproduced,
+.implementation-status--partially-reproduced,
+.implementation-status--shipped {
+  border-color: color-mix(in srgb, var(--color-status-implemented) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-status-implemented) 13%, var(--color-surface));
+}
+
+.implementation-status--failed,
+.implementation-status--abandoned {
+  border-color: color-mix(in srgb, var(--color-status-blocked) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-status-blocked) 13%, var(--color-surface));
+}
+
+.weekly-review-card--featured {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
+}
+
+.weekly-review-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-2);
+}
+
+.weekly-review-metrics span,
+.weekly-featured-item,
+.graph-type-card {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+}
+
+.weekly-review-metrics strong,
+.graph-type-card span {
+  display: block;
+  color: var(--color-text);
+  font-size: var(--text-xl);
+}
+
+.weekly-featured-item {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.graph-explorer {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.graph-filter-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) repeat(2, minmax(160px, 0.25fr)) auto;
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.graph-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.graph-node-buttons,
+.graph-node-detail,
+.graph-edge-list {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.graph-node-buttons {
+  max-height: 32rem;
+  overflow: auto;
+  padding-right: var(--space-1);
+}
+
+.graph-node-buttons button {
+  display: grid;
+  gap: var(--space-1);
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.graph-node-buttons button:hover,
+.graph-node-buttons button.is-selected {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.graph-node-buttons span,
+.graph-edge-row small {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+}
+
+.graph-edge-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.graph-edge-row span {
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.graph-edge-list--compact .graph-edge-row {
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+.momentum-page,
+.momentum-score__summary,
+.momentum-confidence,
+.momentum-component,
+.momentum-notice,
+.momentum-methodology__body {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.momentum-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-5);
+  align-items: end;
+  padding-bottom: var(--space-6);
+}
+
+.momentum-hero > div {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.momentum-score {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  border: 1px solid var(--color-border);
+  border-top: 4px solid var(--momentum-level-color, var(--color-accent));
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.momentum-score--seed {
+  --momentum-level-color: var(--color-momentum-seed);
+}
+
+.momentum-score--building {
+  --momentum-level-color: var(--color-momentum-building);
+}
+
+.momentum-score--steady {
+  --momentum-level-color: var(--color-momentum-steady);
+}
+
+.momentum-score--strong {
+  --momentum-level-color: var(--color-momentum-strong);
+}
+
+.momentum-score--compounding {
+  --momentum-level-color: var(--color-momentum-compounding);
+}
+
+.momentum-score__summary,
+.momentum-confidence {
+  padding: var(--space-5);
+}
+
+.momentum-score__summary {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+}
+
+.momentum-score__summary > p {
+  grid-column: 1 / -1;
+  color: var(--color-text-secondary);
+}
+
+.momentum-score__value {
+  display: grid;
+  justify-items: end;
+  color: var(--momentum-level-color);
+}
+
+.momentum-score__value strong {
+  font-size: 3.4rem;
+  line-height: 0.9;
+}
+
+.momentum-score__value span,
+.momentum-component__confidence,
+.momentum-component__status {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.momentum-score__scope {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.momentum-confidence {
+  align-content: start;
+  border-left: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+}
+
+.momentum-confidence__header,
+.momentum-component header {
+  display: flex;
+  gap: var(--space-3);
+  align-items: start;
+  justify-content: space-between;
+}
+
+.momentum-confidence__header > div,
+.momentum-component header > div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.momentum-confidence__header strong,
+.momentum-component header > strong {
+  color: var(--color-accent);
+  font-size: var(--text-2xl);
+}
+
+.momentum-confidence ul,
+.momentum-component ul,
+.momentum-notice ul {
+  margin: 0;
+  padding-left: var(--space-5);
+  color: var(--color-text-secondary);
+}
+
+.momentum-meter {
+  overflow: hidden;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--color-bg-muted);
+}
+
+.momentum-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent);
+}
+
+.momentum-component-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.momentum-component {
+  align-content: start;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.momentum-component--unavailable {
+  border-style: dashed;
+  background: var(--color-surface-muted);
+}
+
+.momentum-component p,
+.momentum-notice p,
+.momentum-methodology p {
+  color: var(--color-text-secondary);
+}
+
+.momentum-component header span {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+}
+
+.momentum-next-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: var(--space-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.momentum-next-actions li {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4) 0;
+  border-top: 2px solid var(--color-accent);
+}
+
+.momentum-next-actions span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.momentum-evidence-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+
+.momentum-notice {
+  align-content: start;
+  padding: var(--space-4);
+  border-left: 3px solid var(--color-status-structured);
+  background: var(--color-surface-muted);
+}
+
+.momentum-notice--flag {
+  border-left-color: var(--color-status-skim);
+}
+
+.momentum-methodology {
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.momentum-methodology summary {
+  padding: var(--space-4) 0;
+  color: var(--color-text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.momentum-methodology__body {
+  max-width: 72ch;
+  padding-bottom: var(--space-5);
+}
+
+.momentum-methodology dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--space-5);
+  margin: 0;
+}
+
+.momentum-methodology dl div {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.momentum-methodology dd {
+  margin: 0;
+  font-weight: 700;
+}

@@ -14,6 +14,19 @@ computeResearchMomentum(input: MomentumInput): MomentumResult
 
 It lives in `src/utils/momentumScore.ts`. Input and result types live in `src/types/momentum.ts`.
 
+## Public Eligibility Gate
+
+The score engine remains deterministic for tests and internal analysis, including sparse inputs. The public site displays a numeric result only after `getEvidenceEligibility()` confirms all of the following:
+
+- at least 5 meaningful evidence events;
+- at least 3 distinct active dates;
+- at least 2 activity categories;
+- at least one reading, retrieval, revisit, or implementation event.
+
+Before eligibility, the homepage and `/growth` show `Collecting evidence`, progress for every criterion, and concrete next actions. They do not show a numeric score or level.
+
+Only public records with `metricEligible: true` and a non-seed `contentStage` can become evidence. Draft, hidden, unlisted, seed, demo, and system records are excluded before scoring.
+
 ## Overall Formula
 
 The six component weights total 100:
@@ -197,7 +210,7 @@ Confidence is reduced further when:
 
 | Evidence pattern | Expected interpretation |
 | --- | --- |
-| No data | Score 0, low confidence, all core components unavailable |
+| No data | Engine result 0; public UI shows `Collecting evidence`, with no numeric score |
 | Four reading days, no reviews or exams | Provisional reading signal with low confidence |
 | One day with 40 commits | GitHub volume capped; output and confidence remain low |
 | Distributed reading only | Reading can be strong, but missing retrieval/output keeps confidence low |

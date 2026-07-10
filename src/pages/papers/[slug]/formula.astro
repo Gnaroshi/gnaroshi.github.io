@@ -19,7 +19,7 @@ const records = papers.map(toFormulaRecallRecord);
 const today = getTodayKey();
 ---
 
-<BaseLayout title={`${paper.data.title} Formula Recall`} description={`Formula recall practice for ${paper.data.title}.`} canonical={`/papers/${paper.id}/formula/`} width="dashboard">
+<BaseLayout title={`${paper.data.title} Formula Recall`} description={`Formula recall practice for ${paper.data.title}.`} canonical={`/papers/${paper.id}/formula/`} width="dashboard" mode="application">
   <div class="paper-dashboard">
     <header class="paper-hero">
       <div class="paper-hero__copy">
@@ -32,6 +32,6 @@ const today = getTodayKey();
         <a href="/formula">All formulas</a>
       </nav>
     </header>
-    <FormulaRecallTrainer client:load papers={records} initialSlug={paper.id} today={today} />
+    <FormulaRecallTrainer client:visible papers={records} initialSlug={paper.id} today={today} />
   </div>
 </BaseLayout>

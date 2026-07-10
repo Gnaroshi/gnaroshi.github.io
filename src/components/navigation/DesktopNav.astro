@@ -1,0 +1,14 @@
+---
+import { isNavigationActive, primaryNavigation } from "../../utils/navigation";
+
+interface Props { currentPath: string }
+const { currentPath } = Astro.props;
+---
+
+<nav class="desktop-nav" aria-label="Primary navigation">
+  {primaryNavigation.map((item) => (
+    <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
+      {item.label}
+    </a>
+  ))}
+</nav>

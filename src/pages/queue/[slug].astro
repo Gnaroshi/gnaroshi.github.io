@@ -19,7 +19,7 @@ const { Content } = await render(item);
 const convertCommand = `npm run paper:from-queue -- --slug ${item.id}`;
 ---
 
-<BaseLayout title={item.data.title} description={item.data.reasonToRead} canonical={`/queue/${item.id}/`} type="article">
+<BaseLayout title={item.data.title} description={item.data.reasonToRead} canonical={`/queue/${item.id}/`} type="article" mode="application">
   <article class="paper-detail">
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/queue">Back to queue</a>

@@ -1,6 +1,6 @@
 ---
 import { profile } from "../data/profile";
-import { navigation } from "../utils/navigation";
+import { footerNavigation } from "../utils/navigation";
 ---
 
 <footer class="site-footer">
@@ -11,7 +11,7 @@ import { navigation } from "../utils/navigation";
     </div>
 
     <nav class="site-footer__links" aria-label="Footer navigation">
-      {navigation.map((item) => (
+      {footerNavigation.map((item) => (
         <a href={item.href}>{item.label}</a>
       ))}
       <a href="/rss.xml">RSS</a>
@@ -19,4 +19,3 @@ import { navigation } from "../utils/navigation";
     </nav>
   </div>
 </footer>
-

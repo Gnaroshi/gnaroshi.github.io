@@ -7,6 +7,12 @@ export type WeeklyReview = {
   endDate: string;
   generatedAt: string;
   visibility?: "public" | "unlisted" | "hidden";
+  status?: "in-progress" | "complete" | "insufficient-evidence";
+  meaningfulEventCount?: number;
+  contentStage?: "seed" | "working" | "substantive";
+  metricEligible?: boolean;
+  graphEligible?: boolean;
+  weeklyReviewEligible?: boolean;
   summary: string;
   metrics: {
     papersRead: number;
@@ -18,8 +24,8 @@ export type WeeklyReview = {
     projectUpdates: number;
     githubContributions: number;
   };
-  strongestDimension: string;
-  weakestDimension: string;
+  strongestDimension: string | null;
+  weakestDimension: string | null;
   wins: string[];
   openLoops: string[];
   nextWeekFocus: string;

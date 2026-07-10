@@ -13,7 +13,7 @@ const formulaQuestions = getFormulaQuestions(questions);
 const dueQuestions = getDueQuestions(questions, today);
 ---
 
-<BaseLayout title="Question Bank" description="Reusable paper questions generated from reviews, oral exams, and formula prompts." width="dashboard">
+<BaseLayout title="Question Bank" description="Reusable paper questions generated from reviews, oral exams, and formula prompts." width="dashboard" mode="application">
   <div class="paper-dashboard">
     <header class="paper-hero">
       <div class="paper-hero__copy">
@@ -21,14 +21,12 @@ const dueQuestions = getDueQuestions(questions, today);
         <h1>AI Question Bank</h1>
         <p class="lede">Weak questions, formula prompts, and retrieval checks collected into one practice loop.</p>
       </div>
-      <nav class="paper-hero__actions" aria-label="Question navigation">
-        <a href="/reviews">Reviews</a>
-        <a href="/formula">Formula trainer</a>
-        <a href="/papers">Paper Log</a>
-      </nav>
+      <a class="button button--primary" href={questions.length > 0 ? "#question-session" : "/papers#new-paper-template"}>
+        {questions.length > 0 ? "Practice a question" : "Add a paper question"}
+      </a>
     </header>
 
-    <section class="paper-stats" aria-label="Question bank stats">
+    {questions.length > 0 ? <section class="paper-stats" aria-label="Question bank stats">
       <article class="paper-stat-card">
         <strong>{questions.length}</strong>
         <span>Active questions</span>
@@ -45,11 +43,18 @@ const dueQuestions = getDueQuestions(questions, today);
         <strong>{dueQuestions.length}</strong>
         <span>Due questions</span>
       </article>
-    </section>
+    </section> : (
+      <section class="app-empty-state" aria-labelledby="questions-empty-heading">
+        <p class="eyebrow">Practice state</p>
+        <h2 id="questions-empty-heading">No retrieval questions yet</h2>
+        <p>Questions appear after a paper note, AI review, oral exam, or formula prompt leaves something worth recalling.</p>
+        <a class="button button--primary" href="/papers#new-paper-template">Add a paper question</a>
+      </section>
+    )}
 
-    <QuestionPractice client:load questions={questions} today={today} />
+    {questions.length > 0 && <div id="question-session"><QuestionPractice client:visible questions={questions} today={today} /></div>}
 
-    <section class="section" aria-labelledby="weak-questions-heading">
+    {questions.length > 0 && <section class="section" aria-labelledby="weak-questions-heading">
       <SectionHeader id="weak-questions-heading" title="Weak questions" description="Questions with low scores, no practice history, or high difficulty." />
       {weakQuestions.length > 0 ? (
         <div class="card-list">
@@ -60,13 +65,13 @@ const dueQuestions = getDueQuestions(questions, today);
       ) : (
         <p class="empty-state">No weak questions yet.</p>
       )}
-    </section>
+    </section>}
 
-    <section class="section" aria-labelledby="question-bank-meta-heading">
+    {questions.length > 0 && <section class="section" aria-labelledby="question-bank-meta-heading">
       <SectionHeader id="question-bank-meta-heading" title="Question bank status" />
       <p class="metadata">
         {bank.generatedAt ? `Last updated ${bank.generatedAt}.` : "The question bank is ready for its first entry."}
       </p>
-    </section>
+    </section>}
   </div>
 </BaseLayout>

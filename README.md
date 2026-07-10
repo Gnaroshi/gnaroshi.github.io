@@ -40,10 +40,17 @@ npm run preview
 
 ```bash
 npm run check
+npm run build
 npm run check:public-copy
+npm run check:content-metrics
+npm run check:links
+npm run check:empty-shells
+npm run test:e2e
+npm run test:a11y
+npm run test:visual
 ```
 
-Run `npm run build` before `npm run check:public-copy`; the check scans generated public assets for scaffold and developer-facing copy.
+Run `npm run build` before the `check:*` scripts. The checks scan the generated public site for developer-facing copy, misleading evidence metrics, broken internal links, and empty application shells. Playwright covers routes, mobile navigation, 390px overflow, focused empty states, axe accessibility rules, and the light/dark visual matrix.
 
 ## Deploy
 
@@ -184,6 +191,8 @@ Browser practice state is local-only until copied into Markdown frontmatter or c
 ## Research Momentum
 
 `/growth` summarizes public evidence across reading consistency, understanding, retrieval, research output, revisits, and balance. The v2 score reports confidence separately, caps same-day volume, and marks missing data as unavailable instead of silently treating it as zero.
+
+A numeric score remains hidden until the public record has at least five meaningful events, three active dates, two activity categories, and one reading, retrieval, revisit, or implementation event. Before that point, `/growth` and the homepage show `Collecting evidence` with the exact remaining criteria. Seed articles, drafts, hidden/unlisted records, and system content never contribute.
 
 Run the deterministic score scenarios with:
 

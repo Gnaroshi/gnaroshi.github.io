@@ -1,0 +1,117 @@
+---
+import type { EvidenceEligibility } from "../../utils/evidenceEligibility";
+
+interface Props {
+  eligibility: EvidenceEligibility;
+  compact?: boolean;
+  headingLevel?: "h2" | "h3";
+}
+
+const { eligibility, compact = false, headingLevel = "h2" } = Astro.props;
+const Heading = headingLevel;
+const progress = Math.min(100, Math.round((eligibility.eventCount / 5) * 100));
+---
+
+<section class:list={["evidence-gate", compact && "evidence-gate--compact"]} aria-labelledby="evidence-gate-heading">
+  <div class="evidence-gate__intro">
+    <p class="eyebrow">Evidence status</p>
+    <Heading id="evidence-gate-heading">Collecting evidence</Heading>
+    <p>
+      A public score will appear after the research record is large and varied enough to support one.
+    </p>
+  </div>
+  <div
+    class="evidence-gate__progress"
+    role="progressbar"
+    aria-label="Minimum evidence collected"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow={progress}
+  >
+    <span style={`width: ${progress}%`}></span>
+  </div>
+  <ul class="evidence-gate__criteria">
+    {eligibility.criteria.map((criterion) => (
+      <li class:list={[criterion.complete && "is-complete"]}>
+        <span aria-hidden="true">{criterion.complete ? "✓" : "·"}</span>
+        <span>{criterion.label}</span>
+        <strong>{criterion.current}/{criterion.required}</strong>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .evidence-gate {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border-left: 3px solid var(--color-reading);
+    background: var(--color-surface-quiet);
+  }
+
+  .evidence-gate__intro {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .evidence-gate__intro p:last-child {
+    max-width: 62ch;
+    color: var(--color-text-secondary);
+  }
+
+  .evidence-gate__progress {
+    height: 0.4rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--color-bg-muted);
+  }
+
+  .evidence-gate__progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-reading);
+  }
+
+  .evidence-gate__criteria {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2) var(--space-5);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .evidence-gate__criteria li {
+    display: grid;
+    grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+    gap: var(--space-2);
+    align-items: center;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .evidence-gate__criteria li > span:first-child {
+    color: var(--color-text-muted);
+    font-weight: 800;
+  }
+
+  .evidence-gate__criteria li.is-complete > span:first-child {
+    color: var(--color-reading);
+  }
+
+  .evidence-gate__criteria strong {
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .evidence-gate--compact .evidence-gate__criteria {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 640px) {
+    .evidence-gate { padding: var(--space-4); }
+    .evidence-gate__criteria { grid-template-columns: 1fr; }
+  }
+</style>

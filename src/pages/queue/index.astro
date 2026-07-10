@@ -14,7 +14,7 @@ const activeItems = queueItems.filter((item) => ["queued", "next", "reading"].in
 const urgentItems = queueItems.filter((item) => item.data.priority === "urgent" || item.data.priority === "high");
 ---
 
-<BaseLayout title="Reading Queue" description="Papers to read before they become full paper logs." width="dashboard">
+<BaseLayout title="Reading Queue" description="Papers to read before they become full paper logs." width="dashboard" mode="application">
   <div class="paper-dashboard">
     <header class="paper-hero">
       <div class="paper-hero__copy">
@@ -22,14 +22,12 @@ const urgentItems = queueItems.filter((item) => item.data.priority === "urgent" 
         <h1>Paper Reading Queue</h1>
         <p class="lede">A lightweight triage board for papers that look worth reading before they become full notes.</p>
       </div>
-      <nav class="paper-hero__actions" aria-label="Queue actions">
-        <a href="/papers">Paper Log</a>
-        <a href="/reviews">Reviews</a>
-        <a href="/questions">Questions</a>
-      </nav>
+      <a class="button button--primary" href={queueItems.length > 0 ? "#queue-list" : "/papers#new-paper-template"}>
+        {queueItems.length > 0 ? "View queue" : "Start a paper note"}
+      </a>
     </header>
 
-    <section class="paper-stats" aria-label="Queue stats">
+    {queueItems.length > 0 ? <section class="paper-stats" aria-label="Queue stats">
       <article class="paper-stat-card">
         <strong>{queueItems.length}</strong>
         <span>Total queued</span>
@@ -46,9 +44,16 @@ const urgentItems = queueItems.filter((item) => item.data.priority === "urgent" 
         <strong>{topics.length}</strong>
         <span>Topics represented</span>
       </article>
-    </section>
+    </section> : (
+      <section class="app-empty-state" aria-labelledby="queue-empty-heading">
+        <p class="eyebrow">Queue state</p>
+        <h2 id="queue-empty-heading">No papers are waiting</h2>
+        <p>When a paper looks relevant but does not need a full note yet, capture its title and the question it may answer.</p>
+        <a class="button button--primary" href="/papers#new-paper-template">Start a paper note</a>
+      </section>
+    )}
 
-    <section class="section" aria-labelledby="next-paper-heading">
+    {queueItems.length > 0 && <section class="section" aria-labelledby="next-paper-heading">
       <SectionHeader
         id="next-paper-heading"
         eyebrow="Next"
@@ -64,8 +69,8 @@ const urgentItems = queueItems.filter((item) => item.data.priority === "urgent" 
       ) : (
         <p class="empty-state">No active queue item yet.</p>
       )}
-    </section>
+    </section>}
 
-    <QueueDashboard client:load items={queueRecords} topics={topics} tags={tags} />
+    {queueItems.length > 0 && <div id="queue-list"><QueueDashboard client:visible items={queueRecords} topics={topics} tags={tags} /></div>}
   </div>
 </BaseLayout>

@@ -1,0 +1,128 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import ExternalLink from "../../components/common/ExternalLink.astro";
+import { projects, type Project } from "../../data/projects";
+import { getPublishedBlogPosts } from "../../utils/content";
+
+export function getStaticPaths() {
+  return projects.map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props as Props;
+const posts = await getPublishedBlogPosts();
+const relatedPosts = posts.filter((post) => project.relatedWriting.includes(post.id as (typeof project.relatedWriting)[number]));
+---
+
+<BaseLayout title={project.title} description={project.summary} canonical={`/projects/${project.slug}/`} type="article">
+  <article class="project-case-study">
+    <header class="editorial-header">
+      <a href="/projects/">Back to projects</a>
+      <p class="eyebrow">Project</p>
+      <h1>{project.title}</h1>
+      <p class="lede">{project.summary}</p>
+      <div class="project-case-study__links">
+        {project.links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
+      </div>
+    </header>
+
+    <section class="section" aria-labelledby="project-problem-heading">
+      <SectionHeader id="project-problem-heading" title="Problem" />
+      <p class="editorial-copy">{project.problem}</p>
+    </section>
+
+    <section class="section project-facts" aria-label="Project context">
+      <div><h2>Role</h2><p>{project.role}</p></div>
+      <div><h2>Status</h2><p>{project.status}</p></div>
+      <div><h2>Last updated</h2><p>{project.updatedAt}</p></div>
+    </section>
+
+    <section class="section" aria-labelledby="project-decisions-heading">
+      <SectionHeader id="project-decisions-heading" title="Decisions" />
+      <ul class="editorial-list">{project.decisions.map((item) => <li>{item}</li>)}</ul>
+    </section>
+
+    <section class="section" aria-labelledby="project-architecture-heading">
+      <SectionHeader id="project-architecture-heading" title="Architecture" />
+      <ul class="editorial-list">{project.architecture.map((item) => <li>{item}</li>)}</ul>
+    </section>
+
+    <section class="section" aria-labelledby="project-implementation-heading">
+      <SectionHeader id="project-implementation-heading" title="Implementation" />
+      <ul class="editorial-list">{project.implementation.map((item) => <li>{item}</li>)}</ul>
+    </section>
+
+    <section class="section" aria-labelledby="project-result-heading">
+      <SectionHeader id="project-result-heading" title="Result" />
+      <p class="editorial-copy">{project.result}</p>
+    </section>
+
+    <section class="section" aria-labelledby="project-lessons-heading">
+      <SectionHeader id="project-lessons-heading" title="Lessons" />
+      <ul class="editorial-list">{project.lessons.map((item) => <li>{item}</li>)}</ul>
+    </section>
+
+    {relatedPosts.length > 0 && (
+      <section class="section" aria-labelledby="project-writing-heading">
+        <SectionHeader id="project-writing-heading" title="Related writing" />
+        <ul class="editorial-list">
+          {relatedPosts.map((post) => <li><a href={`/blog/${post.id}/`}>{post.data.title}</a></li>)}
+        </ul>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .project-case-study {
+    display: grid;
+  }
+
+  .editorial-header {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-7) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .editorial-header > * {
+    margin: 0;
+  }
+
+  .project-case-study__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .project-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .project-facts h2 {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .project-facts p,
+  .editorial-copy {
+    color: var(--color-text-secondary);
+    line-height: 1.75;
+  }
+
+  .editorial-list {
+    display: grid;
+    gap: var(--space-3);
+    padding-left: 1.25rem;
+  }
+
+  @media (max-width: 680px) {
+    .project-facts { grid-template-columns: 1fr; }
+  }
+</style>

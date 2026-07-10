@@ -1,0 +1,19 @@
+---
+import { isNavigationActive, utilityNavigation } from "../../utils/navigation";
+import ThemeToggle from "../ThemeToggle.astro";
+
+interface Props { currentPath: string }
+const { currentPath } = Astro.props;
+---
+
+<div class="utility-nav" aria-label="Site utilities">
+  {utilityNavigation.map((item) => (
+    <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
+      {item.label}
+    </a>
+  ))}
+  <button class="locale-status" type="button" disabled aria-label="English and Korean language support is planned">
+    EN / KO
+  </button>
+  <ThemeToggle />
+</div>

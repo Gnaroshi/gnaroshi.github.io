@@ -1,0 +1,46 @@
+body[data-mode="application"] {
+  font-size: var(--application-body);
+}
+
+body[data-mode="application"] .site-main {
+  padding-top: var(--space-6);
+}
+
+.app-empty-state {
+  display: grid;
+  max-width: 48rem;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-6);
+  border-left: 3px solid var(--color-reading);
+  background: var(--color-surface-quiet);
+}
+
+.app-empty-state > p:not(.eyebrow) {
+  max-width: 60ch;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+body[data-mode="application"] button,
+body[data-mode="application"] select,
+body[data-mode="application"] input,
+body[data-mode="application"] textarea {
+  transition:
+    border-color var(--duration-fast) ease,
+    background-color var(--duration-fast) ease,
+    color var(--duration-fast) ease;
+}
+
+@media (max-width: 560px) {
+  .app-empty-state { padding: var(--space-5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-mode="application"] button,
+  body[data-mode="application"] select,
+  body[data-mode="application"] input,
+  body[data-mode="application"] textarea {
+    transition: none;
+  }
+}

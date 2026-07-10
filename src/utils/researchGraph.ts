@@ -45,11 +45,14 @@ export type ResearchGraphEdge = {
 export type ResearchGraph = {
   schemaVersion: string;
   generatedAt: string;
+  eligible?: boolean;
   nodes: ResearchGraphNode[];
   edges: ResearchGraphEdge[];
   stats: {
     nodeCount: number;
     edgeCount: number;
+    meaningfulNodeCount?: number;
+    nonTagEdgeCount?: number;
     nodesByType: Record<string, number>;
     edgesByType: Record<string, number>;
   };

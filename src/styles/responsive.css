@@ -1,0 +1,139 @@
+@media (max-width: 820px) {
+  .site-header__inner {
+    grid-template-columns: 1fr auto;
+  }
+
+  .theme-toggle {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  .site-nav {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+
+  .site-footer__inner {
+    display: grid;
+  }
+
+  .blog-layout,
+  .post-nav,
+  .paper-hero,
+  .paper-review-summary__body,
+  .paper-review-card__header,
+  .paper-review-pass-grid,
+  .paper-review-calibration-grid,
+  .paper-review-two-col,
+  .paper-review-breakdown,
+  .new-paper-template,
+  .formula-term-list div,
+  .graph-layout,
+  .graph-filter-grid,
+  .graph-edge-row,
+  .paper-nav,
+  .momentum-hero,
+  .momentum-score,
+  .momentum-component-grid,
+  .momentum-methodology dl {
+    grid-template-columns: 1fr;
+  }
+
+  .live-exam-principles,
+  .live-exam-control-grid,
+  .exam-result__dimensions {
+    grid-template-columns: 1fr;
+  }
+
+  .live-exam-principles p + p {
+    border-top: 1px solid var(--color-border);
+    border-left: 0;
+  }
+
+  .momentum-confidence {
+    border-top: 1px solid var(--color-border);
+    border-left: 0;
+  }
+
+  .post-nav div:last-child,
+  .paper-nav div:last-child {
+    text-align: left;
+  }
+
+  .paper-method-panel__passes,
+  .paper-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .paper-field--wide {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-header__inner,
+  .site-footer__inner,
+  .site-main {
+    width: min(100% - 24px, 100%);
+  }
+
+  .site-main {
+    padding-top: var(--space-6);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+  }
+
+  .paper-method-panel,
+  .paper-heatmap,
+  .paper-filter-panel,
+  .paper-review-summary,
+  .learning-panel,
+  .learning-card,
+  .queue-card,
+  .paper-review-pass-grid article,
+  .paper-review-calibration-grid article,
+  .paper-review-dimension,
+  .paper-review-badge,
+  .paper-review-limitations,
+  .new-paper-template,
+  .paper-card,
+  .paper-stat-card {
+    padding: var(--space-3);
+  }
+
+  .momentum-score__summary,
+  .momentum-confidence,
+  .momentum-component,
+  .momentum-notice {
+    padding: var(--space-3);
+  }
+
+  .live-exam-setup,
+  .text-exam,
+  .exam-transcript,
+  .exam-result,
+  .manual-exam {
+    padding: var(--space-3);
+  }
+
+  .text-exam > header,
+  .exam-transcript > header,
+  .exam-result > header,
+  .exam-transcript__entry {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .paper-method-panel__header,
+  .paper-heatmap__header,
+  .paper-filter-panel__header,
+  .paper-review-summary__header,
+  .learning-panel .paper-filter-panel__header,
+  .manual-review-prompt__header,
+  .paper-results__header {
+    display: grid;
+    align-items: start;
+  }
+}

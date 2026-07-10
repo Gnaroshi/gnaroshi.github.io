@@ -1,27 +1,34 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import EvidenceGate from "../components/growth/EvidenceGate.astro";
 import Hero from "../components/home/Hero.astro";
+import ExternalLink from "../components/common/ExternalLink.astro";
 import { homeCopy } from "../data/homeCopy";
+import { now } from "../data/now";
+import { profile } from "../data/profile";
 import { projects } from "../data/projects";
-import { researchQuestions } from "../data/research";
 import { getPublishedBlogPosts } from "../utils/content";
 import { formatDate } from "../utils/date";
+import { getEvidenceEligibility } from "../utils/evidenceEligibility";
 import { getMomentumInput } from "../utils/momentumData";
-import { computeResearchMomentum } from "../utils/momentumScore";
-import { getPaperStats, getPublishedPapers } from "../utils/papers";
+import { getPublishedPapers } from "../utils/papers";
+import "../styles/home.css";
 
 const [papers, posts, momentumInput] = await Promise.all([
   getPublishedPapers(),
   getPublishedBlogPosts(),
   getMomentumInput()
 ]);
-const paperStats = getPaperStats(papers);
-const momentum = computeResearchMomentum(momentumInput);
-const availableMomentumComponents = Object.values(momentum.components).filter((component) => component.available);
-const hasMomentumEvidence = availableMomentumComponents.length > 0;
+const eligibility = getEvidenceEligibility(momentumInput);
 const recentPosts = posts.slice(0, 3);
 const recentPapers = papers.slice(0, 2);
-const featuredProjects = projects.filter((project) => project.featured).slice(0, 2);
+const selectedProject = projects.find((project) => project.featured) ?? projects[0];
+const publicLinks = [
+  { label: "GitHub", href: profile.links.github },
+  profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar } : null,
+  profile.links.cv ? { label: "CV", href: profile.links.cv } : null,
+  profile.links.email ? { label: "Email", href: `mailto:${profile.links.email}` } : null
+].filter(Boolean) as Array<{ label: string; href: string }>;
 ---
 
 <BaseLayout
@@ -33,609 +40,87 @@ const featuredProjects = projects.filter((project) => project.featured).slice(0,
   canonical="/"
   width="wide"
 >
-  <div class="home-cockpit">
+  <div class="home-editorial">
     <Hero />
 
-    <section class="home-section home-loop" aria-labelledby="today-loop-heading">
-      <header class="home-section__header">
-        <span>01</span>
-        <h2 id="today-loop-heading">{homeCopy.today.title}</h2>
+    <section class="home-band home-focus" aria-labelledby="current-focus-heading">
+      <header>
+        <p class="eyebrow">Current focus</p>
+        <h2 id="current-focus-heading">Questions before claims</h2>
       </header>
-      <div class="home-loop__layout">
-        <ol class="home-loop__steps">
-          {homeCopy.today.steps.map((step, index) => (
-            <li>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <strong>{step}</strong>
-            </li>
-          ))}
-        </ol>
-        {paperStats.total > 0 ? (
-          <div class="home-metric-grid" aria-label="Current paper activity">
-            <article><strong>{paperStats.today}</strong><span>Today</span></article>
-            <article><strong>{paperStats.currentStreak}</strong><span>Current streak</span></article>
-            <article><strong>{paperStats.thisWeek}</strong><span>This week</span></article>
-            <article><strong>{paperStats.activeDays}</strong><span>Active days</span></article>
-          </div>
-        ) : (
-          <div class="home-empty">
-            <strong>{homeCopy.today.emptyTitle}</strong>
-            <p>{homeCopy.today.emptyDescription}</p>
-            <a href="/papers">{homeCopy.hero.primaryCta}</a>
-          </div>
-        )}
+      <div class="home-focus__content">
+        <div>
+          <h3>Reading</h3>
+          <p>{now.currentlyReading[0]}</p>
+        </div>
+        <div>
+          <h3>Building</h3>
+          <p>{now.currentlyBuilding[0]}</p>
+        </div>
+        <div>
+          <h3>Selected work</h3>
+          <p>{selectedProject.summary}</p>
+          <a href={`/projects/${selectedProject.slug}/`}>Open project case study</a>
+        </div>
       </div>
     </section>
 
-    <section class="home-section home-feature" aria-labelledby="growth-preview-heading">
-      <div class="home-feature__copy">
-        <p class="eyebrow">02</p>
-        <h2 id="growth-preview-heading">{homeCopy.growth.title}</h2>
-        <p class="home-feature__subtitle">{homeCopy.growth.subtitle}</p>
-        <a class="home-link" href="/growth">{homeCopy.growth.cta}</a>
-      </div>
-      {hasMomentumEvidence ? (
-        <div class="home-score" aria-label="Research Momentum preview">
-          <div class="home-score__primary">
-            <span>Momentum</span>
-            <strong aria-label={`${momentum.score} out of 100`}>{momentum.score}</strong>
-            <small>{momentum.level}</small>
-          </div>
-          <dl>
-            <div><dt>Confidence</dt><dd>{momentum.confidence.label}</dd></div>
-            <div><dt>Evidence</dt><dd>{availableMomentumComponents.length}/6</dd></div>
-          </dl>
+    <section class="home-band home-activity" aria-labelledby="latest-work-heading">
+      <header>
+        <p class="eyebrow">Latest work</p>
+        <h2 id="latest-work-heading">Writing and paper activity</h2>
+      </header>
+      <div class="home-activity__columns">
+        <div>
+          <div class="home-list-heading"><h3>Writing</h3><a href="/blog">All writing</a></div>
+          <ol class="editorial-record-list">
+            {recentPosts.map((post) => (
+              <li>
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+              </li>
+            ))}
+          </ol>
         </div>
-      ) : (
-        <div class="home-empty">
-          <p>{homeCopy.growth.empty}</p>
-        </div>
-      )}
-    </section>
-
-    <section class="home-section home-feature home-feature--reverse" aria-labelledby="paper-log-preview-heading">
-      <div class="home-feature__copy">
-        <p class="eyebrow">03</p>
-        <h2 id="paper-log-preview-heading">{homeCopy.paperLog.title}</h2>
-        <p class="home-feature__subtitle">{homeCopy.paperLog.subtitle}</p>
-        <p>{homeCopy.paperLog.body}</p>
-        <a class="home-link" href="/papers">{homeCopy.paperLog.cta}</a>
-      </div>
-      <div class="home-dashboard-preview">
-        {paperStats.total > 0 ? (
-          <>
-            <div class="home-metric-grid home-metric-grid--three" aria-label="Paper Log summary">
-              <article><strong>{paperStats.total}</strong><span>Paper notes</span></article>
-              <article><strong>{paperStats.thisMonth}</strong><span>This month</span></article>
-              <article><strong>{paperStats.deepReads}</strong><span>Deep reads</span></article>
-            </div>
-            <div class="home-record-list">
+        <div>
+          <div class="home-list-heading"><h3>Paper notes</h3><a href="/papers">Paper Lab</a></div>
+          {recentPapers.length > 0 ? (
+            <ol class="editorial-record-list">
               {recentPapers.map((paper) => (
-                <a href={`/papers/${paper.id}/`}>
-                  <strong>{paper.data.title}</strong>
-                  <span>{paper.data.status} · {paper.data.depth}</span>
-                </a>
+                <li><a href={`/papers/${paper.id}/`}>{paper.data.title}</a><span>{paper.data.status}</span></li>
               ))}
+            </ol>
+          ) : (
+            <div class="home-onboarding">
+              <p>The public paper record starts with one honest relevance pass.</p>
+              <a href="/papers#new-paper-template">Add the first paper note</a>
             </div>
-          </>
-        ) : (
-          <div class="home-pass-grid" aria-label="Three-pass paper reading method">
-            <article><span>Pass 1</span><strong>Relevance</strong></article>
-            <article><span>Pass 2</span><strong>Structure</strong></article>
-            <article><span>Pass 3</span><strong>Evidence</strong></article>
-          </div>
-        )}
-      </div>
-    </section>
-
-    <section class="home-section home-feature" aria-labelledby="oral-exam-preview-heading">
-      <div class="home-feature__copy">
-        <p class="eyebrow">04</p>
-        <h2 id="oral-exam-preview-heading">{homeCopy.oralExam.title}</h2>
-        <p class="home-feature__subtitle">{homeCopy.oralExam.subtitle}</p>
-        <p>{homeCopy.oralExam.body}</p>
-        <a class="home-link" href="/papers">{homeCopy.oralExam.cta}</a>
-      </div>
-      <div class="home-exam-preview" aria-label="Oral exam dimensions">
-        <span>Problem</span>
-        <span>Core idea</span>
-        <span>Method</span>
-        <span>Formula</span>
-        <span>Evidence</span>
-        <span>Limitations</span>
-        <span>Connection</span>
-      </div>
-    </section>
-
-    <section class="home-section home-feature home-feature--reverse" aria-labelledby="blog-preview-heading">
-      <div class="home-feature__copy">
-        <p class="eyebrow">05</p>
-        <h2 id="blog-preview-heading">{homeCopy.blog.title}</h2>
-        <p class="home-feature__subtitle">{homeCopy.blog.subtitle}</p>
-        <p>{homeCopy.blog.body}</p>
-        <a class="home-link" href="/blog">{homeCopy.blog.cta}</a>
-      </div>
-      {recentPosts.length > 0 && (
-        <div class="home-record-list home-record-list--numbered" aria-label="Recent blog posts">
-          {recentPosts.map((post, index) => (
-            <a href={`/blog/${post.id}/`}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <strong>{post.data.title}</strong>
-              <small>{formatDate(post.data.pubDate)}</small>
-            </a>
-          ))}
+          )}
         </div>
-      )}
-    </section>
-
-    <section class="home-section home-feature" aria-labelledby="projects-preview-heading">
-      <div class="home-feature__copy">
-        <p class="eyebrow">06</p>
-        <h2 id="projects-preview-heading">{homeCopy.projects.title}</h2>
-        <p class="home-feature__subtitle">{homeCopy.projects.subtitle}</p>
-        <p>{homeCopy.projects.body}</p>
-        <a class="home-link" href="/projects">{homeCopy.projects.cta}</a>
       </div>
-      {featuredProjects.length > 0 && (
-        <div class="home-project-list" aria-label="Featured projects">
-          {featuredProjects.map((project) => (
-            <article>
-              <span>{project.status}</span>
-              <h3>{project.title}</h3>
-              <p>{project.summary}</p>
-              <ul>{project.tags.map((tag) => <li>{tag}</li>)}</ul>
-            </article>
-          ))}
-        </div>
-      )}
     </section>
 
-    <section class="home-section home-feature home-feature--reverse" aria-labelledby="research-map-heading">
-      <div class="home-feature__copy">
-        <p class="eyebrow">07</p>
-        <h2 id="research-map-heading">{homeCopy.research.title}</h2>
-        <p class="home-feature__subtitle">{homeCopy.research.subtitle}</p>
-        <p>{homeCopy.research.body}</p>
-        <a class="home-link" href="/research">{homeCopy.research.cta}</a>
+    <section class="home-band home-cockpit-preview" aria-labelledby="cockpit-preview-heading">
+      <header>
+        <p class="eyebrow">Research cockpit</p>
+        <h2 id="cockpit-preview-heading">Evidence before metrics</h2>
+        <p>Reading, retrieval, revisits, and implementation become useful as a connected record, not as isolated counters.</p>
+      </header>
+      <EvidenceGate eligibility={eligibility} compact />
+      <a class="button button--primary" href="/papers#new-paper-template">Add the first paper note</a>
+    </section>
+
+    <section class="home-band home-collaboration" aria-labelledby="collaboration-heading">
+      <div>
+        <p class="eyebrow">Collaboration</p>
+        <h2 id="collaboration-heading">Research, tools, and clear technical work</h2>
+        <p>I am interested in AI systems, research workflows, and software that helps people read and reason more carefully.</p>
       </div>
-      <ol class="home-question-list">
-        {researchQuestions.map((question, index) => (
-          <li>
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <strong>{question.title}</strong>
-          </li>
-        ))}
-      </ol>
-    </section>
-
-    <section class="home-closing" aria-labelledby="home-closing-heading">
-      <p class="eyebrow">08</p>
-      <h2 id="home-closing-heading">{homeCopy.closing.title}</h2>
-      <p>{homeCopy.closing.body}</p>
-      <a class="button button--primary" href="/growth">{homeCopy.closing.cta}</a>
+      <div class="home-collaboration__links">
+        {publicLinks.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
+        <a href="/about">About</a>
+        <a href="/contact">Public links</a>
+      </div>
     </section>
   </div>
 </BaseLayout>
-
-<style>
-  .home-cockpit {
-    display: grid;
-  }
-
-  .home-section {
-    padding: var(--space-7) 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .home-section__header {
-    display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr);
-    gap: var(--space-3);
-    align-items: baseline;
-  }
-
-  .home-section__header > span,
-  .home-loop__steps span,
-  .home-question-list span {
-    color: var(--color-text-muted);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-  }
-
-  .home-loop__layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
-    gap: var(--space-6);
-    align-items: stretch;
-    margin-top: var(--space-5);
-  }
-
-  .home-loop__steps,
-  .home-question-list {
-    display: grid;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  .home-loop__steps li,
-  .home-question-list li {
-    display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr);
-    gap: var(--space-3);
-    align-items: center;
-    min-height: 3.25rem;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .home-loop__steps li:last-child,
-  .home-question-list li:last-child {
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .home-metric-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .home-metric-grid--three {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .home-metric-grid article {
-    display: grid;
-    gap: var(--space-1);
-    min-height: 6.5rem;
-    align-content: center;
-    padding: var(--space-4);
-  }
-
-  .home-metric-grid article:not(:last-child) {
-    border-right: 1px solid var(--color-border);
-  }
-
-  .home-metric-grid:not(.home-metric-grid--three) article:nth-child(-n + 2) {
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .home-metric-grid:not(.home-metric-grid--three) article:nth-child(2) {
-    border-right: 0;
-  }
-
-  .home-metric-grid strong {
-    font-size: var(--text-2xl);
-  }
-
-  .home-metric-grid span,
-  .home-score span,
-  .home-score small {
-    color: var(--color-text-muted);
-    font-size: var(--text-sm);
-  }
-
-  .home-empty {
-    display: grid;
-    gap: var(--space-2);
-    align-content: center;
-    padding: var(--space-5);
-    border-left: 3px solid var(--color-accent);
-    background: var(--color-surface-muted);
-  }
-
-  .home-empty p {
-    margin: 0;
-    color: var(--color-text-secondary);
-  }
-
-  .home-feature {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
-    gap: var(--space-7);
-    align-items: center;
-  }
-
-  .home-feature--reverse .home-feature__copy {
-    order: 2;
-  }
-
-  .home-feature__copy {
-    display: grid;
-    gap: var(--space-3);
-    align-content: center;
-  }
-
-  .home-feature__copy p {
-    margin: 0;
-    color: var(--color-text-secondary);
-  }
-
-  .home-feature__copy .eyebrow {
-    color: var(--color-accent);
-    font-family: var(--font-mono);
-  }
-
-  .home-feature__copy .home-feature__subtitle {
-    color: var(--color-text);
-    font-size: var(--text-lg);
-    font-weight: 650;
-  }
-
-  .home-link {
-    width: fit-content;
-    margin-top: var(--space-2);
-    font-weight: 700;
-  }
-
-  .home-score {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(180px, 0.7fr);
-    border-top: 3px solid var(--color-accent);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .home-score__primary {
-    display: grid;
-    gap: var(--space-2);
-    padding: var(--space-5);
-    border-right: 1px solid var(--color-border);
-  }
-
-  .home-score__primary strong {
-    font-size: 4rem;
-    line-height: 1;
-  }
-
-  .home-score__primary small {
-    text-transform: capitalize;
-  }
-
-  .home-score dl {
-    display: grid;
-    align-content: center;
-    margin: 0;
-  }
-
-  .home-score dl div {
-    display: flex;
-    gap: var(--space-3);
-    justify-content: space-between;
-    padding: var(--space-4);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .home-score dl div:last-child {
-    border-bottom: 0;
-  }
-
-  .home-score dd {
-    margin: 0;
-    font-weight: 700;
-    text-transform: capitalize;
-  }
-
-  .home-dashboard-preview {
-    display: grid;
-    gap: var(--space-4);
-  }
-
-  .home-pass-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-top: 3px solid var(--color-accent);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .home-pass-grid article {
-    display: grid;
-    gap: var(--space-5);
-    min-height: 9rem;
-    align-content: space-between;
-    padding: var(--space-4);
-  }
-
-  .home-pass-grid article + article {
-    border-left: 1px solid var(--color-border);
-  }
-
-  .home-pass-grid span {
-    color: var(--color-text-muted);
-    font-size: var(--text-sm);
-  }
-
-  .home-exam-preview {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-top: 3px solid var(--color-status-structured);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .home-exam-preview span {
-    display: grid;
-    min-height: 4.5rem;
-    place-items: center;
-    padding: var(--space-3);
-    border-right: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-    color: var(--color-text-secondary);
-    font-size: var(--text-sm);
-    font-weight: 700;
-    text-align: center;
-  }
-
-  .home-exam-preview span:nth-child(3n) {
-    border-right: 0;
-  }
-
-  .home-exam-preview span:nth-last-child(-n + 3) {
-    border-bottom: 0;
-  }
-
-  .home-record-list {
-    display: grid;
-    border-top: 3px solid var(--color-accent);
-  }
-
-  .home-record-list a {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: var(--space-3);
-    padding: var(--space-4) 0;
-    border-bottom: 1px solid var(--color-border);
-    color: var(--color-text);
-    text-decoration: none;
-  }
-
-  .home-record-list a:hover strong {
-    color: var(--color-accent);
-  }
-
-  .home-record-list a > span,
-  .home-record-list a > small {
-    color: var(--color-text-muted);
-    font-size: var(--text-xs);
-  }
-
-  .home-record-list--numbered a {
-    grid-template-columns: 2rem minmax(0, 1fr) auto;
-  }
-
-  .home-project-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-4);
-  }
-
-  .home-project-list article {
-    display: grid;
-    gap: var(--space-3);
-    align-content: start;
-    padding-top: var(--space-4);
-    border-top: 3px solid var(--color-status-implemented);
-  }
-
-  .home-project-list article > span {
-    color: var(--color-text-muted);
-    font-size: var(--text-xs);
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-
-  .home-project-list h3,
-  .home-project-list p {
-    margin: 0;
-  }
-
-  .home-project-list p {
-    color: var(--color-text-secondary);
-  }
-
-  .home-project-list ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  .home-project-list li {
-    color: var(--color-text-muted);
-    font-size: var(--text-xs);
-  }
-
-  .home-closing {
-    display: grid;
-    gap: var(--space-4);
-    justify-items: start;
-    padding: var(--space-8) 0;
-  }
-
-  .home-closing h2 {
-    font-size: var(--text-2xl);
-  }
-
-  .home-closing p:not(.eyebrow) {
-    max-width: 52ch;
-    margin: 0;
-    color: var(--color-text-secondary);
-    font-size: var(--text-lg);
-  }
-
-  .button {
-    display: inline-flex;
-    min-height: 2.5rem;
-    align-items: center;
-    justify-content: center;
-    padding: 0.45rem 0.85rem;
-    border: 1px solid var(--color-accent);
-    border-radius: var(--radius-md);
-    background: var(--color-accent);
-    color: var(--color-bg);
-    font-size: var(--text-sm);
-    font-weight: 700;
-    text-decoration: none;
-  }
-
-  .button:hover {
-    background: var(--color-accent-hover);
-    color: var(--color-bg);
-  }
-
-  @media (max-width: 820px) {
-    .home-loop__layout,
-    .home-feature {
-      grid-template-columns: 1fr;
-    }
-
-    .home-feature--reverse .home-feature__copy {
-      order: initial;
-    }
-  }
-
-  @media (max-width: 560px) {
-    .home-section,
-    .home-closing {
-      padding: var(--space-6) 0;
-    }
-
-    .home-metric-grid--three,
-    .home-pass-grid,
-    .home-exam-preview,
-    .home-project-list {
-      grid-template-columns: 1fr;
-    }
-
-    .home-metric-grid--three article:not(:last-child),
-    .home-pass-grid article + article,
-    .home-exam-preview span {
-      border-right: 0;
-      border-bottom: 1px solid var(--color-border);
-      border-left: 0;
-    }
-
-    .home-exam-preview span:last-child {
-      border-bottom: 0;
-    }
-
-    .home-score {
-      grid-template-columns: 1fr;
-    }
-
-    .home-score__primary {
-      border-right: 0;
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .home-record-list--numbered a {
-      grid-template-columns: 2rem minmax(0, 1fr);
-    }
-
-    .home-record-list--numbered a small {
-      grid-column: 2;
-    }
-  }
-</style>

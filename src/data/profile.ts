@@ -1,8 +1,14 @@
 export const profile = {
   displayName: "Gnaroshi",
+  publicAlias: "Gnaroshi",
+  koreanName: "",
+  englishName: "",
   siteName: "Gnaroshi",
   domain: "https://gnaroshi.dev",
   headline: "AI researcher and software engineer",
+  currentRole: "AI researcher and software engineer",
+  affiliation: "",
+  profileImage: "",
   location: "South Korea",
   shortBio:
     "I study AI systems, research workflows, and tools that help people read, build, and think more deeply.",

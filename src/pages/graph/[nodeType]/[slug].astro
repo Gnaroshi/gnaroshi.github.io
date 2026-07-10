@@ -19,7 +19,7 @@ const edges = getConnectedEdges(node.id);
 const labelForType = (value: string) => value.replaceAll("-", " ");
 ---
 
-<BaseLayout title={node.label} description={node.description || `Research graph node: ${node.label}`} canonical={`/graph/${node.type}/${node.slug}/`}>
+<BaseLayout title={node.label} description={node.description || `Research graph node: ${node.label}`} canonical={`/graph/${node.type}/${node.slug}/`} mode="application">
   <article class="paper-detail">
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/graph/">Back to graph</a>

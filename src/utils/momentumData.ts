@@ -27,6 +27,7 @@ export async function getMomentumInput(today = getTodayKey()): Promise<MomentumI
     getCollection("projects")
   ]);
   const reviews = [...getPublicPaperReviewMap(paperEntries).values()];
+  const paperBySlug = new Map(paperEntries.map((paper) => [paper.id, paper]));
   const contentProjects = projectEntries.filter((project) => shouldShowInIndex(project.data));
   const questionBank = getQuestionBank();
 
@@ -44,7 +45,11 @@ export async function getMomentumInput(today = getTodayKey()): Promise<MomentumI
       projectUrl: paper.data.projectUrl,
       noteCompleteness: estimatePaperNoteCompleteness(paper.data, paper.body ?? ""),
       noteWordCount: countWords(paper.body ?? ""),
-      selfScore: getSelfScore(paper.data.selfScore)
+      selfScore: getSelfScore(paper.data.selfScore),
+      contentStage: paper.data.contentStage,
+      metricEligible: paper.data.metricEligible,
+      graphEligible: paper.data.graphEligible,
+      weeklyReviewEligible: paper.data.weeklyReviewEligible
     })),
     paperReviews: reviews.map((review) => ({
       paperSlug: review.paperSlug,
@@ -53,7 +58,9 @@ export async function getMomentumInput(today = getTodayKey()): Promise<MomentumI
       reviewVisibility: review.reviewVisibility,
       confidence: review.confidence,
       dimensions: review.dimensions,
-      selfScoreComparison: review.selfScoreComparison
+      selfScoreComparison: review.selfScoreComparison,
+      contentStage: paperBySlug.get(review.paperSlug)?.data.contentStage,
+      metricEligible: paperBySlug.get(review.paperSlug)?.data.metricEligible
     })),
     oralExams: loadGeneratedValues(oralExamModules).map(toOralExam).filter(isDefined),
     githubContributions: loadGeneratedValues(githubContributionModules).flatMap(toGitHubDays),
@@ -62,18 +69,34 @@ export async function getMomentumInput(today = getTodayKey()): Promise<MomentumI
       pubDate: toDateKey(post.data.pubDate),
       draft: post.data.draft,
       visibility: post.data.visibility,
-      sourcePaper: post.data.sourcePaper
+      sourcePaper: post.data.sourcePaper,
+      contentStage: post.data.contentStage,
+      metricEligible: post.data.metricEligible,
+      graphEligible: post.data.graphEligible,
+      weeklyReviewEligible: post.data.weeklyReviewEligible
     })),
     projects: [
       ...contentProjects.map((project) => ({
         slug: project.id,
         updatedAt: project.data.updatedAt ? toDateKey(project.data.updatedAt) : undefined,
         status: project.data.status,
-        visibility: project.data.visibility
+        visibility: project.data.visibility,
+        contentStage: project.data.contentStage,
+        metricEligible: project.data.metricEligible,
+        graphEligible: project.data.graphEligible,
+        weeklyReviewEligible: project.data.weeklyReviewEligible
       })),
       ...projectCards
         .filter((project) => !contentProjects.some((entry) => entry.id === project.slug))
-        .map((project) => ({ slug: project.slug, status: project.status, visibility: "public" as const }))
+        .map((project) => ({
+          slug: project.slug,
+          status: project.status,
+          visibility: "public" as const,
+          contentStage: project.contentStage,
+          metricEligible: project.metricEligible,
+          graphEligible: project.graphEligible,
+          weeklyReviewEligible: project.weeklyReviewEligible
+        }))
     ],
     implementations: implementationEntries.map((attempt) => ({
       slug: attempt.id,
@@ -84,7 +107,11 @@ export async function getMomentumInput(today = getTodayKey()): Promise<MomentumI
       lessons: attempt.data.lessons,
       relatedPapers: attempt.data.relatedPapers,
       relatedProjects: attempt.data.relatedProjects,
-      visibility: attempt.data.visibility
+      visibility: attempt.data.visibility,
+      contentStage: attempt.data.contentStage,
+      metricEligible: attempt.data.metricEligible,
+      graphEligible: attempt.data.graphEligible,
+      weeklyReviewEligible: attempt.data.weeklyReviewEligible
     })),
     reviewDueItems: paperEntries.flatMap((paper) => {
       const completed = paper.data.reviewHistory.map((review) => {
@@ -93,12 +120,20 @@ export async function getMomentumInput(today = getTodayKey()): Promise<MomentumI
           paperSlug: paper.id,
           dueDate: completedAt,
           completedAt,
-          visibility: paper.data.visibility
+          visibility: paper.data.visibility,
+          contentStage: paper.data.contentStage,
+          metricEligible: paper.data.metricEligible
         };
       });
       const nextReviewDate = getNextReviewDate(paper);
       return nextReviewDate
-        ? [...completed, { paperSlug: paper.id, dueDate: nextReviewDate, visibility: paper.data.visibility }]
+        ? [...completed, {
+            paperSlug: paper.id,
+            dueDate: nextReviewDate,
+            visibility: paper.data.visibility,
+            contentStage: paper.data.contentStage,
+            metricEligible: paper.data.metricEligible
+          }]
         : completed;
     }),
     formulaRecallAttempts: loadGeneratedValues(formulaRecallModules).map(toFormulaRecall).filter(isDefined),
@@ -109,7 +144,9 @@ export async function getMomentumInput(today = getTodayKey()): Promise<MomentumI
         questionType: question.type,
         date: question.lastAsked,
         score: question.lastScore ?? undefined,
-        visibility: "public"
+        visibility: "public",
+        metricEligible: true,
+        contentStage: "working"
       }))
   };
 }
@@ -146,7 +183,11 @@ function toOralExam(value: unknown): OralExamScore | undefined {
     totalQuestions: numberValue(value.totalQuestions),
     completed: typeof value.completed === "boolean" ? value.completed : undefined,
     questionTypeScores: numericRecord(value.questionTypeScores),
-    visibility: visibilityValue(value.visibility)
+    visibility: visibilityValue(value.visibility),
+    contentStage: contentStageValue(value.contentStage),
+    metricEligible: booleanValue(value.metricEligible, value.mock !== true),
+    graphEligible: booleanValue(value.graphEligible, value.mock !== true),
+    weeklyReviewEligible: booleanValue(value.weeklyReviewEligible, value.mock !== true)
   };
 }
 
@@ -159,7 +200,9 @@ function toFormulaRecall(value: unknown): FormulaRecallAttempt | undefined {
     date,
     score: numberValue(value.score),
     completed: typeof value.completed === "boolean" ? value.completed : true,
-    visibility: visibilityValue(value.visibility)
+    visibility: visibilityValue(value.visibility),
+    contentStage: contentStageValue(value.contentStage),
+    metricEligible: booleanValue(value.metricEligible, value.mock !== true)
   };
 }
 
@@ -172,7 +215,13 @@ function toGitHubDays(value: unknown): GitHubContributionDay[] {
       const date = firstString(day.date, day.contributionDate);
       const count = numberValue(day.count, day.contributionCount);
       if (!date || typeof count !== "number") return undefined;
-      return { date, count, visibility: visibilityValue(day.visibility ?? value.visibility) };
+      return {
+        date,
+        count,
+        visibility: visibilityValue(day.visibility ?? value.visibility),
+        contentStage: contentStageValue(day.contentStage ?? value.contentStage),
+        metricEligible: booleanValue(day.metricEligible ?? value.metricEligible, true)
+      };
     })
     .filter(isDefined);
 }
@@ -238,6 +287,14 @@ function numericRecord(value: unknown): Record<string, number> | undefined {
 
 function visibilityValue(value: unknown): "public" | "unlisted" | "hidden" {
   return value === "unlisted" || value === "hidden" ? value : "public";
+}
+
+function contentStageValue(value: unknown): "seed" | "working" | "substantive" {
+  return value === "seed" || value === "substantive" ? value : "working";
+}
+
+function booleanValue(value: unknown, fallback: boolean): boolean {
+  return typeof value === "boolean" ? value : fallback;
 }
 
 function isDefined<T>(value: T | undefined): value is T {

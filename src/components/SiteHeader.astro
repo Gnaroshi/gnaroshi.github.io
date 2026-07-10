@@ -1,17 +1,10 @@
 ---
 import { profile } from "../data/profile";
-import { navigation } from "../utils/navigation";
-import ThemeToggle from "./ThemeToggle.astro";
+import DesktopNav from "./navigation/DesktopNav.astro";
+import MobileNav from "./navigation/MobileNav.astro";
+import UtilityNav from "./navigation/UtilityNav.astro";
 
-const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
-
-const isActive = (href: string) => {
-  if (href === "/") {
-    return currentPath === "/";
-  }
-
-  return currentPath === href || currentPath.startsWith(`${href}/`);
-};
+const currentPath = Astro.url.pathname;
 ---
 
 <header class="site-header">
@@ -20,15 +13,8 @@ const isActive = (href: string) => {
       <span class="site-header__name">{profile.siteName}</span>
       <span class="site-header__role">{profile.headline}</span>
     </a>
-
-    <nav class="site-nav" aria-label="Primary navigation">
-      {navigation.map((item) => (
-        <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
-          {item.label}
-        </a>
-      ))}
-    </nav>
-
-    <ThemeToggle />
+    <DesktopNav currentPath={currentPath} />
+    <UtilityNav currentPath={currentPath} />
+    <MobileNav currentPath={currentPath} />
   </div>
 </header>

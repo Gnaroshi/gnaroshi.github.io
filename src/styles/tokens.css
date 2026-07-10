@@ -5,6 +5,8 @@
   --color-bg-muted: #eeeeea;
   --color-surface: #ffffff;
   --color-surface-muted: #f3f3ef;
+  --color-surface-elevated: var(--color-surface);
+  --color-surface-quiet: var(--color-surface-muted);
   --color-text: #171a18;
   --color-text-secondary: #424942;
   --color-text-muted: #687067;
@@ -16,6 +18,11 @@
   --color-code-bg: #ecefeb;
   --color-code-text: #172018;
   --color-focus: #2d6cdf;
+  --color-reading: #116c5a;
+  --color-ai-review: #2463a6;
+  --color-implementation: #18704a;
+  --color-review-due: #8a6b19;
+  --color-warning: #9b3d30;
 
   --color-status-skim: #7b6c20;
   --color-status-structured: #2463a6;
@@ -45,7 +52,9 @@
   --paper-level-4: var(--color-heatmap-4);
 
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  --font-editorial:
+    ui-serif, Georgia, Cambria, "Times New Roman", "AppleMyungjo", "Batang", serif;
   --font-mono:
     "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 
@@ -56,6 +65,10 @@
   --text-xl: 1.35rem;
   --text-2xl: 1.75rem;
   --text-3xl: 2.35rem;
+  --display-sm: 2.35rem;
+  --display-md: 3rem;
+  --editorial-body: 1.075rem;
+  --application-body: 0.9375rem;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -70,8 +83,13 @@
   --radius-md: 8px;
 
   --shadow-sm: 0 1px 2px rgb(23 26 24 / 8%);
+  --shadow-md: 0 10px 30px rgb(23 26 24 / 12%);
+
+  --duration-fast: 120ms;
+  --duration-state: 180ms;
 
   --width-prose: min(100% - 32px, 760px);
+  --width-editorial: min(100% - 32px, 700px);
   --width-wide: min(100% - 32px, 1040px);
   --width-dashboard: min(100% - 32px, 1180px);
 }
@@ -94,6 +112,11 @@
   --color-code-bg: #20261f;
   --color-code-text: #edf4ee;
   --color-focus: #8ab4ff;
+  --color-reading: #68d0b2;
+  --color-ai-review: #8ab4ff;
+  --color-implementation: #79d6a4;
+  --color-review-due: #d9bd63;
+  --color-warning: #f19a8a;
   --color-score-seed: #f19a8a;
   --color-score-developing: #d9bd63;
   --color-score-solid: #8ab4ff;

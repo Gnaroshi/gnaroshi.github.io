@@ -23,7 +23,7 @@ const completionRate = getReviewCompletionRate(papers, 30, today);
 const completionStreak = getReviewCompletionStreak(papers, today);
 ---
 
-<BaseLayout title="Reviews" description="Spaced paper review queue for durable research memory." width="dashboard">
+<BaseLayout title="Reviews" description="Spaced paper review queue for durable research memory." width="dashboard" mode="application">
   <div class="paper-dashboard">
     <header class="paper-hero">
       <div class="paper-hero__copy">
@@ -31,14 +31,12 @@ const completionStreak = getReviewCompletionStreak(papers, today);
         <h1>Review Due System</h1>
         <p class="lede">A spaced revisit loop for summaries, formulas, retrieval questions, and research connections.</p>
       </div>
-      <nav class="paper-hero__actions" aria-label="Review actions">
-        <a href="/reviews/due">Due today</a>
-        <a href="/formula">Formula trainer</a>
-        <a href="/papers">Paper Log</a>
-      </nav>
+      <a class="button button--primary" href={duePapers.length > 0 ? "#review-session" : "/papers#new-paper-template"}>
+        {duePapers.length > 0 ? "Start review" : "Add a paper note"}
+      </a>
     </header>
 
-    <section class="paper-stats" aria-label="Review stats">
+    {papers.length > 0 ? <section class="paper-stats" aria-label="Review stats">
       <article class="paper-stat-card">
         <strong>{duePapers.length}</strong>
         <span>Due today</span>
@@ -55,11 +53,18 @@ const completionStreak = getReviewCompletionStreak(papers, today);
         <strong>{completionRate}%</strong>
         <span>30-day completion rate</span>
       </article>
-    </section>
+    </section> : (
+      <section class="app-empty-state" aria-labelledby="reviews-empty-heading">
+        <p class="eyebrow">Review state</p>
+        <h2 id="reviews-empty-heading">Nothing is scheduled yet</h2>
+        <p>A paper note creates its first spaced revisit. The review queue appears after that note is public.</p>
+        <a class="button button--primary" href="/papers#new-paper-template">Add a paper note</a>
+      </section>
+    )}
 
-    <ReviewSession client:load papers={dueRecords} today={today} />
+    {dueRecords.length > 0 && <div id="review-session"><ReviewSession client:visible papers={dueRecords} today={today} /></div>}
 
-    <section class="section" aria-labelledby="upcoming-reviews-heading">
+    {papers.length > 0 && <section class="section" aria-labelledby="upcoming-reviews-heading">
       <SectionHeader id="upcoming-reviews-heading" title="Upcoming review load" description="Next scheduled revisits from the paper reading record." />
       {loadByDay.length > 0 ? (
         <div class="activity-grid">
@@ -73,9 +78,9 @@ const completionStreak = getReviewCompletionStreak(papers, today);
       ) : (
         <p class="empty-state">No scheduled reviews yet.</p>
       )}
-    </section>
+    </section>}
 
-    <section class="section" aria-labelledby="overdue-heading">
+    {papers.length > 0 && <section class="section" aria-labelledby="overdue-heading">
       <SectionHeader id="overdue-heading" title="Overdue papers" description="Papers whose next review date has already passed." />
       {overduePapers.length > 0 ? (
         <div class="card-list">
@@ -86,6 +91,6 @@ const completionStreak = getReviewCompletionStreak(papers, today);
       ) : (
         <p class="empty-state">No overdue reviews.</p>
       )}
-    </section>
+    </section>}
   </div>
 </BaseLayout>

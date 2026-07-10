@@ -2,9 +2,17 @@
 import "katex/dist/katex.min.css";
 import "../styles/tokens.css";
 import "../styles/global.css";
+import "../styles/blog.css";
+import "../styles/papers.css";
+import "../styles/insights.css";
+import "../styles/exams.css";
+import "../styles/responsive.css";
+import "../styles/navigation.css";
+import "../styles/application.css";
 import SEO from "../components/SEO.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
+import PaperLabNav from "../components/navigation/PaperLabNav.astro";
 
 interface Props {
   title: string;
@@ -16,9 +24,23 @@ interface Props {
   absoluteTitle?: boolean;
   type?: "website" | "article";
   width?: "prose" | "wide" | "dashboard";
+  mode?: "editorial" | "application";
+  paperLab?: boolean;
 }
 
-const { title, description, canonical, ogImage, ogTitle, ogDescription, absoluteTitle, type, width = "prose" } = Astro.props;
+const {
+  title,
+  description,
+  canonical,
+  ogImage,
+  ogTitle,
+  ogDescription,
+  absoluteTitle,
+  type,
+  width = "prose",
+  mode = "editorial",
+  paperLab = mode === "application"
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -52,9 +74,10 @@ const { title, description, canonical, ogImage, ogTitle, ogDescription, absolute
       })();
     </script>
   </head>
-  <body>
+  <body data-mode={mode}>
     <a class="skip-link" href="#content">Skip to content</a>
     <SiteHeader />
+    {paperLab && <PaperLabNav currentPath={Astro.url.pathname} />}
     <main id="content" class:list={["site-main", `site-main--${width}`]}>
       <slot />
     </main>

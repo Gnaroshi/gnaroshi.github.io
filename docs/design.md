@@ -63,6 +63,25 @@ The first viewport of `/` should immediately identify:
 
 Avoid generic hero copy. The homepage should read like a concise personal academic page.
 
+### Information Architecture
+
+Primary navigation is limited to six destinations:
+
+- Home
+- Research
+- Projects
+- Writing
+- Paper Lab
+- About
+
+Growth is a utility destination. Now and public links belong in the homepage, About, and footer. Paper workflow tools stay grouped under a local Paper Lab navigation instead of competing in the global header.
+
+### Visual Modes
+
+Editorial mode covers Home, About, Research, Projects, Writing, and long-form detail pages. It uses narrative hierarchy, generous whitespace, narrow prose, and dividers before cards.
+
+Application mode covers Paper Lab workflows and Growth. It uses compact controls, explicit state, one primary action, semantic surfaces, and progressive disclosure. It must not turn empty routes into zero-filled dashboards.
+
 ## Typography
 
 Typography is the main visual asset.
@@ -121,14 +140,20 @@ Component boundaries should reflect behavior and content type. Do not put conten
 
 ## Paper Dashboard UI
 
-The `/papers` page should be information-dense and scannable:
+The `/papers` page grows with the record:
 
-- Activity heatmap at top.
-- Summary stats nearby: current streak, longest streak, papers this week/month/year, deep reads, implemented papers.
-- Search and filters below or beside stats.
-- Paper cards or rows with title, authors, year, venue, status, depth, tags, last read date, and reading time.
+- At 0 papers, show one onboarding action, a short reading method, and a collapsed note template.
+- At 1-2 papers, show a compact note list and activity summary.
+- At 3+ papers, reveal the heatmap and basic filters.
+- At 2+ AI reviews, reveal review aggregates.
+- At 3+ oral exams, reveal retrieval trends.
+- At 4+ weeks, reveal longitudinal analysis.
 
 The dashboard can use React islands for filtering and sorting. The content source remains static MDX/Markdown.
+
+## Evidence States
+
+Public metrics require evidence, not merely available fields. Before eligibility, use honest labels such as `Collecting evidence`, `In progress`, and `Not ready yet`. Never use seed writing, hidden content, demo records, or empty generated files as achievements. Empty application pages should render static guidance with one next action and no unnecessary island hydration.
 
 ## Accessibility
 
@@ -161,6 +186,6 @@ A future implementation satisfies this document when:
 - The homepage clearly introduces Gnaroshi as an AI/software researcher.
 - Blog and paper pages are more prominent than decorative presentation.
 - Technical writing is comfortable to read on desktop and mobile.
-- The paper dashboard is dense, useful, and understandable without onboarding text.
+- The paper dashboard reveals density only when data supports it and offers focused onboarding when empty.
 - Styling decisions are centralized through tokens.
 - No corporate or lab-homepage visual pattern dominates the site.

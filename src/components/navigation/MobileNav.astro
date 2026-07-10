@@ -1,0 +1,73 @@
+---
+import { footerNavigation, isNavigationActive } from "../../utils/navigation";
+
+interface Props { currentPath: string }
+const { currentPath } = Astro.props;
+---
+
+<div class="mobile-nav" data-mobile-nav>
+  <button
+    class="mobile-nav__trigger"
+    type="button"
+    aria-expanded="false"
+    aria-controls="mobile-navigation-panel"
+    data-mobile-nav-trigger
+  >
+    <span aria-hidden="true"></span>
+    <span>Menu</span>
+  </button>
+  <div class="mobile-nav__panel" id="mobile-navigation-panel" hidden data-mobile-nav-panel>
+    <nav aria-label="Mobile navigation">
+      {footerNavigation.map((item) => (
+        <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-mobile-nav]")) {
+    const trigger = root.querySelector<HTMLButtonElement>("[data-mobile-nav-trigger]");
+    const panel = root.querySelector<HTMLElement>("[data-mobile-nav-panel]");
+    if (!trigger || !panel) continue;
+
+    const focusable = () => [...panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')];
+    const close = () => {
+      panel.hidden = true;
+      trigger.setAttribute("aria-expanded", "false");
+      document.body.classList.remove("mobile-nav-open");
+      trigger.focus();
+    };
+    const open = () => {
+      panel.hidden = false;
+      trigger.setAttribute("aria-expanded", "true");
+      document.body.classList.add("mobile-nav-open");
+      focusable()[0]?.focus();
+    };
+
+    trigger.addEventListener("click", () => (panel.hidden ? open() : close()));
+    panel.addEventListener("click", (event) => {
+      if ((event.target as HTMLElement).closest("a")) close();
+    });
+    root.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !panel.hidden) {
+        event.preventDefault();
+        close();
+      }
+      if (event.key !== "Tab" || panel.hidden) return;
+      const items = focusable();
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items.at(-1)!;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+  }
+</script>

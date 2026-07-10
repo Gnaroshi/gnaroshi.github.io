@@ -51,8 +51,14 @@ npm install
 npm run dev
 npm run check
 npm run check:public-copy
+npm run check:content-metrics
+npm run check:links
+npm run check:empty-shells
 npm run build
 npm run preview
+npm run test:e2e
+npm run test:a11y
+npm run test:visual
 npm run paper:new
 npm run paper:review -- --slug <paper-slug>
 npm run paper:review:all -- --dry-run
@@ -74,8 +80,14 @@ cd apps/api && npm run deploy
 - `npm run dev`: start local Astro dev server.
 - `npm run check`: run Astro/TypeScript diagnostics.
 - `npm run check:public-copy`: fail when built public assets expose scaffold or developer-facing terms.
+- `npm run check:content-metrics`: validate evidence eligibility, weekly review, graph, and public score gates.
+- `npm run check:links`: validate internal links in `dist/`.
+- `npm run check:empty-shells`: report primary pages or empty tools that expose zero dashboards or unnecessary islands.
 - `npm run build`: build the static site into `dist/`.
 - `npm run preview`: preview the built static site.
+- `npm run test:e2e`: verify public routes, mobile navigation, overflow, and empty states with Playwright.
+- `npm run test:a11y`: run axe and keyboard-focus checks against the production preview.
+- `npm run test:visual`: capture the light/dark desktop, tablet, and mobile route matrix under ignored `artifacts/`.
 - `npm run paper:new`: create a draft paper log in `src/content/papers/`.
 - `npm run paper:review`: generate one AI paper review JSON from local CLI or GitHub Actions.
 - `npm run paper:review:all`: review all non-draft paper logs; use `--dry-run` before API-backed runs.
@@ -184,6 +196,8 @@ Astro 7 content collections are defined in `src/content.config.ts` using `glob()
 - Visibility is not privacy. Do not commit private or confidential material to this public repository.
 - Rebuild weekly reviews before the research graph when both changed, so graph nodes can include the newest weekly review.
 - Keep Research Momentum Score calculations pure in `src/utils/momentumScore.ts`; normalize Astro/build data separately in `src/utils/momentumData.ts`.
+- Treat `contentStage`, `metricEligible`, `graphEligible`, and `weeklyReviewEligible` as public evidence boundaries. Seed, demo, draft, hidden, unlisted, and system content must not contribute to public aggregates.
+- Keep the numeric Momentum score behind `getEvidenceEligibility()`. Do not render it before all thresholds in `src/config/evidenceGates.ts` pass.
 - Treat the momentum score as research-loop evidence, never as intelligence, talent, or personal worth.
 - Do not turn missing momentum data into automatic zeroes. Mark components unavailable and lower confidence.
 - Preserve the daily caps and depth-mismatch checks documented in `docs/research-momentum-score.md`.
@@ -201,6 +215,9 @@ Astro 7 content collections are defined in `src/content.config.ts` using `glob()
 - No decorative gradient blobs, corporate landing-page treatment, or generic portfolio template style.
 - Use dashboard width only for dense interfaces such as `/papers`.
 - Keep cards for repeated items, tools, and bounded panels; avoid nested card layouts.
+- Use editorial mode for identity, research, projects, writing, and detail articles. Use application mode only for Paper Lab workflows and Growth.
+- Keep the primary navigation to Home, Research, Projects, Writing, Paper Lab, and About. Keep Now and Links in the footer.
+- Use progressive disclosure: no zero grids, heatmaps, filters, review aggregates, or empty React islands before enough evidence exists.
 
 ## Accessibility Rules
 
@@ -328,6 +345,10 @@ For most code changes:
 ```bash
 npm run check
 npm run build
+npm run check:public-copy
+npm run check:content-metrics
+npm run check:links
+npm run check:empty-shells
 ```
 
 For momentum scoring changes, also run:
@@ -337,6 +358,14 @@ npm run score:test
 ```
 
 For UI changes, also run a local dev or preview server and inspect the affected pages in a browser when possible.
+
+For navigation, route, evidence-state, or broad visual changes, also run:
+
+```bash
+npm run test:e2e
+npm run test:a11y
+npm run test:visual
+```
 
 For content-only changes, schema validation and build are usually sufficient.
 

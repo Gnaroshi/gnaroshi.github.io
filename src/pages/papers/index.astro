@@ -13,7 +13,7 @@ const reviewsBySlug = getPublicPaperReviewMap(papers);
 const reviewStats = getPaperReviewStats(papers, reviewsBySlug, today);
 ---
 
-<BaseLayout title="Paper Log" description="A daily paper reading tracker for skim notes, deep reads, questions, and implementation attempts." width="dashboard">
+<BaseLayout title="Paper Log" description="A daily paper reading tracker for skim notes, deep reads, questions, and implementation attempts." width="dashboard" mode="application">
   <PaperDashboard
     papers={papers}
     stats={stats}

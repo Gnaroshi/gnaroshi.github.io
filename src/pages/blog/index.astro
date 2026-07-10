@@ -1,78 +1,74 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import BlogCard from "../../components/blog/BlogCard.astro";
 import BlogSearch from "../../components/blog/BlogSearch";
 import TagList from "../../components/blog/TagList.astro";
 import SectionHeader from "../../components/common/SectionHeader.astro";
-import {
-  getAllBlogTags,
-  getFeaturedBlogPosts,
-  getPublishedBlogPosts,
-  toBlogPostPreview
-} from "../../utils/content";
+import { evidenceGates } from "../../config/evidenceGates";
+import { formatDate } from "../../utils/date";
+import { getAllBlogTags, getPostReadingTime, getPublishedBlogPosts, toBlogPostPreview } from "../../utils/content";
 
 const posts = await getPublishedBlogPosts();
-const featuredPosts = getFeaturedBlogPosts(posts);
-const recentPosts = posts.slice(0, 6);
 const tags = getAllBlogTags(posts);
-const postPreviews = posts.map(toBlogPostPreview);
+const showDiscovery = posts.length >= evidenceGates.blog.discoveryToolsAt;
 ---
 
-<BaseLayout title="Blog" description="Technical notes, research logs, paper summaries, and project writeups." width="wide">
-  <header class="page-header">
-    <p class="eyebrow">Blog</p>
+<BaseLayout title="Writing" description="Technical notes, research logs, paper reflections, and project writeups." width="wide">
+  <header class="writing-header">
+    <p class="eyebrow">Writing</p>
     <h1>Technical notes and research logs</h1>
-    <p class="lede">
-      Essays and working notes on research workflows, paper reading, implementation, and technical projects.
-    </p>
+    <p class="lede">Essays and working notes on research workflows, paper reading, implementation, and technical projects.</p>
   </header>
 
-  {featuredPosts.length > 0 && (
-    <section class="section" aria-labelledby="featured-posts-heading">
-      <SectionHeader
-        id="featured-posts-heading"
-        title="Featured posts"
-        description="Pinned notes that explain the shape of the site and research workflow."
-      />
-      <div class="grid">
-        {featuredPosts.map((post) => <BlogCard post={post} />)}
-      </div>
-    </section>
-  )}
-
-  <section class="section" aria-labelledby="recent-posts-heading">
-    <SectionHeader
-      id="recent-posts-heading"
-      title="Recent posts"
-      description="Published notes, newest first."
-    >
-      <a slot="action" href="/blog/archive">Archive</a>
-    </SectionHeader>
-    <div class="blog-layout">
-      <div class="blog-layout__main">
-        {recentPosts.length > 0 ? (
-          <div class="card-list">
-            {recentPosts.map((post) => <BlogCard post={post} />)}
-          </div>
-        ) : (
-          <p class="empty-state">No public posts yet.</p>
-        )}
-      </div>
-      <aside class="blog-layout__aside" aria-label="Blog tags">
-        <h2>Tags</h2>
-        {tags.length > 0 ? <TagList tags={tags} /> : <p class="empty-state">No tags yet.</p>}
-      </aside>
+  <section class="writing-index" aria-labelledby="writing-index-heading">
+    <div class="writing-index__header">
+      <h2 id="writing-index-heading">All writing</h2>
+      <a href="/blog/archive">Archive</a>
     </div>
+    {posts.length > 0 ? (
+      <ol>
+        {posts.map((post) => (
+          <li>
+            <div class="writing-index__meta">
+              <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+              <span>{getPostReadingTime(post)}</span>
+              {post.data.featured && <span>Selected</span>}
+            </div>
+            <h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+            <p>{post.data.description}</p>
+            <div class="writing-index__tags">{post.data.tags.map((tag) => <span>{tag}</span>)}</div>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p class="empty-state">No public writing yet.</p>
+    )}
   </section>
 
-  {posts.length > 0 && (
-    <section class="section" aria-labelledby="search-heading">
-      <SectionHeader
-        id="search-heading"
-        title="Search and filter"
-        description="Find notes by title, topic, series, or tag."
-      />
-      <BlogSearch client:load posts={postPreviews} tags={tags} />
+  {showDiscovery && (
+    <section class="section" aria-labelledby="writing-discovery-heading">
+      <SectionHeader id="writing-discovery-heading" title="Find a note" description="Search by title, topic, series, or tag." />
+      <div class="writing-discovery-layout">
+        <BlogSearch client:visible posts={posts.map(toBlogPostPreview)} tags={tags} />
+        <aside aria-label="Writing tags"><h2>Topics</h2><TagList tags={tags} /></aside>
+      </div>
     </section>
   )}
 </BaseLayout>
+
+<style>
+  .writing-header { display: grid; max-width: 52rem; gap: var(--space-4); padding: var(--space-7) 0 var(--space-8); }
+  .writing-index { display: grid; }
+  .writing-index__header { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: var(--space-4); border-bottom: 2px solid var(--color-text); }
+  .writing-index > ol { padding: 0; margin: 0; list-style: none; }
+  .writing-index > ol > li { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: var(--space-2) var(--space-6); padding: var(--space-6) 0; border-bottom: 1px solid var(--color-border); }
+  .writing-index__meta { grid-row: span 3; display: grid; align-content: start; gap: var(--space-2); color: var(--color-text-muted); font-size: var(--text-sm); }
+  .writing-index h2 a { color: var(--color-text); text-decoration: none; }
+  .writing-index p { max-width: 66ch; color: var(--color-text-secondary); }
+  .writing-index__tags { display: flex; flex-wrap: wrap; gap: var(--space-3); color: var(--color-text-muted); font-size: var(--text-xs); }
+  .writing-discovery-layout { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; gap: var(--space-6); }
+  @media (max-width: 680px) {
+    .writing-index > ol > li { grid-template-columns: 1fr; }
+    .writing-index__meta { grid-row: auto; display: flex; flex-wrap: wrap; }
+    .writing-discovery-layout { grid-template-columns: 1fr; }
+  }
+</style>

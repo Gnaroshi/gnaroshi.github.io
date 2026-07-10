@@ -86,7 +86,9 @@ export function computeResearchMomentum(input: MomentumInput): MomentumResult {
 }
 
 function normalizeInput(input: MomentumInput): ScoreContext {
-  const papers = input.papers.filter((paper) => !paper.draft && isPublic(paper.visibility));
+  const papers = input.papers.filter(
+    (paper) => !paper.draft && isPublic(paper.visibility) && isMetricEligible(paper)
+  );
   const paperSlugs = new Set(papers.map((paper) => paper.slug));
   const activePapers = papers.filter(
     (paper) => Boolean(paper.readDate) && !["planned", "abandoned"].includes(paper.status)
@@ -97,17 +99,25 @@ function normalizeInput(input: MomentumInput): ScoreContext {
     papers,
     activePapers,
     reviews: input.paperReviews.filter(
-      (review) => isPublic(review.reviewVisibility) && paperSlugs.has(review.paperSlug)
+      (review) => isPublic(review.reviewVisibility) && isMetricEligible(review) && paperSlugs.has(review.paperSlug)
     ),
-    oralExams: input.oralExams.filter((exam) => isPublic(exam.visibility)),
-    github: input.githubContributions.filter((day) => isPublic(day.visibility)),
-    blogs: input.blogPosts.filter((post) => !post.draft && isPublic(post.visibility)),
-    projects: input.projects.filter((project) => isPublic(project.visibility)),
-    implementations: input.implementations.filter((attempt) => isPublic(attempt.visibility)),
-    reviewDueItems: input.reviewDueItems.filter((item) => isPublic(item.visibility)),
-    formulaRecalls: (input.formulaRecallAttempts ?? []).filter((attempt) => isPublic(attempt.visibility)),
-    questionPractice: (input.questionPracticeAttempts ?? []).filter((attempt) => isPublic(attempt.visibility))
+    oralExams: input.oralExams.filter((exam) => isPublic(exam.visibility) && isMetricEligible(exam)),
+    github: input.githubContributions.filter((day) => isPublic(day.visibility) && isMetricEligible(day)),
+    blogs: input.blogPosts.filter((post) => !post.draft && isPublic(post.visibility) && isMetricEligible(post)),
+    projects: input.projects.filter((project) => isPublic(project.visibility) && isMetricEligible(project)),
+    implementations: input.implementations.filter((attempt) => isPublic(attempt.visibility) && isMetricEligible(attempt)),
+    reviewDueItems: input.reviewDueItems.filter((item) => isPublic(item.visibility) && isMetricEligible(item)),
+    formulaRecalls: (input.formulaRecallAttempts ?? []).filter(
+      (attempt) => isPublic(attempt.visibility) && isMetricEligible(attempt)
+    ),
+    questionPractice: (input.questionPracticeAttempts ?? []).filter(
+      (attempt) => isPublic(attempt.visibility) && isMetricEligible(attempt)
+    )
   };
+}
+
+function isMetricEligible(value: { metricEligible?: boolean; contentStage?: string }): boolean {
+  return value.metricEligible !== false && value.contentStage !== "seed";
 }
 
 function computeReadingConsistency(context: ScoreContext): MomentumComponent {

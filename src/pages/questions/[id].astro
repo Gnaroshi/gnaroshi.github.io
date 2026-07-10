@@ -14,7 +14,7 @@ interface Props {
 const { question } = Astro.props as Props;
 ---
 
-<BaseLayout title="Question" description={question.question} canonical={`/questions/${question.id}/`}>
+<BaseLayout title="Question" description={question.question} canonical={`/questions/${question.id}/`} mode="application">
   <article class="paper-detail">
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/questions">Back to questions</a>

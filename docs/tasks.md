@@ -9,7 +9,7 @@
 - [x] Research-output feature pack for graph, weekly reviews, implementation attempts, visibility, and paper-to-blog drafts
 - [x] GitHub Pages deployment
 - [x] Optional Cloudflare Worker and live oral-exam frontend scaffold
-- [ ] Full polish, accessibility, SEO, and performance pass
+- [x] Product-level redesign, evidence gates, accessibility, and route QA
 - [ ] Future feature expansion
 
 ## Phase 0: Repository And Bootstrap
@@ -50,7 +50,11 @@
 - [x] Add prose styling for technical writing.
 - [x] Add accessible focus states.
 - [x] Verify mobile layout for implemented dashboard and core pages.
-- [ ] Run a full site-wide visual QA pass after more real content exists.
+- [x] Split global and feature CSS into maintainable modules.
+- [x] Add editorial and application visual modes.
+- [x] Add concise desktop navigation and accessible mobile menu.
+- [x] Add Paper Lab local navigation.
+- [x] Run a full site-wide visual QA pass in light/dark desktop, tablet, and mobile views.
 
 ## Phase 3: Homepage, About, Research, Projects
 
@@ -127,10 +131,12 @@
 - [x] Test responsive views for the paper dashboard.
 - [x] Add SEO and Open Graph defaults.
 - [x] Add RSS.
-- [ ] Run full responsive pass across all routes.
-- [ ] Check keyboard navigation across all interactive controls.
-- [ ] Check color contrast across light and dark themes.
-- [ ] Check heading order across all routes.
+- [x] Run full responsive pass across all routes.
+- [x] Check keyboard navigation for global navigation and representative interactive controls.
+- [x] Run axe color/semantic checks across light and dark capable routes.
+- [x] Check heading order across all public routes.
+- [x] Add route, navigation, accessibility, empty-state, and visual Playwright suites.
+- [x] Add internal-link, public-copy, evidence-integrity, and empty-shell checks.
 - [ ] Validate metadata on deployed pages.
 - [ ] Validate RSS in a feed reader.
 - [ ] Optimize images and static assets.
@@ -151,14 +157,14 @@
 - [x] Add paper-to-blog promotion script.
 - [x] Add visibility controls for public, unlisted, and hidden content.
 - [ ] Add real project MDX writeups.
-- [ ] Add richer project detail pages.
+- [x] Add a factual detail page for the consolidated gnaroshi.dev project.
 - [ ] Add real public implementation attempts.
 - [ ] Add richer graph visualization only if the static list explorer becomes insufficient.
 - [ ] Add paper BibTeX export.
 - [ ] Add paper revisit reminders as static metadata.
 - [ ] Add richer blog search if post volume grows.
 - [ ] Add social preview image assets.
-- [ ] Add custom 404 page.
+- [x] Add localized-ready custom 404 page.
 - [ ] Add lightweight analytics only with explicit approval.
 - [ ] Add MCP-assisted local workflow only through untracked local config.
 - [x] Add optional Cloudflare Worker API scaffold for live voice oral exams.

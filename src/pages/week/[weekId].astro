@@ -17,7 +17,7 @@ interface Props {
 const { review } = Astro.props as Props;
 ---
 
-<BaseLayout title={review.weekId} description={review.summary} canonical={`/week/${review.weekId}/`}>
+<BaseLayout title={review.weekId} description={review.summary} canonical={`/week/${review.weekId}/`} mode="application">
   <article class="paper-detail">
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/week/">Back to weekly reviews</a>
@@ -25,20 +25,21 @@ const { review } = Astro.props as Props;
         <p class="eyebrow">Weekly review</p>
         <h1>{review.weekId}</h1>
         <p class="lede">{review.summary}</p>
+        {review.status === "in-progress" && <span class="paper-badge paper-badge--review-due">In progress</span>}
       </div>
       <p class="paper-detail-header__meta">{review.startDate} to {review.endDate}</p>
     </header>
 
-    <section class="paper-stats" aria-label="Weekly metrics">
+    {(review.meaningfulEventCount ?? 0) >= 2 && <section class="paper-stats" aria-label="Weekly metrics">
       {Object.entries(review.metrics).map(([key, value]) => (
         <article class="paper-stat-card">
           <strong>{value}</strong>
           <span>{formatMetricLabel(key)}</span>
         </article>
       ))}
-    </section>
+    </section>}
 
-    <section class="section" aria-labelledby="weekly-progress-heading">
+    {(review.meaningfulEventCount ?? 0) >= 2 ? <section class="section" aria-labelledby="weekly-progress-heading">
       <SectionHeader id="weekly-progress-heading" title="Progress summary" />
       <div class="paper-detail-grid">
         <div>
@@ -54,21 +55,27 @@ const { review } = Astro.props as Props;
           <p>{review.nextWeekFocus}</p>
         </div>
       </div>
-    </section>
+    </section> : (
+      <section class="app-empty-state" aria-labelledby="weekly-progress-heading">
+        <h2 id="weekly-progress-heading">This review is still collecting evidence</h2>
+        <p>Strongest and weakest dimensions remain hidden until at least two meaningful events support the comparison.</p>
+        <a href="/papers#new-paper-template">Record the next event</a>
+      </section>
+    )}
 
-    <section class="section" aria-labelledby="weekly-wins-heading">
+    {review.wins.length > 0 && <section class="section" aria-labelledby="weekly-wins-heading">
       <SectionHeader id="weekly-wins-heading" title="Recent wins" />
       <ul class="list">
         {review.wins.map((win) => <li class="list-item"><p>{win}</p></li>)}
       </ul>
-    </section>
+    </section>}
 
-    <section class="section" aria-labelledby="weekly-open-loops-heading">
+    {review.openLoops.length > 0 && <section class="section" aria-labelledby="weekly-open-loops-heading">
       <SectionHeader id="weekly-open-loops-heading" title="Open loops" />
       <ul class="list">
         {review.openLoops.map((loop) => <li class="list-item"><p>{loop}</p></li>)}
       </ul>
-    </section>
+    </section>}
 
     {review.featuredItems.length > 0 && (
       <section class="section" aria-labelledby="weekly-featured-heading">

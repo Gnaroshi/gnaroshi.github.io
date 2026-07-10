@@ -1,13 +1,14 @@
 ---
+import { evidenceGates } from "../../config/evidenceGates";
 import type { PaperEntry, PaperStats as PaperStatsData } from "../../utils/papers";
-import type { PaperReview, PaperReviewStats as PaperReviewStatsData } from "../../utils/paperReviews";
 import { toPaperRecord } from "../../utils/papers";
+import type { PaperReview, PaperReviewStats as PaperReviewStatsData } from "../../utils/paperReviews";
 import { formatScore, scoreLevelForScore, toPaperReviewSummary } from "../../utils/paperReviews";
 import NewPaperTemplate from "./NewPaperTemplate.astro";
 import PaperFilters from "./PaperFilters";
-import PaperStats from "./PaperStats.astro";
 import PaperScoreBadge from "./PaperScoreBadge.astro";
 import PaperScoreTrend from "./PaperScoreTrend.astro";
+import PaperStats from "./PaperStats.astro";
 import ReadingMethodPanel from "./ReadingMethodPanel.astro";
 
 interface Props {
@@ -21,148 +22,195 @@ interface Props {
 }
 
 const { papers, stats, countsByDate, tags, today, reviewStats, reviewsBySlug } = Astro.props;
-const paperRecords = papers.map((paper) => {
+const records = papers.map((paper) => {
   const review = reviewsBySlug.get(paper.id);
   return toPaperRecord(paper, review ? toPaperReviewSummary(review) : undefined, today);
 });
-const years = [...new Set(paperRecords.map((paper) => paper.year))].sort((a, b) => b - a);
+const years = [...new Set(records.map((paper) => paper.year))].sort((a, b) => b - a);
 const countsRecord = Object.fromEntries(countsByDate.entries());
+const hasAdvancedNotebook = papers.length >= evidenceGates.paperLab.filtersAt;
+const hasReviewSummary = reviewStats.reviewedCount >= evidenceGates.paperLab.aiReviewSummaryAt;
 ---
 
 <div class="paper-dashboard">
-  <header class="paper-hero">
+  <header class="paper-hero paper-hero--focused">
     <div class="paper-hero__copy">
-      <p class="eyebrow">Papers</p>
+      <p class="eyebrow">Paper Lab</p>
       <h1>Paper Log</h1>
-      <p class="lede">A daily record of papers I skim, read, question, revisit, and connect to my research.</p>
+      <p class="lede">A record of papers I skim, question, revisit, and connect to research work.</p>
     </div>
-    <nav class="paper-hero__actions" aria-label="Paper log actions">
-      <a href="/queue">Reading queue</a>
-      <a href="/reviews">Reviews due</a>
-      <a href="/formula">Formula recall</a>
-      <a href="/questions">Questions</a>
-      <a href="/implementations">Implementations</a>
-      <a href="/graph">Research graph</a>
-      <a href="/week">Weekly reviews</a>
-      <a href="#new-paper-template">New paper template</a>
-      <a href="#reading-method">Reading method</a>
-    </nav>
+    <a class="button button--primary" href="#new-paper-template">Add a paper note</a>
   </header>
 
-  <PaperStats stats={stats} />
-
-  <ReadingMethodPanel />
-
-  <section class="paper-review-summary" aria-labelledby="paper-review-summary-heading">
-    <div class="paper-review-summary__header">
-      <div>
-        <p class="eyebrow">AI Review</p>
-        <h2 id="paper-review-summary-heading">Reading process score</h2>
-        <p>
-          Scores reflect evidence in written notes and three-pass discipline. They are not intelligence scores.
+  {papers.length === 0 ? (
+    <>
+      <section class="paper-onboarding" aria-labelledby="paper-onboarding-heading">
+        <div>
+          <p class="eyebrow">Start small</p>
+          <h2 id="paper-onboarding-heading">One useful note is enough to begin</h2>
+          <p>
+            Start with a 20-minute relevance pass. Record the paper's question, core idea, why it matters now,
+            and whether it deserves another pass.
+          </p>
+        </div>
+        <a class="button button--primary" href="#new-paper-template">Add the first paper note</a>
+      </section>
+      <ReadingMethodPanel />
+      <section class="paper-workflow-notes" aria-label="Paper Lab workflows">
+        <article id="ai-review-workflow">
+          <h2>AI review</h2>
+          <p>Each paper note can produce an evidence-based review manually or through the local CLI.</p>
+        </article>
+        <article id="oral-exam-entry">
+          <h2>Oral exam</h2>
+          <p>Oral practice becomes available from an individual paper note after the note exists.</p>
+        </article>
+        <article id="paper-to-blog">
+          <h2>Paper-to-Blog</h2>
+          <p>A substantive paper note can later become a private writing draft without publishing automatically.</p>
+        </article>
+      </section>
+    </>
+  ) : (
+    <>
+      {hasAdvancedNotebook ? <PaperStats stats={stats} /> : (
+        <p class="paper-compact-activity">
+          <strong>{papers.length}</strong> public paper note{papers.length === 1 ? "" : "s"}. More activity views appear after three notes.
         </p>
-      </div>
-      {reviewStats.averageScore !== null ? (
-        <PaperScoreBadge score={reviewStats.averageScore} level={scoreLevelForScore(reviewStats.averageScore)} label="Average" />
-      ) : (
-        <span class="paper-badge paper-badge--muted">No public reviews yet</span>
       )}
-    </div>
 
-    <div class="paper-review-summary__grid">
-      <article class="paper-stat-card">
-        <strong>{formatScore(reviewStats.averageScore)}</strong>
-        <span>Average AI score</span>
-      </article>
-      <article class="paper-stat-card">
-        <strong>{formatScore(reviewStats.averageSelfScore)}</strong>
-        <span>Average self-score</span>
-      </article>
-      <article class="paper-stat-card">
-        <strong>{formatScore(reviewStats.averageScoreGap)}</strong>
-        <span>Average AI-user score gap</span>
-      </article>
-      <article class="paper-stat-card">
-        <strong>{reviewStats.papersWithNextReviewDue}</strong>
-        <span>Papers with next review due</span>
-      </article>
-      <article class="paper-stat-card">
-        <strong>{formatScore(reviewStats.recentAverageScore)}</strong>
-        <span>Average last 7 reviewed papers</span>
-      </article>
-      <article class="paper-stat-card">
-        <strong>{reviewStats.reviewedCount}</strong>
-        <span>Reviewed papers</span>
-      </article>
-      <article class="paper-stat-card">
-        <strong>{reviewStats.unreviewedCount}</strong>
-        <span>Unreviewed papers</span>
-      </article>
-    </div>
+      {hasReviewSummary && (
+        <section id="ai-review-workflow" class="paper-review-summary" aria-labelledby="paper-review-summary-heading">
+          <div class="paper-review-summary__header">
+            <div>
+              <p class="eyebrow">AI Review</p>
+              <h2 id="paper-review-summary-heading">Reading process evidence</h2>
+              <p>Scores reflect evidence in written notes and three-pass discipline, not intelligence.</p>
+            </div>
+            {reviewStats.averageScore !== null && (
+              <PaperScoreBadge score={reviewStats.averageScore} level={scoreLevelForScore(reviewStats.averageScore)} label="Average" />
+            )}
+          </div>
+          <div class="paper-review-summary__grid">
+            <article class="paper-stat-card"><strong>{formatScore(reviewStats.averageScore)}</strong><span>Average AI score</span></article>
+            <article class="paper-stat-card"><strong>{formatScore(reviewStats.averageSelfScore)}</strong><span>Average self-score</span></article>
+            <article class="paper-stat-card"><strong>{formatScore(reviewStats.averageScoreGap)}</strong><span>Average score gap</span></article>
+            <article class="paper-stat-card"><strong>{reviewStats.papersWithNextReviewDue}</strong><span>Reviews due</span></article>
+          </div>
+          <div class="paper-review-summary__body">
+            <div><h3>Score trend</h3><PaperScoreTrend trend={reviewStats.trend} /></div>
+            {reviewStats.weakestDimension && (
+              <div><h3>Weak dimension</h3><p class="metadata">{reviewStats.weakestDimension.label}: {reviewStats.weakestDimension.averageScore}/10 average.</p></div>
+            )}
+          </div>
+        </section>
+      )}
 
-    <div class="paper-review-summary__body">
-      <div>
-        <h3>Score trend</h3>
-        <PaperScoreTrend trend={reviewStats.trend} />
-      </div>
-      <div>
-        <h3>Recent badges</h3>
-        {reviewStats.recentBadges.length > 0 ? (
-          <ul class="paper-review-badge-list">
-            {reviewStats.recentBadges.map((badge) => (
-              <li>
-                <a href={`/papers/${badge.paperSlug}/`}>{badge.label}</a>
-                <span>{badge.paperTitle}</span>
-              </li>
+      <section id="paper-notes" aria-label="Paper notes">
+        {hasAdvancedNotebook ? (
+          <PaperFilters
+            client:visible
+            papers={records}
+            countsByDate={countsRecord}
+            tags={tags}
+            years={years}
+            today={today}
+          />
+        ) : (
+          <div class="paper-note-list">
+            {records.map((paper) => (
+              <article>
+                <div><span>{paper.status}</span><span>{paper.depth}</span></div>
+                <h2><a href={paper.href}>{paper.title}</a></h2>
+                <p>{paper.oneLineSummary}</p>
+                <small>{paper.venue} · {paper.year}{paper.readDate ? ` · ${paper.readDate}` : ""}</small>
+              </article>
             ))}
-          </ul>
-        ) : (
-          <p class="metadata">No public review badges yet.</p>
+          </div>
         )}
-      </div>
-      <div>
-        <h3>Best improved paper</h3>
-        {reviewStats.bestImproved ? (
-          <p class="metadata">
-            <a href={`/papers/${reviewStats.bestImproved.paperSlug}/`}>{reviewStats.bestImproved.paperTitle}</a>
-            {" "}
-            improved by {reviewStats.bestImproved.delta} points.
-          </p>
-        ) : (
-          <p class="metadata">No score history yet.</p>
-        )}
-      </div>
-      <div>
-        <h3>Weak dimension</h3>
-        {reviewStats.weakestDimension ? (
-          <p class="metadata">
-            {reviewStats.weakestDimension.label}: {reviewStats.weakestDimension.averageScore}/10 average.
-          </p>
-        ) : (
-          <p class="metadata">No public dimension scores yet.</p>
-        )}
-      </div>
-      <div>
-        <h3>Improved dimension</h3>
-        {reviewStats.mostImprovedDimension ? (
-          <p class="metadata">
-            {reviewStats.mostImprovedDimension.label}: +{reviewStats.mostImprovedDimension.delta} average.
-          </p>
-        ) : (
-          <p class="metadata">No dimension history yet.</p>
-        )}
-      </div>
-    </div>
-  </section>
-
-  <PaperFilters
-    client:load
-    papers={paperRecords}
-    countsByDate={countsRecord}
-    tags={tags}
-    years={years}
-    today={today}
-  />
+      </section>
+    </>
+  )}
 
   <NewPaperTemplate />
 </div>
+
+<style>
+  .paper-hero--focused {
+    align-items: end;
+  }
+
+  .paper-hero--focused > .button {
+    width: fit-content;
+  }
+
+  .paper-onboarding {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-6);
+    align-items: end;
+    padding: var(--space-6);
+    border-left: 3px solid var(--color-reading);
+    background: var(--color-surface-quiet);
+  }
+
+  .paper-onboarding > div {
+    display: grid;
+    max-width: 62ch;
+    gap: var(--space-3);
+  }
+
+  .paper-onboarding p:last-child,
+  .paper-workflow-notes p,
+  .paper-note-list p {
+    color: var(--color-text-secondary);
+  }
+
+  .paper-workflow-notes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    padding: var(--space-6) 0;
+  }
+
+  .paper-workflow-notes article {
+    display: grid;
+    gap: var(--space-2);
+    padding-top: var(--space-4);
+    border-top: 2px solid var(--color-border-strong);
+  }
+
+  .paper-compact-activity {
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+
+  .paper-note-list {
+    display: grid;
+  }
+
+  .paper-note-list article {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-5) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .paper-note-list article > div {
+    display: flex;
+    gap: var(--space-3);
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+  }
+
+  .paper-note-list small {
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 720px) {
+    .paper-onboarding { grid-template-columns: 1fr; padding: var(--space-5); }
+    .paper-workflow-notes { grid-template-columns: 1fr; }
+  }
+</style>

@@ -41,11 +41,39 @@ draft: true
 Capture the problem, contribution, relevance, and next reading decision.`;
 ---
 
-<section id="new-paper-template" class="new-paper-template" aria-labelledby="new-paper-template-heading">
+<details id="new-paper-template" class="new-paper-template">
+  <summary>
+    <span>
+      <span class="eyebrow">Template</span>
+      <strong>Start one 20-minute pass</strong>
+    </span>
+    <span>Show template</span>
+  </summary>
   <div>
-    <p class="eyebrow">Template</p>
-    <h2 id="new-paper-template-heading">Start one 20-minute pass</h2>
     <p>Start with a short relevance pass: title, question, core idea, and the next reading decision.</p>
+    <textarea readonly rows="18" aria-label="Copyable paper log template">{snippet}</textarea>
   </div>
-  <textarea readonly rows="18" aria-label="Copyable paper log template">{snippet}</textarea>
-</section>
+</details>
+
+<style>
+  .new-paper-template {
+    padding: var(--space-5) 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .new-paper-template summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .new-paper-template summary::-webkit-details-marker { display: none; }
+  .new-paper-template summary > span:first-child { display: grid; gap: var(--space-1); }
+  .new-paper-template summary > span:last-child { color: var(--color-accent); font-size: var(--text-sm); font-weight: 700; }
+  .new-paper-template > div { display: grid; gap: var(--space-4); padding-top: var(--space-4); }
+  .new-paper-template p { color: var(--color-text-secondary); }
+  .new-paper-template textarea { width: 100%; min-height: 22rem; resize: vertical; }
+</style>
