@@ -56,6 +56,9 @@ npm run paper:review:all -- --dry-run
 npm run paper:review:validate
 npm run paper:review:import -- --slug <paper-slug> --file review.json
 npm run paper:from-queue -- --slug <queue-slug>
+npm run paper:promote -- --slug <paper-slug>
+npm run week:build
+npm run graph:build
 npm run questions:build
 npm run formula:score -- --slug <paper-slug> --file attempt.json
 ```
@@ -70,6 +73,9 @@ npm run formula:score -- --slug <paper-slug> --file attempt.json
 - `npm run paper:review:validate`: validate generated AI paper review JSON.
 - `npm run paper:review:import`: import JSON returned by a manual ChatGPT review prompt.
 - `npm run paper:from-queue`: create a draft paper log from a queue item.
+- `npm run paper:promote`: create a hidden draft blog post from a paper note.
+- `npm run week:build`: rebuild the current weekly review JSON.
+- `npm run graph:build`: rebuild `src/generated/research-graph.json`.
 - `npm run questions:build`: build `src/generated/question-bank/question-bank.json`.
 - `npm run formula:score`: score an exported formula recall attempt without an API.
 
@@ -97,6 +103,12 @@ Main routes:
 - `/formula`
 - `/questions`
 - `/questions/[id]`
+- `/implementations`
+- `/implementations/[slug]`
+- `/week`
+- `/week/[weekId]`
+- `/graph`
+- `/graph/[nodeType]/[slug]`
 - `/now`
 - `/contact`
 - `/rss.xml`
@@ -109,6 +121,7 @@ Use Astro file-based routes. Use `getStaticPaths` for dynamic blog and paper pag
 - Paper logs: `src/content/papers/`
 - Paper reading queue: `src/content/queue/`
 - Future long-form project writeups: `src/content/projects/`
+- Implementation attempts: `src/content/implementations/`
 - Content collection schemas: `src/content.config.ts`
 - Primary profile data: `src/data/profile.ts`
 - Skills/timeline/research/project/now data: `src/data/*.ts`
@@ -122,6 +135,9 @@ Use Astro file-based routes. Use `getStaticPaths` for dynamic blog and paper pag
 - Generated question bank: `src/generated/question-bank/`
 - Generated formula recall attempts: `src/generated/formula-recall/`
 - Generated oral exam data: `src/generated/oral-exams/`
+- Generated weekly reviews: `src/generated/weekly-reviews/`
+- Generated research graph: `src/generated/research-graph.json`
+- Manual research graph edges: `src/data/researchGraph.manual.ts`
 
 Astro 7 content collections are defined in `src/content.config.ts` using `glob()` loaders. Do not create or reintroduce legacy `src/content/config.ts`.
 
@@ -142,6 +158,9 @@ Astro 7 content collections are defined in `src/content.config.ts` using `glob()
 - Generated AI paper review files must follow the schema documented in `docs/ai-paper-review.md`.
 - AI review copy must be motivational, constructive, and evidence-based. Do not frame scores as intelligence, IQ, or personal worth.
 - Calibrate AI review scores with `docs/ai-review-rubric-examples.md`. Do not over-score vague notes.
+- Use `visibility: "public" | "unlisted" | "hidden"` consistently. Public content appears in indexes and public stats; unlisted detail pages may build but stay out of indexes; hidden content is excluded from production public pages and public generated stats.
+- Visibility is not privacy. Do not commit private or confidential material to this public repository.
+- Rebuild weekly reviews before the research graph when both changed, so graph nodes can include the newest weekly review.
 
 ## Design Rules
 
@@ -257,6 +276,25 @@ See `docs/ai-paper-review.md` for scoring dimensions and workflow details.
 - For long-form technical writeups, add MDX files under `src/content/projects/` after the project content collection is ready.
 - Do not invent formal publications, awards, or achievements.
 
+## Adding Implementation Attempts
+
+1. Add a Markdown or MDX file under `src/content/implementations/`.
+2. Use `src/content/implementations/_template.mdx` as the shape.
+3. Link papers with `relatedPapers` using paper slugs.
+4. Link project cards with `relatedProjects` using project slugs from `src/data/projects.ts`.
+5. Record failures and partial reproductions honestly.
+6. Use `visibility: "hidden"` until the attempt should be public.
+7. Run `npm run check` and `npm run build`.
+
+## Research Graph And Weekly Reviews
+
+- Run `npm run week:build` to create or refresh `src/generated/weekly-reviews/<weekId>.json`.
+- Run `npm run graph:build` to create or refresh `src/generated/research-graph.json`.
+- Use `--force` only when overwriting changed generated JSON is intentional.
+- Manual graph edges live in `src/data/researchGraph.manual.ts`.
+- Graph and weekly review scripts must not require secrets or network access.
+- Keep the graph static and lightweight. Do not add a heavy graph visualization library without explicit approval.
+
 ## Build And Verification
 
 For most code changes:
@@ -309,6 +347,7 @@ See `docs/deployment.md` for DNS, HTTPS, and 404 troubleshooting.
 - Do not add backend services, databases, OAuth, or server runtimes without explicit approval.
 - Do not commit secrets, API keys, OAuth tokens, personal credentials, or local MCP configs.
 - Do not add browser-side AI API calls or expose OpenAI API keys in bundled JavaScript.
+- Do not treat visibility fields as privacy controls.
 - Do not set `base: "/gnaroshi.github.io/"`; this is a user site with a custom root domain.
 - Do not use a `gh-pages` branch unless the deployment strategy is explicitly changed.
 - Do not commit `dist/`.

@@ -49,12 +49,12 @@ Sources:
 }
 
 function buildQuestionBank() {
-  const papers = loadAllPaperLogs().filter(isReviewablePaper);
+  const papers = loadAllPaperLogs().filter(isReviewablePaper).filter((paper) => paper.frontmatter.visibility === "public");
   const paperBySlug = new Map(papers.map((paper) => [paper.slug, paper]));
   const questions = [];
 
   for (const review of loadJsonFiles(reviewDir)) {
-    if (!paperBySlug.has(review.paperSlug) || review.reviewVisibility === "hidden") continue;
+    if (!paperBySlug.has(review.paperSlug) || review.reviewVisibility !== "public") continue;
     for (const question of review.retrievalQuestions ?? []) {
       questions.push(
         normalizeQuestion({

@@ -9,6 +9,7 @@ Primary content locations:
 - Blog posts: `src/content/blog/`
 - Paper logs: `src/content/papers/`
 - Projects: `src/content/projects/`
+- Implementation attempts: `src/content/implementations/`
 - Static profile data: `src/data/profile.ts`
 
 ## Slug Rules
@@ -47,6 +48,7 @@ seriesOrder:
 heroImage:
 readingTime:
 featured: false
+visibility: "public"
 ```
 
 Required fields:
@@ -67,11 +69,16 @@ Optional fields:
 - `featured`
 - `ogImage`
 - `canonicalUrl`
+- `visibility`
+- `sourcePaper`
 
 Draft behavior:
 
 - `draft: true` posts can appear during local development.
 - `draft: true` posts are hidden from production builds.
+- `visibility: "public"` posts appear in indexes and search.
+- `visibility: "unlisted"` posts can build as detail pages but stay out of indexes.
+- `visibility: "hidden"` posts are excluded from production public pages.
 
 Tag behavior:
 
@@ -114,6 +121,7 @@ selfScore:
   note: "I think I understood the core idea but not the formula."
 selfReflection: ""
 reviewVisibility: "public"
+visibility: "public"
 oneLineSummary: "One sentence summary in my own words."
 coreQuestion: "What problem is this paper trying to solve?"
 coreIdea: "What is the key idea?"
@@ -172,7 +180,8 @@ Optional AI review fields:
 - `sourceExcerpt`: optional manually pasted source excerpt for review context.
 - `selfScore`: optional self-assessment object with `overall`, `confidence`, and `note`; legacy numeric 0-100 values are still accepted.
 - `selfReflection`: optional reflection before AI review.
-- `reviewVisibility`: `public` or `hidden`; defaults to `public`.
+- `reviewVisibility`: `public`, `unlisted`, or `hidden`; defaults to `public`.
+- `visibility`: `public`, `unlisted`, or `hidden`; defaults to `public`.
 - `reviewSchedule`: optional spaced-review intervals in days.
 - `reviewHistory`: optional committed review history.
 - `formulaTerms`: optional symbol glossary for formula recall.
@@ -310,6 +319,49 @@ Allowed queue priorities:
 
 Use `npm run paper:from-queue -- --slug <queue-slug>` to create a draft paper log from a queue item.
 
+## Implementation Attempt Schema
+
+Implementation attempts live in:
+
+```text
+src/content/implementations/
+```
+
+Recommended frontmatter:
+
+```yaml
+title: "Implementation Attempt Title"
+date: 2026-07-10
+status: "in-progress"
+relatedPapers:
+  - "paper-slug"
+relatedProjects:
+  - "paper-reading-tracker"
+repoUrl: ""
+demoUrl: ""
+paperUrl: ""
+goal: "What should this implementation test or reproduce?"
+result: ""
+failureReason: ""
+lessons:
+  - "What should future me remember?"
+tags:
+  - implementation
+visibility: "public"
+```
+
+Allowed status values:
+
+- `planned`
+- `in-progress`
+- `reproduced`
+- `partially-reproduced`
+- `failed`
+- `abandoned`
+- `shipped`
+
+See `docs/implementation-tracker.md`.
+
 ## Project Schema
 
 Recommended frontmatter:
@@ -327,6 +379,7 @@ repoUrl: "https://github.com/..."
 demoUrl: ""
 paperUrl: ""
 featured: true
+visibility: "public"
 ```
 
 Allowed `status` values:

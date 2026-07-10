@@ -3,10 +3,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Badge from "../components/common/Badge.astro";
 import Card from "../components/common/Card.astro";
 import ExternalLink from "../components/common/ExternalLink.astro";
+import ImplementationCard from "../components/implementations/ImplementationCard.astro";
 import SectionHeader from "../components/common/SectionHeader.astro";
 import { projects } from "../data/projects";
+import { getImplementationAttemptsForProject, getPublishedImplementationAttempts } from "../utils/implementations";
 
 const sortedProjects = [...projects].sort((a, b) => Number(b.featured) - Number(a.featured));
+const implementationAttempts = await getPublishedImplementationAttempts();
 ---
 
 <BaseLayout title="Projects" description="Project cards and technical writeups." width="wide">
@@ -34,8 +37,31 @@ const sortedProjects = [...projects].sort((a, b) => Number(b.featured) - Number(
           <div class="link-row">
             {project.links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
           </div>
+          {getImplementationAttemptsForProject(implementationAttempts, project.slug).length > 0 && (
+            <div class="implementation-card__related">
+              <h3>Implementation attempts</h3>
+              <ul>
+                {getImplementationAttemptsForProject(implementationAttempts, project.slug).map((attempt) => (
+                  <li><a href={`/implementations/${attempt.id}/`}>{attempt.data.title}</a></li>
+                ))}
+              </ul>
+            </div>
+          )}
         </Card>
       ))}
     </div>
   </section>
+
+  {implementationAttempts.length > 0 && (
+    <section class="section" aria-labelledby="project-implementation-heading">
+      <SectionHeader
+        id="project-implementation-heading"
+        title="Recent implementation attempts"
+        description="Experiments that connect papers to code and project work."
+      />
+      <div class="implementation-grid">
+        {implementationAttempts.slice(0, 4).map((attempt) => <ImplementationCard attempt={attempt} />)}
+      </div>
+    </section>
+  )}
 </BaseLayout>

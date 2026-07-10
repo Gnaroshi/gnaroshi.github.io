@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
+import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
 
 export type QueueEntry = CollectionEntry<"queue">;
 
@@ -47,7 +48,12 @@ export async function getAllQueueItems(): Promise<QueueEntry[]> {
 
 export async function getPublishedQueueItems(): Promise<QueueEntry[]> {
   const items = await getAllQueueItems();
-  return items.filter((item) => item.data.visibility === "public");
+  return items.filter((item) => shouldShowInIndex(item.data));
+}
+
+export async function getBuildableQueueItems(): Promise<QueueEntry[]> {
+  const items = await getAllQueueItems();
+  return items.filter((item) => shouldBuildDetailPage(item.data, { includeHidden: !import.meta.env.PROD }));
 }
 
 export function sortQueueItems(items: QueueEntry[]): QueueEntry[] {

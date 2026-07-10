@@ -3,10 +3,10 @@ import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ExternalLink from "../../components/common/ExternalLink.astro";
 import SectionHeader from "../../components/common/SectionHeader.astro";
-import { getPublishedQueueItems, toQueueDateKey, type QueueEntry } from "../../utils/queue";
+import { getBuildableQueueItems, toQueueDateKey, type QueueEntry } from "../../utils/queue";
 
 export async function getStaticPaths() {
-  const items = await getPublishedQueueItems();
+  const items = await getBuildableQueueItems();
   return items.map((item) => ({ params: { slug: item.id }, props: { item } }));
 }
 

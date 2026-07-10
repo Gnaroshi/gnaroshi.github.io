@@ -25,7 +25,9 @@ function main() {
       continue;
     }
 
-    const expectedVisibility = paper.frontmatter.reviewVisibility === "hidden" ? "hidden" : "public";
+    const expectedVisibility = ["public", "unlisted", "hidden"].includes(paper.frontmatter.reviewVisibility)
+      ? paper.frontmatter.reviewVisibility
+      : "public";
     if (review.reviewVisibility !== expectedVisibility) {
       errors.push(`${fileName}: reviewVisibility "${review.reviewVisibility}" does not match paper frontmatter "${expectedVisibility}"`);
     }
@@ -62,12 +64,12 @@ function main() {
   const publicAggregate = reviews
     .map(({ review }) => {
       const paper = paperBySlug.get(review.paperSlug);
-      return paper && paper.frontmatter.reviewVisibility !== "hidden" && review.reviewVisibility !== "hidden" ? review : undefined;
+      return paper && paper.frontmatter.reviewVisibility === "public" && review.reviewVisibility === "public" ? review : undefined;
     })
     .filter(Boolean);
   const hiddenReviews = reviews.filter(({ review }) => {
     const paper = paperBySlug.get(review.paperSlug);
-    return review.reviewVisibility === "hidden" || paper?.frontmatter.reviewVisibility === "hidden";
+    return review.reviewVisibility !== "public" || paper?.frontmatter.reviewVisibility !== "public";
   });
 
   for (const { review, fileName } of hiddenReviews) {

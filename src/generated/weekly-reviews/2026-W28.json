@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "weekId": "2026-W28",
+  "startDate": "2026-07-06",
+  "endDate": "2026-07-12",
+  "generatedAt": "2026-07-10T05:19:31.186Z",
+  "visibility": "public",
+  "summary": "3 blog posts published",
+  "metrics": {
+    "papersRead": 0,
+    "deepReads": 0,
+    "aiReviews": 0,
+    "oralExams": 0,
+    "formulaRecalls": 0,
+    "blogPosts": 3,
+    "projectUpdates": 0,
+    "githubContributions": 0
+  },
+  "strongestDimension": "writing",
+  "weakestDimension": "implementation",
+  "wins": [
+    "Published: Why I built this homepage",
+    "Published: Three-pass paper reading",
+    "Published: Building a research workflow with Markdown and Git"
+  ],
+  "openLoops": [
+    "Strengthen the implementation loop with one concrete public note next week."
+  ],
+  "nextWeekFocus": "Turn one paper note into a small implementation attempt.",
+  "featuredItems": [
+    {
+      "type": "blog",
+      "slug": "first-post",
+      "title": "Why I built this homepage",
+      "href": "/blog/first-post/"
+    },
+    {
+      "type": "blog",
+      "slug": "paper-reading-method",
+      "title": "Three-pass paper reading",
+      "href": "/blog/paper-reading-method/"
+    },
+    {
+      "type": "blog",
+      "slug": "research-workflow",
+      "title": "Building a research workflow with Markdown and Git",
+      "href": "/blog/research-workflow/"
+    }
+  ]
+}

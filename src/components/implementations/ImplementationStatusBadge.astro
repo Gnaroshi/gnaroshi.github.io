@@ -1,0 +1,13 @@
+---
+import { implementationStatusLabels, type ImplementationStatus } from "../../utils/implementations";
+
+interface Props {
+  status: ImplementationStatus;
+}
+
+const { status } = Astro.props;
+---
+
+<span class:list={["paper-badge", "implementation-status", `implementation-status--${status}`]}>
+  {implementationStatusLabels[status]}
+</span>

@@ -1,0 +1,131 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ExternalLink from "../../components/common/ExternalLink.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import ImplementationStatusBadge from "../../components/implementations/ImplementationStatusBadge.astro";
+import {
+  getBuildableImplementationAttempts,
+  getPublishedImplementationAttempts,
+  toImplementationDateKey,
+  type ImplementationEntry
+} from "../../utils/implementations";
+import { getBuildablePapers } from "../../utils/papers";
+
+export async function getStaticPaths() {
+  const attempts = await getBuildableImplementationAttempts();
+  return attempts.map((attempt) => ({ params: { slug: attempt.id }, props: { attempt } }));
+}
+
+interface Props {
+  attempt: ImplementationEntry;
+}
+
+const { attempt } = Astro.props as Props;
+const { Content } = await render(attempt);
+const publicAttempts = await getPublishedImplementationAttempts();
+const papers = await getBuildablePapers();
+const paperBySlug = new Map(papers.map((paper) => [paper.id, paper]));
+const relatedPapers = attempt.data.relatedPapers.flatMap((slug) => {
+  const paper = paperBySlug.get(slug);
+  return paper ? [paper] : [];
+});
+const currentIndex = publicAttempts.findIndex((item) => item.id === attempt.id);
+const newerAttempt = currentIndex > 0 ? publicAttempts[currentIndex - 1] : undefined;
+const olderAttempt = currentIndex >= 0 ? publicAttempts[currentIndex + 1] : undefined;
+const links = [
+  attempt.data.repoUrl ? { label: "Repo", href: attempt.data.repoUrl } : null,
+  attempt.data.demoUrl ? { label: "Demo", href: attempt.data.demoUrl } : null,
+  attempt.data.paperUrl ? { label: "Paper", href: attempt.data.paperUrl } : null
+].filter(Boolean) as Array<{ label: string; href: string }>;
+---
+
+<BaseLayout title={attempt.data.title} description={attempt.data.goal} canonical={`/implementations/${attempt.id}/`} type="article">
+  <article class="paper-detail">
+    <header class="paper-detail-header">
+      <a class="paper-detail-header__back" href="/implementations/">Back to implementations</a>
+      <div class="paper-detail-header__title">
+        <p class="eyebrow">Implementation attempt</p>
+        <h1>{attempt.data.title}</h1>
+        <p class="lede">{attempt.data.goal}</p>
+      </div>
+      <p class="paper-detail-header__meta">{toImplementationDateKey(attempt.data.date)}</p>
+      <div class="paper-detail-header__badges">
+        <ImplementationStatusBadge status={attempt.data.status} />
+        {attempt.data.tags.map((tag) => <span class="paper-tag">{tag}</span>)}
+      </div>
+      {links.length > 0 && (
+        <div class="paper-detail-header__links">
+          {links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
+        </div>
+      )}
+    </header>
+
+    <section class="section" aria-labelledby="implementation-summary-heading">
+      <SectionHeader id="implementation-summary-heading" title="Attempt summary" />
+      <div class="paper-detail-grid">
+        <div>
+          <h2>Goal</h2>
+          <p>{attempt.data.goal}</p>
+        </div>
+        <div>
+          <h2>Result</h2>
+          <p>{attempt.data.result || "Result not recorded yet."}</p>
+        </div>
+        <div>
+          <h2>What failed</h2>
+          <p>{attempt.data.failureReason || "No failure note recorded."}</p>
+        </div>
+        <div>
+          <h2>Related papers</h2>
+          {relatedPapers.length > 0 ? (
+            <ul>
+              {relatedPapers.map((paper) => <li><a href={`/papers/${paper.id}/`}>{paper.data.title}</a></li>)}
+            </ul>
+          ) : (
+            <p>No related paper linked yet.</p>
+          )}
+        </div>
+      </div>
+    </section>
+
+    {attempt.data.lessons.length > 0 && (
+      <section class="section" aria-labelledby="implementation-lessons-heading">
+        <SectionHeader id="implementation-lessons-heading" title="Lessons" />
+        <ul class="list">
+          {attempt.data.lessons.map((lesson) => <li class="list-item"><p>{lesson}</p></li>)}
+        </ul>
+      </section>
+    )}
+
+    <section class="section" aria-labelledby="implementation-body-heading">
+      <SectionHeader id="implementation-body-heading" title="Full log" />
+      <div class="prose">
+        <Content />
+      </div>
+    </section>
+
+    <nav class="paper-nav" aria-label="Implementation navigation">
+      <div>
+        {olderAttempt ? (
+          <a href={`/implementations/${olderAttempt.id}/`}>
+            <span>Older attempt</span>
+            {olderAttempt.data.title}
+          </a>
+        ) : (
+          <span class="paper-nav__empty">No older attempt</span>
+        )}
+      </div>
+      <div>
+        {newerAttempt ? (
+          <a href={`/implementations/${newerAttempt.id}/`}>
+            <span>Newer attempt</span>
+            {newerAttempt.data.title}
+          </a>
+        ) : (
+          <span class="paper-nav__empty">No newer attempt</span>
+        )}
+      </div>
+    </nav>
+  </article>
+</BaseLayout>

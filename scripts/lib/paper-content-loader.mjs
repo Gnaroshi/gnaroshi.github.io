@@ -115,8 +115,13 @@ function normalizeFrontmatter(data) {
     sourceExcerpt: data.sourceExcerpt ?? "",
     selfScore: data.selfScore ?? undefined,
     selfReflection: data.selfReflection ?? "",
-    reviewVisibility: data.reviewVisibility === "hidden" ? "hidden" : "public"
+    reviewVisibility: normalizeVisibility(data.reviewVisibility),
+    visibility: normalizeVisibility(data.visibility)
   };
+}
+
+function normalizeVisibility(value) {
+  return ["public", "unlisted", "hidden"].includes(value) ? value : "public";
 }
 
 function normalizeDateValue(value) {

@@ -288,6 +288,25 @@ See `docs/ai-paper-review.md` for the score dimensions, limitations, and workflo
 
 Do not add these before MVP unless explicitly requested.
 
+## Connected Research Outputs
+
+Paper logs can now feed several downstream outputs:
+
+- Implementation attempts in `src/content/implementations/` can link back through `relatedPapers`.
+- The research graph connects public paper notes, topics, questions, formulas, blog posts, projects, implementations, and weekly reviews.
+- Weekly reviews count only public paper activity and public reviews that map to public paper logs.
+- `npm run paper:promote -- --slug <paper-slug>` creates a hidden draft blog post with `sourcePaper`.
+
+Useful commands:
+
+```bash
+npm run graph:build
+npm run week:build
+npm run paper:promote -- --slug <paper-slug>
+```
+
+See `docs/research-graph.md`, `docs/weekly-review.md`, `docs/implementation-tracker.md`, `docs/visibility.md`, and `docs/paper-to-blog.md`.
+
 ## Learning Loop Extensions
 
 The research cockpit now includes static-first learning-loop features:

@@ -1,0 +1,47 @@
+---
+import type { ImplementationEntry } from "../../utils/implementations";
+import { toImplementationDateKey } from "../../utils/implementations";
+import ExternalLink from "../common/ExternalLink.astro";
+import ImplementationStatusBadge from "./ImplementationStatusBadge.astro";
+
+interface Props {
+  attempt: ImplementationEntry;
+}
+
+const { attempt } = Astro.props;
+const links = [
+  attempt.data.repoUrl ? { label: "Repo", href: attempt.data.repoUrl } : null,
+  attempt.data.demoUrl ? { label: "Demo", href: attempt.data.demoUrl } : null,
+  attempt.data.paperUrl ? { label: "Paper", href: attempt.data.paperUrl } : null
+].filter(Boolean) as Array<{ label: string; href: string }>;
+---
+
+<article class="implementation-card">
+  <div class="implementation-card__header">
+    <div>
+      <h3><a href={`/implementations/${attempt.id}/`}>{attempt.data.title}</a></h3>
+      <p class="metadata">{toImplementationDateKey(attempt.data.date)}</p>
+    </div>
+    <ImplementationStatusBadge status={attempt.data.status} />
+  </div>
+
+  <p>{attempt.data.goal}</p>
+
+  {attempt.data.failureReason && (
+    <div class="implementation-card__failure">
+      <strong>What failed</strong>
+      <p>{attempt.data.failureReason}</p>
+    </div>
+  )}
+
+  {attempt.data.tags.length > 0 && (
+    <div class="badge-row" aria-label="Implementation tags">
+      {attempt.data.tags.map((tag) => <span class="paper-tag">{tag}</span>)}
+    </div>
+  )}
+
+  <div class="link-row">
+    <a href={`/implementations/${attempt.id}/`}>Read attempt</a>
+    {links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}
+  </div>
+</article>

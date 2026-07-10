@@ -2,6 +2,7 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import { formatMonth, getYearMonthKey } from "./date";
 import { getReadingTime } from "./readingTime";
 import { slugify } from "./slug";
+import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
 
 export type BlogPost = CollectionEntry<"blog">;
 
@@ -28,7 +29,17 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
 
 export async function getPublishedBlogPosts(): Promise<BlogPost[]> {
   const posts = await getAllBlogPosts();
-  return posts.filter((post) => import.meta.env.PROD ? !post.data.draft : true);
+  return posts.filter((post) => shouldShowInIndex(post.data, { includeDrafts: !import.meta.env.PROD }));
+}
+
+export async function getBuildableBlogPosts(): Promise<BlogPost[]> {
+  const posts = await getAllBlogPosts();
+  return posts.filter((post) =>
+    shouldBuildDetailPage(post.data, {
+      includeDrafts: !import.meta.env.PROD,
+      includeHidden: !import.meta.env.PROD
+    })
+  );
 }
 
 export function sortBlogPosts(posts: BlogPost[]): BlogPost[] {
@@ -97,4 +108,3 @@ export function toBlogPostPreview(post: BlogPost): BlogPostPreview {
     readingTime: getPostReadingTime(post)
   };
 }
-

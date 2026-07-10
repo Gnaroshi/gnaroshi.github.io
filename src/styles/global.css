@@ -1530,6 +1530,205 @@ p {
   font-size: var(--text-sm);
 }
 
+.implementation-grid,
+.weekly-review-list,
+.graph-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-4);
+}
+
+.implementation-card,
+.weekly-review-card,
+.graph-controls,
+.graph-node-list,
+.graph-detail-panel,
+.graph-edge-table,
+.graph-type-card,
+.weekly-featured-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.implementation-card,
+.weekly-review-card,
+.graph-controls,
+.graph-node-list,
+.graph-detail-panel,
+.graph-edge-table {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.implementation-card__header,
+.graph-section-header {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.implementation-card p,
+.weekly-review-card p,
+.graph-node-detail p {
+  color: var(--color-text-secondary);
+}
+
+.implementation-card__failure {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-left: 3px solid var(--color-status-blocked);
+  background: color-mix(in srgb, var(--color-status-blocked) 8%, var(--color-surface));
+}
+
+.implementation-card__related {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.implementation-card__related ul {
+  display: grid;
+  gap: var(--space-1);
+  padding-left: var(--space-4);
+  margin: 0;
+}
+
+.implementation-status--planned,
+.implementation-status--in-progress {
+  border-color: color-mix(in srgb, var(--color-status-structured) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-status-structured) 13%, var(--color-surface));
+}
+
+.implementation-status--reproduced,
+.implementation-status--partially-reproduced,
+.implementation-status--shipped {
+  border-color: color-mix(in srgb, var(--color-status-implemented) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-status-implemented) 13%, var(--color-surface));
+}
+
+.implementation-status--failed,
+.implementation-status--abandoned {
+  border-color: color-mix(in srgb, var(--color-status-blocked) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-status-blocked) 13%, var(--color-surface));
+}
+
+.weekly-review-card--featured {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
+}
+
+.weekly-review-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-2);
+}
+
+.weekly-review-metrics span,
+.weekly-featured-item,
+.graph-type-card {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+}
+
+.weekly-review-metrics strong,
+.graph-type-card span {
+  display: block;
+  color: var(--color-text);
+  font-size: var(--text-xl);
+}
+
+.weekly-featured-item {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.graph-explorer {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.graph-filter-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) repeat(2, minmax(160px, 0.25fr)) auto;
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.graph-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.graph-node-buttons,
+.graph-node-detail,
+.graph-edge-list {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.graph-node-buttons {
+  max-height: 32rem;
+  overflow: auto;
+  padding-right: var(--space-1);
+}
+
+.graph-node-buttons button {
+  display: grid;
+  gap: var(--space-1);
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.graph-node-buttons button:hover,
+.graph-node-buttons button.is-selected {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.graph-node-buttons span,
+.graph-edge-row small {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+}
+
+.graph-edge-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.graph-edge-row span {
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.graph-edge-list--compact .graph-edge-row {
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
 @media (max-width: 820px) {
   .site-header__inner {
     grid-template-columns: 1fr auto;
@@ -1555,6 +1754,9 @@ p {
   .paper-review-breakdown,
   .new-paper-template,
   .formula-term-list div,
+  .graph-layout,
+  .graph-filter-grid,
+  .graph-edge-row,
   .paper-nav {
     grid-template-columns: 1fr;
   }

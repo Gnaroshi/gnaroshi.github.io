@@ -1,0 +1,437 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-07-10T05:19:36.256Z",
+  "nodes": [
+    {
+      "id": "blog:research-workflow",
+      "type": "blog",
+      "slug": "research-workflow",
+      "label": "Building a research workflow with Markdown and Git",
+      "description": "A note on keeping research notes, paper logs, and project writeups in version control.",
+      "href": "/blog/research-workflow/",
+      "tags": [
+        "research-workflow",
+        "git",
+        "markdown"
+      ],
+      "source": "src/content/blog/research-workflow.mdx"
+    },
+    {
+      "id": "blog:paper-reading-method",
+      "type": "blog",
+      "slug": "paper-reading-method",
+      "label": "Three-pass paper reading",
+      "description": "A technical note on reading papers at the right depth and recording useful progress.",
+      "href": "/blog/paper-reading-method/",
+      "tags": [
+        "paper-reading",
+        "research-method",
+        "notes"
+      ],
+      "source": "src/content/blog/paper-reading-method.mdx"
+    },
+    {
+      "id": "blog:first-post",
+      "type": "blog",
+      "slug": "first-post",
+      "label": "Why I built this homepage",
+      "description": "A note on using this site as a personal research notebook for papers, projects, and technical writing.",
+      "href": "/blog/first-post/",
+      "tags": [
+        "site-notes",
+        "research-workflow",
+        "markdown"
+      ],
+      "source": "src/content/blog/first-post.mdx"
+    },
+    {
+      "id": "project:gnaroshi-dev",
+      "type": "project",
+      "slug": "gnaroshi-dev",
+      "label": "gnaroshi.dev",
+      "description": "Personal academic homepage, research blog, and paper reading tracker for keeping research notes close to papers and code.",
+      "href": "/projects/",
+      "tags": [
+        "astro",
+        "mdx",
+        "research-notebook"
+      ],
+      "source": "src/data/projects.ts"
+    },
+    {
+      "id": "project:paper-reading-tracker",
+      "type": "project",
+      "slug": "paper-reading-tracker",
+      "label": "Paper reading tracker",
+      "description": "Static-first system for tracking daily paper reading, three-pass notes, revisits, and implementation attempts.",
+      "href": "/projects/",
+      "tags": [
+        "paper-reading",
+        "research-workflow",
+        "static-data"
+      ],
+      "source": "src/data/projects.ts"
+    },
+    {
+      "id": "project:research-workflow-notes",
+      "type": "project",
+      "slug": "research-workflow-notes",
+      "label": "Research workflow notes",
+      "description": "Technical notes about reading workflows, experiment logs, and software systems for research.",
+      "href": "/projects/",
+      "tags": [
+        "notes",
+        "workflow",
+        "tools"
+      ],
+      "source": "src/data/projects.ts"
+    },
+    {
+      "id": "topic:astro",
+      "type": "topic",
+      "slug": "astro",
+      "label": "astro",
+      "description": "Research items tagged astro.",
+      "href": "/graph/topic/astro/",
+      "tags": [
+        "astro"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:git",
+      "type": "topic",
+      "slug": "git",
+      "label": "git",
+      "description": "Research items tagged git.",
+      "href": "/graph/topic/git/",
+      "tags": [
+        "git"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:markdown",
+      "type": "topic",
+      "slug": "markdown",
+      "label": "markdown",
+      "description": "Research items tagged markdown.",
+      "href": "/graph/topic/markdown/",
+      "tags": [
+        "markdown"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:mdx",
+      "type": "topic",
+      "slug": "mdx",
+      "label": "mdx",
+      "description": "Research items tagged mdx.",
+      "href": "/graph/topic/mdx/",
+      "tags": [
+        "mdx"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:notes",
+      "type": "topic",
+      "slug": "notes",
+      "label": "notes",
+      "description": "Research items tagged notes.",
+      "href": "/graph/topic/notes/",
+      "tags": [
+        "notes"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:paper-reading",
+      "type": "topic",
+      "slug": "paper-reading",
+      "label": "paper-reading",
+      "description": "Research items tagged paper-reading.",
+      "href": "/graph/topic/paper-reading/",
+      "tags": [
+        "paper-reading"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:research-method",
+      "type": "topic",
+      "slug": "research-method",
+      "label": "research-method",
+      "description": "Research items tagged research-method.",
+      "href": "/graph/topic/research-method/",
+      "tags": [
+        "research-method"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:research-notebook",
+      "type": "topic",
+      "slug": "research-notebook",
+      "label": "research-notebook",
+      "description": "Research items tagged research-notebook.",
+      "href": "/graph/topic/research-notebook/",
+      "tags": [
+        "research-notebook"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:research-workflow",
+      "type": "topic",
+      "slug": "research-workflow",
+      "label": "research-workflow",
+      "description": "Research items tagged research-workflow.",
+      "href": "/graph/topic/research-workflow/",
+      "tags": [
+        "research-workflow"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:site-notes",
+      "type": "topic",
+      "slug": "site-notes",
+      "label": "site-notes",
+      "description": "Research items tagged site-notes.",
+      "href": "/graph/topic/site-notes/",
+      "tags": [
+        "site-notes"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:static-data",
+      "type": "topic",
+      "slug": "static-data",
+      "label": "static-data",
+      "description": "Research items tagged static-data.",
+      "href": "/graph/topic/static-data/",
+      "tags": [
+        "static-data"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:tools",
+      "type": "topic",
+      "slug": "tools",
+      "label": "tools",
+      "description": "Research items tagged tools.",
+      "href": "/graph/topic/tools/",
+      "tags": [
+        "tools"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:weekly-review",
+      "type": "topic",
+      "slug": "weekly-review",
+      "label": "weekly-review",
+      "description": "Research items tagged weekly-review.",
+      "href": "/graph/topic/weekly-review/",
+      "tags": [
+        "weekly-review"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "topic:workflow",
+      "type": "topic",
+      "slug": "workflow",
+      "label": "workflow",
+      "description": "Research items tagged workflow.",
+      "href": "/graph/topic/workflow/",
+      "tags": [
+        "workflow"
+      ],
+      "source": "inferred"
+    },
+    {
+      "id": "weekly-review:2026-W28",
+      "type": "weekly-review",
+      "slug": "2026-W28",
+      "label": "2026-W28",
+      "description": "3 blog posts published",
+      "href": "/week/2026-W28/",
+      "tags": [
+        "weekly-review"
+      ],
+      "source": "src/generated/weekly-reviews/2026-W28.json"
+    }
+  ],
+  "edges": [
+    {
+      "id": "blog:first-post->belongs-to-topic->topic:markdown",
+      "source": "blog:first-post",
+      "target": "topic:markdown",
+      "type": "belongs-to-topic",
+      "label": "markdown",
+      "inferred": true
+    },
+    {
+      "id": "blog:first-post->belongs-to-topic->topic:research-workflow",
+      "source": "blog:first-post",
+      "target": "topic:research-workflow",
+      "type": "belongs-to-topic",
+      "label": "research-workflow",
+      "inferred": true
+    },
+    {
+      "id": "blog:first-post->belongs-to-topic->topic:site-notes",
+      "source": "blog:first-post",
+      "target": "topic:site-notes",
+      "type": "belongs-to-topic",
+      "label": "site-notes",
+      "inferred": true
+    },
+    {
+      "id": "blog:paper-reading-method->belongs-to-topic->topic:notes",
+      "source": "blog:paper-reading-method",
+      "target": "topic:notes",
+      "type": "belongs-to-topic",
+      "label": "notes",
+      "inferred": true
+    },
+    {
+      "id": "blog:paper-reading-method->belongs-to-topic->topic:paper-reading",
+      "source": "blog:paper-reading-method",
+      "target": "topic:paper-reading",
+      "type": "belongs-to-topic",
+      "label": "paper-reading",
+      "inferred": true
+    },
+    {
+      "id": "blog:paper-reading-method->belongs-to-topic->topic:research-method",
+      "source": "blog:paper-reading-method",
+      "target": "topic:research-method",
+      "type": "belongs-to-topic",
+      "label": "research-method",
+      "inferred": true
+    },
+    {
+      "id": "blog:research-workflow->belongs-to-topic->topic:git",
+      "source": "blog:research-workflow",
+      "target": "topic:git",
+      "type": "belongs-to-topic",
+      "label": "git",
+      "inferred": true
+    },
+    {
+      "id": "blog:research-workflow->belongs-to-topic->topic:markdown",
+      "source": "blog:research-workflow",
+      "target": "topic:markdown",
+      "type": "belongs-to-topic",
+      "label": "markdown",
+      "inferred": true
+    },
+    {
+      "id": "blog:research-workflow->belongs-to-topic->topic:research-workflow",
+      "source": "blog:research-workflow",
+      "target": "topic:research-workflow",
+      "type": "belongs-to-topic",
+      "label": "research-workflow",
+      "inferred": true
+    },
+    {
+      "id": "project:gnaroshi-dev->belongs-to-topic->topic:astro",
+      "source": "project:gnaroshi-dev",
+      "target": "topic:astro",
+      "type": "belongs-to-topic",
+      "label": "astro",
+      "inferred": true
+    },
+    {
+      "id": "project:gnaroshi-dev->belongs-to-topic->topic:mdx",
+      "source": "project:gnaroshi-dev",
+      "target": "topic:mdx",
+      "type": "belongs-to-topic",
+      "label": "mdx",
+      "inferred": true
+    },
+    {
+      "id": "project:gnaroshi-dev->belongs-to-topic->topic:research-notebook",
+      "source": "project:gnaroshi-dev",
+      "target": "topic:research-notebook",
+      "type": "belongs-to-topic",
+      "label": "research-notebook",
+      "inferred": true
+    },
+    {
+      "id": "project:paper-reading-tracker->belongs-to-topic->topic:paper-reading",
+      "source": "project:paper-reading-tracker",
+      "target": "topic:paper-reading",
+      "type": "belongs-to-topic",
+      "label": "paper-reading",
+      "inferred": true
+    },
+    {
+      "id": "project:paper-reading-tracker->belongs-to-topic->topic:research-workflow",
+      "source": "project:paper-reading-tracker",
+      "target": "topic:research-workflow",
+      "type": "belongs-to-topic",
+      "label": "research-workflow",
+      "inferred": true
+    },
+    {
+      "id": "project:paper-reading-tracker->belongs-to-topic->topic:static-data",
+      "source": "project:paper-reading-tracker",
+      "target": "topic:static-data",
+      "type": "belongs-to-topic",
+      "label": "static-data",
+      "inferred": true
+    },
+    {
+      "id": "project:research-workflow-notes->belongs-to-topic->topic:notes",
+      "source": "project:research-workflow-notes",
+      "target": "topic:notes",
+      "type": "belongs-to-topic",
+      "label": "notes",
+      "inferred": true
+    },
+    {
+      "id": "project:research-workflow-notes->belongs-to-topic->topic:tools",
+      "source": "project:research-workflow-notes",
+      "target": "topic:tools",
+      "type": "belongs-to-topic",
+      "label": "tools",
+      "inferred": true
+    },
+    {
+      "id": "project:research-workflow-notes->belongs-to-topic->topic:workflow",
+      "source": "project:research-workflow-notes",
+      "target": "topic:workflow",
+      "type": "belongs-to-topic",
+      "label": "workflow",
+      "inferred": true
+    },
+    {
+      "id": "weekly-review:2026-W28->belongs-to-topic->topic:weekly-review",
+      "source": "weekly-review:2026-W28",
+      "target": "topic:weekly-review",
+      "type": "belongs-to-topic",
+      "label": "weekly-review",
+      "inferred": true
+    }
+  ],
+  "stats": {
+    "nodeCount": 21,
+    "edgeCount": 19,
+    "nodesByType": {
+      "blog": 3,
+      "project": 3,
+      "topic": 14,
+      "weekly-review": 1
+    },
+    "edgesByType": {
+      "belongs-to-topic": 19
+    }
+  }
+}

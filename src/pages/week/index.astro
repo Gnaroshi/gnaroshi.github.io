@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import { formatMetricLabel, getAllWeeklyReviews } from "../../utils/weeklyReviews";
+
+const reviews = getAllWeeklyReviews();
+const latestReview = reviews[0];
+---
+
+<BaseLayout title="Weekly Research Reviews" description="Weekly summaries of papers, writing, reviews, and implementation progress." width="wide">
+  <header class="page-header">
+    <p class="eyebrow">Weekly review</p>
+    <h1>Research weeks</h1>
+    <p class="lede">
+      A compact weekly loop for seeing what moved, what stayed open, and what should get attention next.
+    </p>
+  </header>
+
+  {latestReview && (
+    <section class="section" aria-labelledby="latest-week-heading">
+      <SectionHeader id="latest-week-heading" title="Latest week" description={`${latestReview.startDate} to ${latestReview.endDate}`} />
+      <article class="weekly-review-card weekly-review-card--featured">
+        <div>
+          <p class="eyebrow">{latestReview.weekId}</p>
+          <h2><a href={`/week/${latestReview.weekId}/`}>{latestReview.summary}</a></h2>
+        </div>
+        <div class="weekly-review-metrics">
+          {Object.entries(latestReview.metrics).map(([key, value]) => (
+            <span><strong>{value}</strong>{formatMetricLabel(key)}</span>
+          ))}
+        </div>
+        <p><strong>Next focus:</strong> {latestReview.nextWeekFocus}</p>
+      </article>
+    </section>
+  )}
+
+  <section class="section" aria-labelledby="weekly-list-heading">
+    <SectionHeader
+      id="weekly-list-heading"
+      title="Review archive"
+      description="Generated from committed content, not from a private database."
+    >
+      <a slot="action" href="/graph">Research graph</a>
+    </SectionHeader>
+    {reviews.length > 0 ? (
+      <div class="weekly-review-list">
+        {reviews.map((review) => (
+          <article class="weekly-review-card">
+            <div>
+              <p class="eyebrow">{review.weekId}</p>
+              <h2><a href={`/week/${review.weekId}/`}>{review.summary}</a></h2>
+              <p class="metadata">{review.startDate} to {review.endDate}</p>
+            </div>
+            <p><strong>Weak loop:</strong> {review.weakestDimension}</p>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-state">No weekly reviews have been generated yet.</p>
+    )}
+  </section>
+</BaseLayout>

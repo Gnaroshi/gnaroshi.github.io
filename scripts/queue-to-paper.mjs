@@ -166,6 +166,7 @@ sourceExcerpt: ""
 selfScore:
 selfReflection: ""
 reviewVisibility: "public"
+visibility: "hidden"
 oneLineSummary: "First-pass note created from the reading queue."
 coreQuestion: "What problem is this paper trying to solve?"
 coreIdea: "What is the key idea?"

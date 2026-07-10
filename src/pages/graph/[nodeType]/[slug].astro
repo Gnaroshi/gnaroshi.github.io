@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import SectionHeader from "../../../components/common/SectionHeader.astro";
+import { getConnectedEdges, getNodeById, researchGraph, type ResearchGraphNode } from "../../../utils/researchGraph";
+
+export async function getStaticPaths() {
+  return researchGraph.nodes.map((node) => ({
+    params: { nodeType: node.type, slug: node.slug },
+    props: { node }
+  }));
+}
+
+interface Props {
+  node: ResearchGraphNode;
+}
+
+const { node } = Astro.props as Props;
+const edges = getConnectedEdges(node.id);
+const labelForType = (value: string) => value.replaceAll("-", " ");
+---
+
+<BaseLayout title={node.label} description={node.description || `Research graph node: ${node.label}`} canonical={`/graph/${node.type}/${node.slug}/`}>
+  <article class="paper-detail">
+    <header class="paper-detail-header">
+      <a class="paper-detail-header__back" href="/graph/">Back to graph</a>
+      <div class="paper-detail-header__title">
+        <p class="eyebrow">Graph node</p>
+        <h1>{node.label}</h1>
+        {node.description && <p class="lede">{node.description}</p>}
+      </div>
+      <div class="paper-detail-header__badges">
+        <span class="paper-badge paper-badge--featured">{labelForType(node.type)}</span>
+        {node.tags.map((tag) => <span class="paper-tag">{tag}</span>)}
+      </div>
+      <div class="paper-detail-header__links">
+        <a href={node.href}>Open source page</a>
+      </div>
+    </header>
+
+    <section class="section" aria-labelledby="graph-node-relations-heading">
+      <SectionHeader
+        id="graph-node-relations-heading"
+        title="Connected relations"
+        description="Incoming and outgoing edges for this graph node."
+      />
+      {edges.length > 0 ? (
+        <div class="graph-edge-list">
+          {edges.map((edge) => {
+            const source = getNodeById(edge.source);
+            const target = getNodeById(edge.target);
+
+            return (
+              <article class="graph-edge-row">
+                <a href={source ? `/graph/${source.type}/${source.slug}/` : "#"}>{source?.label ?? edge.source}</a>
+                <span>{labelForType(edge.type)}</span>
+                <a href={target ? `/graph/${target.type}/${target.slug}/` : "#"}>{target?.label ?? edge.target}</a>
+                <small>{edge.inferred ? "inferred" : "manual"}</small>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="empty-state">No relations connected to this node yet.</p>
+      )}
+    </section>
+  </article>
+</BaseLayout>

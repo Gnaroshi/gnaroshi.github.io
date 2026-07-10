@@ -1,6 +1,7 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import type { PaperReviewSummary } from "./paperReviews";
 import { isReviewDue } from "./reviewDue";
+import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
 
 export type PaperEntry = CollectionEntry<"papers">;
 
@@ -77,9 +78,19 @@ export async function getAllPapers(): Promise<PaperEntry[]> {
 
 export async function getPublishedPapers(): Promise<PaperEntry[]> {
   const papers = await getAllPapers();
-  const publishedPapers = papers.filter((paper) => (import.meta.env.PROD ? !paper.data.draft : true));
+  const publishedPapers = papers.filter((paper) => shouldShowInIndex(paper.data, { includeDrafts: !import.meta.env.PROD }));
   warnForMissingFutureMe(publishedPapers);
   return publishedPapers;
+}
+
+export async function getBuildablePapers(): Promise<PaperEntry[]> {
+  const papers = await getAllPapers();
+  return papers.filter((paper) =>
+    shouldBuildDetailPage(paper.data, {
+      includeDrafts: !import.meta.env.PROD,
+      includeHidden: !import.meta.env.PROD
+    })
+  );
 }
 
 export function sortPapersByReadDate(papers: PaperEntry[]): PaperEntry[] {

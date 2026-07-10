@@ -22,6 +22,13 @@ npm run dev
 npm run build
 ```
 
+Generated research outputs can be rebuilt with:
+
+```bash
+npm run week:build
+npm run graph:build
+```
+
 ## Preview
 
 ```bash
@@ -91,15 +98,17 @@ draft: false
 tags:
   - ai
   - research
+visibility: "public"
 series:
 seriesOrder:
+sourcePaper:
 heroImage:
 readingTime:
 featured: false
 ---
 ```
 
-Drafts are hidden in production builds when `draft: true`. Tags should be lowercase kebab-case and generate static tag pages under `/blog/tags/[tag]`. The blog supports MDX, code blocks, math, table of contents, series navigation, archive pages, and RSS at `/rss.xml`.
+Drafts are hidden in production builds when `draft: true`. `visibility: "public"` appears in indexes, `unlisted` builds detail pages without index placement, and `hidden` is excluded from public builds. Tags should be lowercase kebab-case and generate static tag pages under `/blog/tags/[tag]`. The blog supports MDX, code blocks, math, table of contents, series navigation, archive pages, and RSS at `/rss.xml`.
 
 ## Add A Paper Log
 
@@ -115,7 +124,7 @@ The helper writes a file under:
 src/content/papers/
 ```
 
-It uses today's local date and never overwrites an existing file. Paper logs default to `draft: true`; set `draft: false` when the note should be public. The schema and status/depth definitions are documented in `docs/content-model.md` and `docs/paper-reading-system.md`.
+It uses today's local date and never overwrites an existing file. Paper logs default to `draft: true` and `visibility: "hidden"`; set `draft: false` and `visibility: "public"` when the note should appear publicly. The schema and status/depth definitions are documented in `docs/content-model.md` and `docs/paper-reading-system.md`.
 
 ## Learning Loop Tools
 
@@ -123,6 +132,9 @@ The research cockpit includes static-first tools for queueing, reviewing, recall
 
 ```bash
 npm run paper:from-queue -- --slug <queue-slug>
+npm run paper:promote -- --slug <paper-slug>
+npm run week:build
+npm run graph:build
 npm run questions:build
 npm run formula:score -- --slug <paper-slug> --file attempt.json
 ```
@@ -133,8 +145,40 @@ Public routes:
 - `/reviews`
 - `/formula`
 - `/questions`
+- `/implementations`
+- `/week`
+- `/graph`
 
 Browser practice state is local-only until copied into Markdown frontmatter or committed generated JSON. See `docs/learning-loop-features.md`.
+
+## Research Output System
+
+The site connects research outputs across public content:
+
+- Paper logs live in `src/content/papers/`.
+- Blog posts live in `src/content/blog/`.
+- Implementation attempts live in `src/content/implementations/`.
+- Project cards live in `src/data/projects.ts`.
+- Weekly reviews live in `src/generated/weekly-reviews/`.
+- Research graph JSON lives in `src/generated/research-graph.json`.
+
+Commands:
+
+```bash
+npm run week:build
+npm run graph:build
+npm run paper:promote -- --slug <paper-slug>
+```
+
+Use `visibility: "public"`, `visibility: "unlisted"`, or `visibility: "hidden"` to control public indexes and generated public stats. This is not privacy; committed content in a public repository is still visible in GitHub.
+
+Docs:
+
+- `docs/visibility.md`
+- `docs/research-graph.md`
+- `docs/weekly-review.md`
+- `docs/implementation-tracker.md`
+- `docs/paper-to-blog.md`
 
 ## AI Paper Review
 

@@ -6,6 +6,7 @@
 - [x] MDX blog system
 - [x] Paper reading tracker content model and dashboard
 - [x] Learning-loop feature pack for queue, reviews, formula recall, Future Me, and questions
+- [x] Research-output feature pack for graph, weekly reviews, implementation attempts, visibility, and paper-to-blog drafts
 - [x] GitHub Pages deployment
 - [ ] Full polish, accessibility, SEO, and performance pass
 - [ ] Future feature expansion
@@ -143,9 +144,15 @@
 - [x] Add formula recall trainer.
 - [x] Add Future Me paper note fields.
 - [x] Add generated AI question bank.
+- [x] Add implementation attempt tracker.
+- [x] Add weekly research reviews.
+- [x] Add static research graph.
+- [x] Add paper-to-blog promotion script.
+- [x] Add visibility controls for public, unlisted, and hidden content.
 - [ ] Add real project MDX writeups.
 - [ ] Add richer project detail pages.
-- [ ] Add paper reading map or topic graph.
+- [ ] Add real public implementation attempts.
+- [ ] Add richer graph visualization only if the static list explorer becomes insufficient.
 - [ ] Add paper BibTeX export.
 - [ ] Add paper revisit reminders as static metadata.
 - [ ] Add richer blog search if post volume grows.

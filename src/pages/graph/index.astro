@@ -1,0 +1,72 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import ResearchGraphExplorer from "../../components/graph/ResearchGraphExplorer";
+import { researchGraph } from "../../utils/researchGraph";
+
+const generatedAt = new Date(researchGraph.generatedAt).toLocaleString("en", {
+  dateStyle: "medium",
+  timeStyle: "short"
+});
+---
+
+<BaseLayout
+  title="Research Graph"
+  description="A static graph connecting papers, posts, projects, implementations, questions, topics, formulas, and weekly reviews."
+  width="dashboard"
+>
+  <div class="paper-dashboard">
+    <header class="paper-hero">
+      <div class="paper-hero__copy">
+        <p class="eyebrow">Research graph</p>
+        <h1>Connected research outputs</h1>
+        <p class="lede">
+          A map of how reading notes, blog posts, implementation attempts, projects, questions, formulas, and weekly reviews relate.
+        </p>
+      </div>
+      <nav class="paper-hero__actions" aria-label="Research graph actions">
+        <a href="/papers">Papers</a>
+        <a href="/blog">Blog</a>
+        <a href="/implementations">Implementations</a>
+        <a href="/week">Weekly reviews</a>
+      </nav>
+    </header>
+
+    <section class="paper-stats" aria-label="Graph stats">
+      <article class="paper-stat-card">
+        <strong>{researchGraph.stats.nodeCount}</strong>
+        <span>Nodes</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{researchGraph.stats.edgeCount}</strong>
+        <span>Relations</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{Object.keys(researchGraph.stats.nodesByType).length}</strong>
+        <span>Node types</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{generatedAt}</strong>
+        <span>Last generated</span>
+      </article>
+    </section>
+
+    <section class="section" aria-labelledby="graph-model-heading">
+      <SectionHeader
+        id="graph-model-heading"
+        title="Graph model"
+        description="The graph is rebuilt from committed Markdown, MDX, generated weekly review JSON, and manual edge declarations."
+      />
+      <div class="graph-type-grid">
+        {Object.entries(researchGraph.stats.nodesByType).map(([type, count]) => (
+          <article class="graph-type-card">
+            <strong>{type.replaceAll("-", " ")}</strong>
+            <span>{count}</span>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <ResearchGraphExplorer client:load graph={researchGraph} />
+  </div>
+</BaseLayout>

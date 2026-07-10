@@ -112,7 +112,7 @@ reviewVisibility: "public"
 
 Use `abstract` or `sourceExcerpt` when you want the reviewer to compare the note against source text. The script does not fetch PDFs or scrape paper URLs.
 
-Use `reviewVisibility: "hidden"` to generate a review JSON file without rendering it publicly. Hidden reviews are excluded from public score averages.
+Use `reviewVisibility: "public"` for public paper detail pages and dashboard averages. Use `reviewVisibility: "unlisted"` for detail-only calibration, or `reviewVisibility: "hidden"` to generate JSON without rendering it publicly. Non-public reviews are excluded from public score averages.
 
 When `selfScore.overall` exists, generated reviews include `selfScoreComparison` with the user score, AI score, score gap, and a short calibration comment.
 

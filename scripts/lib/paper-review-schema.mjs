@@ -14,7 +14,7 @@ export const DIMENSION_KEYS = [
 ];
 
 export const SCORE_LEVELS = ["seed", "developing", "solid", "strong", "excellent"];
-export const REVIEW_VISIBILITIES = ["public", "hidden"];
+export const REVIEW_VISIBILITIES = ["public", "unlisted", "hidden"];
 export const CONFIDENCE_LEVELS = ["low", "medium", "high"];
 export const THREE_PASS_STATUSES = ["complete", "partial", "not_started", "not_applicable"];
 
@@ -213,7 +213,9 @@ export function normalizePaperReview(rawReview, { paper, model, reviewedAt = new
   const review = JSON.parse(JSON.stringify(rawReview));
   const overallScore = calculateOverallScore(review.dimensions);
   const scoreLevel = scoreLevelForScore(overallScore);
-  const reviewVisibility = paper?.frontmatter?.reviewVisibility === "hidden" ? "hidden" : "public";
+  const reviewVisibility = REVIEW_VISIBILITIES.includes(paper?.frontmatter?.reviewVisibility)
+    ? paper.frontmatter.reviewVisibility
+    : "public";
 
   review.schemaVersion = PAPER_REVIEW_SCHEMA_VERSION;
   review.paperSlug = paper?.slug ?? review.paperSlug;
@@ -249,7 +251,7 @@ export function validatePaperReview(review) {
   }
 
   if (!REVIEW_VISIBILITIES.includes(review.reviewVisibility)) {
-    errors.push("reviewVisibility must be public or hidden");
+    errors.push("reviewVisibility must be public, unlisted, or hidden");
   }
 
   if (!SCORE_LEVELS.includes(review.scoreLevel)) {
@@ -370,7 +372,7 @@ export function validatePaperReview(review) {
 }
 
 export function isPublicReview(review) {
-  return review?.reviewVisibility !== "hidden";
+  return review?.reviewVisibility === "public";
 }
 
 function mergeHistory(existingReview, nextReview) {

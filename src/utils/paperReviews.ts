@@ -1,7 +1,7 @@
 import type { PaperEntry } from "./papers";
 
 export type ScoreLevel = "seed" | "developing" | "solid" | "strong" | "excellent";
-export type ReviewVisibility = "public" | "hidden";
+export type ReviewVisibility = "public" | "unlisted" | "hidden";
 
 export type PaperReviewDimension = {
   score: number;
@@ -137,6 +137,12 @@ export function getPaperReviewForSlug(slug: string): PaperReview | undefined {
 }
 
 export function getPublicPaperReviewForPaper(paper: PaperEntry): PaperReview | undefined {
+  const review = getPaperReviewForSlug(paper.id);
+  if (!review) return undefined;
+  return paper.data.reviewVisibility === "public" && review.reviewVisibility === "public" ? review : undefined;
+}
+
+export function getVisiblePaperReviewForPaper(paper: PaperEntry): PaperReview | undefined {
   const review = getPaperReviewForSlug(paper.id);
   if (!review) return undefined;
   return isReviewVisibleForPaper(paper, review) ? review : undefined;
@@ -344,7 +350,7 @@ function isPaperReview(value: unknown): value is PaperReview {
     typeof review.overallScore === "number" &&
     typeof review.scoreLevel === "string" &&
     typeof review.nextReviewDate === "string" &&
-    review.reviewVisibility !== "hidden"
+    typeof review.reviewVisibility === "string" && ["public", "unlisted", "hidden"].includes(review.reviewVisibility)
   );
 }
 

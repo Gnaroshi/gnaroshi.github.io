@@ -1,5 +1,6 @@
 export const projects = [
   {
+    slug: "gnaroshi-dev",
     title: "gnaroshi.dev",
     summary:
       "Personal academic homepage, research blog, and paper reading tracker for keeping research notes close to papers and code.",
@@ -12,6 +13,7 @@ export const projects = [
     ]
   },
   {
+    slug: "paper-reading-tracker",
     title: "Paper reading tracker",
     summary:
       "Static-first system for tracking daily paper reading, three-pass notes, revisits, and implementation attempts.",
@@ -21,6 +23,7 @@ export const projects = [
     links: [{ label: "Paper log", href: "/papers" }]
   },
   {
+    slug: "research-workflow-notes",
     title: "Research workflow notes",
     summary:
       "Technical notes about reading workflows, experiment logs, and software systems for research.",

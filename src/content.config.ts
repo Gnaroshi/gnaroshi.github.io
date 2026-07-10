@@ -22,6 +22,7 @@ const optionalPaperDate = z.preprocess(
   (value) => (value === null || value === "" ? undefined : value),
   z.coerce.date().optional()
 );
+const visibilitySchema = z.enum(["public", "unlisted", "hidden"]).default("public");
 const optionalDateArray = z.preprocess(
   (value) => (value === null || value === "" || value === undefined ? [] : value),
   z.array(
@@ -59,8 +60,10 @@ const blog = defineCollection({
     updatedDate: optionalNullableDate,
     draft: z.boolean(),
     tags: z.array(z.string()).min(1),
+    visibility: visibilitySchema,
     series: optionalNullableString,
     seriesOrder: optionalNullableNumber.pipe(z.number().int().positive().optional()),
+    sourcePaper: optionalNullableString,
     heroImage: optionalNullableUrl,
     readingTime: z
       .union([z.string(), z.number(), z.null()])
@@ -107,7 +110,8 @@ const papers = defineCollection({
         .optional()
         .transform((value) => value ?? undefined),
       selfReflection: z.string().default(""),
-      reviewVisibility: z.enum(["public", "hidden"]).default("public"),
+      reviewVisibility: visibilitySchema,
+      visibility: visibilitySchema,
       oneLineSummary: z.string(),
       coreQuestion: z.string(),
       coreIdea: z.string(),
@@ -158,7 +162,7 @@ const queue = defineCollection({
     tags: z.array(z.string()).min(1),
     estimatedDifficulty: z.number().int().min(1).max(5),
     estimatedReadingTimeMinutes: z.number().int().nonnegative(),
-    visibility: z.enum(["public", "hidden"]).default("public")
+    visibility: visibilitySchema
   })
 });
 
@@ -174,8 +178,29 @@ const projects = defineCollection({
     repoUrl: optionalUrl,
     demoUrl: optionalUrl,
     paperUrl: optionalUrl,
+    visibility: visibilitySchema,
     featured: z.boolean().default(false)
   })
 });
 
-export const collections = { blog, papers, queue, projects };
+const implementations = defineCollection({
+  loader: glob({ base: "./src/content/implementations", pattern: "**/*.{md,mdx}" }),
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    status: z.enum(["planned", "in-progress", "reproduced", "partially-reproduced", "failed", "abandoned", "shipped"]),
+    relatedPapers: z.array(z.string()).default([]),
+    relatedProjects: z.array(z.string()).default([]),
+    repoUrl: optionalNullableUrl,
+    demoUrl: optionalNullableUrl,
+    paperUrl: optionalNullableUrl,
+    goal: z.string(),
+    result: z.string().default(""),
+    failureReason: z.string().default(""),
+    lessons: z.array(z.string()).default([]),
+    tags: z.array(z.string()).default([]),
+    visibility: visibilitySchema
+  })
+});
+
+export const collections = { blog, papers, queue, projects, implementations };

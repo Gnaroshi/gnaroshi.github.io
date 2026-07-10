@@ -1,26 +1,33 @@
 ---
 import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import ImplementationCard from "../../components/implementations/ImplementationCard.astro";
 import SectionHeader from "../../components/common/SectionHeader.astro";
 import PaperDetailHeader from "../../components/papers/PaperDetailHeader.astro";
 import PaperReviewCard from "../../components/papers/PaperReviewCard.astro";
 import ReviewPromptFallback from "../../components/papers/ReviewPromptFallback.astro";
 import ManualReviewPrompt from "../../components/papers/ManualReviewPrompt";
-import { getPublishedPapers, type PaperEntry } from "../../utils/papers";
-import { getPublicPaperReviewForPaper } from "../../utils/paperReviews";
+import { getBuildablePapers, getPublishedPapers, type PaperEntry } from "../../utils/papers";
+import { getImplementationAttemptsForPaper, getPublishedImplementationAttempts } from "../../utils/implementations";
+import { getVisiblePaperReviewForPaper } from "../../utils/paperReviews";
 import { buildManualReviewPromptForPaper } from "../../../scripts/lib/paper-review-prompt.mjs";
 
 export async function getStaticPaths() {
-  const papers = await getPublishedPapers();
+  const papers = await getBuildablePapers();
+  const publicPapers = await getPublishedPapers();
 
-  return papers.map((paper, index) => ({
-    params: { slug: paper.id },
-    props: {
-      paper,
-      newerPaper: papers[index - 1],
-      olderPaper: papers[index + 1]
-    }
-  }));
+  return papers.map((paper) => {
+    const publicIndex = publicPapers.findIndex((item) => item.id === paper.id);
+
+    return {
+      params: { slug: paper.id },
+      props: {
+        paper,
+        newerPaper: publicIndex > 0 ? publicPapers[publicIndex - 1] : undefined,
+        olderPaper: publicIndex >= 0 ? publicPapers[publicIndex + 1] : undefined
+      }
+    };
+  });
 }
 
 interface Props {
@@ -31,13 +38,15 @@ interface Props {
 
 const { paper, newerPaper, olderPaper } = Astro.props as Props;
 const { Content } = await render(paper);
-const review = getPublicPaperReviewForPaper(paper);
+const review = getVisiblePaperReviewForPaper(paper);
 const manualPrompt = buildManualReviewPromptForPaper({
   slug: paper.id,
   frontmatter: paper.data,
   body: paper.body
 });
 const reviewCommand = `npm run paper:review -- --slug ${paper.id}`;
+const promoteCommand = `npm run paper:promote -- --slug ${paper.id}`;
+const implementationAttempts = getImplementationAttemptsForPaper(await getPublishedImplementationAttempts(), paper.id);
 
 const fallback = "Not recorded yet.";
 const futureMe = paper.data.futureMe;
@@ -181,6 +190,28 @@ const hasFutureMe =
           </div>
         )}
       </div>
+    </section>
+
+    {implementationAttempts.length > 0 && (
+      <section class="section" aria-labelledby="paper-implementations-heading">
+        <SectionHeader
+          id="paper-implementations-heading"
+          title="Implementation attempts"
+          description="Code attempts connected to this paper, including partial and failed reproductions."
+        />
+        <div class="implementation-grid">
+          {implementationAttempts.map((attempt) => <ImplementationCard attempt={attempt} />)}
+        </div>
+      </section>
+    )}
+
+    <section class="section" aria-labelledby="paper-promotion-heading">
+      <SectionHeader
+        id="paper-promotion-heading"
+        title="Promote to blog"
+        description="Turn this structured paper note into a draft essay when it is ready for a wider explanation."
+      />
+      <pre><code>{promoteCommand}</code></pre>
     </section>
 
     <section class="section" aria-labelledby="paper-body-heading">

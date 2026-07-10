@@ -3,13 +3,14 @@ import { render } from "astro:content";
 import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
 import {
   getAdjacentPosts,
+  getBuildableBlogPosts,
   getPublishedBlogPosts,
   getSeriesPosts,
   type BlogPost
 } from "../../utils/content";
 
 export async function getStaticPaths() {
-  const posts = await getPublishedBlogPosts();
+  const posts = await getBuildableBlogPosts();
 
   return posts.map((post) => ({
     params: { slug: post.id },
@@ -31,4 +32,3 @@ const { previous, next } = getAdjacentPosts(posts, post);
 <BlogPostLayout post={post} headings={headings} seriesPosts={seriesPosts} previous={previous} next={next}>
   <Content />
 </BlogPostLayout>
-

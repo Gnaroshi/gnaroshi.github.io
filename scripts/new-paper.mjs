@@ -57,6 +57,7 @@ selfScore:
 #  note: "I think I understood the core idea but not the formula."
 selfReflection: ""
 reviewVisibility: "public"
+visibility: "hidden"
 oneLineSummary: "TODO"
 coreQuestion: "TODO"
 coreIdea: "TODO"
