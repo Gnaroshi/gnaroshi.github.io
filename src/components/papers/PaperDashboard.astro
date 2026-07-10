@@ -4,7 +4,6 @@ import type { PaperEntry, PaperStats as PaperStatsData } from "../../utils/paper
 import { toPaperRecord } from "../../utils/papers";
 import type { PaperReview, PaperReviewStats as PaperReviewStatsData } from "../../utils/paperReviews";
 import { formatScore, scoreLevelForScore, toPaperReviewSummary } from "../../utils/paperReviews";
-import NewPaperTemplate from "./NewPaperTemplate.astro";
 import PaperFilters from "./PaperFilters";
 import PaperScoreBadge from "./PaperScoreBadge.astro";
 import PaperScoreTrend from "./PaperScoreTrend.astro";
@@ -45,7 +44,6 @@ const messages = islandMessages.paper;
       <h1>{translate(locale, "papers.title")}</h1>
       <p class="lede">{translate(locale, "papers.subtitle")}</p>
     </div>
-    {papers.length > 0 && <a class="button button--primary" href="#new-paper-template">{translate(locale, "papers.add")}</a>}
   </header>
 
   {papers.length === 0 ? (
@@ -56,23 +54,9 @@ const messages = islandMessages.paper;
           <h2 id="paper-onboarding-heading">{translate(locale, "papers.firstEnough")}</h2>
           <p>{translate(locale, "papers.firstDescription")}</p>
         </div>
-        <a class="button button--primary" href="#new-paper-template">{translate(locale, "home.addFirstPaper")}</a>
+        <a class="button button--primary" href={locale === "ko" ? "/ko/research/" : "/research/"}>{translate(locale, "nav.research")}</a>
       </section>
       <ReadingMethodPanel locale={locale} />
-      <section class="paper-workflow-notes" aria-label={translate(locale, "nav.paperLab")}>
-        <article id="ai-review-workflow">
-          <h2>{translate(locale, "papers.aiReview")}</h2>
-          <p>{translate(locale, "papers.aiReviewBody")}</p>
-        </article>
-        <article id="oral-exam-entry">
-          <h2>{translate(locale, "papers.oralExam")}</h2>
-          <p>{translate(locale, "papers.oralExamBody")}</p>
-        </article>
-        <article id="paper-to-blog">
-          <h2>{translate(locale, "papers.paperToBlog")}</h2>
-          <p>{translate(locale, "papers.paperToBlogBody")}</p>
-        </article>
-      </section>
     </>
   ) : (
     <>
@@ -136,8 +120,6 @@ const messages = islandMessages.paper;
       </section>
     </>
   )}
-
-  <NewPaperTemplate locale={locale} />
 </div>
 
 <style>

@@ -1,4 +1,6 @@
 import type { PaperEntry } from "./papers";
+import { readContentFeedJson } from "./contentFeed";
+import { getContentSlug } from "./localizedContent";
 
 export type ScoreLevel = "seed" | "developing" | "solid" | "strong" | "excellent";
 export type ReviewVisibility = "public" | "unlisted" | "hidden";
@@ -107,7 +109,20 @@ export type PaperReviewStats = {
   }>;
 };
 
-const reviewModules = import.meta.glob("../generated/paper-reviews/*.json", { eager: true });
+type FeedPaperReview = {
+  id: string;
+  schemaVersion: number;
+  visibility: "private" | "unlisted" | "public";
+  paperId: string;
+  reviewedAt: string;
+  reviewer: "self" | "ai" | "peer";
+  overallScore: number | null;
+  confidence: "low" | "medium" | "high";
+  summary: string;
+  strengths: string[];
+  gaps: string[];
+  nextActions: string[];
+};
 const DIMENSION_LABELS: Record<string, string> = {
   problemFraming: "Problem framing",
   coreIdea: "Core idea",
@@ -122,9 +137,9 @@ const DIMENSION_LABELS: Record<string, string> = {
 };
 
 export function getAllPaperReviews(): PaperReview[] {
-  return Object.values(reviewModules)
-    .map(unwrapJsonModule)
-    .filter(isPaperReview)
+  return getFeedPaperReviews()
+    .map((review) => adaptFeedReview(review))
+    .filter((review): review is PaperReview => Boolean(review))
     .sort((a, b) => b.reviewedAt.localeCompare(a.reviewedAt));
 }
 
@@ -137,13 +152,13 @@ export function getPaperReviewForSlug(slug: string): PaperReview | undefined {
 }
 
 export function getPublicPaperReviewForPaper(paper: PaperEntry): PaperReview | undefined {
-  const review = getPaperReviewForSlug(paper.id);
+  const review = adaptFeedReview(getFeedPaperReviews().find((item) => item.paperId === getContentSlug(paper.id)), paper);
   if (!review) return undefined;
-  return paper.data.reviewVisibility === "public" && review.reviewVisibility === "public" ? review : undefined;
+  return review.reviewVisibility === "public" ? review : undefined;
 }
 
 export function getVisiblePaperReviewForPaper(paper: PaperEntry): PaperReview | undefined {
-  const review = getPaperReviewForSlug(paper.id);
+  const review = adaptFeedReview(getFeedPaperReviews().find((item) => item.paperId === getContentSlug(paper.id)), paper);
   if (!review) return undefined;
   return isReviewVisibleForPaper(paper, review) ? review : undefined;
 }
@@ -257,19 +272,16 @@ function averageNumber(values: number[]): number | null {
 }
 
 function getPaperSelfScore(paper?: PaperEntry): number | null {
-  const selfScore = paper?.data.selfScore;
-  if (typeof selfScore === "number") return selfScore;
-  if (selfScore && typeof selfScore === "object" && "overall" in selfScore && typeof selfScore.overall === "number") {
-    return selfScore.overall;
-  }
+  void paper;
   return null;
 }
 
 function getWeakestDimension(reviews: PaperReview[]): PaperReviewStats["weakestDimension"] {
   if (reviews.length === 0) return undefined;
 
-  const dimensionStats = Object.entries(DIMENSION_LABELS).map(([key, label]) => {
-    const scores = reviews.map((review) => review.dimensions[key]?.score ?? 0);
+  const dimensionStats = Object.entries(DIMENSION_LABELS).flatMap(([key, label]) => {
+    const scores = reviews.map((review) => review.dimensions[key]?.score).filter((score): score is number => typeof score === "number");
+    if (scores.length === 0) return [];
     return {
       key,
       label,
@@ -277,6 +289,8 @@ function getWeakestDimension(reviews: PaperReview[]): PaperReviewStats["weakestD
       weakCount: scores.filter((score) => score <= 5).length
     };
   });
+
+  if (dimensionStats.length === 0) return undefined;
 
   return dimensionStats.sort((a, b) => b.weakCount - a.weakCount || a.averageScore - b.averageScore)[0];
 }
@@ -331,27 +345,50 @@ function getBestImprovedPaper(reviews: PaperReview[]): PaperReviewStats["bestImp
   return improvements.sort((a, b) => b.delta - a.delta)[0];
 }
 
-function unwrapJsonModule(module: unknown): unknown {
-  if (module && typeof module === "object" && "default" in module) {
-    return (module as { default: unknown }).default;
-  }
-
-  return module;
+function getFeedPaperReviews(): FeedPaperReview[] {
+  return readContentFeedJson<FeedPaperReview[]>("data/reviews/index.json", [])
+    .filter((review) => review.schemaVersion === 1 && review.visibility !== "private" && typeof review.paperId === "string");
 }
 
-function isPaperReview(value: unknown): value is PaperReview {
-  if (!value || typeof value !== "object") return false;
-  const review = value as Partial<PaperReview>;
-  return (
-    review.schemaVersion === "1.0.0" &&
-    typeof review.paperSlug === "string" &&
-    typeof review.paperTitle === "string" &&
-    typeof review.reviewedAt === "string" &&
-    typeof review.overallScore === "number" &&
-    typeof review.scoreLevel === "string" &&
-    typeof review.nextReviewDate === "string" &&
-    typeof review.reviewVisibility === "string" && ["public", "unlisted", "hidden"].includes(review.reviewVisibility)
-  );
+function adaptFeedReview(review: FeedPaperReview | undefined, paper?: PaperEntry): PaperReview | undefined {
+  if (!review || review.overallScore === null) return undefined;
+  const scoreLevel = scoreLevelForScore(review.overallScore);
+  const nextLevel: ScoreLevel = scoreLevel === "seed" ? "developing" : scoreLevel === "developing" ? "solid" : scoreLevel === "solid" ? "strong" : "excellent";
+  const paperSlug = review.paperId;
+  return {
+    schemaVersion: "1.0.0",
+    paperSlug,
+    paperTitle: paper?.data.title ?? paperSlug,
+    reviewedAt: review.reviewedAt,
+    model: review.reviewer,
+    reviewVisibility: review.visibility === "private" ? "hidden" : review.visibility,
+    overallScore: review.overallScore,
+    scoreLevel,
+    confidence: review.confidence,
+    summary: review.summary,
+    motivationMessage: "",
+    selfScoreComparison: null,
+    improvementTarget: {
+      currentLevel: scoreLevel,
+      nextLevel,
+      oneThingToImprove: review.nextActions[0] ?? review.gaps[0] ?? "Revisit the evidence recorded in the note.",
+      suggestedTimeMinutes: 15
+    },
+    nextReviewDate: paper?.data.nextReviewAt ?? review.reviewedAt.slice(0, 10),
+    dimensions: {},
+    threePassReview: {
+      pass1: { status: "recorded", comment: "" },
+      pass2: { status: "recorded", comment: "" },
+      pass3: { status: "optional", comment: "" }
+    },
+    strengths: review.strengths,
+    gaps: review.gaps,
+    nextActions: review.nextActions.map((action) => ({ type: "review", action, effortMinutes: 15 })),
+    retrievalQuestions: [],
+    badge: { id: review.id, label: "Reviewed", reason: review.summary },
+    limitations: [],
+    history: [{ reviewedAt: review.reviewedAt, overallScore: review.overallScore, scoreLevel, dimensionScores: {} }]
+  };
 }
 
 function toLocalDateKey(date = new Date()): string {

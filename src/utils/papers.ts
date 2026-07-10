@@ -5,6 +5,8 @@ import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
 import type { Locale } from "../i18n/types";
 import { getLocalePath } from "../i18n/utils";
 import { getContentSlug } from "./localizedContent";
+import { getActivityCalendar, type ActivityDay } from "./feedData";
+import { getContentFeedRecordCount } from "./contentFeed";
 
 export type PaperEntry = CollectionEntry<"papers">;
 
@@ -72,18 +74,16 @@ type PaperActivityOptions = {
 
 const ACTIVE_STATUSES = new Set(["pass1", "pass2", "pass3", "read", "implemented"]);
 const DEEP_DEPTHS = new Set(["deep", "reproduce", "implement"]);
-const futureMeWarningSlugs = new Set<string>();
 
 export async function getAllPapers(locale: Locale = "en"): Promise<PaperEntry[]> {
+  if (getContentFeedRecordCount("papers") === 0) return [];
   const papers = await getCollection("papers");
   return sortPapersByReadDate(papers.filter((paper) => !getContentSlug(paper.id).startsWith("_") && paper.data.locale === locale));
 }
 
 export async function getPublishedPapers(locale: Locale = "en"): Promise<PaperEntry[]> {
   const papers = await getAllPapers(locale);
-  const publishedPapers = papers.filter((paper) => shouldShowInIndex(paper.data, { includeDrafts: !import.meta.env.PROD }));
-  warnForMissingFutureMe(publishedPapers);
-  return publishedPapers;
+  return papers.filter((paper) => shouldShowInIndex(paper.data, { includeDrafts: !import.meta.env.PROD }));
 }
 
 export async function getBuildablePapers(locale: Locale = "en"): Promise<PaperEntry[]> {
@@ -126,22 +126,28 @@ export function countPapersByDate(papers: PaperEntry[], options: PaperActivityOp
   return counts;
 }
 
-export function getPaperStats(papers: PaperEntry[], today = getTodayKey()): PaperStats {
+export function getActivityCountsByDate(activity = getActivityCalendar()): Map<string, number> {
+  return new Map(activity.map((day) => [day.date, day.sessions]));
+}
+
+export function getPaperStats(papers: PaperEntry[], today = getTodayKey(), activity: ActivityDay[] = getActivityCalendar()): PaperStats {
   const activePapers = getActivePapers(papers);
-  const counts = countPapersByDate(papers);
+  const counts = getActivityCountsByDate(activity);
+  const weekStart = toDateKey(addDays(parseDateKey(today), -(parseDateKey(today).getUTCDay() || 7) + 1));
+  const weekEnd = toDateKey(addDays(parseDateKey(weekStart), 6));
 
   return {
     total: papers.length,
     activeDays: counts.size,
-    today: getPapersToday(activePapers, today).length,
+    today: counts.get(today) ?? 0,
     currentStreak: getCurrentStreak(counts, today),
     longestStreak: getLongestStreak(counts),
-    thisWeek: getPapersThisWeek(activePapers, today).length,
-    thisMonth: getPapersThisMonth(activePapers, today).length,
-    thisYear: getPapersThisYear(activePapers, today).length,
+    thisWeek: activity.filter((day) => day.date >= weekStart && day.date <= weekEnd).reduce((total, day) => total + day.sessions, 0),
+    thisMonth: activity.filter((day) => day.date.startsWith(today.slice(0, 7))).reduce((total, day) => total + day.sessions, 0),
+    thisYear: activity.filter((day) => day.date.startsWith(today.slice(0, 4))).reduce((total, day) => total + day.sessions, 0),
     deepReads: getDeepReadCount(activePapers),
     implemented: getImplementedCount(activePapers),
-    totalReadingMinutes: activePapers.reduce((sum, paper) => sum + paper.data.readingTimeMinutes, 0)
+    totalReadingMinutes: activity.reduce((total, day) => total + day.minutes, 0)
   };
 }
 
@@ -326,21 +332,4 @@ function getFutureMeExcerpt(paper: PaperEntry): string {
     futureMe.warning ||
     ""
   );
-}
-
-function hasFutureMeContent(paper: PaperEntry): boolean {
-  return Boolean(getFutureMeExcerpt(paper).trim());
-}
-
-function warnForMissingFutureMe(papers: PaperEntry[]) {
-  const statusesNeedingFutureMe = new Set(["pass2", "pass3", "read", "implemented"]);
-
-  for (const paper of papers) {
-    if (!statusesNeedingFutureMe.has(paper.data.status) || hasFutureMeContent(paper) || futureMeWarningSlugs.has(paper.id)) {
-      continue;
-    }
-
-    futureMeWarningSlugs.add(paper.id);
-    console.warn(`[future-me] ${paper.id} is ${paper.data.status} but has no futureMe note yet.`);
-  }
 }

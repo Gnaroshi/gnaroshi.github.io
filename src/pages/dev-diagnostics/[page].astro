@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getContentFeedBuildInfo } from "../../utils/contentFeed";
+
+export function getStaticPaths() {
+  return process.env.NODE_ENV !== "production" ? [{ params: { page: "content-feed" } }] : [];
+}
+
+const info = getContentFeedBuildInfo();
+---
+
+<BaseLayout title="Content feed diagnostics" description="Development-only content feed build information.">
+  <article class="prose">
+    <h1>Content feed diagnostics</h1>
+    <pre><code>{JSON.stringify(info, null, 2)}</code></pre>
+  </article>
+</BaseLayout>

@@ -5,7 +5,6 @@ import "../styles/global.css";
 import "../styles/blog.css";
 import "../styles/papers.css";
 import "../styles/insights.css";
-import "../styles/exams.css";
 import "../styles/responsive.css";
 import "../styles/navigation.css";
 import "../styles/application.css";
@@ -16,6 +15,7 @@ import PaperLabNav from "../components/navigation/PaperLabNav.astro";
 import { ogLocales } from "../i18n/config";
 import type { AlternateUrls, Locale } from "../i18n/types";
 import { getLocaleFromUrl, getLocalePath, translate } from "../i18n/utils";
+import { getContentFeedBuildInfo } from "../utils/contentFeed";
 
 interface Props {
   title: string;
@@ -53,6 +53,7 @@ const {
   ogLocaleAlternate = ogLocales[locale === "en" ? "ko" : "en"]
 } = Astro.props;
 const rssPath = getLocalePath(locale, "/rss.xml");
+const contentFeedBuildInfo = getContentFeedBuildInfo();
 ---
 
 <!doctype html>
@@ -62,6 +63,7 @@ const rssPath = getLocalePath(locale, "/rss.xml");
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#101211" media="(prefers-color-scheme: dark)" />
+    <meta name="content-feed-commit" content={contentFeedBuildInfo.contentFeedCommit ?? "unavailable"} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" href={rssPath} type="application/rss+xml" title={translate(locale, "site.rssTitle")} />
     <SEO

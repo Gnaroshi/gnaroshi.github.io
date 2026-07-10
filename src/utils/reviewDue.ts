@@ -20,6 +20,7 @@ export type ReviewDueRecord = {
 };
 
 export function getNextReviewDate(paper: PaperEntry): string | undefined {
+  if (paper.data.nextReviewAt) return paper.data.nextReviewAt;
   const baseDate = getLatestReviewBaseDate(paper);
   if (!baseDate) return undefined;
 

@@ -42,10 +42,6 @@ function matchesText(item: QueueRecord, query: string): boolean {
     .includes(query);
 }
 
-function conversionCommand(slug: string) {
-  return `npm run paper:from-queue -- --slug ${slug}`;
-}
-
 export default function QueueDashboard({ items, topics, tags, locale, messages }: Props) {
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState("");
@@ -53,7 +49,6 @@ export default function QueueDashboard({ items, topics, tags, locale, messages }
   const [priority, setPriority] = useState("");
   const [source, setSource] = useState("");
   const [status, setStatus] = useState("");
-  const [copiedSlug, setCopiedSlug] = useState("");
 
   const normalizedQuery = query.trim().toLowerCase();
   const filteredItems = useMemo(
@@ -69,16 +64,6 @@ export default function QueueDashboard({ items, topics, tags, locale, messages }
       }),
     [items, normalizedQuery, priority, source, status, tag, topic]
   );
-
-  async function copyCommand(slug: string) {
-    const command = conversionCommand(slug);
-    try {
-      await navigator.clipboard.writeText(command);
-      setCopiedSlug(slug);
-    } catch {
-      setCopiedSlug("");
-    }
-  }
 
   return (
     <div className="learning-dashboard-island" lang={locale}>
@@ -208,9 +193,6 @@ export default function QueueDashboard({ items, topics, tags, locale, messages }
                       {messages.code}
                     </a>
                   ) : null}
-                  <button type="button" onClick={() => copyCommand(item.id)}>
-                    {copiedSlug === item.id ? messages.copied : messages.copyCommand}
-                  </button>
                 </div>
               </article>
             ))}

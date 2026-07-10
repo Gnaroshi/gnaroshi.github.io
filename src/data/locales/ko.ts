@@ -32,7 +32,7 @@ export const koData = {
       currentBuild: "의미 있는 기록이 충분할 때만 활동과 분석을 보여 주는 정적 논문 연구실을 만들고 있습니다.",
       uncertainty: "구조가 너무 적으면 맥락을 잃고, 너무 많으면 매일 기록하기 비싸집니다. 적절한 수준은 아직 분명하지 않습니다.",
       related: [
-        { label: "논문을 3단계로 읽는 방법", href: "/ko/blog/paper-reading-method/" },
+        { label: "연구 글", href: "/ko/blog/" },
         { label: "논문 연구실", href: "/ko/papers/" }
       ]
     },
@@ -55,7 +55,7 @@ export const koData = {
       currentBuild: "장기 자격 증명을 노출하지 않고도 동작하는 수동·선택형 API 논문 리뷰와 구술 연습을 만들고 있습니다.",
       uncertainty: "도움이 되는 마찰과 불필요한 작업 부담의 경계는 반복적인 실제 사용을 통해 확인해야 합니다.",
       related: [
-        { label: "Markdown과 Git으로 연구 흐름 만들기", href: "/ko/blog/research-workflow/" },
+        { label: "연구 글", href: "/ko/blog/" },
         { label: "gnaroshi.dev 프로젝트", href: "/ko/projects/gnaroshi-dev/" }
       ]
     }

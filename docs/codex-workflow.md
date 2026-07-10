@@ -1,110 +1,44 @@
 # Codex Workflow
 
-Use this workflow to keep future Codex-assisted development focused and auditable.
+Use this workflow for presentation-layer work only. Canonical paper notes, writing, publishing, AI review, and API code belong to their owning repositories.
 
-## Start With Project Context
+## Start With Context
 
-Before implementation, read:
+Read `AGENTS.md`, `docs/architecture.md`, `docs/content-import.md`, `docs/design.md`, and the document specific to the change. Use `docs/deployment.md` for Pages work and `docs/i18n.md` for locale changes.
 
-- `AGENTS.md`
-- `docs/tasks.md`
-- the specific planning document for the task
+## Import Public Content
 
-For example:
+Before development, prepare the generated public feed:
 
-- Product or page scope: `docs/product.md`
-- Visual work: `docs/design.md`
-- Routing or build behavior: `docs/architecture.md`
-- Blog or paper content: `docs/content-model.md`
-- Paper dashboard behavior: `docs/paper-reading-system.md`
-- Deployment: `docs/deployment.md`
+```bash
+npm run content:pull
+npm run content:check
+```
 
-## Work One Phase At A Time
+`CONTENT_FEED_PATH` may point to an existing public feed checkout. Never point it at `gnaroshi-paper-lab` or `gnaroshi-writing`, and never edit the feed from this repository.
 
-Use `docs/tasks.md` as the project roadmap. Ask Codex to implement one phase or one coherent feature at a time.
+## Scope
 
-Good prompts are specific:
-
-- "Implement Phase 4 blog tag polish."
-- "Add one paper tracker filter."
-- "Create a project MDX collection and migrate project cards."
-
-Avoid mixing unrelated work such as deployment, design refactors, and content changes in one prompt.
+Website changes may cover Astro routes, components, localization, SEO, accessibility, theme, profile data, project metadata, and display-only feed adapters. Blog and paper authoring must be done through `gnaroshi-studio` and the private canonical repositories.
 
 ## Verification
 
-After each implementation phase, run:
+Run the contract and static checks after every change:
 
 ```bash
+npm run content:check
 npm run check
 npm run build
+npm run check:i18n
+npm run check:links
 ```
 
-For UI changes, also run a dev or preview server and inspect the affected routes in a browser.
+For route or interaction changes, also run `npm run test:e2e` and `npm run test:a11y`.
 
 ## Commits
 
-Keep commits small and clear:
+Keep commits focused, use conventional commit messages, and push the verified branch. Broad changes should use a branch and pull request.
 
-```bash
-git add .
-git commit -m "type: concise description"
-git push
-```
+## Local Configuration
 
-Use conventional commit prefixes when practical:
-
-- `feat:`
-- `fix:`
-- `docs:`
-- `ci:`
-- `chore:`
-
-## Blog Posts
-
-Write blog posts as MDX files under:
-
-```text
-src/content/blog/
-```
-
-Use the frontmatter schema in `docs/content-model.md`. Keep drafts as `draft: true` until they should appear publicly.
-
-## Paper Logs
-
-Create paper logs with:
-
-```bash
-npm run paper:new
-```
-
-Then edit the generated draft under:
-
-```text
-src/content/papers/
-```
-
-Use the three-pass method from `docs/paper-reading-system.md`. Partial progress is valid.
-
-## Projects
-
-Keep lightweight project metadata structured in:
-
-```text
-src/data/projects.ts
-```
-
-Use `src/content/projects/` later for longer MDX writeups. Do not invent publications, awards, or achievements.
-
-## Keep Data Structured
-
-Prefer structured data and frontmatter over one-off hardcoded content. Reusable personal identity should stay in `src/data/profile.ts`.
-
-## MCP-Assisted Development
-
-MCP can help with GitHub, local docs, browser inspection, or repository search, but configuration must remain local.
-
-- Safe example: `.codex/config.example.toml`
-- Local config: `.codex/config.toml` or `~/.codex/config.toml`
-- Never commit real MCP tokens, OAuth secrets, API keys, or credentials.
-
+MCP and Codex configuration stays local. `.codex/config.example.toml` is safe to share; `.codex/config.toml`, tokens, OAuth secrets, API keys, and credentials must never be committed.

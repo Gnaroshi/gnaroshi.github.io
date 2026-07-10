@@ -1,88 +1,34 @@
 ---
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
-import LiveOralExam from "../../../../components/exams/LiveOralExam";
 import { getBuildablePapers, type PaperEntry } from "../../../../utils/papers";
-import { getResearchApiBaseUrl } from "../../../../utils/researchApiClient";
-import type { ApiPaperContext, ApiTargetDepth } from "../../../../types/api";
-import { getIslandMessages } from "../../../../i18n/islands";
+import { getContentSlug } from "../../../../utils/localizedContent";
 
 export async function getStaticPaths() {
   const papers = await getBuildablePapers();
-  return papers.map((paper) => ({ params: { slug: paper.id }, props: { paper } }));
+  return papers.map((paper) => ({ params: { slug: getContentSlug(paper.id) }, props: { paper } }));
 }
 
-interface Props {
-  paper: PaperEntry;
-}
-
+interface Props { paper: PaperEntry }
 const { paper } = Astro.props as Props;
-const apiBaseUrl = getResearchApiBaseUrl();
-const paperContext: ApiPaperContext = {
-  oneLineSummary: paper.data.oneLineSummary,
-  coreIdea: paper.data.coreIdea,
-  mainFormula: paper.data.mainFormula,
-  formulaInterpretation: paper.data.formulaInterpretation,
-  experimentTakeaway: paper.data.experimentTakeaway,
-  notesExcerpt: (paper.body ?? "").slice(0, 8_000)
-};
-const initialTargetDepth: ApiTargetDepth = paper.data.status === "pass3" || ["deep", "reproduce", "implement"].includes(paper.data.depth)
-  ? "pass3"
-  : paper.data.status === "pass2" || paper.data.depth === "understand"
-    ? "pass2"
-    : "pass1";
-const manualPrompt = buildManualExamPrompt(paper, initialTargetDepth);
-const messages = getIslandMessages("en").exam;
-const alternateUrls = { en: `/papers/${paper.id}/exam/live/`, ko: "/ko/papers/", xDefault: `/papers/${paper.id}/exam/live/`, translationAvailable: false } as const;
-
-function buildManualExamPrompt(entry: PaperEntry, targetDepth: ApiTargetDepth): string {
-  return [
-    "Act as a supportive but serious oral examiner for this paper note.",
-    "Ask one question at a time and wait for my answer.",
-    "Ask one concise follow-up when an answer is vague.",
-    `Use ${targetDepth} depth and do not demand deeper evidence than that pass requires.`,
-    "Evaluate retrieval evidence, explanation, precision, uncertainty, research connection, formula understanding, experiment evidence, and critical thinking.",
-    "Do not call the result intelligence, talent, or personal worth.",
-    "Do not reveal an ideal answer before I respond.",
-    "At the end, return a short evidence summary and concrete next actions.",
-    "Do not overclaim correctness because this context may not include the full paper.",
-    "",
-    `Paper: ${entry.data.title}`,
-    `One-line summary: ${entry.data.oneLineSummary}`,
-    `Core idea: ${entry.data.coreIdea}`,
-    `Main formula: ${entry.data.mainFormula || "Not recorded at this depth."}`,
-    `Formula interpretation: ${entry.data.formulaInterpretation || "Not recorded at this depth."}`,
-    `Experiment takeaway: ${entry.data.experimentTakeaway || "Not recorded at this depth."}`,
-    "",
-    "Paper note excerpt:",
-    (entry.body ?? "").slice(0, 8_000)
-  ].join("\n");
-}
+const slug = getContentSlug(paper.id);
+const exams = paper.data.oralExams;
+const alternateUrls = { en: `/papers/${slug}/exam/live/`, ko: "/ko/papers/", xDefault: `/papers/${slug}/exam/live/`, translationAvailable: false } as const;
 ---
 
-<BaseLayout
-  title={`Live oral exam · ${paper.data.title}`}
-  description={`A local-first voice and text retrieval exam for ${paper.data.title}.`}
-  canonical={`/papers/${paper.id}/exam/live/`}
-  alternateUrls={alternateUrls}
-  width="dashboard"
-  mode="application"
->
+<BaseLayout title={`Oral exam record · ${paper.data.title}`} description={`Published oral exam evidence for ${paper.data.title}.`} canonical={`/papers/${slug}/exam/live/`} alternateUrls={alternateUrls} width="dashboard" mode="application">
   <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
   <header class="page-header">
-    <a class="paper-detail-header__back" href={`/papers/${paper.id}/`}>Back to paper note</a>
-    <p class="eyebrow">Oral exam</p>
+    <a class="paper-detail-header__back" href={`/papers/${slug}/`}>Back to paper note</a>
+    <p class="eyebrow">Oral exam record</p>
     <h1>{paper.data.title}</h1>
-    <p class="lede">Practice explanation from memory with live voice, text questions, or a manual prompt.</p>
+    <p class="lede">Published retrieval-practice summaries associated with this paper.</p>
   </header>
-  <LiveOralExam
-    client:load
-    apiBaseUrl={apiBaseUrl}
-    paperSlug={paper.id}
-    paperTitle={paper.data.title}
-    paperContext={paperContext}
-    initialTargetDepth={initialTargetDepth}
-    manualPrompt={manualPrompt}
-    locale="en"
-    messages={messages}
-  />
+  {exams.length > 0 ? (
+    <section class="section" aria-labelledby="oral-exam-history-heading">
+      <h2 id="oral-exam-history-heading">Exam history</h2>
+      <div class="paper-note-list">{exams.map((exam) => <article><h3>{exam.date}</h3><p>{exam.questionsAnswered} of {exam.totalQuestions} questions answered · {exam.confidence} confidence{exam.overallScore === null ? "" : ` · score ${exam.overallScore}`}</p>{exam.followUpQuestion && <p>{exam.followUpQuestion}</p>}</article>)}</div>
+    </section>
+  ) : (
+    <section class="app-empty-state" aria-labelledby="oral-exam-empty-heading"><h2 id="oral-exam-empty-heading">No public oral exam record</h2><p>This paper does not currently include a published oral exam summary.</p><a class="button button--primary" href={`/papers/${slug}/`}>Return to paper note</a></section>
+  )}
 </BaseLayout>

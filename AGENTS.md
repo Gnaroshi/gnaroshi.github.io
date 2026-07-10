@@ -1,466 +1,146 @@
 # AGENTS.md
 
-This repository is the source for `https://gnaroshi.dev`, a personal academic/research homepage, research blog, and paper reading tracker for Gnaroshi.
+This repository is the presentation layer for `https://gnaroshi.dev`, a personal academic homepage, research blog, and public paper-reading record.
 
-Old Lab-LVM code was intentionally deleted and backed up elsewhere. Do not recover, reference, or migrate it.
+It is not a canonical authoring repository. Public blog and paper data must come only from `Gnaroshi/gnaroshi-content-feed`.
 
-## Project Purpose
+## Read First
 
-- Introduce Gnaroshi as an AI/software researcher.
-- Serve as a personal homepage.
-- Host a serious technical blog for notes, research logs, paper summaries, and project writeups.
-- Track daily paper reading through Markdown/MDX files.
-- Show GitHub-contribution-style paper reading activity.
-- Support a three-pass paper reading workflow.
-- Deploy as a static GitHub Pages site at `https://gnaroshi.dev`.
+Before structural changes, read:
 
-The tone is personal, technical, clean, and research-oriented. This is not a corporate site, a generic portfolio template, or a lab homepage.
-
-## Planning Documents
-
-Before changing product, design, architecture, content behavior, or major structure, read the relevant files:
-
-- `docs/product.md`
-- `docs/design.md`
 - `docs/architecture.md`
-- `docs/content-model.md`
-- `docs/paper-reading-system.md`
-- `docs/tasks.md`
+- `docs/content-import.md`
 - `docs/deployment.md`
-- `docs/cloudflare-worker-api.md`
+- `docs/local-development.md`
+- `docs/design.md`
 - `docs/i18n.md`
 - `docs/i18n-terminology.md`
-- `docs/codex-workflow.md`
 
 ## Stack
 
-- Astro 7
+- Astro 7 static output
 - TypeScript
-- MDX
-- React only for interactive islands
-- Plain CSS with design tokens in `src/styles/tokens.css`
-- Astro content collections in `src/content.config.ts`
-- Static output
-- GitHub Pages deployment through GitHub Actions
-- Optional Cloudflare Worker under `apps/api/` for explicitly approved live oral exams
+- MDX imported from the public feed
+- React only for interactive presentation islands
+- Plain CSS and tokens in `src/styles/tokens.css`
+- GitHub Pages through GitHub Actions
 
-Do not introduce additional backend dependencies, server runtimes, databases, OAuth, CMS infrastructure, or secret-dependent services without explicit user approval. The existing Worker is optional and must never become a prerequisite for the static site.
+There is no backend, database, OAuth, authoring CLI, AI client, or private content checkout in this repository.
 
 ## Commands
 
 ```bash
+npm run content:pull
 npm install
 npm run dev
-npm run check
-npm run check:public-copy
-npm run check:content-metrics
-npm run check:links
-npm run check:empty-shells
-npm run check:i18n
-npm run check:hardcoded-ui
-npm run check:translation-links
 npm run build
 npm run preview
+npm run check
+npm run content:check
 npm run test:e2e
 npm run test:a11y
-npm run test:visual
-npm run paper:new
-npm run paper:review -- --slug <paper-slug>
-npm run paper:review:all -- --dry-run
-npm run paper:review:validate
-npm run paper:review:import -- --slug <paper-slug> --file review.json
-npm run paper:from-queue -- --slug <queue-slug>
-npm run paper:promote -- --slug <paper-slug>
-npm run week:build
-npm run graph:build
-npm run questions:build
-npm run formula:score -- --slug <paper-slug> --file attempt.json
-npm run score:test
-cd apps/api && npm run typecheck
-cd apps/api && npm test
-cd apps/api && npm run dev
-cd apps/api && npm run deploy
+npm run check:i18n
+npm run check:links
 ```
 
-- `npm run dev`: start local Astro dev server.
-- `npm run check`: run Astro/TypeScript diagnostics.
-- `npm run check:public-copy`: fail when built public assets expose scaffold or developer-facing terms.
-- `npm run check:content-metrics`: validate evidence eligibility, weekly review, graph, and public score gates.
-- `npm run check:links`: validate internal links in `dist/`.
-- `npm run check:empty-shells`: report primary pages or empty tools that expose zero dashboards or unnecessary islands.
-- `npm run check:i18n`: enforce exact English/Korean dictionary and island-message parity.
-- `npm run check:hardcoded-ui`: catch untranslated labels in interactive components and Korean output.
-- `npm run check:translation-links`: validate built route pairs, canonical/hreflang links, RSS, and sitemap.
-- `npm run build`: build the static site into `dist/`.
-- `npm run preview`: preview the built static site.
-- `npm run test:e2e`: verify public routes, mobile navigation, overflow, and empty states with Playwright.
-- `npm run test:a11y`: run axe and keyboard-focus checks against the production preview.
-- `npm run test:visual`: capture the light/dark desktop, tablet, and mobile route matrix under ignored `artifacts/`.
-- `npm run paper:new`: create a draft paper log in `src/content/papers/`.
-- `npm run paper:review`: generate one AI paper review JSON from local CLI or GitHub Actions.
-- `npm run paper:review:all`: review all non-draft paper logs; use `--dry-run` before API-backed runs.
-- `npm run paper:review:validate`: validate generated AI paper review JSON.
-- `npm run paper:review:import`: import JSON returned by a manual ChatGPT review prompt.
-- `npm run paper:from-queue`: create a draft paper log from a queue item.
-- `npm run paper:promote`: create a hidden draft blog post from a paper note.
-- `npm run week:build`: rebuild the current weekly review JSON.
-- `npm run graph:build`: rebuild `src/generated/research-graph.json`.
-- `npm run questions:build`: build `src/generated/question-bank/question-bank.json`.
-- `npm run formula:score`: score an exported formula recall attempt without an API.
-- `npm run score:test`: run deterministic Research Momentum Score v2 anti-distortion scenarios.
-- `cd apps/api && npm run typecheck`: type-check the optional Cloudflare Worker.
-- `cd apps/api && npm test`: run Worker router, CORS, mock, and secret-safety tests without OpenAI calls.
-- `cd apps/api && npm run dev`: run the Worker locally with values from untracked `.dev.vars`.
-- `cd apps/api && npm run deploy`: deploy the Worker after its Cloudflare secret is configured.
+- `content:pull`: clone or fast-forward the public feed in ignored `.content-feed/`.
+- `content:check`: validate the manifest version, directory contract, and source commit metadata.
+- `dev`, `check`, and `build`: fail before Astro starts when the feed is unavailable or incompatible.
+- `check:links`: run after `build`.
 
-The package scripts disable Astro telemetry to avoid global config writes during local and CI checks.
+Use `CONTENT_FEED_PATH` for an existing local public-feed checkout. Never point it to private paper or writing repositories.
+
+## Ownership
+
+Website-owned:
+
+- Astro pages, layouts, and UI components
+- English/Korean localization
+- SEO, RSS, sitemap, accessibility, and theme
+- Public navigation and route tests
+- `src/data/profile.ts`, locale-aware profile data, research copy, and project metadata
+- presentation adapters in `src/utils/`
+
+Feed-owned:
+
+- `.content-feed/blog/`
+- `.content-feed/papers/`
+- `.content-feed/data/`
+- `.content-feed/assets/`
+- `.content-feed/manifest.json`
+
+Studio-owned:
+
+- content schemas and domain rules
+- paper and writing authoring
+- AI review and oral-exam generation
+- formula/question/weekly/graph builders
+- publishing and repository writes
+
+The website may format dates, filter public records, calculate reading time for display, and adapt feed records to UI props. It must display canonical Growth snapshots, weekly reviews, activity, and graph data from the feed without recomputing private-source metrics.
+
+## Content Loading
+
+`src/content.config.ts` maps feed schema version 1 into the existing Astro presentation types. Local `src/content/projects/` remains website-owned. Do not recreate local blog, paper, queue, or implementation source directories.
+
+The initial `bootstrap-empty` feed is valid only when every declared entry count is zero. Generated feeds must include `blog/`, `papers/`, and `data/`.
+
+Every production build exposes the imported feed commit in a meta tag and `/build-info.json`. Development-only diagnostics use `/dev-diagnostics/content-feed/` and must not be emitted in production.
 
 ## Routing
 
-Main routes:
+Keep English unprefixed and Korean under `/ko/`. Preserve existing public route shapes, including `/blog/[slug]/`, `/papers/[slug]/`, `/growth/`, `/week/`, and `/graph/`.
 
-English uses these unprefixed routes. Every core route also has a Korean wrapper under `/ko/`.
-
-- `/`
-- `/about`
-- `/research`
-- `/projects`
-- `/blog`
-- `/blog/[slug]`
-- `/blog/tags/[tag]`
-- `/blog/archive`
-- `/papers`
-- `/papers/[slug]`
-- `/papers/[slug]/exam/live`
-- `/papers/[slug]/formula`
-- `/queue`
-- `/queue/[slug]`
-- `/reviews`
-- `/reviews/due`
-- `/formula`
-- `/questions`
-- `/questions/[id]`
-- `/implementations`
-- `/implementations/[slug]`
-- `/week`
-- `/week/[weekId]`
-- `/graph`
-- `/graph/[nodeType]/[slug]`
-- `/growth`
-- `/now`
-- `/contact`
-- `/rss.xml`
-- `/ko/rss.xml`
-
-Use Astro file-based routes. Use `getStaticPaths` for dynamic blog and paper pages.
-
-## Content And Data Locations
-
-- Blog posts: `src/content/blog/`
-- English/Korean dictionaries and helpers: `src/i18n/`
-- Locale-aware static data: `src/data/locales/`
-- Shared English/Korean page views: `src/views/`
-- Paper logs: `src/content/papers/`
-- Paper reading queue: `src/content/queue/`
-- Future long-form project writeups: `src/content/projects/`
-- Implementation attempts: `src/content/implementations/`
-- Content collection schemas: `src/content.config.ts`
-- Primary profile data: `src/data/profile.ts`
-- Skills/timeline/research/project/now data: `src/data/*.ts`
-- Shared layouts: `src/layouts/`
-- Components: `src/components/`
-- Utilities: `src/utils/`
-- Design tokens: `src/styles/tokens.css`
-- Global styles: `src/styles/global.css`
-- Static assets and `CNAME`: `public/`
-- Generated AI paper reviews: `src/generated/paper-reviews/`
-- Generated question bank: `src/generated/question-bank/`
-- Generated formula recall attempts: `src/generated/formula-recall/`
-- Generated oral exam data: `src/generated/oral-exams/`
-- Generated weekly reviews: `src/generated/weekly-reviews/`
-- Generated research graph: `src/generated/research-graph.json`
-- Optional generated GitHub contribution days: `src/generated/github-contributions/`
-- Manual research graph edges: `src/data/researchGraph.manual.ts`
-- Optional Cloudflare Worker: `apps/api/`
-- Worker deployment and security guide: `docs/cloudflare-worker-api.md`
-
-Astro 7 content collections are defined in `src/content.config.ts` using `glob()` loaders. Do not create or reintroduce legacy `src/content/config.ts`.
+Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render silent English fallback content at a Korean content URL.
 
 ## Coding Rules
 
-- Use TypeScript.
-- Keep English as the unprefixed default locale and Korean under `/ko/`; never add `/en/` or `/kr/` routes.
-- Keep English and Korean dictionary keys in exact parity and pass typed message subsets into React islands.
-- Keep route wrappers thin and business logic in shared locale-aware views.
-- Pair translated content with `translationKey`; never render silent English fallback content at a Korean URL.
-- Do not machine-translate research claims without owner review. Preserve proper nouns, paper titles, code, formulas, model names, and dataset names.
-- Keep content and UI separate.
-- Keep personal identity data centralized in `src/data/profile.ts`.
-- Prefer editable data files over hardcoding repeated personal data in components.
-- Keep React limited to isolated islands such as paper filtering, search, and theme controls.
-- Do not turn the site into a full React app.
-- Keep utilities small and local to `src/utils/`.
-- Keep the site static-export compatible.
-- Avoid unnecessary dependencies.
-- Do not commit generated `dist/`, local caches, or machine-specific files.
-- Never expose `OPENAI_API_KEY`, `OPENAI_MODEL`, or any API secret in client-side code.
-- The live oral-exam browser may use only a short-lived Realtime credential returned by the Worker; never send the Worker API key to the browser.
-- Keep `apps/api/.dev.vars` and all local Worker secret files untracked.
-- Keep voice transcripts transient by default. Do not add cloud persistence without explicit approval.
-- AI review scripts must run only server-side through local Node CLI or GitHub Actions.
-- Generated AI paper review files must follow the schema documented in `docs/ai-paper-review.md`.
-- AI review copy must be motivational, constructive, and evidence-based. Do not frame scores as intelligence, IQ, or personal worth.
-- Calibrate AI review scores with `docs/ai-review-rubric-examples.md`. Do not over-score vague notes.
-- Use `visibility: "public" | "unlisted" | "hidden"` consistently. Public content appears in indexes and public stats; unlisted detail pages may build but stay out of indexes; hidden content is excluded from production public pages and public generated stats.
-- Visibility is not privacy. Do not commit private or confidential material to this public repository.
-- Rebuild weekly reviews before the research graph when both changed, so graph nodes can include the newest weekly review.
-- Keep Research Momentum Score calculations pure in `src/utils/momentumScore.ts`; normalize Astro/build data separately in `src/utils/momentumData.ts`.
-- Treat `contentStage`, `metricEligible`, `graphEligible`, and `weeklyReviewEligible` as public evidence boundaries. Seed, demo, draft, hidden, unlisted, and system content must not contribute to public aggregates.
-- Keep the numeric Momentum score behind `getEvidenceEligibility()`. Do not render it before all thresholds in `src/config/evidenceGates.ts` pass.
-- Treat the momentum score as research-loop evidence, never as intelligence, talent, or personal worth.
-- Do not turn missing momentum data into automatic zeroes. Mark components unavailable and lower confidence.
-- Preserve the daily caps and depth-mismatch checks documented in `docs/research-momentum-score.md`.
+- Use TypeScript and static-compatible Astro APIs.
+- Keep React limited to search, filter, theme, and other genuine islands.
+- Keep Node filesystem access in build-time feed adapters only; never bundle it into client islands.
+- Keep personal identity centralized in `src/data/profile.ts`.
+- Keep feed-specific compatibility logic out of UI components.
+- Avoid unnecessary dependencies and large chart libraries.
+- Do not commit `.content-feed/`, `dist/`, credentials, local caches, or machine-specific files.
+- Do not write into the content-feed checkout.
 
-## Design Rules
+## Design And Accessibility
 
-- Minimal academic homepage.
-- Blog-first and research-note friendly.
-- Dense but readable.
-- Fast page loads.
-- Strong typography over decoration.
-- Neutral palette with one quiet accent color.
-- Light/dark theme support through CSS variables.
-- No heavy animation.
-- No decorative gradient blobs, corporate landing-page treatment, or generic portfolio template style.
-- Use dashboard width only for dense interfaces such as `/papers`.
-- Keep cards for repeated items, tools, and bounded panels; avoid nested card layouts.
-- Use editorial mode for identity, research, projects, writing, and detail articles. Use application mode only for Paper Lab workflows and Growth.
-- Keep the primary navigation to Home, Research, Projects, Writing, Paper Lab, and About. Keep Now and Links in the footer.
-- Use progressive disclosure: no zero grids, heatmaps, filters, review aggregates, or empty React islands before enough evidence exists.
+- Maintain the minimal academic/editorial design.
+- Keep application mode limited to public Paper Lab and Growth views.
+- Use semantic landmarks and heading order.
+- Preserve visible focus states, keyboard navigation, contrast, and mobile overflow protection.
+- Keep graph list fallback and heatmap labels accessible.
+- Do not expose developer or authoring instructions on public pages.
 
-## Accessibility Rules
+## Prohibited Changes
 
-- Use semantic HTML landmarks and heading order.
-- Keep navigation keyboard accessible.
-- Provide visible focus states.
-- Maintain sufficient contrast in light and dark themes.
-- Give interactive controls accessible names.
-- Do not rely on hover-only behavior.
-- Keep filters, toggles, and heatmap cells keyboard usable where feasible.
-- Check mobile layouts for overflow and text clipping.
+- Do not import `gnaroshi-paper-lab` or `gnaroshi-writing`.
+- Do not add private repository tokens or a cross-repository PAT.
+- Do not create paper files, blog drafts, or implementation records here.
+- Do not add OpenAI calls, review generation, scoring scripts, publishing scripts, or an authoring CLI.
+- Do not add `apps/api`, a database, OAuth, or a server runtime.
+- Do not recompute canonical Growth, weekly review, or graph outputs from page content.
+- Do not set an Astro repository subpath base.
 
-## Adding A Blog Post
+## Verification
 
-1. Add a Markdown or MDX file under `src/content/blog/`.
-2. Use the blog frontmatter schema in `docs/content-model.md`.
-3. Include `title`, `description`, `pubDate`, `draft`, `tags`, and `featured`.
-4. Use MDX only when components are needed.
-5. Keep tags lowercase kebab-case.
-6. Use `draft: true` until the post should appear publicly.
-7. Run `npm run check` and `npm run build` before committing.
-
-## Adding A Paper Log
-
-1. Prefer:
+For code changes:
 
 ```bash
-npm run paper:new
-```
-
-2. Edit the generated draft under `src/content/papers/`.
-3. Use the paper schema in `docs/content-model.md`.
-4. Track `status`, `depth`, `priority`, `difficulty`, `readingTimeMinutes`, and `readDate`.
-5. Keep generated notes as `draft: true` until they should appear publicly.
-6. Use the three-pass sections:
-   - `Why I Opened This`
-   - `Pass 1: Skim`
-   - `Pass 2: Structure`
-   - `Pass 3: Deep Dive`
-   - `Questions`
-   - `Implementation Notes`
-   - `Links`
-7. Partial progress is valid and should be represented honestly.
-
-## Adding A Queue Item
-
-1. Add a Markdown or MDX file under `src/content/queue/`.
-2. Use the queue schema in `docs/learning-loop-features.md`.
-3. Keep `visibility: "hidden"` until the item should be public.
-4. Convert to a draft paper log with:
-
-```bash
-npm run paper:from-queue -- --slug <queue-slug>
-```
-
-5. Add `--mark-converted` only when the queue item should be updated after conversion.
-
-## Adding An AI Paper Review
-
-1. Write or update a paper log under `src/content/papers/`.
-2. Keep secrets in untracked `.env.local`:
-
-```bash
-OPENAI_API_KEY=...
-OPENAI_MODEL=...
-```
-
-3. Generate a review:
-
-```bash
-npm run paper:review -- --slug <paper-slug>
-```
-
-4. Use `--force` to re-review and append score history.
-5. Use `--dry-run` to inspect targets without API calls or file writes.
-6. Run `npm run paper:review:validate` after generated review JSON changes.
-7. Set `reviewVisibility: "hidden"` in paper frontmatter if the JSON should exist but not render publicly.
-8. Do not call OpenAI from browser code. Do not commit `.env.local` or workflow secrets.
-
-Manual no-API review prompts are available on paper detail pages. Use `npm run paper:review:import -- --slug <paper-slug> --file review.json` to import returned JSON. See `docs/manual-ai-review.md`.
-
-See `docs/ai-paper-review.md` for scoring dimensions and workflow details.
-
-## Learning Loop Features
-
-- Review due logic lives in `src/utils/reviewDue.ts`.
-- Queue logic lives in `src/utils/queue.ts`.
-- Formula recall logic lives in `src/utils/formulaRecall.ts`.
-- Question bank logic lives in `src/utils/questionBank.ts`.
-- Browser practice state is localStorage-only and must not be described as saved to GitHub.
-- Permanent review or recall state must be committed as paper frontmatter or generated JSON.
-- See `docs/learning-loop-features.md` before changing these workflows.
-
-## Adding Projects
-
-- Lightweight project cards currently come from `src/data/projects.ts`.
-- Keep project entries honest. Do not expose developer-facing sample or placeholder language on public pages.
-- Use tags, status, links, and `featured` flags consistently.
-- For long-form technical writeups, add MDX files under `src/content/projects/` after the project content collection is ready.
-- Do not invent formal publications, awards, or achievements.
-
-## Adding Implementation Attempts
-
-1. Add a Markdown or MDX file under `src/content/implementations/`.
-2. Use `src/content/implementations/_template.mdx` as the shape.
-3. Link papers with `relatedPapers` using paper slugs.
-4. Link project cards with `relatedProjects` using project slugs from `src/data/projects.ts`.
-5. Record failures and partial reproductions honestly.
-6. Use `visibility: "hidden"` until the attempt should be public.
-7. Run `npm run check` and `npm run build`.
-
-## Research Graph And Weekly Reviews
-
-- Run `npm run week:build` to create or refresh `src/generated/weekly-reviews/<weekId>.json`.
-- Run `npm run graph:build` to create or refresh `src/generated/research-graph.json`.
-- Use `--force` only when overwriting changed generated JSON is intentional.
-- Manual graph edges live in `src/data/researchGraph.manual.ts`.
-- Graph and weekly review scripts must not require secrets or network access.
-- Keep the graph static and lightweight. Do not add a heavy graph visualization library without explicit approval.
-
-## Build And Verification
-
-For most code changes:
-
-```bash
+npm run content:check
 npm run check
 npm run build
-npm run check:public-copy
-npm run check:content-metrics
+npm run check:i18n
 npm run check:links
-npm run check:empty-shells
 ```
 
-For momentum scoring changes, also run:
+For route or interaction changes, also run `npm run test:e2e` and `npm run test:a11y`.
 
-```bash
-npm run score:test
-```
+## Git Discipline
 
-For UI changes, also run a local dev or preview server and inspect the affected pages in a browser when possible.
-
-For navigation, route, evidence-state, or broad visual changes, also run:
-
-```bash
-npm run test:e2e
-npm run test:a11y
-npm run test:visual
-```
-
-For content-only changes, schema validation and build are usually sufficient.
-
-## Deployment
-
-Deployment target:
-
-```text
-https://gnaroshi.dev
-```
-
-Deployment files:
-
-- `astro.config.mjs` with `site: "https://gnaroshi.dev"` and no `base`
-- `public/CNAME` containing exactly `gnaroshi.dev`
-- `.github/workflows/deploy.yml`
-
-Deployment flow:
-
-1. Push to `main`.
-2. GitHub Actions runs `Deploy to GitHub Pages`.
-3. The workflow builds Astro, uploads a Pages artifact, and deploys it.
-4. GitHub Pages serves the custom domain.
-
-GitHub repository Settings -> Pages should use GitHub Actions as the source, with `gnaroshi.dev` as the custom domain and HTTPS enforced after certificate provisioning.
-
-See `docs/deployment.md` for DNS, HTTPS, and 404 troubleshooting.
-
-The optional Worker deploys separately to `api.gnaroshi.dev`. Configure `OPENAI_API_KEY` with `npx wrangler secret put`, never in `wrangler.jsonc`. After the Worker is healthy, set the public repository variable `PUBLIC_AI_API_BASE_URL=https://api.gnaroshi.dev` and rebuild Pages. See `docs/cloudflare-worker-api.md`.
-
-## Codex And MCP Notes
-
-- Future Codex sessions should start with this file and the relevant docs under `docs/`.
-- Project-scoped Codex guidance lives in `.codex/README.md`.
-- `.codex/config.example.toml` is safe to commit and contains no secrets.
-- Real MCP configuration, tokens, API keys, OAuth secrets, and credentials must stay local and untracked.
-- `.codex/config.toml` is ignored on purpose.
-
-## What Not To Do
-
-- Do not recover, reference, or migrate old Lab-LVM code.
-- Do not add backend services, databases, OAuth, or server runtimes without explicit approval.
-- Do not commit secrets, API keys, OAuth tokens, personal credentials, or local MCP configs.
-- Do not add key-authenticated browser-side AI calls or expose OpenAI API keys in bundled JavaScript. The approved exception is direct Realtime WebRTC using a short-lived Worker-issued credential.
-- Do not treat visibility fields as privacy controls.
-- Do not set `base: "/gnaroshi.github.io/"`; this is a user site with a custom root domain.
-- Do not use a `gh-pages` branch unless the deployment strategy is explicitly changed.
-- Do not commit `dist/`.
-- Do not add random templates or scaffold unrelated design systems.
-- Do not hardcode personal data across many components.
-- Do not imply browser-side edits save to GitHub.
-- Do not add heavy UI frameworks or animation libraries without a clear need.
-
-## Commit Discipline
-
-- Keep commits focused.
-- For every user prompt that changes files, create a git commit after verification.
-- Use clear conventional commit messages when possible.
-- Push completed commits to GitHub unless the user explicitly asks not to push or credentials/network access are blocked.
-- Always report the final commit hash, pushed branch, verification results, and any failed commands.
-
-## GitHub Logging Policy
-
-- For small, direct changes on `main`, commit and push with a concise message plus a detailed final summary.
-- For larger work, risky changes, or multi-step features, prefer a branch and pull request when practical.
-- PR descriptions should summarize the goal, important implementation details, verification commands, and known follow-up work.
-- If a PR cannot be opened because tooling, auth, or network access is blocked, push the branch if possible and report the exact blocker.
-- If a prompt only asks a question and no files change, do not create an empty commit.
-
-## Future Codex Workflow
-
-Before making changes:
-
-1. Check `git status --short --branch`.
-2. Read the relevant planning document.
-3. Make the smallest complete change for the requested phase.
-4. Run appropriate checks.
-5. Commit and push file changes.
-6. Report changed files, commands run, verification results, commit hash, and any failures.
+- Start with `git status --short --branch`.
+- Keep commits focused and use conventional commit messages.
+- For each file-changing prompt, verify, commit, and push unless blocked or explicitly told not to.
+- Prefer a branch and PR for broad architecture changes.
+- Report the commit, pushed branch, checks, failures, and deployment state.

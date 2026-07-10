@@ -7,6 +7,7 @@ import { getContentSlug, getTranslationEntry } from "./localizedContent";
 import { getReadingTime } from "./readingTime";
 import { slugify } from "./slug";
 import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
+import { getContentFeedRecordCount } from "./contentFeed";
 
 export type BlogPost = CollectionEntry<"blog">;
 
@@ -28,11 +29,13 @@ export type ArchiveGroup = {
 };
 
 export async function getAllBlogPosts(locale: Locale = "en"): Promise<BlogPost[]> {
+  if (getContentFeedRecordCount("blog") === 0) return [];
   const posts = await getCollection("blog");
   return sortBlogPosts(posts.filter((post) => post.data.locale === locale));
 }
 
 export async function getAllBlogPostsAcrossLocales(): Promise<BlogPost[]> {
+  if (getContentFeedRecordCount("blog") === 0) return [];
   return sortBlogPosts(await getCollection("blog"));
 }
 
