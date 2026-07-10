@@ -55,6 +55,9 @@ npm run paper:review -- --slug <paper-slug>
 npm run paper:review:all -- --dry-run
 npm run paper:review:validate
 npm run paper:review:import -- --slug <paper-slug> --file review.json
+npm run paper:from-queue -- --slug <queue-slug>
+npm run questions:build
+npm run formula:score -- --slug <paper-slug> --file attempt.json
 ```
 
 - `npm run dev`: start local Astro dev server.
@@ -66,6 +69,9 @@ npm run paper:review:import -- --slug <paper-slug> --file review.json
 - `npm run paper:review:all`: review all non-draft paper logs; use `--dry-run` before API-backed runs.
 - `npm run paper:review:validate`: validate generated AI paper review JSON.
 - `npm run paper:review:import`: import JSON returned by a manual ChatGPT review prompt.
+- `npm run paper:from-queue`: create a draft paper log from a queue item.
+- `npm run questions:build`: build `src/generated/question-bank/question-bank.json`.
+- `npm run formula:score`: score an exported formula recall attempt without an API.
 
 The package scripts disable Astro telemetry to avoid global config writes during local and CI checks.
 
@@ -83,6 +89,14 @@ Main routes:
 - `/blog/archive`
 - `/papers`
 - `/papers/[slug]`
+- `/papers/[slug]/formula`
+- `/queue`
+- `/queue/[slug]`
+- `/reviews`
+- `/reviews/due`
+- `/formula`
+- `/questions`
+- `/questions/[id]`
 - `/now`
 - `/contact`
 - `/rss.xml`
@@ -93,6 +107,7 @@ Use Astro file-based routes. Use `getStaticPaths` for dynamic blog and paper pag
 
 - Blog posts: `src/content/blog/`
 - Paper logs: `src/content/papers/`
+- Paper reading queue: `src/content/queue/`
 - Future long-form project writeups: `src/content/projects/`
 - Content collection schemas: `src/content.config.ts`
 - Primary profile data: `src/data/profile.ts`
@@ -104,6 +119,9 @@ Use Astro file-based routes. Use `getStaticPaths` for dynamic blog and paper pag
 - Global styles: `src/styles/global.css`
 - Static assets and `CNAME`: `public/`
 - Generated AI paper reviews: `src/generated/paper-reviews/`
+- Generated question bank: `src/generated/question-bank/`
+- Generated formula recall attempts: `src/generated/formula-recall/`
+- Generated oral exam data: `src/generated/oral-exams/`
 
 Astro 7 content collections are defined in `src/content.config.ts` using `glob()` loaders. Do not create or reintroduce legacy `src/content/config.ts`.
 
@@ -182,6 +200,19 @@ npm run paper:new
    - `Links`
 7. Partial progress is valid and should be represented honestly.
 
+## Adding A Queue Item
+
+1. Add a Markdown or MDX file under `src/content/queue/`.
+2. Use the queue schema in `docs/learning-loop-features.md`.
+3. Keep `visibility: "hidden"` until the item should be public.
+4. Convert to a draft paper log with:
+
+```bash
+npm run paper:from-queue -- --slug <queue-slug>
+```
+
+5. Add `--mark-converted` only when the queue item should be updated after conversion.
+
 ## Adding An AI Paper Review
 
 1. Write or update a paper log under `src/content/papers/`.
@@ -208,10 +239,20 @@ Manual no-API review prompts are available on paper detail pages. Use `npm run p
 
 See `docs/ai-paper-review.md` for scoring dimensions and workflow details.
 
+## Learning Loop Features
+
+- Review due logic lives in `src/utils/reviewDue.ts`.
+- Queue logic lives in `src/utils/queue.ts`.
+- Formula recall logic lives in `src/utils/formulaRecall.ts`.
+- Question bank logic lives in `src/utils/questionBank.ts`.
+- Browser practice state is localStorage-only and must not be described as saved to GitHub.
+- Permanent review or recall state must be committed as paper frontmatter or generated JSON.
+- See `docs/learning-loop-features.md` before changing these workflows.
+
 ## Adding Projects
 
 - Lightweight project cards currently come from `src/data/projects.ts`.
-- Keep project entries honest and clearly mark sample or placeholder content.
+- Keep project entries honest. Do not expose developer-facing sample or placeholder language on public pages.
 - Use tags, status, links, and `featured` flags consistently.
 - For long-form technical writeups, add MDX files under `src/content/projects/` after the project content collection is ready.
 - Do not invent formal publications, awards, or achievements.

@@ -62,6 +62,9 @@ coreQuestion: "TODO"
 coreIdea: "TODO"
 mainFormula: ""
 formulaInterpretation: ""
+formulaTerms: []
+formulaRecallPrompts:
+  - "Write the main formula from memory."
 experimentTakeaway: ""
 strengths:
   - "TODO"
@@ -69,6 +72,16 @@ weaknesses:
   - "TODO"
 myConnection: ""
 nextAction: ""
+reviewSchedule:
+  - 1
+  - 7
+reviewHistory: []
+futureMe:
+  oneThingToRemember: ""
+  whyItMatters: ""
+  whenToUseThis: ""
+  whatToRevisit: ""
+  warning: ""
 reviewAfterDays: 7
 featured: false
 draft: true

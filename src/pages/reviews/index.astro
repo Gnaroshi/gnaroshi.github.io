@@ -1,0 +1,91 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Card from "../../components/common/Card.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import ReviewSession from "../../components/reviews/ReviewSession";
+import { getPublishedPapers, getTodayKey } from "../../utils/papers";
+import {
+  getDueReviews,
+  getOverdueReviews,
+  getReviewCompletionRate,
+  getReviewCompletionStreak,
+  getReviewLoadByDay,
+  toReviewDueRecord
+} from "../../utils/reviewDue";
+
+const papers = await getPublishedPapers();
+const today = getTodayKey();
+const duePapers = getDueReviews(papers, today);
+const overduePapers = getOverdueReviews(papers, today);
+const loadByDay = [...getReviewLoadByDay(papers).entries()].slice(0, 14);
+const dueRecords = duePapers.map((paper) => toReviewDueRecord(paper, today));
+const completionRate = getReviewCompletionRate(papers, 30, today);
+const completionStreak = getReviewCompletionStreak(papers, today);
+---
+
+<BaseLayout title="Reviews" description="Spaced paper review queue for durable research memory." width="dashboard">
+  <div class="paper-dashboard">
+    <header class="paper-hero">
+      <div class="paper-hero__copy">
+        <p class="eyebrow">Reviews</p>
+        <h1>Review Due System</h1>
+        <p class="lede">A spaced revisit loop for summaries, formulas, retrieval questions, and research connections.</p>
+      </div>
+      <nav class="paper-hero__actions" aria-label="Review actions">
+        <a href="/reviews/due">Due today</a>
+        <a href="/formula">Formula trainer</a>
+        <a href="/papers">Paper Log</a>
+      </nav>
+    </header>
+
+    <section class="paper-stats" aria-label="Review stats">
+      <article class="paper-stat-card">
+        <strong>{duePapers.length}</strong>
+        <span>Due today</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{overduePapers.length}</strong>
+        <span>Overdue</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{completionStreak}</strong>
+        <span>Review streak</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{completionRate}%</strong>
+        <span>30-day completion rate</span>
+      </article>
+    </section>
+
+    <ReviewSession client:load papers={dueRecords} today={today} />
+
+    <section class="section" aria-labelledby="upcoming-reviews-heading">
+      <SectionHeader id="upcoming-reviews-heading" title="Upcoming review load" description="Next scheduled paper reviews from committed paper notes." />
+      {loadByDay.length > 0 ? (
+        <div class="activity-grid">
+          {loadByDay.map(([date, count]) => (
+            <div class="activity-cell">
+              <strong>{date}</strong>
+              <span>{count} paper{count === 1 ? "" : "s"}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="empty-state">No scheduled reviews yet.</p>
+      )}
+    </section>
+
+    <section class="section" aria-labelledby="overdue-heading">
+      <SectionHeader id="overdue-heading" title="Overdue papers" description="Papers whose next review date has already passed." />
+      {overduePapers.length > 0 ? (
+        <div class="card-list">
+          {overduePapers.map((paper) => (
+            <Card title={paper.data.title} href={`/papers/${paper.id}/`} description={paper.data.oneLineSummary} />
+          ))}
+        </div>
+      ) : (
+        <p class="empty-state">No overdue reviews.</p>
+      )}
+    </section>
+  </div>
+</BaseLayout>

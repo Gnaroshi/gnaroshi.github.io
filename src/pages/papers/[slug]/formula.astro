@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import FormulaRecallTrainer from "../../../components/formula/FormulaRecallTrainer";
+import { getPublishedPapers, getTodayKey, type PaperEntry } from "../../../utils/papers";
+import { toFormulaRecallRecord } from "../../../utils/formulaRecall";
+
+export async function getStaticPaths() {
+  const papers = await getPublishedPapers();
+  return papers.map((paper) => ({ params: { slug: paper.id }, props: { paper, papers } }));
+}
+
+interface Props {
+  paper: PaperEntry;
+  papers: PaperEntry[];
+}
+
+const { paper, papers } = Astro.props as Props;
+const records = papers.map(toFormulaRecallRecord);
+const today = getTodayKey();
+---
+
+<BaseLayout title={`${paper.data.title} Formula Recall`} description={`Formula recall practice for ${paper.data.title}.`} canonical={`/papers/${paper.id}/formula/`} width="dashboard">
+  <div class="paper-dashboard">
+    <header class="paper-hero">
+      <div class="paper-hero__copy">
+        <p class="eyebrow">Formula recall</p>
+        <h1>{paper.data.title}</h1>
+        <p class="lede">Write the formula and interpretation from memory before opening the saved note.</p>
+      </div>
+      <nav class="paper-hero__actions" aria-label="Paper formula navigation">
+        <a href={`/papers/${paper.id}/`}>Paper note</a>
+        <a href="/formula">All formulas</a>
+      </nav>
+    </header>
+    <FormulaRecallTrainer client:load papers={records} initialSlug={paper.id} today={today} />
+  </div>
+</BaseLayout>

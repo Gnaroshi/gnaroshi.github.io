@@ -1,0 +1,72 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Card from "../../components/common/Card.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import QuestionPractice from "../../components/questions/QuestionPractice";
+import { getActiveQuestions, getDueQuestions, getFormulaQuestions, getQuestionBank, getTodayKey, getWeakQuestions } from "../../utils/questionBank";
+
+const bank = getQuestionBank();
+const questions = getActiveQuestions();
+const today = getTodayKey();
+const weakQuestions = getWeakQuestions(questions);
+const formulaQuestions = getFormulaQuestions(questions);
+const dueQuestions = getDueQuestions(questions, today);
+---
+
+<BaseLayout title="Question Bank" description="Reusable paper questions generated from reviews, oral exams, and formula prompts." width="dashboard">
+  <div class="paper-dashboard">
+    <header class="paper-hero">
+      <div class="paper-hero__copy">
+        <p class="eyebrow">Question bank</p>
+        <h1>AI Question Bank</h1>
+        <p class="lede">Weak questions, formula prompts, and retrieval checks collected into one practice loop.</p>
+      </div>
+      <nav class="paper-hero__actions" aria-label="Question navigation">
+        <a href="/reviews">Reviews</a>
+        <a href="/formula">Formula trainer</a>
+        <a href="/papers">Paper Log</a>
+      </nav>
+    </header>
+
+    <section class="paper-stats" aria-label="Question bank stats">
+      <article class="paper-stat-card">
+        <strong>{questions.length}</strong>
+        <span>Active questions</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{weakQuestions.length}</strong>
+        <span>Weak questions</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{formulaQuestions.length}</strong>
+        <span>Formula questions</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{dueQuestions.length}</strong>
+        <span>Due questions</span>
+      </article>
+    </section>
+
+    <QuestionPractice client:load questions={questions} today={today} />
+
+    <section class="section" aria-labelledby="weak-questions-heading">
+      <SectionHeader id="weak-questions-heading" title="Weak questions" description="Questions with low scores, no practice history, or high difficulty." />
+      {weakQuestions.length > 0 ? (
+        <div class="card-list">
+          {weakQuestions.slice(0, 8).map((question) => (
+            <Card title={question.question} href={`/questions/${question.id}/`} description={`${question.type} · difficulty ${question.difficulty}/5`} />
+          ))}
+        </div>
+      ) : (
+        <p class="empty-state">No weak questions yet.</p>
+      )}
+    </section>
+
+    <section class="section" aria-labelledby="question-bank-meta-heading">
+      <SectionHeader id="question-bank-meta-heading" title="Generated source" />
+      <p class="metadata">
+        {bank.generatedAt ? `Question bank generated ${bank.generatedAt}.` : "Question bank has not been generated yet."}
+      </p>
+    </section>
+  </div>
+</BaseLayout>

@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import type { PaperReviewSummary } from "./paperReviews";
+import { isReviewDue } from "./reviewDue";
 
 export type PaperEntry = CollectionEntry<"papers">;
 
@@ -46,6 +47,14 @@ export type PaperRecord = {
   weaknesses: string[];
   myConnection: string;
   nextAction: string;
+  futureMe?: {
+    oneThingToRemember: string;
+    whyItMatters: string;
+    whenToUseThis: string;
+    whatToRevisit: string;
+    warning: string;
+  };
+  futureMeExcerpt: string;
   reviewAfterDays?: number;
   featured: boolean;
   draft: boolean;
@@ -59,6 +68,7 @@ type PaperActivityOptions = {
 
 const ACTIVE_STATUSES = new Set(["pass1", "pass2", "pass3", "read", "implemented"]);
 const DEEP_DEPTHS = new Set(["deep", "reproduce", "implement"]);
+const futureMeWarningSlugs = new Set<string>();
 
 export async function getAllPapers(): Promise<PaperEntry[]> {
   const papers = await getCollection("papers");
@@ -67,7 +77,9 @@ export async function getAllPapers(): Promise<PaperEntry[]> {
 
 export async function getPublishedPapers(): Promise<PaperEntry[]> {
   const papers = await getAllPapers();
-  return papers.filter((paper) => (import.meta.env.PROD ? !paper.data.draft : true));
+  const publishedPapers = papers.filter((paper) => (import.meta.env.PROD ? !paper.data.draft : true));
+  warnForMissingFutureMe(publishedPapers);
+  return publishedPapers;
 }
 
 export function sortPapersByReadDate(papers: PaperEntry[]): PaperEntry[] {
@@ -232,11 +244,13 @@ export function toPaperRecord(paper: PaperEntry, review?: PaperReviewSummary, to
     weaknesses: paper.data.weaknesses,
     myConnection: paper.data.myConnection,
     nextAction: paper.data.nextAction,
+    futureMe: paper.data.futureMe,
+    futureMeExcerpt: getFutureMeExcerpt(paper),
     reviewAfterDays: paper.data.reviewAfterDays,
     featured: paper.data.featured,
     draft: paper.data.draft,
     review,
-    reviewDue: Boolean(review?.nextReviewDate && review.nextReviewDate <= today)
+    reviewDue: isReviewDue(paper, today) || Boolean(review?.nextReviewDate && review.nextReviewDate <= today)
   };
 }
 
@@ -286,4 +300,33 @@ function addDays(date: Date, days: number): Date {
 function isPaperInRange(paper: PaperEntry, start: string, end: string): boolean {
   const date = getPaperActivityDate(paper);
   return Boolean(date && date >= start && date <= end);
+}
+
+function getFutureMeExcerpt(paper: PaperEntry): string {
+  const futureMe = paper.data.futureMe;
+  return (
+    futureMe.oneThingToRemember ||
+    futureMe.whyItMatters ||
+    futureMe.whenToUseThis ||
+    futureMe.whatToRevisit ||
+    futureMe.warning ||
+    ""
+  );
+}
+
+function hasFutureMeContent(paper: PaperEntry): boolean {
+  return Boolean(getFutureMeExcerpt(paper).trim());
+}
+
+function warnForMissingFutureMe(papers: PaperEntry[]) {
+  const statusesNeedingFutureMe = new Set(["pass2", "pass3", "read", "implemented"]);
+
+  for (const paper of papers) {
+    if (!statusesNeedingFutureMe.has(paper.data.status) || hasFutureMeContent(paper) || futureMeWarningSlugs.has(paper.id)) {
+      continue;
+    }
+
+    futureMeWarningSlugs.add(paper.id);
+    console.warn(`[future-me] ${paper.id} is ${paper.data.status} but has no futureMe note yet.`);
+  }
 }

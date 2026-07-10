@@ -13,7 +13,10 @@
     "paper:review:all": "node scripts/review-papers.mjs",
     "paper:review:changed": "node scripts/review-papers.mjs --changed",
     "paper:review:validate": "node scripts/validate-paper-reviews.mjs",
-    "paper:review:import": "node scripts/import-paper-review.mjs"
+    "paper:review:import": "node scripts/import-paper-review.mjs",
+    "paper:from-queue": "node scripts/queue-to-paper.mjs",
+    "questions:build": "node scripts/build-question-bank.mjs",
+    "formula:score": "node scripts/score-formula-recall.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.1",

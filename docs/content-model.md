@@ -119,6 +119,11 @@ coreQuestion: "What problem is this paper trying to solve?"
 coreIdea: "What is the key idea?"
 mainFormula: ""
 formulaInterpretation: ""
+formulaTerms:
+  - symbol: "Q"
+    meaning: "Query matrix"
+formulaRecallPrompts:
+  - "Write the main objective from memory."
 experimentTakeaway: ""
 strengths:
   - "TODO"
@@ -126,6 +131,20 @@ weaknesses:
   - "TODO"
 myConnection: ""
 nextAction: ""
+reviewSchedule:
+  - 1
+  - 7
+  - 30
+reviewHistory:
+  - date: 2026-07-09
+    type: "manual"
+    note: "Recalled core idea."
+futureMe:
+  oneThingToRemember: ""
+  whyItMatters: ""
+  whenToUseThis: ""
+  whatToRevisit: ""
+  warning: ""
 reviewAfterDays: 7
 featured: false
 draft: false
@@ -154,6 +173,11 @@ Optional AI review fields:
 - `selfScore`: optional self-assessment object with `overall`, `confidence`, and `note`; legacy numeric 0-100 values are still accepted.
 - `selfReflection`: optional reflection before AI review.
 - `reviewVisibility`: `public` or `hidden`; defaults to `public`.
+- `reviewSchedule`: optional spaced-review intervals in days.
+- `reviewHistory`: optional committed review history.
+- `formulaTerms`: optional symbol glossary for formula recall.
+- `formulaRecallPrompts`: optional prompts for `/formula`.
+- `futureMe`: optional future-facing memory card for `/papers/[slug]`.
 
 `readDate` is required unless `status` is `planned`.
 
@@ -218,6 +242,73 @@ npm run paper:new
 ```
 
 This creates `src/content/papers/YYYY-MM-DD-untitled-paper.mdx` and appends `-2`, `-3`, etc. if needed. Generated logs default to `draft: true`.
+
+## Paper Queue Schema
+
+Queued papers live in:
+
+```text
+src/content/queue/
+```
+
+Recommended frontmatter:
+
+```yaml
+title: "Paper title"
+authors:
+  - "Author A"
+venue: "arXiv"
+year: 2026
+paperUrl: ""
+codeUrl: ""
+source: "self"
+addedDate: 2026-07-10
+targetDate:
+priority: "medium"
+status: "queued"
+reasonToRead: "Why this paper matters to me."
+relatedTopics:
+  - "vision-language models"
+relatedProjects:
+  - ""
+tags:
+  - ai
+  - paper-queue
+estimatedDifficulty: 3
+estimatedReadingTimeMinutes: 90
+visibility: "public"
+```
+
+Allowed `source` values:
+
+- `advisor`
+- `lab`
+- `citation`
+- `arxiv`
+- `github`
+- `blog`
+- `social`
+- `course`
+- `self`
+- `other`
+
+Allowed `status` values:
+
+- `queued`
+- `next`
+- `reading`
+- `converted`
+- `skipped`
+- `archived`
+
+Allowed queue priorities:
+
+- `low`
+- `medium`
+- `high`
+- `urgent`
+
+Use `npm run paper:from-queue -- --slug <queue-slug>` to create a draft paper log from a queue item.
 
 ## Project Schema
 

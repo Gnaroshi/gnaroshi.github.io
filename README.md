@@ -117,6 +117,25 @@ src/content/papers/
 
 It uses today's local date and never overwrites an existing file. Paper logs default to `draft: true`; set `draft: false` when the note should be public. The schema and status/depth definitions are documented in `docs/content-model.md` and `docs/paper-reading-system.md`.
 
+## Learning Loop Tools
+
+The research cockpit includes static-first tools for queueing, reviewing, recalling, and practicing papers:
+
+```bash
+npm run paper:from-queue -- --slug <queue-slug>
+npm run questions:build
+npm run formula:score -- --slug <paper-slug> --file attempt.json
+```
+
+Public routes:
+
+- `/queue`
+- `/reviews`
+- `/formula`
+- `/questions`
+
+Browser practice state is local-only until copied into Markdown frontmatter or committed generated JSON. See `docs/learning-loop-features.md`.
+
 ## AI Paper Review
 
 Paper notes can be reviewed by an AI-assisted CLI that scores evidence of written understanding and three-pass reading discipline. It does not run in the browser and does not expose API keys.

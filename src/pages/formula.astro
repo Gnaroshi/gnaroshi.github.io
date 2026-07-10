@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FormulaRecallTrainer from "../components/formula/FormulaRecallTrainer";
+import { getPublishedPapers, getTodayKey } from "../utils/papers";
+import { hasFormulaRecallMaterial, toFormulaRecallRecord } from "../utils/formulaRecall";
+
+const papers = (await getPublishedPapers()).filter(hasFormulaRecallMaterial).map(toFormulaRecallRecord);
+const today = getTodayKey();
+---
+
+<BaseLayout title="Formula Recall" description="Reconstruct paper formulas from memory before revealing the saved note." width="dashboard">
+  <div class="paper-dashboard">
+    <header class="paper-hero">
+      <div class="paper-hero__copy">
+        <p class="eyebrow">Recall trainer</p>
+        <h1>Formula Recall Trainer</h1>
+        <p class="lede">Practice reconstructing formulas and interpretations from memory instead of only recognizing them.</p>
+      </div>
+      <nav class="paper-hero__actions" aria-label="Formula navigation">
+        <a href="/reviews">Reviews</a>
+        <a href="/questions">Questions</a>
+        <a href="/papers">Paper Log</a>
+      </nav>
+    </header>
+    <FormulaRecallTrainer client:load papers={papers} today={today} />
+  </div>
+</BaseLayout>

@@ -40,6 +40,9 @@ const manualPrompt = buildManualReviewPromptForPaper({
 const reviewCommand = `npm run paper:review -- --slug ${paper.id}`;
 
 const fallback = "Not recorded yet.";
+const futureMe = paper.data.futureMe;
+const hasFutureMe =
+  futureMe.oneThingToRemember || futureMe.whyItMatters || futureMe.whenToUseThis || futureMe.whatToRevisit || futureMe.warning;
 ---
 
 <BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/papers/${paper.id}/`} type="article">
@@ -59,6 +62,47 @@ const fallback = "Not recorded yet.";
       </>
     ) : (
       <ReviewPromptFallback paper={paper} />
+    )}
+
+    {hasFutureMe && (
+      <section class="learning-panel learning-panel--accent" aria-labelledby="future-me-heading">
+        <div>
+          <p class="eyebrow">For Future Me</p>
+          <h2 id="future-me-heading">What should still matter later</h2>
+        </div>
+        <div class="paper-detail-grid">
+          {futureMe.oneThingToRemember && (
+            <div>
+              <h2>One thing to remember</h2>
+              <p>{futureMe.oneThingToRemember}</p>
+            </div>
+          )}
+          {futureMe.whyItMatters && (
+            <div>
+              <h2>Why it matters</h2>
+              <p>{futureMe.whyItMatters}</p>
+            </div>
+          )}
+          {futureMe.whenToUseThis && (
+            <div>
+              <h2>When to use this</h2>
+              <p>{futureMe.whenToUseThis}</p>
+            </div>
+          )}
+          {futureMe.whatToRevisit && (
+            <div>
+              <h2>Revisit action</h2>
+              <p>{futureMe.whatToRevisit}</p>
+            </div>
+          )}
+          {futureMe.warning && (
+            <div>
+              <h2>Warning</h2>
+              <p>{futureMe.warning}</p>
+            </div>
+          )}
+        </div>
+      </section>
     )}
 
     <section class="section" aria-labelledby="paper-summary-heading">

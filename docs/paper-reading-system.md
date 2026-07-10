@@ -288,6 +288,18 @@ See `docs/ai-paper-review.md` for the score dimensions, limitations, and workflo
 
 Do not add these before MVP unless explicitly requested.
 
+## Learning Loop Extensions
+
+The research cockpit now includes static-first learning-loop features:
+
+- `/queue`: triage papers before they become full logs.
+- `/reviews` and `/reviews/due`: spaced review from `reviewSchedule`, `lastReviewed`, and `reviewHistory`.
+- `/formula` and `/papers/[slug]/formula`: local formula recall attempts.
+- Future Me fields on paper notes for six-month recall.
+- `/questions`: reusable question bank generated from reviews, oral exams, and formula prompts.
+
+See `docs/learning-loop-features.md` for schemas, routes, scripts, and localStorage limitations.
+
 ## Acceptance Criteria
 
 The paper system is implemented well when:

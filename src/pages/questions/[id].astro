@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import { getActiveQuestions, type QuestionBankItem } from "../../utils/questionBank";
+
+export function getStaticPaths() {
+  return getActiveQuestions().map((question) => ({ params: { id: question.id }, props: { question } }));
+}
+
+interface Props {
+  question: QuestionBankItem;
+}
+
+const { question } = Astro.props as Props;
+---
+
+<BaseLayout title="Question" description={question.question} canonical={`/questions/${question.id}/`}>
+  <article class="paper-detail">
+    <header class="paper-detail-header">
+      <a class="paper-detail-header__back" href="/questions">Back to questions</a>
+      <div class="paper-detail-header__title">
+        <p class="eyebrow">Question</p>
+        <h1>{question.question}</h1>
+      </div>
+      <div class="paper-detail-header__badges">
+        <span class="paper-badge paper-badge--featured">{question.type}</span>
+        <span class="paper-badge paper-badge--muted">{question.source}</span>
+        <span class="paper-badge paper-badge--muted">difficulty {question.difficulty}/5</span>
+      </div>
+      <div class="paper-detail-header__links">
+        <a href={`/papers/${question.paperSlug}/`}>Open paper</a>
+      </div>
+    </header>
+
+    <section class="section" aria-labelledby="signals-heading">
+      <SectionHeader id="signals-heading" title="Expected signals" description="Use these only after answering from memory." />
+      {question.expectedSignals.length > 0 ? (
+        <ul class="list">
+          {question.expectedSignals.map((signal) => (
+            <li class="list-item">
+              <p>{signal}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="empty-state">No expected signals recorded yet.</p>
+      )}
+    </section>
+  </article>
+</BaseLayout>

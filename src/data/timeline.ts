@@ -1,6 +1,12 @@
-export const education = [] as const;
+export type TimelineItem = {
+  label: string;
+  period: string;
+  description: string;
+};
 
-export const researchTimeline = [
+export const education: TimelineItem[] = [];
+
+export const researchTimeline: TimelineItem[] = [
   {
     label: "Current direction",
     period: "Now",

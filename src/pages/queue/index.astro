@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Card from "../../components/common/Card.astro";
+import SectionHeader from "../../components/common/SectionHeader.astro";
+import QueueDashboard from "../../components/queue/QueueDashboard";
+import { getNextQueueItem, getPublishedQueueItems, getQueueTags, getQueueTopics, toQueueRecord } from "../../utils/queue";
+
+const queueItems = await getPublishedQueueItems();
+const nextItem = getNextQueueItem(queueItems);
+const queueRecords = queueItems.map(toQueueRecord);
+const topics = getQueueTopics(queueItems);
+const tags = getQueueTags(queueItems);
+const activeItems = queueItems.filter((item) => ["queued", "next", "reading"].includes(item.data.status));
+const urgentItems = queueItems.filter((item) => item.data.priority === "urgent" || item.data.priority === "high");
+---
+
+<BaseLayout title="Reading Queue" description="Papers to read before they become full paper logs." width="dashboard">
+  <div class="paper-dashboard">
+    <header class="paper-hero">
+      <div class="paper-hero__copy">
+        <p class="eyebrow">Reading queue</p>
+        <h1>Paper Reading Queue</h1>
+        <p class="lede">A lightweight triage board for papers that look worth reading before they become full notes.</p>
+      </div>
+      <nav class="paper-hero__actions" aria-label="Queue actions">
+        <a href="/papers">Paper Log</a>
+        <a href="/reviews">Reviews</a>
+        <a href="/questions">Questions</a>
+      </nav>
+    </header>
+
+    <section class="paper-stats" aria-label="Queue stats">
+      <article class="paper-stat-card">
+        <strong>{queueItems.length}</strong>
+        <span>Total queued</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{activeItems.length}</strong>
+        <span>Active candidates</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{urgentItems.length}</strong>
+        <span>High priority</span>
+      </article>
+      <article class="paper-stat-card">
+        <strong>{topics.length}</strong>
+        <span>Topics represented</span>
+      </article>
+    </section>
+
+    <section class="section" aria-labelledby="next-paper-heading">
+      <SectionHeader
+        id="next-paper-heading"
+        eyebrow="Next"
+        title="Next paper to consider"
+        description="The next item is selected from active queue entries by status, priority, and target date."
+      />
+      {nextItem ? (
+        <Card title={nextItem.data.title} href={`/queue/${nextItem.id}/`} description={nextItem.data.reasonToRead}>
+          <p class="metadata">
+            {nextItem.data.authors.join(", ")} · {nextItem.data.venue} · {nextItem.data.year}
+          </p>
+        </Card>
+      ) : (
+        <p class="empty-state">No active queue item yet.</p>
+      )}
+    </section>
+
+    <QueueDashboard client:load items={queueRecords} topics={topics} tags={tags} />
+  </div>
+</BaseLayout>

@@ -22,6 +22,33 @@ const optionalPaperDate = z.preprocess(
   (value) => (value === null || value === "" ? undefined : value),
   z.coerce.date().optional()
 );
+const optionalDateArray = z.preprocess(
+  (value) => (value === null || value === "" || value === undefined ? [] : value),
+  z.array(
+    z.object({
+      date: z.coerce.date(),
+      type: z.enum(["manual", "ai-review", "formula-recall", "oral-exam", "imported"]).default("manual"),
+      note: z.string().default("")
+    })
+  )
+);
+const emptyFutureMe = {
+  oneThingToRemember: "",
+  whyItMatters: "",
+  whenToUseThis: "",
+  whatToRevisit: "",
+  warning: ""
+};
+const futureMeSchema = z.preprocess(
+  (value) => (value === null || value === "" || value === undefined ? emptyFutureMe : value),
+  z.object({
+    oneThingToRemember: z.string().default(""),
+    whyItMatters: z.string().default(""),
+    whenToUseThis: z.string().default(""),
+    whatToRevisit: z.string().default(""),
+    warning: z.string().default("")
+  })
+);
 
 const blog = defineCollection({
   loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
@@ -86,12 +113,17 @@ const papers = defineCollection({
       coreIdea: z.string(),
       mainFormula: z.string().default(""),
       formulaInterpretation: z.string().default(""),
+      formulaTerms: z.array(z.object({ symbol: z.string(), meaning: z.string() })).default([]),
+      formulaRecallPrompts: z.array(z.string()).default([]),
       experimentTakeaway: z.string().default(""),
       strengths: z.array(z.string()).default([]),
       weaknesses: z.array(z.string()).default([]),
       myConnection: z.string().default(""),
       nextAction: z.string().default(""),
       reviewAfterDays: z.number().int().positive().optional(),
+      reviewSchedule: z.array(z.number().int().positive()).optional(),
+      reviewHistory: optionalDateArray,
+      futureMe: futureMeSchema,
       featured: z.boolean().default(false),
       draft: z.boolean().default(false)
     })
@@ -104,6 +136,30 @@ const papers = defineCollection({
         });
       }
     })
+});
+
+const queue = defineCollection({
+  loader: glob({ base: "./src/content/queue", pattern: "**/*.{md,mdx}" }),
+  schema: z.object({
+    title: z.string(),
+    authors: z.array(z.string()).min(1),
+    venue: z.string(),
+    year: z.number().int(),
+    paperUrl: optionalNullableUrl,
+    codeUrl: optionalNullableUrl,
+    source: z.enum(["advisor", "lab", "citation", "arxiv", "github", "blog", "social", "course", "self", "other"]),
+    addedDate: z.coerce.date(),
+    targetDate: optionalPaperDate,
+    priority: z.enum(["low", "medium", "high", "urgent"]),
+    status: z.enum(["queued", "next", "reading", "converted", "skipped", "archived"]),
+    reasonToRead: z.string(),
+    relatedTopics: z.array(z.string()).default([]),
+    relatedProjects: z.array(z.string()).default([]),
+    tags: z.array(z.string()).min(1),
+    estimatedDifficulty: z.number().int().min(1).max(5),
+    estimatedReadingTimeMinutes: z.number().int().nonnegative(),
+    visibility: z.enum(["public", "hidden"]).default("public")
+  })
 });
 
 const projects = defineCollection({
@@ -122,4 +178,4 @@ const projects = defineCollection({
   })
 });
 
-export const collections = { blog, papers, projects };
+export const collections = { blog, papers, queue, projects };

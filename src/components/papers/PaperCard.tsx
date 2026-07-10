@@ -49,6 +49,7 @@ export default function PaperCard({ paper }: Props) {
           {paper.featured ? <span className="paper-badge paper-badge--featured">Featured</span> : null}
         </div>
         <p className="paper-card__summary">{paper.oneLineSummary}</p>
+        {paper.futureMeExcerpt ? <p className="metadata">Future me: {paper.futureMeExcerpt}</p> : null}
         <p className="metadata">
           {paper.authors.join(", ")} · {paper.venue} · {paper.year}
           {paper.readDate ? ` · read ${paper.readDate}` : ""}

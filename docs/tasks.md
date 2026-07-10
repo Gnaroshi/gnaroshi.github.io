@@ -5,6 +5,7 @@
 - [x] Homepage and core static pages
 - [x] MDX blog system
 - [x] Paper reading tracker content model and dashboard
+- [x] Learning-loop feature pack for queue, reviews, formula recall, Future Me, and questions
 - [x] GitHub Pages deployment
 - [ ] Full polish, accessibility, SEO, and performance pass
 - [ ] Future feature expansion
@@ -58,7 +59,7 @@
 - [x] Implement `/projects`.
 - [x] Add project content collection schema.
 - [x] Add project cards from structured data.
-- [x] Add clearly marked sample/placeholder project entries.
+- [x] Add honest early project entries without developer-facing placeholder copy.
 - [x] Ensure personal data is imported from `profile.ts`.
 - [ ] Add real project writeups under `src/content/projects/`.
 
@@ -79,7 +80,7 @@
 - [x] Add SEO metadata.
 - [x] Add Open Graph metadata.
 - [x] Add RSS feed.
-- [ ] Replace sample posts with real posts over time.
+- [ ] Add deeper real posts over time.
 - [ ] Add richer blog search if content volume grows.
 
 ## Phase 5: Paper Reading Tracker
@@ -137,6 +138,11 @@
 
 ## Future Features
 
+- [x] Add paper reading queue.
+- [x] Add spaced review due dashboard.
+- [x] Add formula recall trainer.
+- [x] Add Future Me paper note fields.
+- [x] Add generated AI question bank.
 - [ ] Add real project MDX writeups.
 - [ ] Add richer project detail pages.
 - [ ] Add paper reading map or topic graph.

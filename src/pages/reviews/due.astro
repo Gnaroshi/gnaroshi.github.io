@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ReviewSession from "../../components/reviews/ReviewSession";
+import { getPublishedPapers, getTodayKey } from "../../utils/papers";
+import { getDueReviews, toReviewDueRecord } from "../../utils/reviewDue";
+
+const papers = await getPublishedPapers();
+const today = getTodayKey();
+const dueRecords = getDueReviews(papers, today).map((paper) => toReviewDueRecord(paper, today));
+---
+
+<BaseLayout title="Reviews Due" description="Paper reviews due today." width="dashboard">
+  <div class="paper-dashboard">
+    <header class="paper-hero">
+      <div class="paper-hero__copy">
+        <p class="eyebrow">Due today</p>
+        <h1>Today's Reviews</h1>
+        <p class="lede">Recall the summary, formula, and key question before reopening the paper note.</p>
+      </div>
+      <nav class="paper-hero__actions" aria-label="Review navigation">
+        <a href="/reviews">All reviews</a>
+        <a href="/papers">Paper Log</a>
+      </nav>
+    </header>
+    <ReviewSession client:load papers={dueRecords} today={today} />
+  </div>
+</BaseLayout>

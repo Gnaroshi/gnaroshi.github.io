@@ -619,8 +619,10 @@ p {
 
 .paper-hero__actions a,
 .paper-card__links a,
+.paper-card__links button,
 .paper-filter-panel__reset,
-.paper-selected-date button {
+.paper-selected-date button,
+.paper-filter-panel__header button {
   display: inline-flex;
   min-height: 2.25rem;
   align-items: center;
@@ -630,6 +632,7 @@ p {
   border-radius: var(--radius-sm);
   background: var(--color-surface);
   color: var(--color-text-secondary);
+  cursor: pointer;
   font-size: var(--text-sm);
   font-weight: 700;
   text-decoration: none;
@@ -637,8 +640,10 @@ p {
 
 .paper-hero__actions a:hover,
 .paper-card__links a:hover,
+.paper-card__links button:hover,
 .paper-filter-panel__reset:hover,
-.paper-selected-date button:hover {
+.paper-selected-date button:hover,
+.paper-filter-panel__header button:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
@@ -676,6 +681,7 @@ p {
 .paper-heatmap,
 .paper-filter-panel,
 .paper-review-summary,
+.learning-panel,
 .new-paper-template {
   display: grid;
   gap: var(--space-4);
@@ -695,6 +701,98 @@ p {
   gap: var(--space-4);
   align-items: end;
   justify-content: space-between;
+}
+
+.learning-dashboard-island {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.learning-panel {
+  align-content: start;
+}
+
+.learning-panel--accent {
+  border-color: color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
+  background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface));
+}
+
+.learning-card,
+.queue-card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+.queue-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.queue-card__main {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.learning-field {
+  display: grid;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.learning-field strong {
+  color: var(--color-text);
+}
+
+.learning-field textarea,
+.learning-panel textarea {
+  width: 100%;
+  resize: vertical;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  line-height: 1.5;
+}
+
+.learning-panel pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-code-bg);
+  color: var(--color-code-text);
+  font-size: var(--text-sm);
+}
+
+.formula-term-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.formula-term-list div {
+  display: grid;
+  grid-template-columns: minmax(60px, 0.2fr) minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.formula-term-list dt {
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.formula-term-list dd {
+  margin: 0;
+  color: var(--color-text-secondary);
 }
 
 .paper-method-panel__passes {
@@ -1456,6 +1554,7 @@ p {
   .paper-review-two-col,
   .paper-review-breakdown,
   .new-paper-template,
+  .formula-term-list div,
   .paper-nav {
     grid-template-columns: 1fr;
   }
@@ -1494,6 +1593,9 @@ p {
   .paper-heatmap,
   .paper-filter-panel,
   .paper-review-summary,
+  .learning-panel,
+  .learning-card,
+  .queue-card,
   .paper-review-pass-grid article,
   .paper-review-calibration-grid article,
   .paper-review-dimension,
@@ -1509,6 +1611,7 @@ p {
   .paper-heatmap__header,
   .paper-filter-panel__header,
   .paper-review-summary__header,
+  .learning-panel .paper-filter-panel__header,
   .manual-review-prompt__header,
   .paper-results__header {
     display: grid;
