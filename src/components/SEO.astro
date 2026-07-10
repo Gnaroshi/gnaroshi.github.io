@@ -6,6 +6,9 @@ interface Props {
   description?: string;
   canonical?: string;
   ogImage?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  absoluteTitle?: boolean;
   type?: "website" | "article";
 }
 
@@ -14,10 +17,15 @@ const {
   description = profile.shortBio,
   canonical,
   ogImage,
+  ogTitle,
+  ogDescription,
+  absoluteTitle = false,
   type = "website"
 } = Astro.props;
 
-const pageTitle = title === profile.siteName ? profile.siteName : `${title} | ${profile.siteName}`;
+const pageTitle = absoluteTitle || title === profile.siteName ? title : `${title} | ${profile.siteName}`;
+const socialTitle = ogTitle ?? pageTitle;
+const socialDescription = ogDescription ?? description;
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, profile.domain).toString();
 const imageUrl = new URL(ogImage ?? "/og/default.svg", profile.domain).toString();
 ---
@@ -28,12 +36,12 @@ const imageUrl = new URL(ogImage ?? "/og/default.svg", profile.domain).toString(
 
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content={profile.siteName} />
-<meta property="og:title" content={pageTitle} />
-<meta property="og:description" content={description} />
+<meta property="og:title" content={socialTitle} />
+<meta property="og:description" content={socialDescription} />
 <meta property="og:url" content={canonicalUrl} />
 <meta property="og:image" content={imageUrl} />
 
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={pageTitle} />
-<meta name="twitter:description" content={description} />
+<meta name="twitter:title" content={socialTitle} />
+<meta name="twitter:description" content={socialDescription} />
 <meta name="twitter:image" content={imageUrl} />

@@ -11,11 +11,14 @@ interface Props {
   description?: string;
   canonical?: string;
   ogImage?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  absoluteTitle?: boolean;
   type?: "website" | "article";
   width?: "prose" | "wide" | "dashboard";
 }
 
-const { title, description, canonical, ogImage, type, width = "prose" } = Astro.props;
+const { title, description, canonical, ogImage, ogTitle, ogDescription, absoluteTitle, type, width = "prose" } = Astro.props;
 ---
 
 <!doctype html>
@@ -27,7 +30,16 @@ const { title, description, canonical, ogImage, type, width = "prose" } = Astro.
     <meta name="theme-color" content="#101211" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" href="/rss.xml" type="application/rss+xml" title="Gnaroshi Blog" />
-    <SEO title={title} description={description} canonical={canonical} ogImage={ogImage} type={type} />
+    <SEO
+      title={title}
+      description={description}
+      canonical={canonical}
+      ogImage={ogImage}
+      ogTitle={ogTitle}
+      ogDescription={ogDescription}
+      absoluteTitle={absoluteTitle}
+      type={type}
+    />
     <script is:inline>
       (() => {
         try {

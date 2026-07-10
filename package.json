@@ -8,6 +8,7 @@
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "check:public-copy": "node scripts/check-public-copy.mjs",
     "paper:new": "node scripts/new-paper.mjs",
     "paper:review": "node scripts/review-paper.mjs",
     "paper:review:all": "node scripts/review-papers.mjs",

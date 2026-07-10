@@ -31,7 +31,6 @@ export type ResearchGraphNode = {
   description: string;
   href: string;
   tags: string[];
-  source: string;
 };
 
 export type ResearchGraphEdge = {
@@ -56,7 +55,16 @@ export type ResearchGraph = {
   };
 };
 
-export const researchGraph = graph as ResearchGraph;
+type StoredResearchGraph = Omit<ResearchGraph, "nodes"> & {
+  nodes: Array<ResearchGraphNode & { source?: string }>;
+};
+
+const storedResearchGraph = graph as StoredResearchGraph;
+
+export const researchGraph: ResearchGraph = {
+  ...storedResearchGraph,
+  nodes: storedResearchGraph.nodes.map(({ source: _source, ...node }) => node)
+};
 
 export function getGraphNode(type: string, slug: string): ResearchGraphNode | undefined {
   return researchGraph.nodes.find((node) => node.type === type && node.slug === slug);

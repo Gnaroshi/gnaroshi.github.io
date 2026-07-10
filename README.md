@@ -40,7 +40,10 @@ npm run preview
 
 ```bash
 npm run check
+npm run check:public-copy
 ```
+
+Run `npm run build` before `npm run check:public-copy`; the check scans generated public assets for scaffold and developer-facing copy.
 
 ## Deploy
 

@@ -50,6 +50,7 @@ Do not introduce additional backend dependencies, server runtimes, databases, OA
 npm install
 npm run dev
 npm run check
+npm run check:public-copy
 npm run build
 npm run preview
 npm run paper:new
@@ -72,6 +73,7 @@ cd apps/api && npm run deploy
 
 - `npm run dev`: start local Astro dev server.
 - `npm run check`: run Astro/TypeScript diagnostics.
+- `npm run check:public-copy`: fail when built public assets expose scaffold or developer-facing terms.
 - `npm run build`: build the static site into `dist/`.
 - `npm run preview`: preview the built static site.
 - `npm run paper:new`: create a draft paper log in `src/content/papers/`.

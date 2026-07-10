@@ -498,7 +498,7 @@ function computeConfidence(
     `${Object.values(components).filter((item) => item.available).length} of 6 components have usable public evidence.`,
     `${activeCategories} of 6 research-loop categories have activity in the last 28 days.`
   ];
-  if (context.papers.length < 5) reasons.push("The paper sample is still small, so the score is provisional.");
+  if (context.papers.length < 5) reasons.push("The public paper record is still small, so the score is provisional.");
   if (context.papers.length >= 5 && context.reviews.length === 0) reasons.push("Understanding has no public AI review calibration.");
   if (context.papers.length >= 10 && context.oralExams.length === 0) reasons.push("A mature paper log without oral exam evidence substantially lowers confidence.");
   if (antiGamingFlags.length > 0) reasons.push("Capped or mismatched activity reduced confidence in the raw evidence.");
@@ -558,7 +558,7 @@ function collectMissingEvidence(context: ScoreContext): string[] {
   if (context.reviews.length === 0) {
     missing.push(
       context.papers.length >= 5
-        ? "No public AI reviews are available for a mature enough paper sample; understanding remains weakly calibrated."
+        ? "No public AI reviews are available across a mature enough paper record; understanding remains weakly calibrated."
         : "No public AI review evidence is available yet."
     );
   }
