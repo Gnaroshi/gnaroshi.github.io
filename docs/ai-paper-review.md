@@ -1,5 +1,7 @@
 # AI Paper Review
 
+> Migration reference: AI review generation and validation moved to `Gnaroshi/gnaroshi-studio`; the website only renders reviews exported by the public feed.
+
 The AI paper review system evaluates evidence in a written paper note. It is meant to support reflection, motivation, and better paper-reading habits.
 
 It does not measure intelligence, IQ, talent, or true understanding. The review only sees the paper frontmatter, the MDX body, optional `abstract`, and optional `sourceExcerpt`. If those source fields are missing, the reviewer must not claim it independently verified the paper.

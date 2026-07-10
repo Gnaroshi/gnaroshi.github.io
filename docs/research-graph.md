@@ -1,5 +1,7 @@
 # Research Graph
 
+> Migration reference: graph generation moved to `Gnaroshi/gnaroshi-studio`; the website renders `.content-feed/data/research-graph.json` without rebuilding it.
+
 The research graph connects public research outputs into a static knowledge map.
 
 ## Route

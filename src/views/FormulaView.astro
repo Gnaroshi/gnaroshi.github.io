@@ -1,15 +1,15 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import FormulaRecallTrainer from "../components/formula/FormulaRecallTrainer";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
-import { getIslandMessages } from "../i18n/islands";
 import { hasFormulaRecallMaterial, toFormulaRecallRecord } from "../utils/formulaRecall";
-import { getPublishedPapers, getTodayKey } from "../utils/papers";
+import { getPublishedPapers } from "../utils/papers";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const papers = (await getPublishedPapers(locale)).filter(hasFormulaRecallMaterial).map(toFormulaRecallRecord);
-const today = getTodayKey();
-const messages = getIslandMessages(locale).formula;
 ---
-<BaseLayout locale={locale} title={translate(locale, "paperLab.formulaRecall")} description={translate(locale, "formula.subtitle")} width="dashboard" mode="application"><div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><p class="eyebrow">{translate(locale, "paperLab.formulaRecall")}</p><h1>{translate(locale, "formula.title")}</h1><p class="lede">{translate(locale, "formula.subtitle")}</p></div>{papers.length > 0 && <a class="button button--primary" href="#formula-session">{translate(locale, "common.open")}</a>}</header>{papers.length ? <div id="formula-session"><FormulaRecallTrainer client:visible papers={papers} today={today} locale={locale} messages={messages} /></div> : <section class="app-empty-state" aria-labelledby="formula-empty"><h2 id="formula-empty">{translate(locale, "formula.empty")}</h2><p>{translate(locale, "formula.emptyBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/#new-paper-template")}>{translate(locale, "formula.action")}</a></section>}</div></BaseLayout>
+<BaseLayout locale={locale} title={translate(locale, "paperLab.formulaRecall")} description={translate(locale, "formula.subtitle")} width="dashboard" mode="application">
+  <div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><p class="eyebrow">{translate(locale, "paperLab.formulaRecall")}</p><h1>{translate(locale, "formula.title")}</h1><p class="lede">{translate(locale, "formula.subtitle")}</p></div></header>
+    {papers.length > 0 ? <section class="paper-note-list" aria-label={translate(locale, "paperLab.formulaRecall")}>{papers.map((paper) => <article><h2><a href={getLocalePath(locale, `/papers/${paper.id}/formula/`)}>{paper.title}</a></h2><pre><code>{paper.mainFormula}</code></pre><p>{paper.formulaInterpretation}</p></article>)}</section> : <section class="app-empty-state" aria-labelledby="formula-empty"><h2 id="formula-empty">{translate(locale, "formula.empty")}</h2><p>{translate(locale, "formula.emptyBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "formula.action")}</a></section>}
+  </div>
+</BaseLayout>

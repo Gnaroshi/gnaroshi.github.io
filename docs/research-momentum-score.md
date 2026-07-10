@@ -1,5 +1,7 @@
 # Research Momentum Score v2
 
+> Migration reference: score generation moved to `Gnaroshi/gnaroshi-studio`; the website displays the canonical public Growth snapshot from the feed.
+
 ## Meaning
 
 Research Momentum Score v2 is a directional summary of the public research loop recorded on `gnaroshi.dev`. It asks whether reading, understanding, retrieval, output, and revisiting are moving together over time.

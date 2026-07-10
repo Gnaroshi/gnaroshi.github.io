@@ -1,5 +1,4 @@
 ---
-import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ExternalLink from "../../components/common/ExternalLink.astro";
 import SectionHeader from "../../components/common/SectionHeader.astro";
@@ -15,8 +14,6 @@ interface Props {
 }
 
 const { item } = Astro.props as Props;
-const { Content } = await render(item);
-const convertCommand = `npm run paper:from-queue -- --slug ${item.id}`;
 const alternateUrls = { en: `/queue/${item.id}/`, ko: "/ko/queue/", xDefault: `/queue/${item.id}/`, translationAvailable: false } as const;
 ---
 
@@ -59,10 +56,6 @@ const alternateUrls = { en: `/queue/${item.id}/`, ko: "/ko/queue/", xDefault: `/
           <h2>Target date</h2>
           <p>{toQueueDateKey(item.data.targetDate) ?? "Not scheduled yet."}</p>
         </div>
-        <div>
-          <h2>Convert to paper log</h2>
-          <pre><code>{convertCommand}</code></pre>
-        </div>
       </div>
     </section>
 
@@ -80,11 +73,5 @@ const alternateUrls = { en: `/queue/${item.id}/`, ko: "/ko/queue/", xDefault: `/
       </div>
     </section>
 
-    <section class="section" aria-labelledby="queue-body-heading">
-      <SectionHeader id="queue-body-heading" title="Notes" />
-      <div class="prose">
-        <Content />
-      </div>
-    </section>
   </article>
 </BaseLayout>

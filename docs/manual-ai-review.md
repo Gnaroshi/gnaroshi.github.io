@@ -1,5 +1,7 @@
 # Manual AI Review Workflow
 
+> Migration reference: this authoring workflow moved to `Gnaroshi/gnaroshi-studio` and is intentionally absent from the presentation repository.
+
 Use manual review when `OPENAI_API_KEY` is not configured, when you want to use ChatGPT directly, or when you want to inspect the prompt before generating a review.
 
 This workflow does not call an API from the browser. It creates a prompt on the static paper detail page and lets you paste it into a model manually.

@@ -7,14 +7,14 @@ test("empty Paper Log uses onboarding without dashboard machinery", async ({ pag
   await expect(page.locator(".paper-heatmap")).toHaveCount(0);
   await expect(page.locator(".paper-filter-panel")).toHaveCount(0);
   await expect(page.locator("astro-island")).toHaveCount(0);
-  await expect(page.locator("#new-paper-template")).not.toHaveAttribute("open", "");
+  await expect(page.locator("#new-paper-template")).toHaveCount(0);
 });
 
 test("Momentum stays non-numeric before evidence eligibility", async ({ page }) => {
   await page.goto("/growth");
-  await expect(page.getByRole("heading", { name: "Collecting evidence" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "No public score yet" })).toBeVisible();
   await expect(page.locator(".momentum-score__value")).toHaveCount(0);
-  await expect(page.getByText("Meaningful evidence events")).toBeVisible();
+  await expect(page.getByText(/public feed reports sufficient activity/i)).toBeVisible();
 });
 
 const emptyTools = [

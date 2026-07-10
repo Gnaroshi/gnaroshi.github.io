@@ -1,5 +1,7 @@
 # Learning Loop Features
 
+> Migration reference: authoring, practice persistence, and generators moved to `Gnaroshi/gnaroshi-studio`; public projections are imported from the feed.
+
 This document describes the research cockpit features that turn the Paper Log into a daily learning system.
 
 The implementation is static-first. Content is committed as Markdown/MDX, generated artifacts are committed as JSON, and browser interactions use localStorage only for temporary drafts. The optional live oral-exam page can use a separately deployed Worker and a short-lived Realtime WebRTC credential; no long-lived API secret is present in browser code.

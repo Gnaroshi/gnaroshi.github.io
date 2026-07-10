@@ -1,268 +1,96 @@
 # gnaroshi.dev
 
-Personal research homepage, blog, and paper reading tracker for [gnaroshi.dev](https://gnaroshi.dev).
+Presentation-only Astro application for [gnaroshi.dev](https://gnaroshi.dev).
 
-This site is built as a static Astro project with TypeScript, MDX, and small React islands only where interactivity is useful.
+The website renders public research and writing exported by [`Gnaroshi/gnaroshi-content-feed`](https://github.com/Gnaroshi/gnaroshi-content-feed). Canonical paper notes and writing do not live in this repository.
 
-## Install
+## Repository Boundary
 
-```bash
-npm install
-```
+- This repository owns Astro routes, layouts, components, localization, SEO, accessibility, theme, profile data, project metadata, and public display transforms.
+- `gnaroshi-content-feed` owns the generated public projection consumed at build time.
+- Private paper and writing repositories are never checked out by the website or its deployment workflow.
+- Authoring, review generation, scoring, publishing, and Git operations belong to `gnaroshi-studio`.
 
 ## Run Locally
 
 ```bash
+npm run content:pull
+npm install
 npm run dev
 ```
 
-## Build
+The feed is cloned into the ignored `.content-feed/` directory. To use an existing read-only checkout:
 
 ```bash
+CONTENT_FEED_PATH=../gnaroshi-content-feed npm run content:check
+CONTENT_FEED_PATH=../gnaroshi-content-feed npm run dev
+```
+
+`CONTENT_FEED_REF` or `npm run content:pull -- --ref <ref>` selects a feed branch, tag, or commit.
+
+## Commands
+
+```bash
+npm run dev
 npm run build
-npm run score:test
-```
-
-Generated research outputs can be rebuilt with:
-
-```bash
-npm run week:build
-npm run graph:build
-```
-
-## Preview
-
-```bash
 npm run preview
-```
-
-## Check
-
-```bash
 npm run check
-npm run build
-npm run check:public-copy
-npm run check:content-metrics
-npm run check:links
-npm run check:empty-shells
-npm run check:i18n
-npm run check:hardcoded-ui
-npm run check:translation-links
+npm run content:pull
+npm run content:check
 npm run test:e2e
 npm run test:a11y
-npm run test:visual
+npm run check:i18n
+npm run check:links
 ```
 
-Run `npm run build` before the `check:*` scripts. The checks scan the generated public site for developer-facing copy, misleading evidence metrics, broken internal links, and empty application shells. Playwright covers routes, mobile navigation, 390px overflow, focused empty states, axe accessibility rules, and the light/dark visual matrix.
+`dev`, `check`, and `build` validate the feed before Astro starts. Missing manifests, unsupported schema versions, invalid source commit metadata, and incomplete generated directory structures fail with a direct error.
 
-## English And Korean
+## Content Import
 
-English remains the default at unprefixed URLs. Korean pages live under `/ko/`; `/en/` and `/kr/` are not used. Shared views in `src/views/` render both route sets, while typed dictionaries and locale helpers live in `src/i18n/`.
+Astro content collections load public MDX from:
 
-Locale-aware profile and project copy lives in `src/data/locales/`. Blog translations live under `src/content/blog/en/` and `src/content/blog/ko/`, paired by `translationKey`. Add `locale`, `translationKey`, and `translationStatus` to every content entry; paper entries also require `paperId`. See `docs/i18n.md` and `docs/i18n-terminology.md` before adding or translating public content.
-
-Localized feeds are available at `/rss.xml` and `/ko/rss.xml`.
-
-## Deploy
-
-The site deploys to GitHub Pages through GitHub Actions.
-
-- Pushing to `main` triggers `.github/workflows/deploy.yml`.
-- The workflow builds the Astro static site and deploys the generated Pages artifact.
-- GitHub repository Settings -> Pages -> Build and deployment -> Source should be set to **GitHub Actions**.
-- The custom domain should be set to `gnaroshi.dev`.
-- `public/CNAME` contains `gnaroshi.dev` so the built artifact keeps the custom domain file.
-- DNS for `gnaroshi.dev` must point to GitHub Pages.
-- `www.gnaroshi.dev` can be configured separately with a CNAME record if desired.
-- Enable **Enforce HTTPS** after GitHub finishes issuing the certificate.
-
-Manual repository settings, DNS records, and troubleshooting notes are documented in `docs/deployment.md`.
-
-## Optional Voice Oral Exam API
-
-Live paper oral exams use an optional Cloudflare Worker at `api.gnaroshi.dev`. The Astro site remains static and works without it: paper exam pages keep a copyable manual practice prompt when `PUBLIC_AI_API_BASE_URL` is absent.
-
-Develop and verify the Worker separately:
-
-```bash
-cd apps/api
-npm install
-cp .dev.vars.example .dev.vars
-npm run typecheck
-npm test
-npm run dev
+```text
+.content-feed/blog/
+.content-feed/papers/
 ```
 
-Deploy only after adding the OpenAI key as a Worker secret:
+Canonical generated JSON is loaded from:
 
-```bash
-cd apps/api
-npx wrangler secret put OPENAI_API_KEY
-npm run deploy
+```text
+.content-feed/data/
 ```
 
-Then set the GitHub Actions repository variable `PUBLIC_AI_API_BASE_URL=https://api.gnaroshi.dev` and rebuild Pages. Never expose `OPENAI_API_KEY` through Astro, browser JavaScript, GitHub Pages variables, or committed files. Architecture, endpoint, privacy, cost, and failure-mode details are in `docs/cloudflare-worker-api.md`.
+This includes public reviews, activity, Growth snapshots, weekly reviews, and the research graph. Feed assets are emitted under `/assets/` during the static build.
 
-## Edit Profile Data
+The bootstrap-empty feed is a deliberate zero-content migration state. It renders honest empty states without treating seed or demo records as public activity.
 
-Primary identity data lives in:
+See [`docs/content-import.md`](docs/content-import.md) for the schema and failure behavior.
+
+## Build Metadata
+
+Every page includes:
+
+```html
+<meta name="content-feed-commit" content="...">
+```
+
+The same commit and manifest metadata are available at `/build-info.json`. A richer diagnostics page exists at `/dev-diagnostics/content-feed/` only in development.
+
+## Profile And Project Data
+
+Public identity and presentation data remain website-owned:
 
 ```text
 src/data/profile.ts
-```
-
-Edit that file for display name, headline, short bio, interests, location, and public links.
-
-Additional editable page data lives in:
-
-```text
-src/data/skills.ts
-src/data/timeline.ts
-src/data/research.ts
+src/data/locales/
 src/data/projects.ts
-src/data/now.ts
+src/content/projects/
 ```
 
-Project cards currently use `src/data/projects.ts` because the early homepage needs lightweight, editable project metadata. Longer technical project writeups can later be added under `src/content/projects/`.
+Do not place private research notes, blog drafts, API credentials, or authoring tools in this repository.
 
-## Add A Blog Post
+## Deployment
 
-Add an MDX file under:
+Pushes to `main` deploy through GitHub Actions. The workflow checks out this repository and the public content feed, validates the feed, builds Astro, and uploads the GitHub Pages artifact. Manual runs accept a `feed_ref` input, defaulting to `main`.
 
-```text
-src/content/blog/en/
-```
-
-Use this frontmatter:
-
-```yaml
----
-locale: "en"
-translationKey: "post-title"
-translationStatus: "complete"
-title: "Post title"
-description: "Short description"
-pubDate: 2026-07-09
-updatedDate:
-draft: false
-tags:
-  - ai
-  - research
-visibility: "public"
-series:
-seriesOrder:
-sourcePaper:
-heroImage:
-readingTime:
-featured: false
----
-```
-
-Drafts are hidden in production builds when `draft: true`. `visibility: "public"` appears in indexes, `unlisted` builds detail pages without index placement, and `hidden` is excluded from public builds. Tags should be lowercase kebab-case and generate static tag pages under `/blog/tags/[tag]`. The blog supports MDX, code blocks, math, table of contents, series navigation, archive pages, and RSS at `/rss.xml`.
-
-## Add A Paper Log
-
-Create a new draft paper log with:
-
-```bash
-npm run paper:new
-```
-
-The helper writes a file under:
-
-```text
-src/content/papers/
-```
-
-It uses today's local date and never overwrites an existing file. Paper logs default to `draft: true` and `visibility: "hidden"`; set `draft: false` and `visibility: "public"` when the note should appear publicly. The schema and status/depth definitions are documented in `docs/content-model.md` and `docs/paper-reading-system.md`.
-
-## Learning Loop Tools
-
-The research cockpit includes static-first tools for queueing, reviewing, recalling, and practicing papers:
-
-```bash
-npm run paper:from-queue -- --slug <queue-slug>
-npm run paper:promote -- --slug <paper-slug>
-npm run week:build
-npm run graph:build
-npm run questions:build
-npm run formula:score -- --slug <paper-slug> --file attempt.json
-```
-
-Public routes:
-
-- `/queue`
-- `/reviews`
-- `/formula`
-- `/questions`
-- `/implementations`
-- `/week`
-- `/graph`
-- `/growth`
-
-Browser practice state is local-only until copied into Markdown frontmatter or committed generated JSON. See `docs/learning-loop-features.md`.
-
-## Research Momentum
-
-`/growth` summarizes public evidence across reading consistency, understanding, retrieval, research output, revisits, and balance. The v2 score reports confidence separately, caps same-day volume, and marks missing data as unavailable instead of silently treating it as zero.
-
-A numeric score remains hidden until the public record has at least five meaningful events, three active dates, two activity categories, and one reading, retrieval, revisit, or implementation event. Before that point, `/growth` and the homepage show `Collecting evidence` with the exact remaining criteria. Seed articles, drafts, hidden/unlisted records, and system content never contribute.
-
-Run the deterministic score scenarios with:
-
-```bash
-npm run score:test
-```
-
-The formula and data rules are documented in `docs/research-momentum-score.md` and `docs/growth-dashboard.md`. Optional day-level GitHub contribution JSON can be committed under `src/generated/github-contributions/`; no token is used by the static dashboard.
-
-## Research Output System
-
-The site connects research outputs across public content:
-
-- Paper logs live in `src/content/papers/`.
-- Blog posts live in `src/content/blog/`.
-- Implementation attempts live in `src/content/implementations/`.
-- Project cards live in `src/data/projects.ts`.
-- Weekly reviews live in `src/generated/weekly-reviews/`.
-- Research graph JSON lives in `src/generated/research-graph.json`.
-
-Commands:
-
-```bash
-npm run week:build
-npm run graph:build
-npm run paper:promote -- --slug <paper-slug>
-```
-
-Use `visibility: "public"`, `visibility: "unlisted"`, or `visibility: "hidden"` to control public indexes and generated public stats. This is not privacy; committed content in a public repository is still visible in GitHub.
-
-Docs:
-
-- `docs/visibility.md`
-- `docs/research-graph.md`
-- `docs/weekly-review.md`
-- `docs/implementation-tracker.md`
-- `docs/paper-to-blog.md`
-
-## AI Paper Review
-
-Paper notes can be reviewed by an AI-assisted CLI that scores evidence of written understanding and three-pass reading discipline. It does not run in the browser and does not expose API keys.
-
-Local setup:
-
-```bash
-OPENAI_API_KEY=...
-OPENAI_MODEL=...
-```
-
-Store those values in untracked `.env.local`, then run:
-
-```bash
-npm run paper:review -- --slug <paper-slug>
-npm run paper:review:all -- --dry-run
-npm run paper:review:validate
-npm run paper:review:import -- --slug <paper-slug> --file review.json
-```
-
-Generated JSON lives in `src/generated/paper-reviews/` and renders on paper detail pages when `reviewVisibility` is `public`. Full documentation is in `docs/ai-paper-review.md` and `docs/manual-ai-review.md`.
+No cross-repository PAT or private repository token is required. See [`docs/deployment.md`](docs/deployment.md).

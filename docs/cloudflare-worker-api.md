@@ -1,5 +1,7 @@
 # Cloudflare Voice Oral Exam API
 
+> Migration reference: the Worker and AI endpoints moved to private `Gnaroshi/gnaroshi-api`; this website has no backend or direct OpenAI integration.
+
 ## Purpose
 
 The optional research API powers live voice and text oral exams without turning the Astro site into a server application. `gnaroshi.dev` remains a static GitHub Pages site. `api.gnaroshi.dev` is a separately deployed Cloudflare Worker.

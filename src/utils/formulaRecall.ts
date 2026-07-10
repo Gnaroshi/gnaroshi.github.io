@@ -1,4 +1,5 @@
 import type { PaperEntry } from "./papers";
+import { getContentSlug } from "./localizedContent";
 
 export type FormulaRecallRecord = {
   id: string;
@@ -22,9 +23,9 @@ export function hasFormulaRecallMaterial(paper: PaperEntry): boolean {
 
 export function toFormulaRecallRecord(paper: PaperEntry): FormulaRecallRecord {
   return {
-    id: paper.id,
+    id: getContentSlug(paper.id),
     title: paper.data.title,
-    href: `/papers/${paper.id}/`,
+    href: `/papers/${getContentSlug(paper.id)}/`,
     mainFormula: paper.data.mainFormula,
     formulaInterpretation: paper.data.formulaInterpretation,
     formulaTerms: paper.data.formulaTerms,

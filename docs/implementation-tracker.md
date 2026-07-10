@@ -1,5 +1,7 @@
 # Implementation Tracker
 
+> Migration reference: implementation authoring moved to `Gnaroshi/gnaroshi-paper-lab` through Studio; this website renders public attempts only.
+
 The implementation tracker records attempts to turn papers and research ideas into code. Failed and partial attempts are first-class because they preserve assumptions, constraints, and next actions.
 
 ## Routes

@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import EvidenceGate from "../components/growth/EvidenceGate.astro";
 import Hero from "../components/home/Hero.astro";
 import ExternalLink from "../components/common/ExternalLink.astro";
 import { getLocalizedData } from "../data/locales";
@@ -9,20 +8,19 @@ import { formatLocalizedDate } from "../i18n/date";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getBlogPostHref, getPublishedBlogPosts } from "../utils/content";
-import { getEvidenceEligibility } from "../utils/evidenceEligibility";
-import { getMomentumInput } from "../utils/momentumData";
+import { getPublicGrowthSnapshot } from "../utils/feedData";
 import { getPublishedPapers } from "../utils/papers";
 import "../styles/home.css";
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const data = getLocalizedData(locale);
-const [papers, posts, momentumInput] = await Promise.all([
+const [papers, posts] = await Promise.all([
   getPublishedPapers(locale),
-  getPublishedBlogPosts(locale),
-  getMomentumInput()
+  getPublishedBlogPosts(locale)
 ]);
-const eligibility = getEvidenceEligibility(momentumInput);
+const growthSnapshot = getPublicGrowthSnapshot();
+const growthEligible = Boolean(growthSnapshot?.metricEligible && growthSnapshot.score !== null);
 const recentPosts = posts.slice(0, 3);
 const recentPapers = papers.slice(0, 2);
 const selectedProject = data.projects.find((project) => project.featured) ?? data.projects[0];
@@ -52,19 +50,19 @@ const publicLinks = [
       <div class="home-activity__columns">
         <div>
           <div class="home-list-heading"><h3>{translate(locale, "nav.writing")}</h3><a href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.allWriting")}</a></div>
-          <ol class="editorial-record-list">{recentPosts.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time></li>)}</ol>
+          {recentPosts.length > 0 ? <ol class="editorial-record-list">{recentPosts.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time></li>)}</ol> : <p class="metadata">{locale === "ko" ? "공개된 글이 아직 없습니다." : "No public writing is available yet."}</p>}
         </div>
         <div>
           <div class="home-list-heading"><h3>{translate(locale, "home.paperNotes")}</h3><a href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div>
-          {recentPapers.length > 0 ? <ol class="editorial-record-list">{recentPapers.map((paper) => <li><a href={getLocalePath(locale, `/papers/${paper.id}/`)}>{paper.data.title}</a><span>{translate(locale, `status.${paper.data.status}`)}</span></li>)}</ol> : <div class="home-onboarding"><p>{translate(locale, "home.firstPaperMessage")}</p><a href={getLocalePath(locale, "/papers/#new-paper-template")}>{translate(locale, "home.addFirstPaper")}</a></div>}
+          {recentPapers.length > 0 ? <ol class="editorial-record-list">{recentPapers.map((paper) => <li><a href={getLocalePath(locale, `/papers/${paper.data.feedId}/`)}>{paper.data.title}</a><span>{translate(locale, `status.${paper.data.status}`)}</span></li>)}</ol> : <p class="metadata">{locale === "ko" ? "공개된 논문 노트가 아직 없습니다." : "No public paper notes are available yet."}</p>}
         </div>
       </div>
     </section>
 
     <section class="home-band home-cockpit-preview" aria-labelledby="cockpit-preview-heading">
       <header><p class="eyebrow">{translate(locale, "home.researchWorkspace")}</p><h2 id="cockpit-preview-heading">{translate(locale, "home.evidenceBeforeMetrics")}</h2><p>{translate(locale, "home.evidenceDescription")}</p></header>
-      <EvidenceGate eligibility={eligibility} compact locale={locale} />
-      <a class="button button--primary" href={getLocalePath(locale, "/papers/#new-paper-template")}>{translate(locale, "home.addFirstPaper")}</a>
+      <p class="metadata">{growthEligible ? (locale === "ko" ? `공개 근거 ${growthSnapshot?.evidenceCount ?? 0}건 · 점수 ${growthSnapshot?.score}` : `${growthSnapshot?.evidenceCount ?? 0} public evidence events · score ${growthSnapshot?.score}`) : (locale === "ko" ? "공개 피드에 충분한 근거가 쌓이면 점수와 신뢰도가 표시됩니다." : "Score and confidence appear after the public feed contains sufficient evidence.")}</p>
+      <a class="button button--primary" href={getLocalePath(locale, "/growth/")}>{translate(locale, "nav.growth")}</a>
     </section>
 
     <section class="home-band home-collaboration" aria-labelledby="collaboration-heading">

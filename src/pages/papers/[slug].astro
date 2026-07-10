@@ -5,13 +5,11 @@ import ImplementationCard from "../../components/implementations/ImplementationC
 import SectionHeader from "../../components/common/SectionHeader.astro";
 import PaperDetailHeader from "../../components/papers/PaperDetailHeader.astro";
 import PaperReviewCard from "../../components/papers/PaperReviewCard.astro";
-import ReviewPromptFallback from "../../components/papers/ReviewPromptFallback.astro";
-import ManualReviewPrompt from "../../components/papers/ManualReviewPrompt";
 import { getBuildablePapers, getPublishedPapers, type PaperEntry } from "../../utils/papers";
 import { getImplementationAttemptsForPaper, getPublishedImplementationAttempts } from "../../utils/implementations";
 import { getVisiblePaperReviewForPaper } from "../../utils/paperReviews";
-import { buildManualReviewPromptForPaper } from "../../../scripts/lib/paper-review-prompt.mjs";
 import { getIslandMessages } from "../../i18n/islands";
+import { getContentSlug } from "../../utils/localizedContent";
 
 export async function getStaticPaths() {
   const papers = await getBuildablePapers();
@@ -21,7 +19,7 @@ export async function getStaticPaths() {
     const publicIndex = publicPapers.findIndex((item) => item.id === paper.id);
 
     return {
-      params: { slug: paper.id },
+      params: { slug: getContentSlug(paper.id) },
       props: {
         paper,
         newerPaper: publicIndex > 0 ? publicPapers[publicIndex - 1] : undefined,
@@ -40,19 +38,11 @@ interface Props {
 const { paper, newerPaper, olderPaper } = Astro.props as Props;
 const { Content } = await render(paper);
 const review = getVisiblePaperReviewForPaper(paper);
-const manualPrompt = buildManualReviewPromptForPaper({
-  slug: paper.id,
-  frontmatter: paper.data,
-  body: paper.body
-});
-const reviewCommand = `npm run paper:review -- --slug ${paper.id}`;
-const promoteCommand = `npm run paper:promote -- --slug ${paper.id}`;
-const showAuthorTools = import.meta.env.DEV;
-const implementationAttempts = getImplementationAttemptsForPaper(await getPublishedImplementationAttempts(), paper.id);
+const slug = getContentSlug(paper.id);
+const implementationAttempts = getImplementationAttemptsForPaper(await getPublishedImplementationAttempts(), slug);
 const islandMessages = getIslandMessages("en");
-const manualReviewMessages = islandMessages.manualReview;
 const implementationMessages = islandMessages.implementation;
-const alternateUrls = { en: `/papers/${paper.id}/`, ko: "/ko/papers/", xDefault: `/papers/${paper.id}/`, translationAvailable: false } as const;
+const alternateUrls = { en: `/papers/${slug}/`, ko: "/ko/papers/", xDefault: `/papers/${slug}/`, translationAvailable: false } as const;
 
 const fallback = "Not recorded yet.";
 const futureMe = paper.data.futureMe;
@@ -60,7 +50,7 @@ const hasFutureMe =
   futureMe.oneThingToRemember || futureMe.whyItMatters || futureMe.whenToUseThis || futureMe.whatToRevisit || futureMe.warning;
 ---
 
-<BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/papers/${paper.id}/`} alternateUrls={alternateUrls} type="article" paperLab>
+<BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/papers/${slug}/`} alternateUrls={alternateUrls} type="article" paperLab>
   <article class="paper-detail">
     <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <PaperDetailHeader paper={paper} />
@@ -72,24 +62,11 @@ const hasFutureMe =
         <p>Use live voice when the optional API is available, or continue with text and manual practice.</p>
       </div>
       <div class="paper-card__links">
-        <a href={`/papers/${paper.id}/exam/live/`}>Open oral exam</a>
+        <a href={`/papers/${slug}/exam/live/`}>View oral exam record</a>
       </div>
     </section>
 
-    {review ? (
-      <>
-        <PaperReviewCard review={review} />
-        <section class="section" aria-labelledby="manual-rereview-heading">
-          <div>
-            <p class="eyebrow">Manual review</p>
-            <h2 id="manual-rereview-heading">Re-review manually</h2>
-          </div>
-          <ManualReviewPrompt client:load prompt={manualPrompt} command={reviewCommand} locale="en" messages={manualReviewMessages} />
-        </section>
-      </>
-    ) : (
-      <ReviewPromptFallback paper={paper} />
-    )}
+    {review && <PaperReviewCard review={review} />}
 
     {hasFutureMe && (
       <section class="learning-panel learning-panel--accent" aria-labelledby="future-me-heading">
@@ -223,17 +200,6 @@ const hasFutureMe =
       </section>
     )}
 
-    {showAuthorTools && (
-      <section class="section" aria-labelledby="paper-promotion-heading">
-        <SectionHeader
-          id="paper-promotion-heading"
-          title="Promote to blog"
-          description="Turn this structured paper note into a private draft essay."
-        />
-        <pre><code>{promoteCommand}</code></pre>
-      </section>
-    )}
-
     <section class="section" aria-labelledby="paper-body-heading">
       <SectionHeader id="paper-body-heading" title="Full note" description="Pass-by-pass observations, questions, and implementation notes." />
       <div class="prose">
@@ -244,7 +210,7 @@ const hasFutureMe =
     <nav class="paper-nav" aria-label="Paper note navigation">
       <div>
         {olderPaper ? (
-          <a href={`/papers/${olderPaper.id}/`}>
+          <a href={`/papers/${getContentSlug(olderPaper.id)}/`}>
             <span>Older paper</span>
             {olderPaper.data.title}
           </a>
@@ -254,7 +220,7 @@ const hasFutureMe =
       </div>
       <div>
         {newerPaper ? (
-          <a href={`/papers/${newerPaper.id}/`}>
+          <a href={`/papers/${getContentSlug(newerPaper.id)}/`}>
             <span>Newer paper</span>
             {newerPaper.data.title}
           </a>

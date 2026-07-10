@@ -11,7 +11,7 @@ export const researchAreas = [
     uncertainty:
       "The right amount of structure is still unclear: too little loses context, while too much makes daily notes expensive.",
     related: [
-      { label: "Three-pass paper reading", href: "/blog/paper-reading-method/" },
+      { label: "Research writing", href: "/blog/" },
       { label: "Paper Lab", href: "/papers" }
     ]
   },
@@ -36,11 +36,11 @@ export const researchAreas = [
     hypothesis:
       "AI is most useful as a retrieval examiner, comparison aid, and prompt generator when every output stays tied to source notes and an explicit confidence boundary.",
     currentReading: "Human-AI workflows, evidence calibration, retrieval practice, and research tooling.",
-    currentBuild: "Manual and optional API-assisted paper reviews and oral exams that work without exposing long-lived credentials.",
+    currentBuild: "A public research record that keeps generated evidence separate from the presentation layer.",
     uncertainty:
       "The boundary between helpful friction and unnecessary workflow overhead needs evidence from repeated real use.",
     related: [
-      { label: "Research workflow with Markdown and Git", href: "/blog/research-workflow/" },
+      { label: "Research writing", href: "/blog/" },
       { label: "gnaroshi.dev project", href: "/projects/gnaroshi-dev/" }
     ]
   }

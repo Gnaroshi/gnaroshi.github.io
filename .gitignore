@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .astro/
+.content-feed/
 .DS_Store
 npm-debug.log*
 .env
@@ -13,10 +14,6 @@ npm-debug.log*
 .codex/mcp-secrets.*
 .mcp.env
 mcp-secrets.*
-apps/api/.dev.vars
-apps/api/.env
-apps/api/.env.local
-apps/api/.wrangler/
 artifacts/
 playwright-report/
 test-results/

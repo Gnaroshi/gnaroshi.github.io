@@ -1,5 +1,7 @@
 # Weekly Research Review
 
+> Migration reference: weekly review generation moved to `Gnaroshi/gnaroshi-studio`; the website renders the generated public feed index.
+
 Weekly reviews summarize public research output without calling an AI model.
 
 ## Routes

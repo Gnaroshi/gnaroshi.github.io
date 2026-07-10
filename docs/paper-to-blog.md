@@ -1,5 +1,7 @@
 # Paper To Blog Promotion
 
+> Migration reference: paper-to-writing promotion moved to `Gnaroshi/gnaroshi-studio` and cannot be run from the website repository.
+
 Paper logs are structured research notes. Blog posts are public explanations intended for a wider technical reader.
 
 The promotion script creates a draft blog post from a paper note so the writing can start from the existing reading structure without copying everything by hand.

@@ -1,41 +1,17 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import FormulaRecallTrainer from "../../../components/formula/FormulaRecallTrainer";
-import { getIslandMessages } from "../../../i18n/islands";
-import { getPublishedPapers, getTodayKey, type PaperEntry } from "../../../utils/papers";
-import { toFormulaRecallRecord } from "../../../utils/formulaRecall";
+import { getPublishedPapers, type PaperEntry } from "../../../utils/papers";
+import { getContentSlug } from "../../../utils/localizedContent";
 
 export async function getStaticPaths() {
-  const papers = await getPublishedPapers();
-  return papers.map((paper) => ({ params: { slug: paper.id }, props: { paper, papers } }));
+  return (await getPublishedPapers()).map((paper) => ({ params: { slug: getContentSlug(paper.id) }, props: { paper } }));
 }
 
-interface Props {
-  paper: PaperEntry;
-  papers: PaperEntry[];
-}
-
-const { paper, papers } = Astro.props as Props;
-const records = papers.map(toFormulaRecallRecord);
-const today = getTodayKey();
-const messages = getIslandMessages("en").formula;
-const alternateUrls = { en: `/papers/${paper.id}/formula/`, ko: "/ko/formula/", xDefault: `/papers/${paper.id}/formula/`, translationAvailable: false } as const;
+interface Props { paper: PaperEntry }
+const { paper } = Astro.props as Props;
+const slug = getContentSlug(paper.id);
+const alternateUrls = { en: `/papers/${slug}/formula/`, ko: "/ko/formula/", xDefault: `/papers/${slug}/formula/`, translationAvailable: false } as const;
 ---
-
-<BaseLayout title={`${paper.data.title} Formula Recall`} description={`Formula recall practice for ${paper.data.title}.`} canonical={`/papers/${paper.id}/formula/`} alternateUrls={alternateUrls} width="dashboard" mode="application">
-  <div class="paper-dashboard">
-    <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
-    <header class="paper-hero">
-      <div class="paper-hero__copy">
-        <p class="eyebrow">Formula recall</p>
-        <h1>{paper.data.title}</h1>
-        <p class="lede">Write the formula and interpretation from memory before opening the saved note.</p>
-      </div>
-      <nav class="paper-hero__actions" aria-label="Paper formula navigation">
-        <a href={`/papers/${paper.id}/`}>Paper note</a>
-        <a href="/formula">All formulas</a>
-      </nav>
-    </header>
-    <FormulaRecallTrainer client:visible papers={records} initialSlug={paper.id} today={today} locale="en" messages={messages} />
-  </div>
+<BaseLayout title={`${paper.data.title} Formula`} description={`Published formula note for ${paper.data.title}.`} canonical={`/papers/${slug}/formula/`} alternateUrls={alternateUrls} width="dashboard" mode="application">
+  <div class="paper-dashboard"><p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p><header class="paper-hero"><div class="paper-hero__copy"><p class="eyebrow">Formula note</p><h1>{paper.data.title}</h1><p class="lede">The formula and interpretation published with this paper note.</p></div><nav class="paper-hero__actions" aria-label="Paper formula navigation"><a href={`/papers/${slug}/`}>Paper note</a><a href="/formula/">All formulas</a></nav></header><section class="section" aria-labelledby="saved-formula-heading"><h2 id="saved-formula-heading">Main formula</h2><pre><code>{paper.data.mainFormula || "No public formula is recorded."}</code></pre><p>{paper.data.formulaInterpretation || "No public interpretation is recorded."}</p></section></div>
 </BaseLayout>

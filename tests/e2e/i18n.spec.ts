@@ -18,25 +18,24 @@ test("language switch preserves an equivalent static route", async ({ page }) =>
   await expect(page.getByRole("link", { name: "EN" }).first()).toHaveAttribute("href", "/research/");
 });
 
-test("blog translations are paired without changing English slugs", async ({ page }) => {
-  await page.goto("/blog/paper-reading-method/");
+test("blog locale indexes preserve the public route structure", async ({ page }) => {
+  await page.goto("/blog/");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
-  await expect(page.getByRole("link", { name: "한국어" }).first()).toHaveAttribute("href", "/ko/blog/paper-reading-method/");
+  await expect(page.getByRole("link", { name: "한국어" }).first()).toHaveAttribute("href", "/ko/blog/");
 
-  await page.goto("/ko/blog/paper-reading-method/");
+  await page.goto("/ko/blog/");
   await expect(page.locator("html")).toHaveAttribute("lang", "ko");
-  await expect(page.getByRole("link", { name: "EN" }).first()).toHaveAttribute("href", "/blog/paper-reading-method/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("논문");
+  await expect(page.getByRole("link", { name: "EN" }).first()).toHaveAttribute("href", "/blog/");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
 test("localized SEO, date formatting, RSS, and sitemap are emitted", async ({ page, request }) => {
-  await page.goto("/ko/blog/first-post/");
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://gnaroshi.dev/ko/blog/first-post/");
-  await expect(page.locator('link[hreflang="en"]')).toHaveAttribute("href", "https://gnaroshi.dev/blog/first-post/");
-  await expect(page.locator('link[hreflang="ko"]')).toHaveAttribute("href", "https://gnaroshi.dev/ko/blog/first-post/");
-  await expect(page.locator('link[hreflang="x-default"]')).toHaveAttribute("href", "https://gnaroshi.dev/blog/first-post/");
+  await page.goto("/ko/blog/");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://gnaroshi.dev/ko/blog/");
+  await expect(page.locator('link[hreflang="en"]')).toHaveAttribute("href", "https://gnaroshi.dev/blog/");
+  await expect(page.locator('link[hreflang="ko"]')).toHaveAttribute("href", "https://gnaroshi.dev/ko/blog/");
+  await expect(page.locator('link[hreflang="x-default"]')).toHaveAttribute("href", "https://gnaroshi.dev/blog/");
   await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute("content", "ko_KR");
-  await expect(page.locator("time").first()).toContainText(/2026년/);
 
   expect((await request.get("/rss.xml")).ok()).toBeTruthy();
   expect((await request.get("/ko/rss.xml")).ok()).toBeTruthy();

@@ -1,11 +1,29 @@
-import { getCollection, type CollectionEntry } from "astro:content";
-import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
 import type { Locale } from "../i18n/types";
 import { getContentSlug } from "./localizedContent";
+import { getPublishedPapers } from "./papers";
 
-export type ImplementationEntry = CollectionEntry<"implementations">;
+export type ImplementationStatus = "planned" | "in-progress" | "reproduced" | "partially-reproduced" | "failed" | "abandoned" | "shipped";
 
-export type ImplementationStatus = ImplementationEntry["data"]["status"];
+export type ImplementationEntry = {
+  id: string;
+  data: {
+    locale: Locale;
+    title: string;
+    date: Date;
+    status: ImplementationStatus;
+    relatedPapers: string[];
+    relatedProjects: string[];
+    repoUrl?: string;
+    demoUrl?: string;
+    paperUrl?: string;
+    goal: string;
+    result: string;
+    failureReason: string;
+    lessons: string[];
+    tags: string[];
+    visibility: "public";
+  };
+};
 
 export const implementationStatusLabels: Record<ImplementationStatus, string> = {
   planned: "Planned",
@@ -18,22 +36,36 @@ export const implementationStatusLabels: Record<ImplementationStatus, string> = 
 };
 
 export async function getAllImplementationAttempts(locale: Locale = "en"): Promise<ImplementationEntry[]> {
-  const attempts = await getCollection("implementations");
-  return sortImplementationAttempts(attempts.filter((attempt) => !getContentSlug(attempt.id).startsWith("_") && attempt.data.locale === locale));
+  const papers = await getPublishedPapers(locale);
+  const attempts = papers.flatMap((paper) => paper.data.implementationAttempts.map((attempt) => ({
+    id: attempt.id,
+    data: {
+      locale,
+      title: attempt.title,
+      date: new Date(`${attempt.date}T00:00:00.000Z`),
+      status: attempt.status,
+      relatedPapers: attempt.paperIds,
+      relatedProjects: attempt.projectIds,
+      repoUrl: attempt.repoUrl || undefined,
+      demoUrl: attempt.demoUrl || undefined,
+      paperUrl: paper.data.paperUrl,
+      goal: attempt.goal,
+      result: attempt.result,
+      failureReason: attempt.failureReason,
+      lessons: attempt.lessons,
+      tags: attempt.tags,
+      visibility: "public" as const
+    }
+  })));
+  return sortImplementationAttempts([...new Map(attempts.map((attempt) => [attempt.id, attempt])).values()]);
 }
 
 export async function getPublishedImplementationAttempts(locale: Locale = "en"): Promise<ImplementationEntry[]> {
-  const attempts = await getAllImplementationAttempts(locale);
-  return attempts.filter((attempt) => shouldShowInIndex(attempt.data));
+  return getAllImplementationAttempts(locale);
 }
 
 export async function getBuildableImplementationAttempts(locale: Locale = "en"): Promise<ImplementationEntry[]> {
-  const attempts = await getAllImplementationAttempts(locale);
-  return attempts.filter((attempt) =>
-    shouldBuildDetailPage(attempt.data, {
-      includeHidden: !import.meta.env.PROD
-    })
-  );
+  return getAllImplementationAttempts(locale);
 }
 
 export function sortImplementationAttempts(attempts: ImplementationEntry[]): ImplementationEntry[] {
@@ -41,7 +73,7 @@ export function sortImplementationAttempts(attempts: ImplementationEntry[]): Imp
 }
 
 export function getImplementationAttemptsForPaper(attempts: ImplementationEntry[], paperSlug: string): ImplementationEntry[] {
-  return attempts.filter((attempt) => attempt.data.relatedPapers.includes(paperSlug));
+  return attempts.filter((attempt) => attempt.data.relatedPapers.includes(getContentSlug(paperSlug)));
 }
 
 export function getImplementationAttemptsForProject(attempts: ImplementationEntry[], projectSlug: string): ImplementationEntry[] {
@@ -49,16 +81,9 @@ export function getImplementationAttemptsForProject(attempts: ImplementationEntr
 }
 
 export function getImplementationTags(attempts: ImplementationEntry[]): string[] {
-  return [...new Set(attempts.flatMap((attempt) => attempt.data.tags.map((tag) => tag.trim().toLowerCase())))]
-    .filter(Boolean)
-    .sort((a, b) => a.localeCompare(b));
+  return [...new Set(attempts.flatMap((attempt) => attempt.data.tags.map((tag) => tag.trim().toLowerCase())))].filter(Boolean).sort();
 }
 
 export function toImplementationDateKey(date?: Date): string | undefined {
-  if (!date) return undefined;
-  return [
-    date.getUTCFullYear(),
-    String(date.getUTCMonth() + 1).padStart(2, "0"),
-    String(date.getUTCDate()).padStart(2, "0")
-  ].join("-");
+  return date?.toISOString().slice(0, 10);
 }

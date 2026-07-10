@@ -1,5 +1,7 @@
 # Paper Reading System
 
+> Migration reference: paper authoring and reading workflow commands moved to `Gnaroshi/gnaroshi-studio` and are not runnable in the website repository.
+
 ## Purpose
 
 The paper reading tracker should make daily paper reading visible, searchable, and useful. It should reward consistent engagement and partial progress, not only polished summaries or completed deep reads.

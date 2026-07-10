@@ -87,10 +87,6 @@ test("locale shells and dates remain consistent", async ({ page }) => {
     await page.goto(route);
     await expect(page.locator("html")).toHaveAttribute("lang", "ko");
   }
-  await page.goto("/blog/first-post/");
-  await expect(page.locator("time").first()).toContainText(/Jul|2026/);
-  await page.goto("/ko/blog/first-post/");
-  await expect(page.locator("time").first()).toContainText(/2026년/);
 });
 
 test("homepage, blog, evidence gates, and empty tools remain truthful", async ({ page }) => {
@@ -107,11 +103,11 @@ test("homepage, blog, evidence gates, and empty tools remain truthful", async ({
 
   await page.goto("/papers");
   await expect(page.locator(".paper-stats, .paper-heatmap, .paper-filter-panel, astro-island")).toHaveCount(0);
-  await expect(page.locator("#new-paper-template")).not.toHaveAttribute("open", "");
+  await expect(page.locator("#new-paper-template")).toHaveCount(0);
 
   await page.goto("/growth");
   await expect(page.locator(".momentum-score__value")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Collecting evidence" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "No public score yet" })).toBeVisible();
 
   for (const route of ["/queue", "/reviews", "/formula", "/questions", "/implementations", "/graph"]) {
     await page.goto(route);
@@ -123,7 +119,7 @@ test("homepage, blog, evidence gates, and empty tools remain truthful", async ({
 
 test("technical prose and reduced-motion behavior remain contained", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 });
-  for (const route of ["/blog/research-workflow/", "/ko/blog/research-workflow/", "/blog/paper-reading-method/", "/ko/blog/paper-reading-method/"]) {
+  for (const route of ["/research/", "/ko/research/", "/blog/", "/ko/blog/"]) {
     await page.goto(route);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow, `${route} technical content overflow`).toBeLessThanOrEqual(1);

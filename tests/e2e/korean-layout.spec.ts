@@ -31,12 +31,9 @@ test("Korean mobile navigation fits in the menu", async ({ page }) => {
   expect(box?.width ?? 9999).toBeLessThanOrEqual(390);
 });
 
-test("Korean growth actions keep a readable text column on mobile", async ({ page }) => {
+test("Korean growth empty state keeps a readable text column on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/ko/growth/");
-  const widths = await page.locator(".momentum-next-actions li p").evaluateAll((items) =>
-    items.map((item) => item.getBoundingClientRect().width)
-  );
-  expect(widths).toHaveLength(3);
-  expect(Math.min(...widths)).toBeGreaterThan(240);
+  const width = await page.locator(".app-empty-state").evaluate((item) => item.getBoundingClientRect().width);
+  expect(width).toBeGreaterThan(240);
 });

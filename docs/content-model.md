@@ -1,5 +1,7 @@
 # Content Model
 
+> Migration reference: canonical paper and writing contracts now live in `Gnaroshi/gnaroshi-studio`; this website imports only generated public feed output.
+
 ## Overview
 
 The site should be content-first. Most updates should require editing a Markdown/MDX file or `src/data/profile.ts`.
