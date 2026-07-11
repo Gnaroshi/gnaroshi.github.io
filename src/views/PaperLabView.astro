@@ -7,6 +7,8 @@ import { translate } from "../i18n/utils";
 import { getActivityCountsByDate, getPaperStats, getPublishedPapers, getTodayKey, normalizePaperTags } from "../utils/papers";
 import { getActivityCalendar } from "../utils/feedData";
 import { getPaperReviewStats, getPublicPaperReviewMap } from "../utils/paperReviews";
+import "../styles/application.css";
+import "../styles/papers.css";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const papers = await getPublishedPapers(locale);

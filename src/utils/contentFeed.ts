@@ -121,3 +121,16 @@ export function listContentFeedAssets(): Array<{ path: string; absolutePath: str
     return { path, absolutePath, mediaType: asset.mediaType };
   });
 }
+
+export type PublicAssetMetadata = {
+  publicPath: string;
+  mediaType: "image/avif" | "image/webp" | "image/png" | "image/jpeg" | "image/svg+xml";
+  width: number;
+  height: number;
+  alt: string;
+};
+
+export function getPublicAssetMetadata(publicPath?: string): PublicAssetMetadata | undefined {
+  if (!publicPath) return undefined;
+  return readContentFeedJson<PublicAssetMetadata[]>("assets/index.json", []).find((asset) => asset.publicPath === publicPath);
+}

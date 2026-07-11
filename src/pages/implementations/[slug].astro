@@ -1,5 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import StructuredData from "../../components/StructuredData.astro";
+import "../../styles/application.css";
+import "../../styles/insights.css";
+import "../../styles/papers.css";
 import ExternalLink from "../../components/common/ExternalLink.astro";
 import SectionHeader from "../../components/common/SectionHeader.astro";
 import ImplementationStatusBadge from "../../components/implementations/ImplementationStatusBadge.astro";
@@ -13,6 +18,7 @@ import {
 import { getBuildablePapers } from "../../utils/papers";
 import { getContentSlug } from "../../utils/localizedContent";
 import { getIslandMessages } from "../../i18n/islands";
+import { profile } from "../../data/profile";
 
 export async function getStaticPaths() {
   const attempts = await getBuildableImplementationAttempts();
@@ -47,10 +53,23 @@ const links = [
 ].filter(Boolean) as Array<{ label: string; href: string }>;
 const implementationMessages = getIslandMessages("en").implementation;
 const alternateUrls = { en: `/implementations/${attempt.id}/`, ko: "/ko/implementations/", xDefault: `/implementations/${attempt.id}/`, translationAvailable: false } as const;
+const canonicalPath = `/implementations/${attempt.id}/`;
 ---
 
-<BaseLayout title={attempt.data.title} description={attempt.data.goal} canonical={`/implementations/${attempt.id}/`} alternateUrls={alternateUrls} type="article" mode="application">
+<BaseLayout title={attempt.data.title} description={attempt.data.goal} canonical={canonicalPath} alternateUrls={alternateUrls} type="article" mode="application" robots={attempt.data.visibility === "unlisted" ? "noindex, follow" : "index, follow"} publishedTime={attempt.data.date} articleTags={attempt.data.tags}>
   <article class="paper-detail">
+    <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Implementations", href: "/implementations/" }, { name: attempt.data.title, href: canonicalPath }]} />
+    <StructuredData data={{
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      name: attempt.data.title,
+      description: attempt.data.goal,
+      url: new URL(canonicalPath, profile.domain).toString(),
+      dateCreated: attempt.data.date.toISOString(),
+      author: { "@type": "Person", name: profile.publicAlias, url: profile.domain },
+      keywords: attempt.data.tags,
+      ...(attempt.data.repoUrl ? { codeRepository: attempt.data.repoUrl } : {})
+    }} />
     <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/implementations/">Back to implementations</a>

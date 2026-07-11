@@ -1,0 +1,28 @@
+---
+import { profile } from "../data/profile";
+
+interface Props {
+  target: string;
+}
+
+const target = new URL(Astro.props.target, profile.domain);
+if (target.origin !== profile.domain || !target.pathname.startsWith("/")) {
+  throw new Error(`Unsafe redirect target: ${Astro.props.target}`);
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="canonical" href={target.toString()} />
+    <meta http-equiv="refresh" content={`0;url=${target.pathname}`} />
+    <title>Redirecting | Gnaroshi</title>
+  </head>
+  <body>
+    <p>Redirecting to <a href={target.pathname}>{target.pathname}</a>.</p>
+  </body>
+</html>

@@ -3,6 +3,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getActiveQuestions } from "../utils/questionBank";
+import "../styles/application.css";
+import "../styles/papers.css";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const questions = getActiveQuestions().filter((question) => (question as { locale?: Locale }).locale ? (question as { locale?: Locale }).locale === locale : locale === "en");

@@ -1,8 +1,18 @@
 ---
 import { render } from "astro:content";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import FeatureStyles from "../../../components/FeatureStyles.astro";
+import RedirectPage from "../../../components/RedirectPage.astro";
+import StructuredData from "../../../components/StructuredData.astro";
 import { getBuildablePapers, type PaperEntry } from "../../../utils/papers";
 import { getTranslationEntry } from "../../../utils/localizedContent";
+import { profile } from "../../../data/profile";
+import { hasMathSyntax } from "../../../utils/math";
+import "../../../styles/application.css";
+import "../../../styles/code.css";
+import "../../../styles/papers.css";
+import "../../../styles/prose.css";
 
 export async function getStaticPaths() {
   const koreanPapers = await getBuildablePapers("ko");
@@ -16,7 +26,6 @@ export async function getStaticPaths() {
 
 interface Props { paper: PaperEntry; english?: PaperEntry; redirectTo?: string }
 const { paper, english, redirectTo } = Astro.props as Props;
-if (redirectTo) return Astro.redirect(redirectTo, 301);
 const { Content } = await render(paper);
 const slug = paper.data.canonicalSlug;
 const alternateUrls = { en: english ? `/papers/${english.data.canonicalSlug}/` : "/papers/", ko: `/ko/papers/${slug}/`, xDefault: english ? `/papers/${english.data.canonicalSlug}/` : "/papers/", translationAvailable: Boolean(english) } as const;
@@ -27,17 +36,46 @@ const structuredItems = [
 ].filter((item): item is [string, string] => Boolean(item[1]));
 const critiqueItems = [["내 연구와의 연결", paper.data.myConnection], ["다음 행동", paper.data.nextAction]].filter((item): item is [string, string] => Boolean(item[1]));
 const hasBody = Boolean(paper.body?.trim());
+const hasMath = hasMathSyntax(paper.body) || hasMathSyntax(paper.data.mainFormula);
+const canonicalPath = `/ko/papers/${slug}/`;
+const techArticle = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: paper.data.title,
+  ...(paper.data.oneLineSummary ? { description: paper.data.oneLineSummary } : {}),
+  url: new URL(canonicalPath, profile.domain).toString(),
+  inLanguage: "ko-KR",
+  author: { "@type": "Person", name: profile.publicAlias, url: profile.domain },
+  keywords: [...paper.data.tags, ...paper.data.relatedTopics],
+  ...(paper.data.readDate ? { datePublished: paper.data.readDate.toISOString() } : {}),
+  ...(paper.data.lastReviewed ? { dateModified: paper.data.lastReviewed.toISOString() } : {}),
+  citation: {
+    "@type": "ScholarlyArticle",
+    name: paper.data.title,
+    author: paper.data.authors.map((name) => ({ "@type": "Person", name })),
+    ...(paper.data.paperUrl ? { url: paper.data.paperUrl } : {}),
+    ...(paper.data.venue ? { isPartOf: paper.data.venue } : {}),
+    datePublished: String(paper.data.year)
+  }
+};
 ---
 
-<BaseLayout locale="ko" title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/ko/papers/${slug}/`} alternateUrls={alternateUrls} type="article" paperLab>
+{redirectTo ? <RedirectPage target={redirectTo} /> : <BaseLayout locale="ko" title={paper.data.title} description={paper.data.oneLineSummary} canonical={canonicalPath} alternateUrls={alternateUrls} type="article" paperLab robots={paper.data.visibility === "unlisted" ? "noindex, follow" : "index, follow"} publishedTime={paper.data.readDate} modifiedTime={paper.data.lastReviewed ?? paper.data.readDate} articleTags={paper.data.tags}>
+  <FeatureStyles slot="head" styles={hasMath ? ["katex"] : []} />
   <article class="paper-detail">
+    <Breadcrumbs label="현재 위치" items={[
+      { name: "홈", href: "/ko/" },
+      { name: "논문 기록", href: "/ko/papers/" },
+      { name: paper.data.title, href: canonicalPath }
+    ]} />
+    <StructuredData data={techArticle} />
     {!english && <p class="content-language-badge"><span class="paper-badge paper-badge--muted">한국어 콘텐츠</span> 영어 번역 없음</p>}
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/ko/papers/">논문 기록으로 돌아가기</a>
       <div class="paper-detail-header__title"><p class="eyebrow">논문 노트</p><h1>{paper.data.title}</h1>{paper.data.oneLineSummary && <p class="lede">{paper.data.oneLineSummary}</p>}</div>
       <div class="paper-detail-header__meta"><p>{paper.data.authors.join(", ")}</p><p>{paper.data.venue} · {paper.data.year}</p></div>
       <div class="paper-detail-header__badges"><span class="paper-badge">{paper.data.status}</span><span class="paper-badge">{paper.data.depth}</span><span class="paper-badge paper-badge--muted">난이도 {paper.data.difficulty}/5</span></div>
-      <div class="paper-detail-header__links">{paper.data.paperUrl && <a href={paper.data.paperUrl} target="_blank" rel="noreferrer">논문</a>}{paper.data.codeUrl && <a href={paper.data.codeUrl} target="_blank" rel="noreferrer">코드</a>}{paper.data.projectUrl && <a href={paper.data.projectUrl} target="_blank" rel="noreferrer">프로젝트</a>}</div>
+      <div class="paper-detail-header__links">{paper.data.paperUrl && <a href={paper.data.paperUrl} target="_blank" rel="noopener noreferrer external">논문</a>}{paper.data.codeUrl && <a href={paper.data.codeUrl} target="_blank" rel="noopener noreferrer external">코드</a>}{paper.data.projectUrl && <a href={paper.data.projectUrl} target="_blank" rel="noopener noreferrer external">프로젝트</a>}</div>
     </header>
 
     {paper.data.lastReviewed && <section class="section" aria-labelledby="ko-review-heading"><h2 id="ko-review-heading">공개 리뷰</h2><p>{paper.data.reviewHistory?.[0]?.note}</p><p class="metadata">{paper.data.lastReviewed.toISOString().slice(0, 10)}</p></section>}
@@ -49,4 +87,4 @@ const hasBody = Boolean(paper.body?.trim());
     {(paper.data.tags.length > 0 || paper.data.relatedTopics.length > 0) && <section class="section" aria-labelledby="ko-paper-tags"><h2 id="ko-paper-tags">태그와 주제</h2><div class="badge-row">{paper.data.tags.map((tag) => <span class="paper-tag">{tag}</span>)}{paper.data.relatedTopics.map((topic) => <span class="paper-tag paper-tag--topic">{topic}</span>)}</div></section>}
     {hasBody && <section class="section" aria-labelledby="ko-full-note"><h2 id="ko-full-note">전체 노트</h2><div class="prose"><Content /></div></section>}
   </article>
-</BaseLayout>
+</BaseLayout>}

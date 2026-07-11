@@ -42,11 +42,15 @@ npm run test:a11y
 npm run test:smoke
 npm run test:visual
 npm run test:feed-contract
+npm run test:performance
 npm run check:i18n
 npm run check:links
+npm run check:links:external
 ```
 
 `dev`, `check`, and `build` run the feed's canonical JSON Schema validator before Astro starts. Count/hash drift, schema or privacy violations, broken relations, route/alias collisions, and undeclared assets fail with a direct error.
+
+Use Node 24 as declared in `.node-version`. `test:performance` checks deterministic route budgets and runs mobile Chromium coverage/LCP/CLS. External links are checked only by the manual/scheduled report because third-party availability must not block ordinary content deployment.
 
 ## Content Import
 
@@ -106,3 +110,5 @@ gh workflow run deploy.yml \
 `feed_commit` takes precedence and is verified against the checkout before build. Pull requests run non-deploying CI; production deployment runs static checks and a focused smoke suite, then verifies the live provenance and core routes. Use the manual rollback workflow only with an explicit public website ref and public feed SHA.
 
 No cross-repository PAT or private repository token is required. See [`docs/deployment.md`](docs/deployment.md), [`docs/release-integrity.md`](docs/release-integrity.md), and [`docs/rollback.md`](docs/rollback.md).
+
+Search, privacy, asset-boundary, CSP, and performance decisions are documented in [`docs/technical-hardening-report.md`](docs/technical-hardening-report.md).

@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import StructuredData from "../components/StructuredData.astro";
 import ExternalLink from "../components/common/ExternalLink.astro";
 import { getLocalizedData } from "../data/locales";
 import { mediaManifest } from "../data/mediaManifest";
@@ -7,6 +9,7 @@ import { formatLocalizedDate } from "../i18n/date";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getPublishedBlogPosts, getBlogPostHref } from "../utils/content";
+import { profile } from "../data/profile";
 interface Props { locale: Locale; slug: string }
 const { locale, slug } = Astro.props;
 const data = getLocalizedData(locale);
@@ -16,10 +19,28 @@ const posts = await getPublishedBlogPosts(locale);
 const relatedKeys = new Set<string>(project.relatedWriting);
 const related = posts.filter((post) => relatedKeys.has(post.data.translationKey));
 const artwork = mediaManifest.projectGnaroshiDev;
+const canonicalPath = getLocalePath(locale, `/projects/${project.slug}/`);
+const repositoryUrl = project.links.find((link) => link.label === "Repository")?.href;
 ---
 
-<BaseLayout locale={locale} title={project.title} description={project.summary} canonical={getLocalePath(locale, `/projects/${project.slug}/`)} type="article" width="wide">
+<BaseLayout locale={locale} title={project.title} description={project.summary} canonical={canonicalPath} type="article" width="wide" modifiedTime={project.updatedAt} articleTags={[...project.tags]}>
   <article class="project-case">
+    <Breadcrumbs label={locale === "ko" ? "현재 위치" : "Breadcrumb"} items={[
+      { name: locale === "ko" ? "홈" : "Home", href: getLocalePath(locale, "/") },
+      { name: locale === "ko" ? "프로젝트" : "Projects", href: getLocalePath(locale, "/projects/") },
+      { name: project.title, href: canonicalPath }
+    ]} />
+    <StructuredData data={{
+      "@context": "https://schema.org",
+      "@type": repositoryUrl ? "SoftwareSourceCode" : "CreativeWork",
+      name: project.title,
+      description: project.summary,
+      url: new URL(canonicalPath, profile.domain).toString(),
+      dateModified: project.updatedAt,
+      author: { "@type": "Person", name: profile.publicAlias, url: profile.domain },
+      keywords: project.tags,
+      ...(repositoryUrl ? { codeRepository: repositoryUrl, programmingLanguage: ["TypeScript", "Astro"] } : {})
+    }} />
     <header class="page-header"><a href={getLocalePath(locale, "/projects/")}>{translate(locale, "common.back")}</a><p class="eyebrow">{translate(locale, "nav.projects")}</p><h1>{project.title}</h1><p class="lede">{project.summary}</p><p class="metadata">{project.status} · {translate(locale, "common.updated")} {formatLocalizedDate(project.updatedAt, locale)}</p></header>
     <div class="project-case__media media-frame"><img src={artwork.light} alt={artwork.alt[locale]} width="960" height="600" loading="eager" decoding="async" /></div>
     <section><h2>{translate(locale, "projects.problem")}</h2><p>{project.problem}</p></section>

@@ -5,6 +5,9 @@ import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getPublishedImplementationAttempts } from "../utils/implementations";
 import { getIslandMessages } from "../i18n/islands";
+import "../styles/application.css";
+import "../styles/insights.css";
+import "../styles/papers.css";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const attempts = await getPublishedImplementationAttempts(locale);

@@ -3,20 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
     "dev": "npm run content:check && ASTRO_TELEMETRY_DISABLED=1 astro dev --force",
-    "build": "npm run content:check && ASTRO_TELEMETRY_DISABLED=1 astro build --force",
+    "build": "npm run content:check && ASTRO_TELEMETRY_DISABLED=1 astro build --force && node scripts/prune-sitemap.mjs",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "check": "npm run content:check && ASTRO_TELEMETRY_DISABLED=1 astro sync --force && ASTRO_TELEMETRY_DISABLED=1 astro check",
     "content:pull": "node scripts/content-feed-pull.mjs",
     "content:check": "node scripts/content-feed-check.mjs",
-    "test:e2e": "playwright test --grep-invert \"@a11y|@visual\"",
+    "test:e2e": "playwright test --grep-invert \"@a11y|@visual|@performance\"",
     "test:a11y": "playwright test --grep \"@a11y\"",
     "test:smoke": "playwright test --grep \"@smoke\"",
     "test:visual": "playwright test --grep \"@visual-v3\"",
     "test:feed-contract": "node scripts/test-content-feed-fixtures.mjs",
     "check:links": "node scripts/check-links.mjs",
-    "check:i18n": "node scripts/check-i18n.mjs"
+    "check:links:external": "node scripts/check-external-links.mjs",
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "og:render": "node scripts/render-og-images.mjs",
+    "performance:report": "node scripts/report-route-budgets.mjs",
+    "test:performance": "npm run performance:report && playwright test --grep \"@performance\""
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.1",
@@ -35,6 +42,7 @@
     "@astrojs/check": "^0.9.9",
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
+    "linkedom": "^0.18.13",
     "typescript": "^6.0.3"
   }
 }

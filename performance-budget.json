@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "shared": {
+    "maxCssGzipBytes": 71680,
+    "maxJsGzipBytes": 81920,
+    "maxInitialImageBytes": 512000,
+    "maxCls": 0.1,
+    "maxLcpMs": 2500,
+    "inpTargetMs": 200
+  },
+  "routes": {
+    "/": { "kind": "home", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 47.0, "forbiddenStyles": ["blog", "papers", "insights", "katex"] },
+    "/about/": { "kind": "editorial", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 46.3, "forbiddenStyles": ["blog", "papers", "insights", "katex"] },
+    "/research/": { "kind": "editorial", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 46.9, "forbiddenStyles": ["blog", "papers", "insights", "katex"] },
+    "/projects/": { "kind": "editorial", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 47.3, "forbiddenStyles": ["blog", "papers", "insights", "katex"] },
+    "/blog/": { "kind": "editorial", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 60.1, "forbiddenStyles": ["papers", "insights", "katex"] },
+    "/papers/": { "kind": "application-empty", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 64.8, "forbiddenStyles": ["blog", "insights", "katex"] },
+    "/growth/": { "kind": "application-empty", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 60.5, "forbiddenStyles": ["blog", "papers", "katex"] }
+  }
+}

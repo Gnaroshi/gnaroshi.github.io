@@ -38,6 +38,11 @@ const { locale } = Astro.props;
       // Theme preference is optional; the UI still works without storage.
     }
   };
+  const themeColors = { light: "#f4f5f2", dark: "#0f1311" } as const;
+  const applyTheme = (theme: "light" | "dark") => {
+    document.documentElement.dataset.theme = theme;
+    document.querySelector('meta[data-theme-color]')?.setAttribute("content", themeColors[theme]);
+  };
   const applyThemeToggleState = (button: Element) => {
     const theme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
     const nextTheme = theme === "dark" ? "light" : "dark";
@@ -52,14 +57,21 @@ const { locale } = Astro.props;
 
   for (const button of document.querySelectorAll("[data-theme-toggle]")) {
     const initialTheme = getStoredTheme() ?? getSystemTheme();
-    document.documentElement.dataset.theme = initialTheme;
+    applyTheme(initialTheme);
     applyThemeToggleState(button);
     button.addEventListener("click", () => {
       const theme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
       const nextTheme = theme === "dark" ? "light" : "dark";
-      document.documentElement.dataset.theme = nextTheme;
+      applyTheme(nextTheme);
       storeTheme(nextTheme);
       applyThemeToggleState(button);
     });
   }
+
+  const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+  media?.addEventListener("change", (event) => {
+    if (getStoredTheme()) return;
+    applyTheme(event.matches ? "dark" : "light");
+    for (const button of document.querySelectorAll("[data-theme-toggle]")) applyThemeToggleState(button);
+  });
 </script>

@@ -18,6 +18,7 @@ for (const fixture of valid) run(process.execPath, ["scripts/content-feed-check.
 for (const fixture of invalid) run(process.execPath, ["scripts/content-feed-check.mjs"], fixture, false);
 for (const fixture of valid) {
   run("npm", ["run", "build"], fixture, true);
+  run(process.execPath, ["scripts/check-links.mjs"], fixture, true);
   if (fixture === "one-english-blog") {
     const html = readFileSync("dist/blog/english-only/index.html", "utf8");
     if (html.includes('hreflang="ko"') || existsSync("dist/ko/blog/english-only/index.html")) throw new Error("English-only post received a fabricated Korean alternate");
@@ -27,8 +28,12 @@ for (const fixture of valid) {
     const html = readFileSync("dist/blog/renamed-english/index.html", "utf8");
     if (!html.includes('hreflang="ko"') || !html.includes("/ko/blog/renamed-korean/")) throw new Error("Translated post pair is missing its real hreflang");
     if (!existsSync("dist/blog/old-english-slug/index.html")) throw new Error("Renamed post alias redirect was not built");
+    if (!readFileSync("dist/blog/old-english-slug/index.html", "utf8").includes('content="noindex, follow"')) throw new Error("Blog alias redirect is indexable");
   }
-  if (fixture === "one-paper-multiple-sessions" && !existsSync("dist/papers/old-paper-slug/index.html")) throw new Error("Renamed paper alias redirect was not built");
+  if (fixture === "one-paper-multiple-sessions") {
+    if (!existsSync("dist/papers/old-paper-slug/index.html")) throw new Error("Renamed paper alias redirect was not built");
+    if (!readFileSync("dist/papers/old-paper-slug/index.html", "utf8").includes('content="noindex, follow"')) throw new Error("Paper alias redirect is indexable");
+  }
   if (fixture === "translated-paper-pair") {
     const html = readFileSync("dist/papers/paper-pair-english/index.html", "utf8");
     if (!html.includes('hreflang="ko"') || !html.includes("/ko/papers/paper-pair-korean/")) throw new Error("Translated paper pair is missing its real hreflang");

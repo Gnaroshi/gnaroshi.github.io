@@ -983,3 +983,76 @@
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }
+@media (max-width: 767px) {
+  .paper-hero,
+  .paper-review-summary__body,
+  .paper-review-card__header,
+  .paper-review-pass-grid,
+  .paper-review-calibration-grid,
+  .paper-review-two-col,
+  .paper-review-breakdown,
+  .new-paper-template,
+  .formula-term-list div,
+  .paper-nav,
+  .live-exam-principles,
+  .live-exam-control-grid,
+  .exam-result__dimensions,
+  .paper-method-panel__passes,
+  .paper-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .live-exam-principles p + p {
+    border-top: 1px solid var(--color-border);
+    border-left: 0;
+  }
+
+  .paper-nav div:last-child {
+    text-align: left;
+  }
+
+  .paper-field--wide {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 479px) {
+  .paper-method-panel,
+  .paper-heatmap,
+  .paper-filter-panel,
+  .paper-review-summary,
+  .learning-panel,
+  .learning-card,
+  .queue-card,
+  .paper-review-pass-grid article,
+  .paper-review-calibration-grid article,
+  .paper-review-dimension,
+  .paper-review-badge,
+  .paper-review-limitations,
+  .new-paper-template,
+  .paper-card,
+  .paper-stat-card,
+  .live-exam-setup,
+  .text-exam,
+  .exam-transcript,
+  .exam-result,
+  .manual-exam {
+    padding: var(--space-3);
+  }
+
+  .text-exam > header,
+  .exam-transcript > header,
+  .exam-result > header,
+  .exam-transcript__entry,
+  .paper-method-panel__header,
+  .paper-heatmap__header,
+  .paper-filter-panel__header,
+  .paper-review-summary__header,
+  .learning-panel .paper-filter-panel__header,
+  .manual-review-prompt__header,
+  .paper-results__header {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+}

@@ -1,0 +1,39 @@
+---
+import { profile } from "../data/profile";
+import StructuredData from "./StructuredData.astro";
+
+export interface BreadcrumbItem {
+  name: string;
+  href: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+  label?: string;
+}
+
+const { items, label = "Breadcrumb" } = Astro.props;
+const itemListElement = items.map((item, index) => ({
+  "@type": "ListItem",
+  position: index + 1,
+  name: item.name,
+  item: new URL(item.href, profile.domain).toString()
+}));
+---
+
+<nav class="breadcrumbs" aria-label={label}>
+  <ol>
+    {items.map((item, index) => (
+      <li>
+        {index === items.length - 1 ? <span aria-current="page">{item.name}</span> : <a href={item.href}>{item.name}</a>}
+      </li>
+    ))}
+  </ol>
+</nav>
+<StructuredData data={{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement }} />
+
+<style>
+  .breadcrumbs ol { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0; margin: 0 0 var(--space-5); color: var(--color-text-muted); font-size: var(--text-sm); list-style: none; }
+  .breadcrumbs li:not(:last-child)::after { margin-left: var(--space-2); content: "/"; }
+  .breadcrumbs a { color: inherit; }
+</style>

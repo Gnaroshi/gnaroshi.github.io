@@ -4,6 +4,9 @@ import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { hasFormulaRecallMaterial, toFormulaRecallRecord } from "../utils/formulaRecall";
 import { getPublishedPapers } from "../utils/papers";
+import "../styles/application.css";
+import "../styles/code.css";
+import "../styles/papers.css";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const papers = (await getPublishedPapers(locale)).filter(hasFormulaRecallMaterial).map(toFormulaRecallRecord);

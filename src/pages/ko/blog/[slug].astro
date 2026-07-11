@@ -1,9 +1,9 @@
 ---
 import BlogPostView from "../../../views/BlogPostView.astro";
+import RedirectPage from "../../../components/RedirectPage.astro";
 import { getBuildableBlogPosts, getBlogPostSlug, type BlogPost } from "../../../utils/content";
 export async function getStaticPaths() { return (await getBuildableBlogPosts("ko")).flatMap((post) => [{ params: { slug: getBlogPostSlug(post) }, props: { post } }, ...post.data.aliases.map((alias) => ({ params: { slug: alias }, props: { post, redirectTo: `/ko/blog/${getBlogPostSlug(post)}/` } }))]); }
 interface Props { post: BlogPost; redirectTo?: string }
 const { post, redirectTo } = Astro.props;
-if (redirectTo) return Astro.redirect(redirectTo, 301);
 ---
-<BlogPostView locale="ko" post={post} />
+{redirectTo ? <RedirectPage target={redirectTo} /> : <BlogPostView locale="ko" post={post} />}

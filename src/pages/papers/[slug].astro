@@ -1,6 +1,10 @@
 ---
 import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import FeatureStyles from "../../components/FeatureStyles.astro";
+import RedirectPage from "../../components/RedirectPage.astro";
+import StructuredData from "../../components/StructuredData.astro";
 import ImplementationCard from "../../components/implementations/ImplementationCard.astro";
 import SectionHeader from "../../components/common/SectionHeader.astro";
 import PaperDetailHeader from "../../components/papers/PaperDetailHeader.astro";
@@ -10,6 +14,12 @@ import { getImplementationAttemptsForPaper, getPublishedImplementationAttempts }
 import { getVisiblePaperReviewForPaper } from "../../utils/paperReviews";
 import { getIslandMessages } from "../../i18n/islands";
 import { getTranslationEntry } from "../../utils/localizedContent";
+import { profile } from "../../data/profile";
+import { hasMathSyntax } from "../../utils/math";
+import "../../styles/application.css";
+import "../../styles/code.css";
+import "../../styles/papers.css";
+import "../../styles/prose.css";
 
 export async function getStaticPaths() {
   const papers = await getBuildablePapers("en");
@@ -42,7 +52,6 @@ interface Props {
 }
 
 const { paper, newerPaper, olderPaper, korean, redirectTo } = Astro.props as Props;
-if (redirectTo) return Astro.redirect(redirectTo, 301);
 const { Content } = await render(paper);
 const review = getVisiblePaperReviewForPaper(paper);
 const slug = paper.data.canonicalSlug;
@@ -58,10 +67,39 @@ const structuredItems = [
 ].filter((item): item is [string, string] => Boolean(item[1]));
 const critiqueItems = [["My connection", paper.data.myConnection], ["Next action", paper.data.nextAction]].filter((item): item is [string, string] => Boolean(item[1]));
 const hasBody = Boolean(paper.body?.trim());
+const hasMath = hasMathSyntax(paper.body) || hasMathSyntax(paper.data.mainFormula);
+const canonicalPath = `/papers/${slug}/`;
+const techArticle = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: paper.data.title,
+  ...(paper.data.oneLineSummary ? { description: paper.data.oneLineSummary } : {}),
+  url: new URL(canonicalPath, profile.domain).toString(),
+  inLanguage: "en-US",
+  author: { "@type": "Person", name: profile.publicAlias, url: profile.domain },
+  keywords: [...paper.data.tags, ...paper.data.relatedTopics],
+  ...(paper.data.readDate ? { datePublished: paper.data.readDate.toISOString() } : {}),
+  ...(paper.data.lastReviewed ? { dateModified: paper.data.lastReviewed.toISOString() } : {}),
+  citation: {
+    "@type": "ScholarlyArticle",
+    name: paper.data.title,
+    author: paper.data.authors.map((name) => ({ "@type": "Person", name })),
+    ...(paper.data.paperUrl ? { url: paper.data.paperUrl } : {}),
+    ...(paper.data.venue ? { isPartOf: paper.data.venue } : {}),
+    datePublished: String(paper.data.year)
+  }
+};
 ---
 
-<BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/papers/${slug}/`} alternateUrls={alternateUrls} type="article" paperLab>
+{redirectTo ? <RedirectPage target={redirectTo} /> : <BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={canonicalPath} alternateUrls={alternateUrls} type="article" paperLab robots={paper.data.visibility === "unlisted" ? "noindex, follow" : "index, follow"} publishedTime={paper.data.readDate} modifiedTime={paper.data.lastReviewed ?? paper.data.readDate} articleTags={paper.data.tags}>
+  <FeatureStyles slot="head" styles={hasMath ? ["katex"] : []} />
   <article class="paper-detail">
+    <Breadcrumbs items={[
+      { name: "Home", href: "/" },
+      { name: "Paper Lab", href: "/papers/" },
+      { name: paper.data.title, href: canonicalPath }
+    ]} />
+    <StructuredData data={techArticle} />
     {!korean && <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Korean translation unavailable</p>}
     <PaperDetailHeader paper={paper} />
 
@@ -198,4 +236,4 @@ const hasBody = Boolean(paper.body?.trim());
       </div>
     </nav>
   </article>
-</BaseLayout>
+</BaseLayout>}
