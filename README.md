@@ -44,6 +44,7 @@ npm run test:visual
 npm run test:feed-contract
 npm run test:performance
 npm run check:i18n
+npm run check:launch-content
 npm run check:links
 npm run check:links:external
 ```
@@ -89,10 +90,12 @@ Public identity and presentation data remain website-owned:
 
 ```text
 src/data/profile.ts
+src/data/facts/
 src/data/locales/
 src/data/projects.ts
-src/content/projects/
 ```
+
+Facts such as IDs, dates, status, links, repository URLs, and verified technical properties live in `src/data/facts/`. English and Korean locale files contain copy only. `npm run check:launch-content` verifies locale parity, freshness, public dates, project links, private-path leaks, and launch-content policy.
 
 Do not place private research notes, blog drafts, API credentials, or authoring tools in this repository.
 

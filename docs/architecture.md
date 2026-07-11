@@ -9,20 +9,19 @@ Canonical paper research, writing, publishing rules, AI workflows, and repositor
 ## Data Flow
 
 ```text
+Gnaroshi Studio
+       |
+       v
 private paper-lab + private writing
-              |
-              v
-       gnaroshi-studio publisher
-              |
-              v
- public gnaroshi-content-feed
-              |
-       build-time checkout
-              v
-    Astro presentation application
-              |
-              v
-          GitHub Pages
+       |
+       v
+generated public content feed
+       |
+       v
+presentation-only Astro website
+       |
+       v
+GitHub Pages
 ```
 
 The website never checks out or imports private authoring repositories.
@@ -34,10 +33,20 @@ The website never checks out or imports private authoring repositories.
 - `.content-feed/data/`: canonical public JSON projections.
 - `.content-feed/assets/`: public feed assets emitted under `/assets/`.
 - `.content-feed/manifest.json`: schema version, source commits, counts, hash, and generation metadata.
-- `src/data/`: website-owned public identity, research, Now, and project presentation data.
-- `src/content/projects/`: website-owned long-form project presentation.
+- `src/data/facts/`: shared public IDs, dates, status, links, and verified technical properties.
+- `src/data/locales/`: English and Korean presentation copy, joined to the shared facts at build time.
+- `src/data/`: website-owned public identity, research, Now, and project presentation adapters.
 
 `src/content.config.ts` is an adapter from feed contract version 1 to Astro view models. It is not the canonical domain schema.
+
+## Publication Properties
+
+- **Source-of-truth separation:** paper research and writing remain canonical in private repositories; the website cannot edit them.
+- **Public projection:** Studio emits only reviewed public fields to the generated feed.
+- **Privacy boundary:** private source repositories and credentials are never checked out by the website or Pages workflow.
+- **Deterministic feed:** the manifest records source commits, schema version, counts, and content hash.
+- **Bilingual presentation:** shared facts are joined with English and Korean copy without duplicating dates, status, or links.
+- **Evidence-gated metrics:** Growth, weekly review, and graph outputs are rendered only when the feed marks them eligible.
 
 ## Derived Data Boundary
 

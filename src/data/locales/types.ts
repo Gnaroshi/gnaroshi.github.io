@@ -1,4 +1,7 @@
-export type LocalizedProfile = {
+import type { projectFacts } from "../facts/projects";
+import type { researchFacts } from "../facts/research";
+
+export type LocalizedProfileCopy = {
   headline: string;
   currentRole: string;
   location: string;
@@ -8,42 +11,30 @@ export type LocalizedProfile = {
   researcherValues: readonly string[];
 };
 
-export type LocalizedResearchArea = {
-  slug: string;
+export type LocalizedResearchCopy = {
   question: string;
   motivation: string;
   hypothesis: string;
-  currentReading: string;
-  currentBuild: string;
   uncertainty: string;
-  related: readonly { label: string; href: string }[];
+  relatedLabels: readonly string[];
 };
 
-export type LocalizedProject = {
-  slug: string;
+export type LocalizedProjectCopy = {
   title: string;
   summary: string;
-  status: string;
-  featured: boolean;
-  contentStage: "seed" | "working" | "substantive";
-  metricEligible: boolean;
-  graphEligible: boolean;
-  weeklyReviewEligible: boolean;
-  updatedAt: string;
-  tags: readonly string[];
+  statusLabel: string;
   problem: string;
-  role: string;
-  decisions: readonly string[];
+  designGoals: readonly string[];
   architecture: readonly string[];
-  implementation: readonly string[];
-  result: string;
-  lessons: readonly string[];
+  supportedAdapters: readonly string[];
+  reproducibility: readonly string[];
+  currentState: string;
+  openProblems: readonly string[];
   relatedWriting: readonly string[];
-  links: readonly { label: string; href: string }[];
+  linkLabels: Readonly<Record<string, string>>;
 };
 
-export type LocalizedNow = {
-  lastUpdated: string;
+export type LocalizedNowCopy = {
   currentlyReading: readonly string[];
   currentlyBuilding: readonly string[];
   currentQuestions: readonly string[];
@@ -54,10 +45,29 @@ export type LocalizedSkillGroup = {
   skills: readonly string[];
 };
 
+export type LocaleCopy = {
+  copyUpdatedAt: string;
+  profile: LocalizedProfileCopy;
+  researchAreas: Readonly<Record<(typeof researchFacts)[number]["id"], LocalizedResearchCopy>>;
+  projects: Readonly<Record<(typeof projectFacts)[number]["id"], LocalizedProjectCopy>>;
+  now: LocalizedNowCopy;
+  skillGroups: readonly LocalizedSkillGroup[];
+};
+
+type ProjectFactWithoutLinks<T> = T extends unknown ? Omit<T, "links"> : never;
+
+export type LocalizedProject = ProjectFactWithoutLinks<(typeof projectFacts)[number]> & LocalizedProjectCopy & {
+  links: readonly { id: string; label: string; href: string }[];
+};
+
+export type LocalizedResearchArea = (typeof researchFacts)[number] & LocalizedResearchCopy & {
+  related: readonly { label: string; href: string }[];
+};
+
 export type LocalizedData = {
-  profile: LocalizedProfile;
+  profile: LocalizedProfileCopy;
   researchAreas: readonly LocalizedResearchArea[];
   projects: readonly LocalizedProject[];
-  now: LocalizedNow;
+  now: LocalizedNowCopy & { lastUpdated: string };
   skillGroups: readonly LocalizedSkillGroup[];
 };

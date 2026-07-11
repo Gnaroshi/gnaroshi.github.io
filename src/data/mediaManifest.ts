@@ -59,6 +59,22 @@ export const mediaManifest = {
     alt: { en: "Studio publishing private paper and writing repositories through a sanitized public feed to the website.", ko: "Studio가 비공개 논문·글 저장소를 정제된 공개 피드를 거쳐 웹사이트로 발행하는 구조." },
     aspectRatio: "16:10", light: "/media/project-gnaroshi-dev.svg", dark: "/media/project-gnaroshi-dev.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
   },
+  projectGnaroshiVla: {
+    id: "project-gnaroshi-vla",
+    purpose: "Show the architecture-neutral separation used by the VLA experiment workspace.",
+    route: "/projects/gnaroshi-vla/",
+    alt: {
+      en: "Observation, language, state, and action interfaces organized around replaceable VLA architecture adapters.",
+      ko: "교체 가능한 VLA 아키텍처 어댑터를 중심으로 구성한 관찰, 언어, 상태, 행동 인터페이스."
+    },
+    aspectRatio: "16:10",
+    light: "/media/research-vla.svg",
+    dark: "/media/research-vla.svg",
+    source: diagramSource,
+    provenance: "Original project artwork.",
+    focalPoint: "center",
+    loadingPriority: "low"
+  },
   paperLabCycle: {
     id: "paper-lab-cycle",
     purpose: "Orient new Paper Lab visitors without presenting empty metrics.",

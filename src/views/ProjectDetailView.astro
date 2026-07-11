@@ -18,9 +18,9 @@ if (!project) throw new Error(`Unknown localized project: ${slug}`);
 const posts = await getPublishedBlogPosts(locale);
 const relatedKeys = new Set<string>(project.relatedWriting);
 const related = posts.filter((post) => relatedKeys.has(post.data.translationKey));
-const artwork = mediaManifest.projectGnaroshiDev;
+const artwork = mediaManifest[project.artworkId];
 const canonicalPath = getLocalePath(locale, `/projects/${project.slug}/`);
-const repositoryUrl = project.links.find((link) => link.label === "Repository")?.href;
+const repositoryUrl = project.links.find((link) => link.id === "repository")?.href;
 ---
 
 <BaseLayout locale={locale} title={project.title} description={project.summary} canonical={canonicalPath} type="article" width="wide" modifiedTime={project.updatedAt} articleTags={[...project.tags]}>
@@ -39,17 +39,17 @@ const repositoryUrl = project.links.find((link) => link.label === "Repository")?
       dateModified: project.updatedAt,
       author: { "@type": "Person", name: profile.publicAlias, url: profile.domain },
       keywords: project.tags,
-      ...(repositoryUrl ? { codeRepository: repositoryUrl, programmingLanguage: ["TypeScript", "Astro"] } : {})
+      ...(repositoryUrl ? { codeRepository: repositoryUrl, programmingLanguage: project.codeLanguages } : {})
     }} />
-    <header class="page-header"><a href={getLocalePath(locale, "/projects/")}>{translate(locale, "common.back")}</a><p class="eyebrow">{translate(locale, "nav.projects")}</p><h1>{project.title}</h1><p class="lede">{project.summary}</p><p class="metadata">{project.status} · {translate(locale, "common.updated")} {formatLocalizedDate(project.updatedAt, locale)}</p></header>
+    <header class="page-header"><a href={getLocalePath(locale, "/projects/")}>{translate(locale, "common.back")}</a><p class="eyebrow">{translate(locale, "nav.projects")}</p><h1>{project.title}</h1><p class="lede">{project.summary}</p><p class="metadata">{project.statusLabel} · {translate(locale, "common.updated")} {formatLocalizedDate(project.updatedAt, locale)}</p></header>
     <div class="project-case__media media-frame"><img src={artwork.light} alt={artwork.alt[locale]} width="960" height="600" loading="eager" decoding="async" /></div>
     <section><h2>{translate(locale, "projects.problem")}</h2><p>{project.problem}</p></section>
-    <section><h2>{translate(locale, "projects.role")}</h2><p>{project.role}</p></section>
-    <section><h2>{translate(locale, "projects.decisions")}</h2><ul>{project.decisions.map((item) => <li>{item}</li>)}</ul></section>
+    <section><h2>{translate(locale, "projects.designGoals")}</h2><ul>{project.designGoals.map((item) => <li>{item}</li>)}</ul></section>
     <section><h2>{translate(locale, "projects.architecture")}</h2><ul>{project.architecture.map((item) => <li>{item}</li>)}</ul></section>
-    <section><h2>{translate(locale, "projects.implementation")}</h2><ul>{project.implementation.map((item) => <li>{item}</li>)}</ul></section>
-    <section><h2>{translate(locale, "projects.result")}</h2><p>{project.result}</p></section>
-    <section><h2>{translate(locale, "projects.lessons")}</h2><ul>{project.lessons.map((item) => <li>{item}</li>)}</ul></section>
+    {project.supportedAdapters.length > 0 && <section><h2>{translate(locale, "projects.supportedAdapters")}</h2><ul>{project.supportedAdapters.map((item) => <li>{item}</li>)}</ul></section>}
+    <section><h2>{translate(locale, "projects.reproducibility")}</h2><ul>{project.reproducibility.map((item) => <li>{item}</li>)}</ul></section>
+    <section><h2>{translate(locale, "projects.currentState")}</h2><p>{project.currentState}</p></section>
+    <section><h2>{translate(locale, "projects.openProblems")}</h2><ul>{project.openProblems.map((item) => <li>{item}</li>)}</ul></section>
     {related.length > 0 && <section><h2>{translate(locale, "projects.relatedWriting")}</h2><ul>{related.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a></li>)}</ul></section>}
     <footer class="link-row">{project.links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}</footer>
   </article>

@@ -9,6 +9,7 @@ const localeSchema = z.enum(["en", "ko"]);
 const visibilitySchema = z.enum(["unlisted", "public"]);
 const contentStageSchema = z.enum(["seed", "working", "substantive"]);
 const translationStatusSchema = z.enum(["complete", "partial", "source-only"]);
+const writingCategorySchema = z.enum(["research-note", "implementation-note", "paper-note", "build-note", "essay"]);
 const dateKeySchema = z.preprocess((value) => value instanceof Date ? value.toISOString().slice(0, 10) : value, z.string().regex(/^\d{4}-\d{2}-\d{2}$/));
 const timestampSchema = z.coerce.date();
 const optionalUrl = z.url().optional();
@@ -33,13 +34,13 @@ function presentationVisibility(value: "unlisted" | "public") { return value; }
 const blog = defineCollection({
   loader: glob({ base: new URL("blog/", feedRoot), pattern: "**/*.{md,mdx}", generateId: feedEntryId }),
   schema: z.object({
-    ...baseFields, ...localizedFields, title: z.string().min(1), description: z.string().min(1), publishDate: dateKeySchema,
+    ...baseFields, ...localizedFields, category: writingCategorySchema, title: z.string().min(1), description: z.string().min(1), publishDate: dateKeySchema,
     updatedDate: dateKeySchema.optional(), tags: z.array(z.string()), series: z.string().optional(), seriesOrder: z.number().int().positive().optional(),
     featured: z.boolean(), heroImage: publicPath.optional(), ogImage: publicPath.optional(), canonicalUrl: optionalUrl, assets: z.array(publicPath)
   }).transform((data) => ({
     feedId: data.id, locale: data.locale, translationKey: data.translationKey, translationStatus: data.translationStatus,
     canonicalSlug: data.canonicalSlug, aliases: data.aliases, contentStage: data.contentStage, metricEligible: data.metricEligible,
-    graphEligible: data.graphEligible, weeklyReviewEligible: data.weeklyReviewEligible, title: data.title, description: data.description,
+    graphEligible: data.graphEligible, weeklyReviewEligible: data.weeklyReviewEligible, category: data.category, title: data.title, description: data.description,
     pubDate: new Date(`${data.publishDate}T00:00:00.000Z`), updatedDate: data.updatedDate ? new Date(`${data.updatedDate}T00:00:00.000Z`) : undefined,
     draft: false, tags: data.tags, visibility: presentationVisibility(data.visibility), series: data.series, seriesOrder: data.seriesOrder,
     heroImage: data.heroImage, featured: data.featured, canonicalUrl: data.canonicalUrl, ogImage: data.ogImage, assets: data.assets

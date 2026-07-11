@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 
 const contractRoot = resolve(process.env.CONTENT_FEED_CONTRACT_PATH || "../gnaroshi-content-feed");
 const valid = ["bootstrap-empty", "one-english-blog", "one-korean-blog", "translated-blog-pair", "partial-blog-pair", "translated-paper-pair", "one-paper-multiple-sessions", "one-simple-public-review", "one-rich-review", "one-implementation", "valid-graph"];
-const invalid = ["invalid-dangling-graph-edge", "invalid-manifest-count", "invalid-activity-mismatch", "private-leak", "unhashed-asset"];
+const invalid = ["invalid-dangling-graph-edge", "invalid-manifest-count", "invalid-activity-mismatch", "invalid-build-note-metric", "private-leak", "unhashed-asset"];
 
 function run(command, args, fixture, expectSuccess) {
   const feedPath = resolve(contractRoot, "fixtures", fixture);
