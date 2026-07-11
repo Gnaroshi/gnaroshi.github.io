@@ -1,0 +1,16 @@
+{
+  "manifest": { "counts": { "blogPosts": 2, "papers": 3, "readingSessions": 8, "reviews": 2, "oralExams": 1, "formulaRecalls": 1, "implementations": 1, "weeklyReviews": 1 }, "metricEligible": true, "graphEligible": true, "weeklyReviewEligible": true },
+  "growthSnapshot": { "metricEligible": true, "score": 81 },
+  "researchGraph": {
+    "eligible": true,
+    "eligibilityThreshold": 3,
+    "nodes": [{}, {}, {}, {}, {}, {}],
+    "edges": [{ "relation": "cites" }, { "relation": "implements" }, { "relation": "reviews" }, { "relation": "tagged" }]
+  },
+  "expected": {
+    "trueCapabilities": ["hasWriting", "hasPapers", "hasReadingActivity", "hasReviews", "hasOralExams", "hasFormulaRecall", "hasImplementations", "hasWeeklyReviews", "hasResearchGraph", "hasEligibleGrowth"],
+    "primaryIds": ["research", "projects", "writing", "paper-lab", "about"],
+    "utilityIds": ["growth"],
+    "paperLabGroups": [["overview", "overview", "reading-method", "paper-notes"], ["review", "ai-review", "reviews-due"], ["practice", "oral-exam", "formula-recall"], ["build", "implementations"], ["insights", "weekly-reviews", "research-graph", "growth-insight"]]
+  }
+}

@@ -46,6 +46,7 @@ npm run test:a11y
 npm run test:smoke
 npm run test:visual
 npm run test:feed-contract
+npm run test:capabilities
 npm run test:performance
 npm run check:i18n
 npm run check:launch-content
@@ -56,6 +57,7 @@ npm run check:links:external
 - `content:pull`: clone or fast-forward the public feed in ignored `.content-feed/`.
 - `content:check`: run the canonical bundled Content Feed JSON Schema and privacy validator.
 - `test:feed-contract`: build against valid fixtures and require invalid feeds to fail.
+- `test:capabilities`: verify public capability and EN/KO navigation disclosure across feed states.
 - `dev`, `check`, and `build`: fail before Astro starts when the feed is unavailable or incompatible.
 - `check:links`: run after `build`.
 - `test:e2e`: automatically discovers non-visual, non-accessibility Playwright tests by tag.
@@ -119,6 +121,8 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Keep personal identity centralized in `src/data/profile.ts`.
 - Keep factual IDs, dates, status, links, and verified project properties in `src/data/facts/`; locale files contain copy only.
 - Keep feed-specific compatibility logic out of UI components.
+- Use `src/utils/publicCapabilities.ts` for navigation disclosure. Do not inspect private sources or duplicate feed-count checks in components.
+- Keep unavailable public tools out of primary, local, footer, and empty-state navigation while preserving their buildable noindex routes.
 - Avoid unnecessary dependencies and large chart libraries.
 - Do not commit `.content-feed/`, `dist/`, credentials, local caches, or machine-specific files.
 - Do not write into the content-feed checkout.
@@ -163,6 +167,7 @@ npm run check:launch-content
 npm run check:links
 npm run test:smoke
 npm run test:feed-contract
+npm run test:capabilities
 ```
 
 For route or interaction changes, also run `npm run test:e2e` and `npm run test:a11y`.

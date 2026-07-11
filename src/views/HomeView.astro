@@ -12,6 +12,8 @@ import { getBlogPostHref, getPublishedBlogPosts } from "../utils/content";
 import { getPublishedPapers } from "../utils/papers";
 import { currentFocusAgeDays, isCurrentFocusFresh } from "../utils/currentFocus";
 import { profile } from "../data/profile";
+import { getPublicCapabilities } from "../utils/publicCapabilities";
+import { publicFeatureFlags } from "../config/publicFeatureFlags";
 import "../styles/home.css";
 
 interface Props { locale: Locale }
@@ -24,6 +26,8 @@ const selectedProject = data.projects.find((project) => project.featured) ?? dat
 const projectArtwork = mediaManifest[selectedProject.artworkId];
 const loopArtwork = mediaManifest.paperLabCycle;
 const focusIsFresh = isCurrentFocusFresh(data.now.lastUpdated);
+const capabilities = getPublicCapabilities();
+const showPaperLab = capabilities.hasPapers || publicFeatureFlags.paperLabOnboarding;
 if (!focusIsFresh && import.meta.env.DEV) {
   console.warn(`[current-focus] Hidden from Home because ${data.now.lastUpdated} is ${currentFocusAgeDays(data.now.lastUpdated)} days old.`);
 }
@@ -62,7 +66,7 @@ if (!focusIsFresh && import.meta.env.DEV) {
     ]
   }} />
   <div class="home-editorial">
-    <Hero locale={locale} currentFocus={focusIsFresh ? data.now.currentlyBuilding[0] : undefined} />
+    <Hero locale={locale} currentFocus={focusIsFresh ? data.now.currentlyBuilding[0] : undefined} showWriting={capabilities.hasWriting || publicFeatureFlags.writingEmptyLanding} />
 
     <Section class="home-research" labelledby="research-questions-heading">
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.researchQuestions")}</p><h2 id="research-questions-heading">{translate(locale, "home.researchQuestionsTitle")}</h2><p>{translate(locale, "home.researchQuestionsBody")}</p></div>
@@ -86,9 +90,9 @@ if (!focusIsFresh && import.meta.env.DEV) {
       </div>
     </Section>}
 
-    <Section class="home-loop" labelledby="research-loop-heading">
+    {showPaperLab && <Section class="home-loop" labelledby="research-loop-heading">
       <div class="home-loop__copy"><p class="eyebrow">{translate(locale, "home.researchWorkspace")}</p><h2 id="research-loop-heading">{translate(locale, "home.researchLoopTitle")}</h2><p>{translate(locale, "home.researchLoopBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div>
       <div class="home-loop__media media-frame"><img src={loopArtwork.light} alt={loopArtwork.alt[locale]} width="960" height="600" loading="lazy" decoding="async" /></div>
-    </Section>
+    </Section>}
   </div>
 </BaseLayout>

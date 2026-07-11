@@ -10,6 +10,9 @@ export type ContentFeedManifest = {
   generatedAt: string | null;
   contentHash: string;
   state: "bootstrap-empty" | "generated" | "invalid";
+  metricEligible: boolean;
+  graphEligible: boolean;
+  weeklyReviewEligible: boolean;
   sourceCommits: { paperLab: string; writing: string };
   counts: Record<string, number>;
 };

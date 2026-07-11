@@ -47,7 +47,7 @@ Full visual regression remains a PR/manual QA task. Failed deploy checks upload 
 - workflow run ID and attempt
 - `environment: production`
 - HTTP success for `/`, `/ko/`, `/research/`, and `/papers/`
-- the stable primary-navigation signature
+- a capability-consistent primary-navigation signature across verified routes
 - absence of known scaffold phrases
 
 Failure marks the workflow failed, prints expected and actual provenance, retains the deployment URL in the run, and prints a rollback command. A Pages upload or successful Git push is not deployment proof; only the post-deploy verification job proves the live result.

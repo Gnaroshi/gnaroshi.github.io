@@ -4,9 +4,13 @@ test("desktop navigation stays concise", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
   const primary = page.getByRole("navigation", { name: "Primary navigation" });
-  await expect(primary.getByRole("link")).toHaveCount(5);
-  await expect(primary.getByRole("link", { name: "Writing" })).toHaveAttribute("href", "/blog");
+  await expect(primary.getByRole("link")).toHaveCount(4);
+  await expect(primary.getByRole("link", { name: "Writing" })).toHaveCount(0);
   await expect(primary.getByRole("link", { name: "Paper Lab" })).toHaveAttribute("href", "/papers");
+  await expect(page.locator(".utility-nav").getByRole("link", { name: "Growth" })).toHaveCount(0);
+  await expect(page.locator(".site-footer").getByRole("link", { name: /Writing|Growth|RSS/ })).toHaveCount(0);
+  await expect(page.locator(".home-notes")).toHaveCount(0);
+  await expect(page.locator('.identity-hero__actions a[href="/blog/"]')).toHaveCount(0);
 });
 
 test("mobile menu traps focus, locks scroll, and returns focus on Escape", async ({ page }) => {
@@ -28,11 +32,23 @@ test("mobile menu traps focus, locks scroll, and returns focus on Escape", async
   await expect(trigger).toBeFocused();
 });
 
-test("Paper Lab local navigation groups existing tools", async ({ page }) => {
+test("empty Paper Lab navigation exposes only onboarding", async ({ page }) => {
   await page.goto("/papers");
   const localNav = page.getByRole("navigation", { name: "Paper Lab navigation" });
   await expect(localNav).toBeVisible();
-  await expect(localNav.locator("details")).toHaveCount(6);
-  await localNav.getByText("Practice", { exact: true }).click();
-  await expect(localNav.getByRole("link", { name: "Formula Recall" })).toBeVisible();
+  await expect(localNav.locator("details")).toHaveCount(1);
+  await localNav.locator("summary").click();
+  await expect(localNav.locator("details").getByRole("link")).toHaveCount(2);
+  await expect(localNav.getByRole("link", { name: "Overview" })).toHaveAttribute("href", "/papers/");
+  await expect(localNav.getByRole("link", { name: "Reading method" })).toHaveAttribute("href", "/papers/#reading-method");
+  await expect(localNav.locator('a[href^="/queue"], a[href^="/reviews"], a[href^="/formula"], a[href^="/questions"], a[href^="/implementations"], a[href^="/week"], a[href^="/graph"]')).toHaveCount(0);
+});
+
+test("English and Korean bootstrap navigation are capability-equivalent", async ({ page }) => {
+  const signatures = [];
+  for (const route of ["/", "/ko/"]) {
+    await page.goto(route);
+    signatures.push(await page.locator(".site-header").getAttribute("data-navigation-signature"));
+  }
+  expect(signatures).toEqual(["research|projects|paper-lab|about", "research|projects|paper-lab|about"]);
 });

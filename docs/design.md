@@ -61,15 +61,9 @@ Avoid generic hero copy. The homepage should read like a concise personal academ
 
 ### Information Architecture
 
-Primary navigation is limited to five destinations; the brand links to Home:
+The brand links to Home. Primary navigation always includes Research, Projects, and About. Writing appears only when public writing exists or its explicit empty-landing flag is enabled. Paper Lab appears only when public papers exist or onboarding is explicitly enabled. Growth is a utility destination only after its public snapshot is eligible.
 
-- Research
-- Projects
-- Writing
-- Paper Lab
-- About
-
-Growth is a utility destination. Now and public links belong in the homepage, About, and footer. Paper workflow tools stay grouped under a local Paper Lab navigation instead of competing in the global header.
+Now and public links belong in the homepage, About, and footer. Paper workflow tools stay grouped under a capability-driven local Paper Lab navigation instead of competing in the global header. Buildable empty routes are not advertised.
 
 ### Visual Modes
 

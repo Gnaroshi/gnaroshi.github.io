@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const navigationSignature = "research|projects|writing|paper-lab|about";
+const navigationSignature = "research|projects|paper-lab|about";
 const publicRoutes = ["/", "/ko/", "/research/", "/papers/"];
 const scaffoldPhrases = [
   "editable in src",

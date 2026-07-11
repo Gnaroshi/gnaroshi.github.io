@@ -1,0 +1,16 @@
+{
+  "manifest": { "counts": { "blogPosts": 0, "papers": 1, "readingSessions": 0, "reviews": 0, "oralExams": 0, "formulaRecalls": 0, "implementations": 0, "weeklyReviews": 0 }, "metricEligible": false, "graphEligible": true, "weeklyReviewEligible": false },
+  "growthSnapshot": null,
+  "researchGraph": {
+    "eligible": true,
+    "eligibilityThreshold": 3,
+    "nodes": [{}, {}, {}, {}, {}],
+    "edges": [{ "relation": "cites" }, { "relation": "implements" }, { "relation": "reviews" }]
+  },
+  "expected": {
+    "trueCapabilities": ["hasPapers", "hasResearchGraph"],
+    "primaryIds": ["research", "projects", "paper-lab", "about"],
+    "utilityIds": [],
+    "paperLabGroups": [["overview", "overview", "reading-method", "paper-notes"], ["insights", "research-graph"]]
+  }
+}

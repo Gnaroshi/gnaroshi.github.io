@@ -25,6 +25,7 @@ export const ko = {
   "nav.language": "언어",
   "nav.theme": "테마",
   "paperLab.overview": "개요",
+  "paperLab.readingMethod": "읽기 방법",
   "paperLab.read": "읽기",
   "paperLab.review": "복습",
   "paperLab.practice": "연습",
@@ -256,6 +257,6 @@ export const ko = {
   "links.body": "코드와 글, 연구 노트를 공유하는 공개 채널입니다.",
   "notFound.eyebrow": "404 · 찾을 수 없음",
   "notFound.title": "페이지를 찾을 수 없습니다",
-  "notFound.body": "주소가 바뀌었거나 페이지가 더 이상 없을 수 있습니다. 연구 노트와 글, 논문 연구실에서 계속 둘러볼 수 있습니다.",
+  "notFound.body": "주소가 바뀌었거나 페이지가 더 이상 없을 수 있습니다. 현재 공개된 연구와 프로젝트 페이지에서 계속 살펴보세요.",
   "notFound.links": "둘러볼 곳"
 } satisfies Dictionary;

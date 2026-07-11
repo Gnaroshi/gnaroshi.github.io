@@ -67,6 +67,10 @@ The following must come from `.content-feed/data/`:
 - research graph
 - other public generated evidence
 
+`src/utils/publicCapabilities.ts` is the presentation gate for public navigation. It derives capabilities only from the validated public manifest, Growth snapshot, and research graph. Header, mobile, footer, Home, and Paper Lab navigation consume that shared result; private repositories and route existence are never treated as evidence that a capability is public.
+
+The empty Writing landing page and Paper Lab onboarding are controlled by explicit website-owned flags in `src/config/publicFeatureFlags.ts`. A route can remain buildable and noindex without appearing in public navigation.
+
 The website does not regenerate or silently rename these outputs. Missing evidence hides the corresponding section; adapters do not create empty review dimensions, badges, effort estimates, completion states, translation counterparts, or fallback graph types.
 
 Activity semantics remain distinct: reading sessions, distinct papers touched, minutes, active days, completed passes, revisits, implementations, and deep sessions. Weekly review metrics retain their native names and state. Unknown graph node or edge enums fail before Astro runs.

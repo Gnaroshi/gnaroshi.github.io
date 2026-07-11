@@ -23,6 +23,7 @@ export const en = {
   "nav.language": "Language",
   "nav.theme": "Theme",
   "paperLab.overview": "Overview",
+  "paperLab.readingMethod": "Reading method",
   "paperLab.read": "Read",
   "paperLab.review": "Review",
   "paperLab.practice": "Practice",
@@ -254,7 +255,7 @@ export const en = {
   "links.body": "The public channels where I share code, writing, and research notes.",
   "notFound.eyebrow": "404 · Not found",
   "notFound.title": "Page not found",
-  "notFound.body": "The address may have changed or the page may no longer exist. Continue with the research notes, writing archive, or Paper Lab.",
+  "notFound.body": "The address may have changed or the page may no longer exist. Continue with the available research and project pages.",
   "notFound.links": "Useful links"
 } as const;
 

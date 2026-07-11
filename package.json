@@ -18,6 +18,7 @@
     "test:smoke": "playwright test --grep \"@smoke\"",
     "test:visual": "playwright test --grep \"@visual-v3\"",
     "test:feed-contract": "node scripts/test-content-feed-fixtures.mjs",
+    "test:capabilities": "node scripts/test-public-capabilities.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:links:external": "node scripts/check-external-links.mjs",
     "check:i18n": "node scripts/check-i18n.mjs",
@@ -43,6 +44,7 @@
     "@astrojs/check": "^0.9.9",
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
+    "esbuild": "^0.28.1",
     "linkedom": "^0.18.13",
     "typescript": "^6.0.3"
   }

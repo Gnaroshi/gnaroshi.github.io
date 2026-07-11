@@ -3,10 +3,12 @@ import { profile } from "../data/profile";
 import { getFooterNavigation } from "../i18n/routes";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
+import { getPublicCapabilities } from "../utils/publicCapabilities";
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const footerNavigation = getFooterNavigation(locale);
+const capabilities = getPublicCapabilities();
 ---
 
 <footer class="site-footer">
@@ -20,7 +22,7 @@ const footerNavigation = getFooterNavigation(locale);
       {footerNavigation.map((item) => (
         <a href={item.href}>{item.label}</a>
       ))}
-      <a href={getLocalePath(locale, "/rss.xml")}>{translate(locale, "nav.rss")}</a>
+      {capabilities.hasWriting && <a href={getLocalePath(locale, "/rss.xml")}>{translate(locale, "nav.rss")}</a>}
       <a href={profile.links.github}>{translate(locale, "nav.github")}</a>
     </nav>
   </div>

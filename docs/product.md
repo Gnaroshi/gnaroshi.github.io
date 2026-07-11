@@ -54,7 +54,7 @@ Avoid:
 
 ## Main Routes
 
-Primary navigation contains Home, Research, Projects, Writing, Paper Lab, and About. Growth is a utility. Now and Links remain public but do not compete in the primary navigation. Existing learning-loop routes are grouped under Paper Lab.
+The brand is the Home link. Primary navigation always contains Research, Projects, and About; Writing and Paper Lab appear only when public evidence or an explicit onboarding flag supports them. Growth is a utility only after metric eligibility. Now and Links remain public but do not compete in the primary navigation. Available learning-loop routes are grouped under Paper Lab without advertising empty tools.
 
 ### `/`
 

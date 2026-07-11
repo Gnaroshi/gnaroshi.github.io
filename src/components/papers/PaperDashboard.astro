@@ -50,7 +50,7 @@ const onboardingArtwork = mediaManifest.paperLabCycle;
 
   {papers.length === 0 ? (
     <>
-      <section class="paper-onboarding" aria-labelledby="paper-onboarding-heading">
+      <section id="paper-notes" class="paper-onboarding" aria-labelledby="paper-onboarding-heading">
         <div class="paper-onboarding__copy">
           <p class="eyebrow">{translate(locale, "papers.startSmall")}</p>
           <h2 id="paper-onboarding-heading">{translate(locale, "papers.firstEnough")}</h2>
@@ -59,7 +59,6 @@ const onboardingArtwork = mediaManifest.paperLabCycle;
         </div>
         <div class="paper-onboarding__media media-frame"><img src={onboardingArtwork.light} alt={onboardingArtwork.alt[locale]} width="960" height="600" loading="lazy" decoding="async" /></div>
       </section>
-      <ReadingMethodPanel locale={locale} />
     </>
   ) : (
     <>
@@ -123,6 +122,7 @@ const onboardingArtwork = mediaManifest.paperLabCycle;
       </section>
     </>
   )}
+  <ReadingMethodPanel locale={locale} />
 </div>
 
 <style>

@@ -5,13 +5,15 @@ import MobileNav from "./navigation/MobileNav.astro";
 import UtilityNav from "./navigation/UtilityNav.astro";
 import type { AlternateUrls, Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
+import { getPrimaryNavigation } from "../i18n/routes";
 
 const currentPath = `${Astro.url.pathname}${Astro.url.search}`;
 interface Props { locale: Locale; alternateUrls?: AlternateUrls }
 const { locale, alternateUrls } = Astro.props;
+const navigationSignature = getPrimaryNavigation(locale).map((item) => item.id).join("|");
 ---
 
-<header class="site-header" data-navigation-signature="research|projects|writing|paper-lab|about">
+<header class="site-header" data-navigation-signature={navigationSignature}>
   <div class="site-header__inner">
     <a class="site-header__brand" href={getLocalePath(locale, "/")} aria-label={`${profile.siteName} ${translate(locale, "nav.home")}`}>
       <span class="site-header__name">{profile.siteName}</span>

@@ -159,7 +159,7 @@ test("hero and media remain measurable and non-overlapping", async ({ page }) =>
       expect(art).not.toBeNull();
       if (viewport.width >= 768) expect(copy!.x + copy!.width).toBeLessThanOrEqual(art!.x + 1);
       else expect(copy!.y + copy!.height).toBeLessThanOrEqual(art!.y + 1);
-      await expect(page.locator(".identity-hero__actions .button")).toHaveCount(2);
+      await expect(page.locator(".identity-hero__actions .button")).toHaveCount(1);
       const images = page.locator("main img");
       for (let index = 0; index < await images.count(); index += 1) {
         const image = images.nth(index);

@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
+import { getPrimaryNavigation } from "../i18n/routes";
 
 interface Props {
   locale: Locale;
@@ -9,12 +10,6 @@ interface Props {
 }
 
 const { locale, detectLocale = false } = Astro.props;
-const links = [
-  ["nav.home", "/"],
-  ["nav.research", "/research/"],
-  ["nav.writing", "/blog/"],
-  ["nav.paperLab", "/papers/"]
-] as const;
 const alternateUrls = locale === "ko"
   ? { en: "/", ko: "/ko/404/", translationAvailable: false }
   : { en: "/404.html", ko: "/ko/", xDefault: "/404.html", translationAvailable: false };
@@ -41,7 +36,10 @@ const alternateUrls = locale === "ko"
       </header>
       <section class="section" aria-labelledby={`not-found-links-${viewLocale}`}>
         <h2 id={`not-found-links-${viewLocale}`}>{translate(viewLocale, "notFound.links")}</h2>
-        <div class="not-found-links">{links.map(([key, href]) => <a href={getLocalePath(viewLocale, href)}>{translate(viewLocale, key)}</a>)}</div>
+        <div class="not-found-links">
+          <a href={getLocalePath(viewLocale, "/")}>{translate(viewLocale, "nav.home")}</a>
+          {getPrimaryNavigation(viewLocale).map((item) => <a href={item.href}>{item.label}</a>)}
+        </div>
       </section>
     </article>
   ))}

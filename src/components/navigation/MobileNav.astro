@@ -23,7 +23,7 @@ const mobileNavigation = [...getPrimaryNavigation(locale), ...getUtilityNavigati
   <div class="mobile-nav__panel" id="mobile-navigation-panel" hidden data-mobile-nav-panel>
     <nav aria-label={translate(locale, "a11y.mobileNavigation")}>
       {mobileNavigation.map((item) => (
-        <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
+        <a href={item.href} data-navigation-id={item.id} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
           {item.label}
         </a>
       ))}

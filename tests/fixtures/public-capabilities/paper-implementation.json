@@ -1,0 +1,11 @@
+{
+  "manifest": { "counts": { "blogPosts": 0, "papers": 1, "readingSessions": 0, "reviews": 0, "oralExams": 0, "formulaRecalls": 0, "implementations": 1, "weeklyReviews": 0 }, "metricEligible": false, "graphEligible": false, "weeklyReviewEligible": false },
+  "growthSnapshot": null,
+  "researchGraph": null,
+  "expected": {
+    "trueCapabilities": ["hasPapers", "hasImplementations"],
+    "primaryIds": ["research", "projects", "paper-lab", "about"],
+    "utilityIds": [],
+    "paperLabGroups": [["overview", "overview", "reading-method", "paper-notes"], ["build", "implementations"]]
+  }
+}

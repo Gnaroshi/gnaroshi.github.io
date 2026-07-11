@@ -21,7 +21,6 @@ const attempts = Number(option("attempts", "8"));
 const initialDelayMs = Number(option("initial-delay-ms", "5000"));
 const maxDelayMs = Number(option("max-delay-ms", "30000"));
 const skipNavigationSignature = args.includes("--skip-navigation-signature") || process.env.SKIP_NAVIGATION_SIGNATURE === "true";
-const navigationSignature = "research|projects|writing|paper-lab|about";
 const routes = ["/", "/ko/", "/research/", "/papers/"];
 const scaffoldPhrases = [
   "editable in src",
@@ -70,10 +69,20 @@ async function verify() {
   if (expected.workflowRunId) assertEqual(buildInfo.workflowRunId, expected.workflowRunId, "workflow run id");
   if (expected.workflowRunAttempt) assertEqual(buildInfo.workflowRunAttempt, expected.workflowRunAttempt, "workflow run attempt");
 
+  let navigationSignature;
   for (const route of routes) {
     const html = await fetchText(route);
-    if (!skipNavigationSignature && !html.includes(`data-navigation-signature="${navigationSignature}"`)) {
-      throw new Error(`${route} is missing navigation signature ${navigationSignature}`);
+    if (!skipNavigationSignature) {
+      const signature = html.match(/data-navigation-signature="([a-z|-]+)"/)?.[1];
+      if (!signature) throw new Error(`${route} is missing its navigation signature`);
+      const items = signature.split("|");
+      for (const required of ["research", "projects", "about"]) {
+        if (!items.includes(required)) throw new Error(`${route} navigation is missing required item ${required}`);
+      }
+      if (navigationSignature && signature !== navigationSignature) {
+        throw new Error(`${route} navigation signature ${signature} differs from ${navigationSignature}`);
+      }
+      navigationSignature = signature;
     }
     const normalized = html.toLowerCase();
     const phrase = scaffoldPhrases.find((candidate) => normalized.includes(candidate));

@@ -5,8 +5,8 @@ import { getLocalizedData } from "../../data/locales";
 import { mediaManifest } from "../../data/mediaManifest";
 import type { Locale } from "../../i18n/types";
 import { getLocalePath, translate } from "../../i18n/utils";
-interface Props { locale: Locale; currentFocus?: string }
-const { locale, currentFocus } = Astro.props;
+interface Props { locale: Locale; currentFocus?: string; showWriting?: boolean }
+const { locale, currentFocus, showWriting = false } = Astro.props;
 const data = getLocalizedData(locale);
 const artwork = mediaManifest.homeResearchConstellation;
 ---
@@ -19,7 +19,7 @@ const artwork = mediaManifest.homeResearchConstellation;
     <p class="identity-hero__bio">{data.profile.shortBio}</p>
     <div class="identity-hero__actions">
       <a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewResearch")}</a>
-      <a class="button" href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.readWriting")}</a>
+      {showWriting && <a class="button" href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.readWriting")}</a>}
     </div>
     {currentFocus && <p class="identity-hero__focus"><span>{translate(locale, "home.currentFocus")}</span>{currentFocus}</p>}
   </div>

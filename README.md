@@ -42,6 +42,7 @@ npm run test:a11y
 npm run test:smoke
 npm run test:visual
 npm run test:feed-contract
+npm run test:capabilities
 npm run test:performance
 npm run check:i18n
 npm run check:launch-content
@@ -50,6 +51,8 @@ npm run check:links:external
 ```
 
 `dev`, `check`, and `build` run the feed's canonical JSON Schema validator before Astro starts. Count/hash drift, schema or privacy violations, broken relations, route/alias collisions, and undeclared assets fail with a direct error.
+
+`test:capabilities` verifies evidence-driven primary, utility, footer, and Paper Lab navigation against nine public-feed states in English and Korean. Empty routes remain buildable but are not advertised.
 
 Use Node 24 as declared in `.node-version`. `test:performance` checks deterministic route budgets and runs mobile Chromium coverage/LCP/CLS. External links are checked only by the manual/scheduled report because third-party availability must not block ordinary content deployment.
 
