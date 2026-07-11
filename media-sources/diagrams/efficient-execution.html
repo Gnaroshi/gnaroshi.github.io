@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Efficient execution diagram source</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:#f4f5f1; color:#18201c; }
+    * { box-sizing:border-box; }
+    body { margin:0; width:1600px; height:1200px; display:grid; place-items:center; background:#f4f5f1; }
+    main { width:1460px; height:1060px; padding:72px; border:1px solid #cdd4cd; background:#fbfcf9; display:grid; grid-template-rows:auto 1fr auto; gap:48px; }
+    header { display:flex; justify-content:space-between; align-items:end; gap:40px; border-bottom:2px solid #18201c; padding-bottom:28px; }
+    h1 { margin:0; font-size:48px; line-height:1.08; letter-spacing:0; }
+    header p { margin:0; max-width:440px; color:#55625b; font-size:21px; line-height:1.55; }
+    .pipeline { display:grid; grid-template-columns:290px 70px 280px 70px 300px; align-items:center; justify-content:center; }
+    .observations { display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
+    .frame { aspect-ratio:4/3; display:grid; place-items:center; border:2px solid #859188; background:#e8ebe5; color:#68746c; font-weight:750; font-size:28px; }
+    .frame.new { border-color:#346b54; background:#d9e9df; color:#24533f; }
+    .unit { min-height:200px; padding:28px; border:2px solid #18201c; background:#fff; display:grid; align-content:center; gap:16px; }
+    .unit strong { font-size:34px; line-height:1.2; }
+    .unit span { color:#5d6962; font-size:25px; }
+    .model { background:#e9eee9; }
+    .update { border-color:#346b54; background:#e1efe6; }
+    .arrow { text-align:center; font-size:50px; color:#346b54; }
+    .cache { grid-column:3; align-self:start; justify-self:center; width:230px; margin-top:-6px; padding:20px; border:2px dashed #52725f; background:#f1f7f2; text-align:center; }
+    .cache strong { display:block; font-size:30px; }
+    .routes { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .route { padding:20px 24px; border-top:3px solid #88948c; display:flex; gap:20px; align-items:center; font-size:24px; }
+    .route.reuse { border-color:#346b54; color:#24533f; font-weight:700; }
+    .label { color:#56625b; font-size:25px; font-weight:800; }
+    [data-lang] { display:none; }
+    html[data-locale="en"] [data-lang="en"], html[data-locale="ko"] [data-lang="ko"] { display:initial; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1><span data-lang="en">Reuse state instead of repeating everything</span><span data-lang="ko">모든 계산을 반복하지 않고 상태 재사용하기</span></h1>
+      <p><span data-lang="en">A new observation can update a reusable representation through a smaller path.</span><span data-lang="ko">새 관찰은 더 작은 경로를 통해 재사용 가능한 표현을 갱신할 수 있습니다.</span></p>
+    </header>
+    <section class="pipeline" aria-label="Model execution paths">
+      <div class="observations">
+        <div class="frame">t−3</div><div class="frame">t−2</div><div class="frame">t−1</div><div class="frame new">t</div>
+        <p class="label"><span data-lang="en">Previous observations · New observation</span><span data-lang="ko">이전 관찰 · 새 관찰</span></p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="unit model"><strong><span data-lang="en">Shared model</span><span data-lang="ko">공통 모델</span></strong><span><span data-lang="en">Full feature computation</span><span data-lang="ko">전체 특징 계산</span></span></div>
+      <div class="arrow">→</div>
+      <div class="unit update"><strong><span data-lang="en">Lightweight update</span><span data-lang="ko">가벼운 갱신</span></strong><span><span data-lang="en">Action</span><span data-lang="ko">행동</span> →</span></div>
+      <div class="cache"><strong><span data-lang="en">Cached state</span><span data-lang="ko">저장한 상태</span></strong></div>
+    </section>
+    <footer class="routes">
+      <div class="route"><strong><span data-lang="en">Full recomputation</span><span data-lang="ko">전체 재계산</span></strong><span>observation → model → action</span></div>
+      <div class="route reuse"><strong><span data-lang="en">Reuse path</span><span data-lang="ko">재사용 경로</span></strong><span>new + cached → update → action</span></div>
+    </footer>
+  </main>
+  <script>document.documentElement.dataset.locale = new URLSearchParams(location.search).get('locale') === 'ko' ? 'ko' : 'en';</script>
+</body>
+</html>

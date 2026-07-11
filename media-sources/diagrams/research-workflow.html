@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Research workflow diagram source</title>
+  <style>
+    :root { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:#f4f5f1; color:#17201b; }
+    * { box-sizing:border-box; }
+    body { margin:0; width:1600px; height:1200px; display:grid; place-items:center; background:#f4f5f1; }
+    main { width:1460px; height:1060px; padding:72px; border:1px solid #cdd4cd; background:#fbfcf9; display:grid; grid-template-rows:auto 1fr auto; gap:54px; }
+    header { max-width:980px; }
+    h1 { margin:0 0 18px; font-size:48px; line-height:1.1; }
+    header p, footer { margin:0; color:#59655e; font-size:22px; line-height:1.6; }
+    .stages { display:grid; grid-template-columns:repeat(5, 1fr); gap:18px; align-items:center; }
+    article { min-height:420px; padding:26px 22px; border-top:4px solid #2f6d51; background:#edf1eb; display:grid; grid-template-rows:140px auto 1fr; gap:20px; position:relative; }
+    article:not(:last-child)::after { content:"→"; position:absolute; right:-18px; top:48%; z-index:2; width:36px; height:36px; display:grid; place-items:center; background:#fbfcf9; color:#2f6d51; font-size:32px; }
+    .icon { width:112px; height:132px; margin:auto; border:3px solid #1d2822; background:#fff; position:relative; display:grid; place-items:center; color:#2f6d51; font-size:42px; font-weight:800; }
+    .paper::before, .note::before { content:""; position:absolute; inset:26px 18px; background:repeating-linear-gradient(to bottom,#9ba69f 0 3px,transparent 3px 16px); }
+    .note { background:#e8efc9; transform:rotate(-2deg); }
+    .speech { border-radius:50%; width:128px; height:96px; }
+    .speech::after { content:""; position:absolute; left:20px; bottom:-18px; border:18px solid transparent; border-top-color:#1d2822; transform:rotate(18deg); }
+    .check { border-radius:50%; }
+    .output { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:32px; }
+    .step { color:#2f6d51; font-size:16px; font-weight:850; text-transform:uppercase; }
+    h2 { margin:0; font-size:29px; line-height:1.25; }
+    article p { margin:0; color:#59655e; font-size:22px; line-height:1.45; }
+    [data-lang] { display:none; }
+    html[data-locale="en"] [data-lang="en"], html[data-locale="ko"] [data-lang="ko"] { display:initial; }
+  </style>
+</head>
+<body>
+  <main>
+    <header><h1><span data-lang="en">A research loop built around retrieval</span><span data-lang="ko">기억에서 꺼내 보는 연구 흐름</span></h1><p><span data-lang="en">Understanding improves when reading leads to an explanation, a check, and a concrete output.</span><span data-lang="ko">읽은 내용을 설명하고 확인한 뒤 구체적인 결과물로 남길 때 이해가 더 선명해집니다.</span></p></header>
+    <section class="stages">
+      <article><div class="icon paper"></div><div><span class="step">01</span><h2><span data-lang="en">Read</span><span data-lang="ko">읽기</span></h2></div><p><span data-lang="en">Mark the question, method, and evidence.</span><span data-lang="ko">질문과 방법, 근거를 표시합니다.</span></p></article>
+      <article><div class="icon speech">•••</div><div><span class="step">02</span><h2><span data-lang="en">Explain from memory</span><span data-lang="ko">기억에서 설명하기</span></h2></div><p><span data-lang="en">Close the paper and reconstruct the idea.</span><span data-lang="ko">논문을 덮고 핵심 아이디어를 다시 설명합니다.</span></p></article>
+      <article><div class="icon check">✓</div><div><span class="step">03</span><h2><span data-lang="en">Check what was missed</span><span data-lang="ko">놓친 부분 확인하기</span></h2></div><p><span data-lang="en">Compare the explanation with the source.</span><span data-lang="ko">설명과 원문을 비교합니다.</span></p></article>
+      <article><div class="icon note"></div><div><span class="step">04</span><h2><span data-lang="en">Revisit</span><span data-lang="ko">다시 보기</span></h2></div><p><span data-lang="en">Return to the uncertain parts and annotate them.</span><span data-lang="ko">불확실했던 부분으로 돌아가 기록합니다.</span></p></article>
+      <article><div class="icon output">&lt;/&gt;</div><div><span class="step">05</span><h2><span data-lang="en">Implement or write</span><span data-lang="ko">구현하거나 글로 남기기</span></h2></div><p><span data-lang="en">Turn understanding into code or an argument.</span><span data-lang="ko">이해한 내용을 코드나 글로 구체화합니다.</span></p></article>
+    </section>
+    <footer><span data-lang="en">The loop repeats only where the remaining question matters.</span><span data-lang="ko">남은 질문이 중요한 지점에서만 이 흐름을 반복합니다.</span></footer>
+  </main>
+  <script>document.documentElement.dataset.locale = new URLSearchParams(location.search).get('locale') === 'ko' ? 'ko' : 'en';</script>
+</body>
+</html>

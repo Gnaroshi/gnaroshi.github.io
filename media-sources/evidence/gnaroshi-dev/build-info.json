@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "environment": "local",
+  "websiteCommit": "c1952a39f3fe0b2c5c5a65fee75cc1c8ec5f677c",
+  "contentFeed": {
+    "commit": "0a2b5c5cdaf283e344d896142aedb565659d26f9",
+    "schemaVersion": 1,
+    "contentHash": "9ea450911265f1364623fc4c023952e2c6fc70f19560fad9710fe44a0307d261"
+  }
+}

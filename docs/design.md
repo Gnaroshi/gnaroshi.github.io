@@ -39,6 +39,19 @@ Use a restrained academic interface:
 
 The homepage may have personality, but it should remain text-forward and direct.
 
+### Media
+
+Simple media means one recognizable subject and one message, not abstract emptiness. A visitor should identify the broad subject of every large image within two seconds.
+
+- Use generated media only for concrete concept scenes such as an active research workspace or a VLA task.
+- Use labeled HTML/CSS or Figma diagrams for technical systems and processes.
+- Use actual screenshots, manifests, terminal results, and reviewed artifacts for projects.
+- Use no large image for empty functional states unless the image explains a real action.
+- Functional controls use simple SVG icons.
+- Do not force all media into one composition style or reuse a Research image as a project cover.
+
+See `docs/media-principles.md` and `docs/image-semantic-review.md`.
+
 ## Layout
 
 Use a global shell with:

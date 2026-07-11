@@ -1,0 +1,131 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getLocalizedData } from "../../../data/locales";
+import { profile } from "../../../data/profile";
+import { candidatePassesThreshold, mediaReviewCandidates, totalSemanticScore } from "../../../data/mediaReview";
+
+const sections = ["hero", "research-vla", "technical-diagrams", "project-evidence"] as const;
+type Section = (typeof sections)[number];
+
+export function getStaticPaths() {
+  if (process.env.NODE_ENV === "production") return [];
+  const reviewSections = ["hero", "research-vla", "technical-diagrams", "project-evidence"];
+  return [
+    { params: { section: undefined } },
+    ...reviewSections.map((section) => ({ params: { section } }))
+  ];
+}
+
+const rawSection = Astro.params.section ?? "hero";
+const section = sections.includes(rawSection as Section) ? rawSection as Section : "hero";
+const candidates = mediaReviewCandidates.filter((candidate) => candidate.section === section);
+const en = getLocalizedData("en");
+const ko = getLocalizedData("ko");
+
+function pageContext(context: (typeof candidates)[number]["pageContext"]) {
+  if (context === "home") return {
+    title: profile.displayName,
+    en: `${en.profile.headline.replace("\n", " ")} ${en.profile.shortBio}`,
+    ko: `${ko.profile.headline.replace("\n", " ")} ${ko.profile.shortBio}`
+  };
+  if (context === "vla") return { title: en.researchAreas[0].question, en: en.researchAreas[0].motivation, ko: ko.researchAreas[0].motivation };
+  if (context === "efficient") return { title: en.researchAreas[1].question, en: en.researchAreas[1].motivation, ko: ko.researchAreas[1].motivation };
+  if (context === "workflow") return { title: en.researchAreas[2].question, en: en.researchAreas[2].motivation, ko: ko.researchAreas[2].motivation };
+  const slug = context === "project-vla" ? "gnaroshi-vla" : "gnaroshi-dev";
+  const enProject = en.projects.find((project) => project.slug === slug)!;
+  const koProject = ko.projects.find((project) => project.slug === slug)!;
+  return { title: enProject.title, en: enProject.summary, ko: koProject.summary };
+}
+
+const scoreLabels = [
+  ["semanticClarity", "Semantic clarity"],
+  ["pageRelevance", "Page relevance"],
+  ["focalHierarchy", "Focal hierarchy"],
+  ["credibility", "Credibility"],
+  ["responsiveCrop", "Responsive crop"],
+  ["visualQuality", "Visual quality"]
+] as const;
+---
+
+<BaseLayout title={`Media review: ${section}`} description="Development-only semantic media candidate review." robots="noindex, follow" width="wide" minimalChrome>
+  <div class="review-shell">
+    <header class="review-header">
+      <p class="eyebrow">Development only · Stage 1 · no production selection</p>
+      <h1>Semantic media review</h1>
+      <p>Approve only candidates that communicate the page subject before its text is read.</p>
+      <nav aria-label="Media review sections">
+        {sections.map((item) => <a class:list={{ active: item === section }} href={item === "hero" ? "/dev/media-review/" : `/dev/media-review/${item}/`}>{item.replaceAll("-", " ")}</a>)}
+      </nav>
+    </header>
+
+    <div class="candidate-list">
+      {candidates.map((candidate) => {
+        const context = pageContext(candidate.pageContext);
+        const total = totalSemanticScore(candidate.score);
+        const passes = candidatePassesThreshold(candidate);
+        const src = `/dev/media-review/assets/${candidate.file}`;
+        return <article class="candidate" id={candidate.id}>
+          <header>
+            <div><p class="eyebrow">{candidate.category} · {candidate.route}</p><h2>{candidate.id}</h2></div>
+            <strong class:list={{ pass: passes, reject: !passes }}>{passes ? "Threshold pass" : "Reject"} · {total}/30</strong>
+          </header>
+
+          <section class="page-context" aria-label="Page copy context">
+            <h3>{context.title}</h3>
+            <div><p><b>EN</b> {context.en}</p><p lang="ko"><b>KO</b> {context.ko}</p></div>
+          </section>
+
+          <figure class="full"><img src={src} alt={`${candidate.id} review candidate`} width={candidate.aspectRatio === "16:10" ? 1600 : candidate.aspectRatio === "5:4" ? 2000 : 1600} height={candidate.aspectRatio === "16:10" ? 1000 : candidate.aspectRatio === "5:4" ? 1600 : 1200} /><figcaption>Full candidate · {candidate.aspectRatio}</figcaption></figure>
+
+          <div class="crop-grid" style={`--focal:${candidate.focalPoint}`}>
+            <figure><div class="crop crop--desktop"><img src={src} alt="" /></div><figcaption>Desktop crop</figcaption></figure>
+            <figure><div class="crop crop--tablet"><img src={src} alt="" /></div><figcaption>Tablet crop</figcaption></figure>
+            <figure><div class="crop crop--mobile"><img src={src} alt="" /></div><figcaption>Mobile crop</figcaption></figure>
+            <figure><div class="crop crop--thumb"><img src={src} alt="" /></div><figcaption>160px thumbnail</figcaption></figure>
+          </div>
+
+          <dl class="scores">
+            {scoreLabels.map(([key, label]) => <div><dt>{label}</dt><dd>{candidate.score[key]}/5</dd></div>)}
+          </dl>
+
+          <section class="notes">
+            <h3>Review notes</h3>
+            {candidate.rejectionNotes.length ? <ul>{candidate.rejectionNotes.map((note) => <li>{note}</li>)}</ul> : <p>No automatic rejection condition found. Explicit owner approval is still required.</p>}
+          </section>
+        </article>;
+      })}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .review-shell { width:min(100% - 2rem, 1280px); margin-inline:auto; padding:var(--space-8) 0 var(--space-10); }
+  .review-header { display:grid; gap:var(--space-4); padding-bottom:var(--space-6); border-bottom:2px solid var(--color-border-strong); }
+  .review-header > p:not(.eyebrow) { max-width:68ch; color:var(--color-text-secondary); }
+  .review-header nav { display:flex; flex-wrap:wrap; gap:var(--space-3); }
+  .review-header nav a { padding:.55rem .75rem; border:1px solid var(--color-border); color:var(--color-text); text-transform:capitalize; text-decoration:none; }
+  .review-header nav a.active { border-color:var(--color-accent); color:var(--color-accent); }
+  .candidate-list { display:grid; }
+  .candidate { display:grid; gap:var(--space-5); padding:var(--space-8) 0; border-bottom:1px solid var(--color-border); }
+  .candidate > header { display:flex; justify-content:space-between; gap:var(--space-4); align-items:end; }
+  .candidate h2 { font-size:var(--text-xl); }
+  .candidate > header strong { padding:.4rem .65rem; border:1px solid currentColor; font-size:var(--text-sm); }
+  .candidate > header .pass { color:#2f7656; } .candidate > header .reject { color:#a13b30; }
+  .page-context { display:grid; grid-template-columns:minmax(180px,.45fr) minmax(0,1fr); gap:var(--space-5); padding:var(--space-5); background:var(--color-surface-muted); }
+  .page-context div { display:grid; gap:var(--space-3); }
+  .page-context p { color:var(--color-text-secondary); line-height:1.65; }
+  figure { margin:0; }
+  figcaption { margin-top:var(--space-2); color:var(--color-text-muted); font-size:var(--text-xs); }
+  .full img { display:block; width:100%; height:auto; border:1px solid var(--color-border); }
+  .crop-grid { display:grid; grid-template-columns:1.45fr 1fr .72fr 160px; gap:var(--space-4); align-items:start; }
+  .crop { overflow:hidden; border:1px solid var(--color-border); background:var(--color-surface-muted); }
+  .crop img { width:100%; height:100%; object-fit:cover; object-position:var(--focal); }
+  .crop--desktop { aspect-ratio:16/10; } .crop--tablet { aspect-ratio:4/3; } .crop--mobile { aspect-ratio:4/5; } .crop--thumb { width:160px; height:128px; }
+  .scores { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); border-block:1px solid var(--color-border); }
+  .scores div { display:grid; gap:.25rem; padding:var(--space-3); border-right:1px solid var(--color-border); }
+  .scores div:last-child { border-right:0; }
+  .scores dt { color:var(--color-text-muted); font-size:var(--text-xs); } .scores dd { margin:0; font-size:var(--text-lg); font-weight:750; }
+  .notes { display:grid; gap:var(--space-3); } .notes ul { margin:0; padding-left:1.2rem; } .notes p,.notes li { color:var(--color-text-secondary); }
+  @media (max-width:900px) { .crop-grid { grid-template-columns:1fr 1fr; } .scores { grid-template-columns:repeat(3,1fr); } .scores div:nth-child(3) { border-right:0; } }
+  @media (max-width:600px) { .candidate > header,.page-context { display:grid; } .crop-grid { grid-template-columns:1fr; } .scores { grid-template-columns:1fr 1fr; } .scores div:nth-child(3) { border-right:1px solid var(--color-border); } .scores div:nth-child(even) { border-right:0; } }
+</style>

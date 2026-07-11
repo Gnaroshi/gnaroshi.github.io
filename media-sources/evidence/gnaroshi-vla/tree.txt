@@ -1,0 +1,12 @@
+gnaroshi_vla/
+├── architectures/
+│   ├── registry.yaml
+│   ├── seer/{adapters,env,wrappers}/
+│   └── simvla/{adapters,env,wrappers}/
+├── configs/
+│   ├── architecture/{seer,simvla}.yaml
+│   ├── method/{lrnode,original}.yaml
+│   └── experiment/seer_lrnode_debug.yaml
+├── methods/lrnode/
+├── scripts/{run_experiment,sanity_check}.py
+└── results/README.md

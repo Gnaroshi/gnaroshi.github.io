@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>gnaroshi_vla evidence composition</title>
+  <style>
+    :root { font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; background:#e9ede8; color:#17201b; }
+    * { box-sizing:border-box; }
+    body { margin:0; width:1600px; height:1000px; padding:54px; background:#e9ede8; }
+    main { height:100%; display:grid; grid-template-rows:auto 1fr 230px; gap:22px; }
+    header { display:flex; justify-content:space-between; align-items:end; border-bottom:2px solid #17201b; padding-bottom:20px; }
+    h1 { margin:0; font-size:45px; } header p { margin:0; color:#57635c; font-size:19px; }
+    .evidence { display:grid; grid-template-columns:.82fr 1fr 1fr; gap:20px; min-height:0; }
+    section { min-width:0; overflow:hidden; padding:22px; border:1px solid #bdc7bf; background:#f8faf6; }
+    h2 { margin:0 0 16px; color:#2d684f; font-size:17px; text-transform:uppercase; }
+    pre { margin:0; color:#26332c; font:16px/1.52 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:pre-wrap; }
+    .terminal { background:#111713; color:#dfe9e1; border-color:#111713; }
+    .terminal h2 { color:#8fc5a6; } .terminal pre { color:#dfe9e1; font-size:15px; line-height:1.45; }
+    .status { color:#84c29e; }
+  </style>
+</head>
+<body>
+  <main>
+    <header><div><p>Verified public repository evidence</p><h1>gnaroshi_vla</h1></div><p>source commit 5dfa260 · sanity action · 2026-07-12</p></header>
+    <div class="evidence">
+      <section><h2>Repository structure</h2><pre>architectures/
+  registry.yaml
+  seer/
+    adapters/
+    env/
+    wrappers/
+  simvla/
+    adapters/
+    env/
+    wrappers/
+configs/
+  architecture/
+  method/
+  experiment/
+methods/lrnode/
+scripts/
+results/README.md</pre></section>
+      <section><h2>Actual configuration</h2><pre>name: seer_lrnode_debug
+architecture: seer
+method: lrnode
+env: seer_libero
+action: sanity
+result_subdir:
+  results/seer/lrnode/
+  seer_lrnode_debug
+upstream_workdir:
+  architectures/seer/upstream</pre></section>
+      <section><h2>Generated run manifest</h2><pre>run_id: media-evidence-ok
+architecture: seer
+method: lrnode
+env_id: seer_libero
+node: lrnode
+experiment: seer_lrnode_debug
+action: sanity
+python_version: "Python 3.14.6"
+command_file: command.sh
+config_files:
+  - configs/architecture/seer.yaml
+  - configs/method/lrnode.yaml
+  - configs/env/seer_libero.yaml</pre></section>
+    </div>
+    <section class="terminal"><h2>Verified terminal result · local paths redacted</h2><pre>$ bash scripts/run_experiment.sh architecture=seer method=lrnode env=seer_libero action=sanity
+
+[RUN CONTEXT] architecture=seer  method=lrnode  env=seer_libero
+<span class="status">[OK]</span> architecture upstream   <span class="status">[OK]</span> architecture adapters   <span class="status">[OK]</span> architecture wrappers
+<span class="status">[OK]</span> env config              <span class="status">[OK]</span> method config            <span class="status">[OK]</span> results schema
+<span class="status">[RUN DONE]</span> result_dir=[redacted temporary workspace]/results/...</pre></section>
+  </main>
+</body>
+</html>

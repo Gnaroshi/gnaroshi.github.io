@@ -12,6 +12,9 @@ export type MediaAsset = {
   loadingPriority: "high" | "low";
 };
 
+// Deprecated Stage 1 inventory. Public components must not import this registry.
+// See docs/media-rebuild-audit.md and src/data/mediaReview.ts.
+
 const diagramSource = "Original SVG diagram authored for gnaroshi.dev using the shared editorial media palette.";
 
 export const mediaManifest = {

@@ -138,6 +138,11 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Preserve visible focus states, keyboard navigation, contrast, and mobile overflow protection.
 - Keep graph list fallback and heatmap labels accessible.
 - Do not expose developer or authoring instructions on public pages.
+- Apply the two-second semantic test to every large image: its broad subject must be clear before adjacent copy is read.
+- Generated images are limited to concrete concept scenes; technical systems use labeled diagrams and projects use real evidence.
+- Empty functional states usually use no large image.
+- Do not reuse Research media as project evidence or approve candidates automatically.
+- Keep unapproved sources outside `public/` and review them through the development-only `/dev/media-review/` route.
 - Write public copy in the modest, activity-based voice defined in `docs/public-voice.md`.
 - Keep the brand name-only. Do not infer or display a professional title, affiliation, degree, laboratory, award, or location.
 - Keep publishing architecture on the `gnaroshi.dev` project detail and out of Home, About, Research, and Writing introductions.

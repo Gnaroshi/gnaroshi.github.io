@@ -8,6 +8,8 @@ npm-debug.log*
 .env.local
 .env.*.local
 .codex/config.toml
+media-sources/candidates/raw/
+media-sources/candidates/*.png
 .codex/secrets.toml
 .codex/*.secrets.toml
 .codex/*.secret.toml

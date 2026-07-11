@@ -2,16 +2,14 @@
 import HeroShell from "../layout/HeroShell.astro";
 import { profile } from "../../data/profile";
 import { getLocalizedData } from "../../data/locales";
-import { mediaManifest } from "../../data/mediaManifest";
 import type { Locale } from "../../i18n/types";
 import { getLocalePath, translate } from "../../i18n/utils";
 interface Props { locale: Locale; currentFocus?: string }
 const { locale, currentFocus } = Astro.props;
 const data = getLocalizedData(locale);
-const artwork = mediaManifest.homeResearchConstellation;
 ---
 
-<HeroShell class="identity-hero" labelledby="home-title">
+<HeroShell class="identity-hero identity-hero--text-only" labelledby="home-title">
   <div class="identity-hero__copy">
     <h1 id="home-title">{profile.displayName}</h1>
     <p class="identity-hero__headline">{data.profile.headline.split("\n").map((line) => <span>{line}</span>)}</p>
@@ -22,11 +20,4 @@ const artwork = mediaManifest.homeResearchConstellation;
     </div>
     {currentFocus && <p class="identity-hero__focus"><span>{translate(locale, "home.currentFocus")}</span>{currentFocus}</p>}
   </div>
-  <figure class="identity-hero__art media-frame">
-    <picture>
-      <source type="image/avif" srcset="/media/home-research-constellation-480.avif 480w, /media/home-research-constellation-768.avif 768w, /media/home-research-constellation-1200.avif 1200w, /media/home-research-constellation-1600.avif 1600w" sizes="(min-width: 1024px) 45vw, 100vw" />
-      <source type="image/webp" srcset="/media/home-research-constellation-480.webp 480w, /media/home-research-constellation-768.webp 768w, /media/home-research-constellation-1200.webp 1200w, /media/home-research-constellation-1600.webp 1600w" sizes="(min-width: 1024px) 45vw, 100vw" />
-      <img src={artwork.light} alt={artwork.alt[locale]} width="1600" height="1280" loading="eager" fetchpriority="high" decoding="async" />
-    </picture>
-  </figure>
 </HeroShell>

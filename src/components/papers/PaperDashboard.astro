@@ -9,10 +9,10 @@ import PaperScoreBadge from "./PaperScoreBadge.astro";
 import PaperScoreTrend from "./PaperScoreTrend.astro";
 import PaperStats from "./PaperStats.astro";
 import ReadingMethodPanel from "./ReadingMethodPanel.astro";
+import PaperIcon from "../icons/PaperIcon.astro";
 import type { Locale } from "../../i18n/types";
 import { translate } from "../../i18n/utils";
 import { getIslandMessages } from "../../i18n/islands";
-import { mediaManifest } from "../../data/mediaManifest";
 
 interface Props {
   papers: PaperEntry[];
@@ -36,7 +36,6 @@ const hasAdvancedNotebook = papers.length >= evidenceGates.paperLab.filtersAt;
 const hasReviewSummary = reviewStats.reviewedCount >= evidenceGates.paperLab.aiReviewSummaryAt;
 const islandMessages = getIslandMessages(locale);
 const messages = islandMessages.paper;
-const onboardingArtwork = mediaManifest.paperLabCycle;
 ---
 
 <div class="paper-dashboard">
@@ -52,12 +51,12 @@ const onboardingArtwork = mediaManifest.paperLabCycle;
     <>
       <section class="paper-onboarding" aria-labelledby="paper-onboarding-heading">
         <div class="paper-onboarding__copy">
+          <PaperIcon class="empty-state-icon" />
           <p class="eyebrow">{translate(locale, "papers.startSmall")}</p>
           <h2 id="paper-onboarding-heading">{translate(locale, "papers.firstEnough")}</h2>
           <p>{translate(locale, "papers.firstDescription")}</p>
           <a class="button button--primary" href={locale === "ko" ? "/ko/research/" : "/research/"}>{translate(locale, "nav.research")}</a>
         </div>
-        <div class="paper-onboarding__media media-frame"><img src={onboardingArtwork.light} alt={onboardingArtwork.alt[locale]} width="960" height="600" loading="lazy" decoding="async" /></div>
       </section>
       <ReadingMethodPanel locale={locale} />
     </>
@@ -136,7 +135,7 @@ const onboardingArtwork = mediaManifest.paperLabCycle;
 
   .paper-onboarding {
     display: grid;
-    grid-template-columns: minmax(0, .9fr) minmax(300px, 1.1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-6);
     align-items: center;
     padding: var(--space-6);
@@ -149,8 +148,8 @@ const onboardingArtwork = mediaManifest.paperLabCycle;
     max-width: 62ch;
     gap: var(--space-3);
   }
+  .empty-state-icon { color:var(--color-accent); }
   .paper-onboarding__copy .button { width: fit-content; margin-top: var(--space-2); }
-  .paper-onboarding__media { aspect-ratio: 16 / 10; }
 
   .paper-onboarding p:last-child,
   .paper-workflow-notes p,

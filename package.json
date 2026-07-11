@@ -21,6 +21,9 @@
     "check:links": "node scripts/check-links.mjs",
     "check:links:external": "node scripts/check-external-links.mjs",
     "check:i18n": "node scripts/check-i18n.mjs",
+    "media:capture": "node scripts/capture-project-screenshots.mjs",
+    "media:build": "node scripts/build-media-candidates.mjs",
+    "media:check": "node scripts/check-media.mjs",
     "check:public-tone": "npm run build && node scripts/check-public-tone.mjs",
     "check:launch-content": "node scripts/check-launch-content.mjs",
     "og:render": "node scripts/render-og-images.mjs",
@@ -45,6 +48,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
     "linkedom": "^0.18.13",
+    "sharp": "^0.35.3",
     "typescript": "^6.0.3"
   }
 }
