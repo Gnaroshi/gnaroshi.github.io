@@ -6,7 +6,7 @@ test("desktop navigation stays concise", async ({ page }) => {
   const primary = page.getByRole("navigation", { name: "Primary navigation" });
   await expect(primary.getByRole("link")).toHaveCount(5);
   await expect(primary.getByRole("link", { name: "Writing" })).toHaveAttribute("href", "/blog");
-  await expect(primary.getByRole("link", { name: "Paper Lab" })).toHaveAttribute("href", "/papers");
+  await expect(primary.getByRole("link", { name: "Papers" })).toHaveAttribute("href", "/papers");
 });
 
 test("mobile menu traps focus, locks scroll, and returns focus on Escape", async ({ page }) => {
@@ -28,9 +28,9 @@ test("mobile menu traps focus, locks scroll, and returns focus on Escape", async
   await expect(trigger).toBeFocused();
 });
 
-test("Paper Lab local navigation groups existing tools", async ({ page }) => {
+test("Papers local navigation groups existing tools", async ({ page }) => {
   await page.goto("/papers");
-  const localNav = page.getByRole("navigation", { name: "Paper Lab navigation" });
+  const localNav = page.getByRole("navigation", { name: "Papers navigation" });
   await expect(localNav).toBeVisible();
   await expect(localNav.locator("details")).toHaveCount(6);
   await localNav.getByText("Practice", { exact: true }).click();

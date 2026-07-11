@@ -107,7 +107,7 @@ test("homepage, blog, evidence gates, and empty tools remain truthful", async ({
 
   await page.goto("/growth");
   await expect(page.locator(".momentum-score__value")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "No public score yet" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "There is not enough activity to show a meaningful overview yet." })).toBeVisible();
 
   for (const route of ["/queue", "/reviews", "/formula", "/questions", "/implementations", "/graph"]) {
     await page.goto(route);

@@ -56,7 +56,7 @@ export const mediaManifest = {
     id: "project-gnaroshi-dev",
     purpose: "Show the public publishing boundary for gnaroshi.dev.",
     route: "/projects/",
-    alt: { en: "Studio publishing private paper and writing repositories through a sanitized public feed to the website.", ko: "Studio가 비공개 논문·글 저장소를 정제된 공개 피드를 거쳐 웹사이트로 발행하는 구조." },
+    alt: { en: "A diagram showing private drafts being prepared for selected publication on gnaroshi.dev.", ko: "비공개 초안 가운데 선택한 내용이 gnaroshi.dev에 공개되는 과정을 나타낸 그림." },
     aspectRatio: "16:10", light: "/media/project-gnaroshi-dev.svg", dark: "/media/project-gnaroshi-dev.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
   },
   projectGnaroshiVla: {
@@ -77,7 +77,7 @@ export const mediaManifest = {
   },
   paperLabCycle: {
     id: "paper-lab-cycle",
-    purpose: "Orient new Paper Lab visitors without presenting empty metrics.",
+    purpose: "Orient new Papers visitors without presenting empty metrics.",
     route: "/papers/",
     alt: { en: "Paper workflow from queue through three reading passes, review, recall, and implementation.", ko: "읽을 논문에서 3단계 읽기와 복습, 회상, 구현으로 이어지는 논문 흐름." },
     aspectRatio: "16:10", light: "/media/paper-lab-cycle.svg", dark: "/media/paper-lab-cycle.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"

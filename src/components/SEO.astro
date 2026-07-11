@@ -1,5 +1,6 @@
 ---
 import { profile } from "../data/profile";
+import { getLocalizedData } from "../data/locales";
 import { ogLocales } from "../i18n/config";
 import type { AlternateUrls, Locale } from "../i18n/types";
 import { getLocalePath } from "../i18n/utils";
@@ -29,7 +30,7 @@ interface Props {
 
 const {
   title = profile.siteName,
-  description = profile.shortBio,
+  description,
   canonical,
   ogImage,
   ogTitle,
@@ -50,9 +51,10 @@ const {
   author = profile.publicAlias
 } = Astro.props;
 
+const resolvedDescription = description ?? getLocalizedData(locale).profile.shortBio;
 const pageTitle = absoluteTitle || title === profile.siteName ? title : `${title} | ${profile.siteName}`;
 const socialTitle = ogTitle ?? pageTitle;
-const socialDescription = ogDescription ?? description;
+const socialDescription = ogDescription ?? resolvedDescription;
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, profile.domain).toString();
 const imageUrl = new URL(ogImage ?? (locale === "ko" ? "/og/default-ko.png" : "/og/default-en.png"), profile.domain).toString();
 const englishAlternate = new URL(alternateUrls?.en ?? getLocalePath("en", Astro.url.pathname), profile.domain).toString();
@@ -62,7 +64,7 @@ const translationAvailable = alternateUrls?.translationAvailable ?? true;
 ---
 
 <title>{pageTitle}</title>
-<meta name="description" content={description} />
+<meta name="description" content={resolvedDescription} />
 <meta name="robots" content={robots} />
 <meta name="author" content={author} />
 <link rel="canonical" href={canonicalUrl} />

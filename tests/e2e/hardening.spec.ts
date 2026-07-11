@@ -12,6 +12,9 @@ test("home emits raster social metadata and factual structured data", async ({ p
   const records = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((script) => JSON.parse(script.textContent ?? "{}")));
   const graphTypes = records.flatMap((record) => (record["@graph"] ?? []).map((entry: { "@type": string }) => entry["@type"]));
   expect(graphTypes).toEqual(expect.arrayContaining(["Person", "WebSite", "ProfilePage"]));
+  const person = records.flatMap((record) => record["@graph"] ?? []).find((entry) => entry["@type"] === "Person");
+  expect(person).not.toHaveProperty("jobTitle");
+  expect(person).not.toHaveProperty("homeLocation");
 });
 
 test("project detail has breadcrumbs and source-code structured data", async ({ page }) => {
@@ -23,8 +26,8 @@ test("project detail has breadcrumbs and source-code structured data", async ({ 
     expect(records.some((record) => record["@type"] === "SoftwareSourceCode")).toBe(true);
   }
   await page.goto("/projects/gnaroshi-vla/");
-  await expect(page.getByRole("heading", { level: 2, name: "Current state" })).toBeVisible();
-  await expect(page.getByText("No benchmark result is published here", { exact: false })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "What works now" })).toBeVisible();
+  await expect(page.getByText("It does not present benchmark results", { exact: false })).toBeVisible();
 });
 
 test("404 variants are noindex and root 404 localizes the preserved path", async ({ page }) => {

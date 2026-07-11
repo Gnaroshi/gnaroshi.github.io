@@ -12,9 +12,10 @@ const today = getTodayKey();
 const due = getDueReviews(await getPublishedPapers(locale), today).map((paper) => toReviewDueRecord(paper, today));
 const title = dueOnly ? translate(locale, "reviews.todayTitle") : translate(locale, "reviews.title");
 const empty = dueOnly ? translate(locale, "reviews.todayEmpty") : translate(locale, "reviews.empty");
+const subtitle = dueOnly ? translate(locale, "reviews.todaySubtitle") : translate(locale, "reviews.subtitle");
 ---
-<BaseLayout locale={locale} title={title} description={translate(locale, "reviews.subtitle")} width="dashboard" mode="application">
-  <div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><p class="eyebrow">{translate(locale, "paperLab.reviewsDue")}</p><h1>{title}</h1><p class="lede">{translate(locale, "reviews.subtitle")}</p></div></header>
+<BaseLayout locale={locale} title={title} description={subtitle} width="dashboard" mode="application">
+  <div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><p class="eyebrow">{translate(locale, "paperLab.reviewsDue")}</p><h1>{title}</h1><p class="lede">{subtitle}</p></div></header>
     {due.length > 0 ? <section class="paper-note-list" aria-label={title}>{due.map((paper) => <article><h2><a href={paper.href}>{paper.title}</a></h2><p>{paper.oneLineSummary}</p><p class="metadata">{paper.nextReviewDate} · {paper.isOverdue ? (locale === "ko" ? "기한 지남" : "Overdue") : (locale === "ko" ? "복습 예정" : "Review due")}</p></article>)}</section> : <section class="app-empty-state" aria-labelledby="reviews-empty"><h2 id="reviews-empty">{empty}</h2><p>{translate(locale, "reviews.emptyBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "reviews.action")}</a></section>}
   </div>
 </BaseLayout>

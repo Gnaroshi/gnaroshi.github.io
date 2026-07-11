@@ -1,115 +1,109 @@
 import type { LocaleCopy } from "./types";
 
 export const enCopy = {
-  copyUpdatedAt: "2026-07-11",
+  copyUpdatedAt: "2026-07-12",
   profile: {
-    headline: "AI researcher and software engineer working on vision-language-action systems",
-    currentRole: "AI researcher and software engineer",
-    location: "South Korea",
-    shortBio: "I build research infrastructure for vision-language-action experiments and study how AI systems can be evaluated with clearer evidence.",
+    headline: "I study AI systems\nand build software for research.",
+    shortBio: "Right now, I’m interested in experiment infrastructure for vision-language-action models and better ways to read, revisit, and connect papers.",
+    aboutIntroduction: "My background is in software, and I’m currently learning about AI through experiments and tools in a university research lab.",
     bio: [
-      "I work across AI research and software engineering, with a current focus on vision-language-action systems and the infrastructure needed to compare them carefully.",
-      "My public work emphasizes explicit experiment structure, reproducible run context, and a clear boundary between private notes and claims that have enough evidence to publish.",
-      "This site collects project documentation, technical writing, and paper notes when those records are ready for public review."
-    ],
-    researchBackground: [
-      "My current engineering work separates model architecture, research method, environment configuration, and results so that experiments can be inspected without relying on one repository layout.",
-      "I am also interested in efficient model execution and research tools that preserve questions, assumptions, and implementation decisions alongside code."
+      "I’m interested not only in models, but also in the process around them: setting up experiments, checking results, and preserving enough context to revisit the work later.",
+      "I use this site to organize projects, notes, and papers that are ready to be shared publicly."
     ],
     researcherValues: [
-      "State what the available evidence supports, and leave unsupported outcomes unstated.",
-      "Keep experiment configuration, environment context, and results traceable.",
-      "Treat failed and incomplete work as useful records when their limits are explicit.",
-      "Use automation to improve repeatability without replacing technical judgment."
+      "I leave a clear note when I do not understand something yet.",
+      "I record experiment settings together with their results.",
+      "I keep failed attempts when the reason is useful.",
+      "I check automated results myself."
     ]
   },
   researchAreas: {
     "practical-vla-systems": {
-      question: "How can VLA systems be compared without tying the experiment to one architecture?",
-      motivation: "VLA repositories often mix model-specific setup, environment assumptions, methods, and result handling. That makes a change difficult to compare across architectures.",
-      hypothesis: "An architecture-neutral experiment layer can keep shared methods and run contracts stable while adapters isolate model-specific behavior.",
-      uncertainty: "The abstraction boundary must stay thin enough to preserve architecture-specific details that matter for correctness.",
+      question: "What kind of experiment structure makes different VLA models comparable on common ground?",
+      motivation: "Different VLA repositories organize models, environments, and results in different ways. That makes the same experiment difficult to run and inspect across models.",
+      hypothesis: "I’m testing whether a shared run structure can make comparisons clearer while small adapters keep model-specific behavior visible.",
+      uncertainty: "The shared structure still needs to preserve details that affect correctness.",
       relatedLabels: ["gnaroshi_vla"]
     },
     "efficient-model-execution": {
-      question: "Which intermediate representations can be reused without hiding changes in model behavior?",
-      motivation: "Efficient execution is useful only when saved computation, state reuse, and approximation boundaries can be measured and inspected.",
-      hypothesis: "Explicit interfaces around reusable state and update paths can make efficiency methods easier to compare than ad hoc modifications inside each model.",
-      uncertainty: "The useful interface may differ substantially across architectures, observation histories, and action decoders.",
-      relatedLabels: ["Experiment workspace"]
+      question: "How can computation be reduced without hiding changes in model behavior?",
+      motivation: "Saving computation matters only when the resulting behavior can still be checked. Reused state and approximations need clear boundaries.",
+      hypothesis: "I’m looking at explicit reuse and update paths that can be measured across experiments.",
+      uncertainty: "The useful boundary may change with the model, observation history, and action decoder.",
+      relatedLabels: ["Experiment setup"]
     },
     "human-ai-research-tools": {
-      question: "How should research tools support judgment while keeping evidence visible?",
-      motivation: "Summaries and scores are easy to generate, but they are not substitutes for source notes, retrieval, implementation, or reviewed experimental evidence.",
-      hypothesis: "Tools are more useful when private source material, public projection, and presentation are separate and every public metric has an eligibility rule.",
-      uncertainty: "The right amount of structure must be tested through repeated use; excessive process can be as harmful as missing context.",
-      relatedLabels: ["Writing", "Paper Lab"]
+      question: "How can AI tools support research without replacing the researcher’s judgment?",
+      motivation: "Generated summaries and scores can save time, but they can also hide uncertainty. The original question and the researcher’s own check still need to remain visible.",
+      hypothesis: "I’m exploring tools that help organize notes, suggest questions, and make revisiting easier without deciding what is true on the researcher’s behalf.",
+      uncertainty: "The right amount of structure will only become clear through repeated use.",
+      relatedLabels: ["Writing", "Papers"]
     }
   },
   projects: {
     "gnaroshi-vla": {
       title: "gnaroshi_vla",
-      summary: "An architecture-neutral workspace for organizing VLA experiments across model adapters, shared methods, environment configuration, and explicit result directories.",
-      statusLabel: "Active infrastructure work",
-      problem: "VLA experiments become difficult to compare when architecture code, method changes, environment setup, launch scripts, and results are coupled inside one model repository.",
+      summary: "A workspace for running and comparing different VLA models through a clearer, shared experiment structure.",
+      statusLabel: "In progress",
+      problem: "VLA experiments are hard to compare when model code, method changes, environment setup, launch scripts, and results are tied to one repository layout.",
       designGoals: [
-        "Keep architecture-specific integration behind explicit adapters.",
-        "Separate shared methods from model and environment configuration.",
-        "Make every run's configuration and environment context inspectable.",
-        "Keep result locations explicit without presenting unreviewed outputs as conclusions."
+        "Keep model-specific integration behind small, explicit adapters.",
+        "Separate shared methods from model and environment settings.",
+        "Save enough context to understand how each run was configured.",
+        "Keep result locations clear without treating unchecked output as a conclusion."
       ],
       architecture: [
         "architectures/ contains model adapters and preserved upstream integration points.",
-        "methods/ contains architecture-independent research methods and reference modules.",
-        "configs/ separates architecture, method, environment, experiment, and node settings.",
-        "scripts/ and tools/ capture run context, environment snapshots, checks, and result handling."
+        "methods/ contains methods that can be used across model integrations.",
+        "configs/ separates model, method, environment, experiment, and node settings.",
+        "scripts/ and tools/ record run context, environment snapshots, checks, and result locations."
       ],
       supportedAdapters: [
-        "Seer infrastructure with dedicated configuration and wrappers.",
-        "SimVLA infrastructure with dedicated configuration and wrappers."
+        "Seer integration with dedicated configuration and wrappers.",
+        "SimVLA integration with dedicated configuration and wrappers."
       ],
       reproducibility: [
-        "Composed configuration makes the architecture, method, environment, experiment, and node choice explicit.",
-        "Run-context and environment-snapshot tools preserve the settings needed to inspect a run.",
-        "Results are assigned to explicit architecture and experiment directories rather than inferred from a dashboard."
+        "Composed configuration records the model, method, environment, experiment, and node choice.",
+        "Run manifests and environment snapshots preserve the context needed to inspect a run.",
+        "Results use explicit model and experiment directories."
       ],
-      currentState: "The public repository contains Seer and SimVLA integration structure, shared method modules, and run-context tooling. No benchmark result is published here; the current evidence is infrastructure. Third-party attribution is documented in the repository.",
+      currentState: "The public repository currently contains Seer and SimVLA integration structure, shared method modules, and tools for recording run context. It does not present benchmark results. Third-party attribution is documented in the repository.",
       openProblems: [
-        "Define the smallest adapter contract that remains faithful to each architecture.",
-        "Compare efficiency methods with consistent run manifests and reviewed evidence.",
-        "Clarify repository-level licensing before broader reuse beyond the documented upstream components."
+        "Find the smallest adapter interface that still represents each model correctly.",
+        "Compare efficiency methods with consistent run manifests and reviewed results.",
+        "Clarify repository-level licensing before reuse beyond the documented upstream components."
       ],
       relatedWriting: [],
       linkLabels: { repository: "Repository" }
     },
     "gnaroshi-dev": {
       title: "gnaroshi.dev",
-      summary: "A bilingual Astro presentation layer that renders a deterministic public projection of privately authored research and writing.",
-      statusLabel: "Active",
-      problem: "A public research site needs durable authoring and clear privacy boundaries without making the website repository the source of truth for private notes or generated analysis.",
+      summary: "A personal website where papers and writing are drafted privately and only selected material is published.",
+      statusLabel: "In progress",
+      problem: "I wanted a personal site where writing and paper notes could be prepared privately without turning the website repository into the place where unfinished work lives.",
       designGoals: [
-        "Keep paper and writing sources canonical in private repositories.",
-        "Publish only explicitly selected public fields through a generated feed.",
-        "Keep English and Korean presentation structurally equivalent.",
-        "Show metrics only when the public feed contains enough eligible evidence."
+        "Keep unfinished paper notes and writing outside the public website repository.",
+        "Publish only fields and entries that have been selected for the public site.",
+        "Keep English and Korean pages structurally consistent.",
+        "Hide activity views until there is enough real material to make them useful."
       ],
       architecture: [
-        "Gnaroshi Studio checkpoints private paper and writing sources.",
-        "The publisher creates a sanitized, deterministic public content feed with source commit metadata.",
-        "The presentation-only Astro website validates and renders that public feed.",
-        "GitHub Actions deploys the static build to GitHub Pages and verifies the imported feed commit."
+        "Gnaroshi Studio saves changes in the private paper and writing repositories.",
+        "The publisher builds a sanitized, deterministic public content feed with source commit metadata.",
+        "The presentation-only Astro website validates and renders that feed.",
+        "GitHub Actions deploys the static build and verifies the imported feed commit."
       ],
       supportedAdapters: [],
       reproducibility: [
         "The feed manifest records source commits, counts, schema version, and a content hash.",
-        "The website build records the exact feed commit in metadata and build-info.json.",
-        "Private repositories are never checked out by the public website workflow."
+        "The website records the exact feed commit in metadata and build-info.json.",
+        "The public website workflow never checks out private repositories."
       ],
-      currentState: "The website consumes only the public feed for blog and paper content. Authoring, AI workflows, private metrics, and API endpoints remain in separately owned repositories.",
+      currentState: "The website reads blog and paper content only from the public feed. Authoring, review generation, private metrics, and API endpoints remain in separately owned repositories.",
       openProblems: [
-        "Publish the first substantive article after editorial review.",
-        "Publish the first genuine paper note only after the reading record is owner-authored.",
-        "Keep public evidence rules understandable as the record grows."
+        "Publish the first article after editorial review.",
+        "Publish the first paper note after it has been written and reviewed by the owner.",
+        "Keep the public site understandable as more records are added."
       ],
       relatedWriting: ["first-post", "paper-reading-method", "research-workflow"],
       linkLabels: { repository: "Repository", "live-site": "Live site" }
@@ -117,22 +111,22 @@ export const enCopy = {
   },
   now: {
     currentlyReading: [
-      "VLA architecture interfaces and the assumptions that change across Seer and SimVLA integrations.",
-      "Methods for reusing model state while keeping approximation and evaluation boundaries explicit."
+      "How Seer and SimVLA expose model inputs, state, and action outputs differently.",
+      "Ways to reuse model state while keeping approximation and evaluation boundaries clear."
     ],
     currentlyBuilding: [
-      "An architecture-neutral VLA experiment workspace with separate model, method, environment, and result layers.",
-      "Run manifests and environment snapshots that make experiment context easier to inspect."
+      "A shared experiment layout for running VLA models with separate model, method, environment, and result settings.",
+      "Run manifests and environment snapshots that make experiment context easier to revisit."
     ],
     currentQuestions: [
-      "What belongs in a shared VLA experiment contract, and what must remain architecture-specific?",
-      "Which representations can be reused without obscuring behavior changes?",
-      "What evidence is sufficient before an experiment result becomes a public claim?"
+      "Which parts of a VLA experiment can be shared across models?",
+      "Which representations can be reused without changing behavior in ways I cannot see?",
+      "How much context is enough to understand an old experiment later?"
     ]
   },
   skillGroups: [
-    { title: "Research systems", skills: ["Experiment structure", "Run context", "Result traceability", "Reproduction planning"] },
-    { title: "AI and ML", skills: ["Vision-language-action systems", "Model evaluation", "Efficient execution", "Research tooling"] },
-    { title: "Software", skills: ["Python", "TypeScript", "Static publishing", "Git workflows"] }
+    { title: "Research work", skills: ["Experiment setup", "Run context", "Result checking", "Reproduction planning"] },
+    { title: "AI and ML", skills: ["Vision-language-action models", "Model evaluation", "Efficient execution", "Research tools"] },
+    { title: "Software", skills: ["Python", "TypeScript", "Static websites", "Git workflows"] }
   ]
 } satisfies LocaleCopy;

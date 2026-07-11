@@ -3,11 +3,9 @@ import type { researchFacts } from "../facts/research";
 
 export type LocalizedProfileCopy = {
   headline: string;
-  currentRole: string;
-  location: string;
   shortBio: string;
+  aboutIntroduction: string;
   bio: readonly string[];
-  researchBackground: readonly string[];
   researcherValues: readonly string[];
 };
 

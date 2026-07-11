@@ -38,9 +38,7 @@ if (!focusIsFresh && import.meta.env.DEV) {
         "@id": `${profile.domain}/#person`,
         name: profile.publicAlias,
         url: profile.domain,
-        description: locale === "ko" ? data.profile.shortBio : profile.shortBio,
-        jobTitle: locale === "ko" ? data.profile.currentRole : profile.currentRole,
-        homeLocation: { "@type": "Country", name: profile.location },
+        description: data.profile.shortBio,
         sameAs: [profile.links.github]
       },
       {
@@ -65,7 +63,7 @@ if (!focusIsFresh && import.meta.env.DEV) {
     <Hero locale={locale} currentFocus={focusIsFresh ? data.now.currentlyBuilding[0] : undefined} />
 
     <Section class="home-research" labelledby="research-questions-heading">
-      <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.researchQuestions")}</p><h2 id="research-questions-heading">{translate(locale, "home.researchQuestionsTitle")}</h2><p>{translate(locale, "home.researchQuestionsBody")}</p></div>
+      <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.researchQuestions")}</p><h2 id="research-questions-heading">{translate(locale, "home.researchQuestionsTitle")}</h2></div>
       <ol class="home-research-list">{data.researchAreas.map((area) => <li><a href={getLocalePath(locale, `/research/#${area.slug}`)}>{area.question}</a></li>)}</ol>
       <a class="text-link" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewAllResearch")}</a>
     </Section>

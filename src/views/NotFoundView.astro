@@ -57,8 +57,8 @@ const alternateUrls = locale === "ko"
       for (const path of document.querySelectorAll("[data-not-found-path]")) path.textContent = location.pathname;
       document.title = isKorean ? "페이지를 찾을 수 없습니다 | Gnaroshi" : "Page not found | Gnaroshi";
       document.querySelector('meta[name="description"]')?.setAttribute("content", isKorean
-        ? "주소가 바뀌었거나 페이지가 더 이상 없을 수 있습니다."
-        : "The address may have changed or the page may no longer exist.");
+        ? "주소가 바뀌었거나 페이지가 더 이상 없을 수 있습니다. 연구와 글, 논문 기록에서 계속 둘러볼 수 있습니다."
+        : "The address may have changed or the page may no longer exist. You can continue with Research, Writing, or Papers.");
     })();
   </script>}
 </BaseLayout>

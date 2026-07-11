@@ -17,6 +17,7 @@ Before structural changes, read:
 - `docs/design.md`
 - `docs/i18n.md`
 - `docs/i18n-terminology.md`
+- `docs/public-voice.md`
 - `docs/technical-hardening-report.md`
 - `docs/route-budget-report.md`
 
@@ -132,11 +133,14 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 ## Design And Accessibility
 
 - Maintain the minimal academic/editorial design.
-- Keep application mode limited to public Paper Lab and Growth views.
+- Keep application mode limited to public paper workflows and Activity views.
 - Use semantic landmarks and heading order.
 - Preserve visible focus states, keyboard navigation, contrast, and mobile overflow protection.
 - Keep graph list fallback and heatmap labels accessible.
 - Do not expose developer or authoring instructions on public pages.
+- Write public copy in the modest, activity-based voice defined in `docs/public-voice.md`.
+- Keep the brand name-only. Do not infer or display a professional title, affiliation, degree, laboratory, award, or location.
+- Keep publishing architecture on the `gnaroshi.dev` project detail and out of Home, About, Research, and Writing introductions.
 
 ## Prohibited Changes
 
@@ -159,6 +163,7 @@ npm run content:check
 npm run check
 npm run build
 npm run check:i18n
+npm run check:public-tone
 npm run check:launch-content
 npm run check:links
 npm run test:smoke
