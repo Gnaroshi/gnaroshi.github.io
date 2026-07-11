@@ -18,8 +18,7 @@ const { attempt, locale, messages } = Astro.props;
 const slug = getContentSlug(attempt.id);
 const links = [
   attempt.data.repoUrl ? { label: messages.repo, href: attempt.data.repoUrl } : null,
-  attempt.data.demoUrl ? { label: messages.demo, href: attempt.data.demoUrl } : null,
-  attempt.data.paperUrl ? { label: messages.paper, href: attempt.data.paperUrl } : null
+  attempt.data.demoUrl ? { label: messages.demo, href: attempt.data.demoUrl } : null
 ].filter(Boolean) as Array<{ label: string; href: string }>;
 ---
 

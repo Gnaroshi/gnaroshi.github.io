@@ -1,20 +1,17 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join, relative, resolve, sep } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { join, resolve, sep } from "node:path";
 
 const projectRoot = process.cwd();
 export const contentFeedRoot = resolve(process.env.CONTENT_FEED_PATH || join(projectRoot, ".content-feed"));
 
 export type ContentFeedManifest = {
   schemaVersion: number;
-  generatedAt?: string | null;
-  contentHash?: string;
-  state?: string;
-  sourceCommits?: { paperLab: string; writing: string };
-  sourceRepository?: string;
-  sourceCommit?: string;
-  counts?: Record<string, number>;
-  entries?: Record<string, number>;
+  generatedAt: string | null;
+  contentHash: string;
+  state: "bootstrap-empty" | "generated" | "invalid";
+  sourceCommits: { paperLab: string; writing: string };
+  counts: Record<string, number>;
 };
 
 export type ContentFeedBuildInfo = {
@@ -64,8 +61,8 @@ export function readContentFeedJson<T>(path: string, fallback: T): T {
 export function getContentFeedRecordCount(kind: "papers" | "blog"): number | undefined {
   const manifest = getContentFeedManifest();
   return kind === "papers"
-    ? manifest.counts?.papers ?? manifest.entries?.papers
-    : manifest.counts?.blogPosts ?? manifest.entries?.blog;
+    ? manifest.counts.papers
+    : manifest.counts.blogPosts;
 }
 
 export function getContentFeedCommit(): string | null {
@@ -103,29 +100,24 @@ export function getWebsiteBuildInfo(): WebsiteBuildInfo {
 
 export function getContentFeedBuildInfo(): ContentFeedBuildInfo {
   const manifest = getContentFeedManifest();
-  const sourceCommits = manifest.sourceCommits ?? (
-    manifest.sourceRepository && manifest.sourceCommit
-      ? { [manifest.sourceRepository]: manifest.sourceCommit }
-      : {}
-  );
   return {
     schemaVersion: manifest.schemaVersion,
     contentFeedCommit: getContentFeedCommit(),
-    generatedAt: manifest.generatedAt ?? null,
-    contentHash: manifest.contentHash ?? null,
-    state: manifest.state ?? "generated",
-    counts: manifest.counts ?? manifest.entries ?? {},
-    sourceCommits
+    generatedAt: manifest.generatedAt,
+    contentHash: manifest.contentHash,
+    state: manifest.state,
+    counts: manifest.counts,
+    sourceCommits: manifest.sourceCommits
   };
 }
 
-export function listContentFeedAssets(root = safePath("assets")): Array<{ path: string; absolutePath: string }> {
-  if (!existsSync(root)) return [];
-  return readdirSync(root, { withFileTypes: true }).flatMap((entry) => {
-    if (entry.name.startsWith(".")) return [];
-    const absolutePath = join(root, entry.name);
-    if (entry.isDirectory()) return listContentFeedAssets(absolutePath);
-    if (!entry.isFile()) return [];
-    return [{ path: relative(safePath("assets"), absolutePath).split(sep).join("/"), absolutePath }];
+export function listContentFeedAssets(): Array<{ path: string; absolutePath: string; mediaType: string }> {
+  const declared = readContentFeedJson<Array<{ publicPath: string; mediaType: string }>>("assets/index.json", []);
+  return declared.map((asset) => {
+    if (!/^\/assets\/[a-f0-9]{64}\/[^/]+$/.test(asset.publicPath)) throw new Error(`Invalid declared asset path: ${asset.publicPath}`);
+    const path = asset.publicPath.slice("/assets/".length);
+    const absolutePath = safePath(asset.publicPath.slice(1));
+    if (!existsSync(absolutePath)) throw new Error(`Declared asset is missing: ${asset.publicPath}`);
+    return { path, absolutePath, mediaType: asset.mediaType };
   });
 }

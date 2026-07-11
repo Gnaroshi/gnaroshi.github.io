@@ -2,16 +2,21 @@ import { readContentFeedJson } from "./contentFeed";
 
 export type ActivityDay = {
   date: string;
-  sessions: number;
-  minutes: number;
+  readingSessions: number;
+  distinctPapersTouched: number;
+  readingMinutes: number;
+  activeDay: boolean;
+  completedPasses: number;
+  revisits: number;
+  implementations: number;
+  deepSessions: number;
   paperIds: string[];
-  passes: string[];
 };
 
 export type PublicGrowthSnapshot = {
   id: string;
   schemaVersion: number;
-  updatedAt: string;
+  generatedAt: string;
   metricEligible: boolean;
   periodStart: string;
   periodEnd: string;
@@ -24,7 +29,7 @@ export type PublicGrowthSnapshot = {
 
 export function getActivityCalendar(): ActivityDay[] {
   return readContentFeedJson<ActivityDay[]>("data/activity-calendar.json", [])
-    .filter((day) => /^\d{4}-\d{2}-\d{2}$/.test(day.date) && day.sessions >= 0 && day.minutes >= 0)
+    .filter((day) => /^\d{4}-\d{2}-\d{2}$/.test(day.date) && day.readingSessions >= 0 && day.readingMinutes >= 0)
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 

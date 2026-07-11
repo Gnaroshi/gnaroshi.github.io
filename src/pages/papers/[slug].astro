@@ -9,23 +9,27 @@ import { getBuildablePapers, getPublishedPapers, type PaperEntry } from "../../u
 import { getImplementationAttemptsForPaper, getPublishedImplementationAttempts } from "../../utils/implementations";
 import { getVisiblePaperReviewForPaper } from "../../utils/paperReviews";
 import { getIslandMessages } from "../../i18n/islands";
-import { getContentSlug } from "../../utils/localizedContent";
+import { getTranslationEntry } from "../../utils/localizedContent";
 
 export async function getStaticPaths() {
-  const papers = await getBuildablePapers();
-  const publicPapers = await getPublishedPapers();
+  const papers = await getBuildablePapers("en");
+  const publicPapers = await getPublishedPapers("en");
+  const allPapers = [...papers, ...await getBuildablePapers("ko")];
 
-  return papers.map((paper) => {
+  return papers.flatMap((paper) => {
     const publicIndex = publicPapers.findIndex((item) => item.id === paper.id);
-
-    return {
-      params: { slug: getContentSlug(paper.id) },
-      props: {
-        paper,
-        newerPaper: publicIndex > 0 ? publicPapers[publicIndex - 1] : undefined,
-        olderPaper: publicIndex >= 0 ? publicPapers[publicIndex + 1] : undefined
-      }
+    const korean = getTranslationEntry(allPapers, paper, "ko");
+    const props = {
+      paper, korean,
+      newerPaper: publicIndex > 0 ? publicPapers[publicIndex - 1] : undefined,
+      olderPaper: publicIndex >= 0 ? publicPapers[publicIndex + 1] : undefined
     };
+    return [{
+      params: { slug: paper.data.canonicalSlug },
+      props: {
+        ...props
+      }
+    }, ...paper.data.aliases.map((alias) => ({ params: { slug: alias }, props: { ...props, redirectTo: `/papers/${paper.data.canonicalSlug}/` } }))];
   });
 }
 
@@ -33,29 +37,35 @@ interface Props {
   paper: PaperEntry;
   newerPaper?: PaperEntry;
   olderPaper?: PaperEntry;
+  korean?: PaperEntry;
+  redirectTo?: string;
 }
 
-const { paper, newerPaper, olderPaper } = Astro.props as Props;
+const { paper, newerPaper, olderPaper, korean, redirectTo } = Astro.props as Props;
+if (redirectTo) return Astro.redirect(redirectTo, 301);
 const { Content } = await render(paper);
 const review = getVisiblePaperReviewForPaper(paper);
-const slug = getContentSlug(paper.id);
+const slug = paper.data.canonicalSlug;
 const implementationAttempts = getImplementationAttemptsForPaper(await getPublishedImplementationAttempts(), slug);
 const islandMessages = getIslandMessages("en");
 const implementationMessages = islandMessages.implementation;
-const alternateUrls = { en: `/papers/${slug}/`, ko: "/ko/papers/", xDefault: `/papers/${slug}/`, translationAvailable: false } as const;
-
-const fallback = "Not recorded yet.";
+const alternateUrls = { en: `/papers/${slug}/`, ko: korean ? `/ko/papers/${korean.data.canonicalSlug}/` : "/ko/papers/", xDefault: `/papers/${slug}/`, translationAvailable: Boolean(korean) } as const;
 const futureMe = paper.data.futureMe;
-const hasFutureMe =
-  futureMe.oneThingToRemember || futureMe.whyItMatters || futureMe.whenToUseThis || futureMe.whatToRevisit || futureMe.warning;
+const hasFutureMe = Boolean(futureMe && (futureMe.oneThingToRemember || futureMe.whyItMatters || futureMe.whenToUseThis || futureMe.whatToRevisit || futureMe.warning));
+const structuredItems = [
+  ["One-line summary", paper.data.oneLineSummary], ["Core question", paper.data.coreQuestion], ["Core idea", paper.data.coreIdea],
+  ["Main formula", paper.data.mainFormula], ["Formula interpretation", paper.data.formulaInterpretation], ["Experiment takeaway", paper.data.experimentTakeaway]
+].filter((item): item is [string, string] => Boolean(item[1]));
+const critiqueItems = [["My connection", paper.data.myConnection], ["Next action", paper.data.nextAction]].filter((item): item is [string, string] => Boolean(item[1]));
+const hasBody = Boolean(paper.body?.trim());
 ---
 
 <BaseLayout title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/papers/${slug}/`} alternateUrls={alternateUrls} type="article" paperLab>
   <article class="paper-detail">
-    <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
+    {!korean && <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Korean translation unavailable</p>}
     <PaperDetailHeader paper={paper} />
 
-    <section class="learning-panel learning-panel--accent" aria-labelledby="oral-exam-heading">
+    {(paper.data.oralExams?.length ?? 0) > 0 && <section class="learning-panel learning-panel--accent" aria-labelledby="oral-exam-heading">
       <div>
         <p class="eyebrow">Retrieval practice</p>
         <h2 id="oral-exam-heading">Explain this paper aloud</h2>
@@ -64,11 +74,11 @@ const hasFutureMe =
       <div class="paper-card__links">
         <a href={`/papers/${slug}/exam/live/`}>View oral exam record</a>
       </div>
-    </section>
+    </section>}
 
     {review && <PaperReviewCard review={review} />}
 
-    {hasFutureMe && (
+    {hasFutureMe && futureMe && (
       <section class="learning-panel learning-panel--accent" aria-labelledby="future-me-heading">
         <div>
           <p class="eyebrow">For Future Me</p>
@@ -109,71 +119,29 @@ const hasFutureMe =
       </section>
     )}
 
-    <section class="section" aria-labelledby="paper-summary-heading">
+    {structuredItems.length > 0 && <section class="section" aria-labelledby="paper-summary-heading">
       <SectionHeader id="paper-summary-heading" title="Structured reading note" description="The central ideas, evidence, and interpretation captured during reading." />
       <div class="paper-detail-grid">
-        <div>
-          <h3>One-line summary</h3>
-          <p>{paper.data.oneLineSummary || fallback}</p>
-        </div>
-        <div>
-          <h3>Core question</h3>
-          <p>{paper.data.coreQuestion || fallback}</p>
-        </div>
-        <div>
-          <h3>Core idea</h3>
-          <p>{paper.data.coreIdea || fallback}</p>
-        </div>
-        <div>
-          <h3>Main formula</h3>
-          <p>{paper.data.mainFormula || fallback}</p>
-        </div>
-        <div>
-          <h3>Formula interpretation</h3>
-          <p>{paper.data.formulaInterpretation || fallback}</p>
-        </div>
-        <div>
-          <h3>Experiment takeaway</h3>
-          <p>{paper.data.experimentTakeaway || fallback}</p>
-        </div>
+        {structuredItems.map(([title, value]) => <div><h3>{title}</h3><p>{value}</p></div>)}
       </div>
-    </section>
+    </section>}
 
-    <section class="section" aria-labelledby="paper-critique-heading">
+    {((paper.data.strengths?.length ?? 0) > 0 || (paper.data.weaknesses?.length ?? 0) > 0 || critiqueItems.length > 0) && <section class="section" aria-labelledby="paper-critique-heading">
       <SectionHeader id="paper-critique-heading" title="Critique and follow-up" />
       <div class="paper-detail-grid">
-        <div>
+        {(paper.data.strengths?.length ?? 0) > 0 && <div>
           <h3>Strengths</h3>
-          {paper.data.strengths.length > 0 ? (
-            <ul>
-              {paper.data.strengths.map((item) => <li>{item}</li>)}
-            </ul>
-          ) : (
-            <p>{fallback}</p>
-          )}
-        </div>
-        <div>
+          <ul>{paper.data.strengths?.map((item) => <li>{item}</li>)}</ul>
+        </div>}
+        {(paper.data.weaknesses?.length ?? 0) > 0 && <div>
           <h3>Weaknesses</h3>
-          {paper.data.weaknesses.length > 0 ? (
-            <ul>
-              {paper.data.weaknesses.map((item) => <li>{item}</li>)}
-            </ul>
-          ) : (
-            <p>{fallback}</p>
-          )}
-        </div>
-        <div>
-          <h3>My connection</h3>
-          <p>{paper.data.myConnection || fallback}</p>
-        </div>
-        <div>
-          <h3>Next action</h3>
-          <p>{paper.data.nextAction || fallback}</p>
-        </div>
+          <ul>{paper.data.weaknesses?.map((item) => <li>{item}</li>)}</ul>
+        </div>}
+        {critiqueItems.map(([title, value]) => <div><h3>{title}</h3><p>{value}</p></div>)}
       </div>
-    </section>
+    </section>}
 
-    <section class="section" aria-labelledby="paper-tags-heading">
+    {(paper.data.tags.length > 0 || paper.data.relatedTopics.length > 0) && <section class="section" aria-labelledby="paper-tags-heading">
       <SectionHeader id="paper-tags-heading" title="Tags and topics" />
       <div class="paper-topic-group">
         <div class="badge-row">
@@ -185,7 +153,7 @@ const hasFutureMe =
           </div>
         )}
       </div>
-    </section>
+    </section>}
 
     {implementationAttempts.length > 0 && (
       <section class="section" aria-labelledby="paper-implementations-heading">
@@ -200,17 +168,17 @@ const hasFutureMe =
       </section>
     )}
 
-    <section class="section" aria-labelledby="paper-body-heading">
+    {hasBody && <section class="section" aria-labelledby="paper-body-heading">
       <SectionHeader id="paper-body-heading" title="Full note" description="Pass-by-pass observations, questions, and implementation notes." />
       <div class="prose">
         <Content />
       </div>
-    </section>
+    </section>}
 
     <nav class="paper-nav" aria-label="Paper note navigation">
       <div>
         {olderPaper ? (
-          <a href={`/papers/${getContentSlug(olderPaper.id)}/`}>
+          <a href={`/papers/${olderPaper.data.canonicalSlug}/`}>
             <span>Older paper</span>
             {olderPaper.data.title}
           </a>
@@ -220,7 +188,7 @@ const hasFutureMe =
       </div>
       <div>
         {newerPaper ? (
-          <a href={`/papers/${getContentSlug(newerPaper.id)}/`}>
+          <a href={`/papers/${newerPaper.data.canonicalSlug}/`}>
             <span>Newer paper</span>
             {newerPaper.data.title}
           </a>

@@ -43,12 +43,14 @@ npm run test:e2e
 npm run test:a11y
 npm run test:smoke
 npm run test:visual
+npm run test:feed-contract
 npm run check:i18n
 npm run check:links
 ```
 
 - `content:pull`: clone or fast-forward the public feed in ignored `.content-feed/`.
-- `content:check`: validate the manifest version, directory contract, and source commit metadata.
+- `content:check`: run the canonical bundled Content Feed JSON Schema and privacy validator.
+- `test:feed-contract`: build against valid fixtures and require invalid feeds to fail.
 - `dev`, `check`, and `build`: fail before Astro starts when the feed is unavailable or incompatible.
 - `check:links`: run after `build`.
 - `test:e2e`: automatically discovers non-visual, non-accessibility Playwright tests by tag.
@@ -85,11 +87,13 @@ Studio-owned:
 
 The website may format dates, filter public records, calculate reading time for display, and adapt feed records to UI props. It must display canonical Growth snapshots, weekly reviews, activity, and graph data from the feed without recomputing private-source metrics.
 
+Do not manufacture missing evidence in adapters. No synthetic review dimensions/history, badges, effort estimates, reading completion, translation status, graph fallback types, durations, or epoch dates.
+
 ## Content Loading
 
 `src/content.config.ts` maps feed schema version 1 into the existing Astro presentation types. Local `src/content/projects/` remains website-owned. Do not recreate local blog, paper, queue, or implementation source directories.
 
-The initial `bootstrap-empty` feed is valid only when every declared entry count is zero. Generated feeds must include `blog/`, `papers/`, and `data/`.
+The initial `bootstrap-empty` feed is valid only when every declared count is zero, eligibility is false, and generated research claims are absent. Generated feeds must pass the canonical validator.
 
 Every production build exposes a minimal schema-v1 provenance record through meta tags and `/build-info.json`. It includes website/feed commits, content hash, feed schema, workflow run/attempt, build time, and environment. Development-only diagnostics use `/dev-diagnostics/content-feed/` and must not be emitted in production.
 
@@ -109,6 +113,9 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Avoid unnecessary dependencies and large chart libraries.
 - Do not commit `.content-feed/`, `dist/`, credentials, local caches, or machine-specific files.
 - Do not write into the content-feed checkout.
+- Preserve stable IDs separately from `canonicalSlug`; render all declared aliases as static redirects.
+- Emit hreflang only for real public translation pairs and return unavailable locale switches to the collection index.
+- Serve only declared content-addressed assets with supported media types.
 
 ## Design And Accessibility
 
@@ -142,6 +149,7 @@ npm run build
 npm run check:i18n
 npm run check:links
 npm run test:smoke
+npm run test:feed-contract
 ```
 
 For route or interaction changes, also run `npm run test:e2e` and `npm run test:a11y`.

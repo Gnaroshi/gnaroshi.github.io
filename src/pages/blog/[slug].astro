@@ -1,8 +1,9 @@
 ---
 import BlogPostView from "../../views/BlogPostView.astro";
 import { getBuildableBlogPosts, getBlogPostSlug, type BlogPost } from "../../utils/content";
-export async function getStaticPaths() { return (await getBuildableBlogPosts("en")).map((post) => ({ params: { slug: getBlogPostSlug(post) }, props: { post } })); }
-interface Props { post: BlogPost }
-const { post } = Astro.props;
+export async function getStaticPaths() { return (await getBuildableBlogPosts("en")).flatMap((post) => [{ params: { slug: getBlogPostSlug(post) }, props: { post } }, ...post.data.aliases.map((alias) => ({ params: { slug: alias }, props: { post, redirectTo: `/blog/${getBlogPostSlug(post)}/` } }))]); }
+interface Props { post: BlogPost; redirectTo?: string }
+const { post, redirectTo } = Astro.props;
+if (redirectTo) return Astro.redirect(redirectTo, 301);
 ---
 <BlogPostView locale="en" post={post} />

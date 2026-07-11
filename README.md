@@ -41,11 +41,12 @@ npm run test:e2e
 npm run test:a11y
 npm run test:smoke
 npm run test:visual
+npm run test:feed-contract
 npm run check:i18n
 npm run check:links
 ```
 
-`dev`, `check`, and `build` validate the feed before Astro starts. Missing manifests, unsupported schema versions, invalid source commit metadata, and incomplete generated directory structures fail with a direct error.
+`dev`, `check`, and `build` run the feed's canonical JSON Schema validator before Astro starts. Count/hash drift, schema or privacy violations, broken relations, route/alias collisions, and undeclared assets fail with a direct error.
 
 ## Content Import
 

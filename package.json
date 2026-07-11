@@ -14,6 +14,7 @@
     "test:a11y": "playwright test --grep \"@a11y\"",
     "test:smoke": "playwright test --grep \"@smoke\"",
     "test:visual": "playwright test --grep \"@visual-v3\"",
+    "test:feed-contract": "node scripts/test-content-feed-fixtures.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:i18n": "node scripts/check-i18n.mjs"
   },
