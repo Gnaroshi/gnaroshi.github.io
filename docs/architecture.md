@@ -72,14 +72,17 @@ Feed access uses Node filesystem APIs only at build time. Browser bundles receiv
 
 ## Build Provenance
 
-The imported feed checkout commit is exposed as:
+The public build provenance contract is exposed as:
 
 - `<meta name="content-feed-commit">` on every page.
-- `/build-info.json` with website commit, imported feed commit, and UTC build time.
-- `/dev-diagnostics/content-feed/` during development only.
+- `<meta name="website-commit">` on every page.
+- `/build-info.json` schema version 1 with website/feed commits, feed content hash and schema, UTC build time, workflow run/attempt, and environment.
+- `/dev-diagnostics/content-feed/` with public source counts and feed state during development only.
+
+The endpoint contains no private source paths, private IDs, credentials, or unpublished source metadata.
 
 ## Deployment
 
-GitHub Actions checks out the website, checks out the public feed into `.content-feed`, installs dependencies, validates the feed, builds Astro, and deploys `dist/` to GitHub Pages.
+GitHub Actions checks out the website and an explicitly resolved public feed commit into `.content-feed`, validates all static contracts, runs a focused route smoke suite, and deploys `dist/` to GitHub Pages. A post-deploy verifier compares live provenance and navigation with the exact inputs. PR CI never deploys.
 
 The Astro site remains rooted at `https://gnaroshi.dev` with no repository subpath `base`.

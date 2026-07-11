@@ -1,0 +1,91 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate presentation application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout website
+        uses: actions/checkout@v7
+
+      - name: Checkout public content feed
+        uses: actions/checkout@v7
+        with:
+          repository: Gnaroshi/gnaroshi-content-feed
+          ref: main
+          path: .content-feed
+          persist-credentials: false
+
+      - name: Record CI provenance
+        run: |
+          echo "WEBSITE_COMMIT=$(git rev-parse HEAD)" >> "${GITHUB_ENV}"
+          echo "CONTENT_FEED_COMMIT=$(git -C .content-feed rev-parse HEAD)" >> "${GITHUB_ENV}"
+          echo "BUILD_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "${GITHUB_ENV}"
+          echo "DEPLOYMENT_ENVIRONMENT=ci" >> "${GITHUB_ENV}"
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Prepare CI logs
+        run: mkdir -p artifacts/ci-logs
+
+      - name: Validate content feed
+        run: npm run content:check 2>&1 | tee artifacts/ci-logs/content-check.log
+
+      - name: Type-check Astro application
+        run: npm run check 2>&1 | tee artifacts/ci-logs/astro-check.log
+
+      - name: Build static site
+        run: npm run build 2>&1 | tee artifacts/ci-logs/build.log
+
+      - name: Validate localization
+        run: npm run check:i18n 2>&1 | tee artifacts/ci-logs/i18n.log
+
+      - name: Validate generated links
+        run: npm run check:links 2>&1 | tee artifacts/ci-logs/links.log
+
+      - name: Run all non-visual E2E tests
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: "1"
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/e2e
+          PLAYWRIGHT_OUTPUT_DIR: test-results/e2e
+        run: npm run test:e2e 2>&1 | tee artifacts/ci-logs/e2e.log
+
+      - name: Run accessibility tests
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: "1"
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/a11y
+          PLAYWRIGHT_OUTPUT_DIR: test-results/a11y
+        run: npm run test:a11y 2>&1 | tee artifacts/ci-logs/a11y.log
+
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ci-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 7
+          path: |
+            artifacts/ci-logs/
+            playwright-report/
+            test-results/

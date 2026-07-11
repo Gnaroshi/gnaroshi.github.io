@@ -38,6 +38,7 @@ const filenameFor = (route: string) => route === "/"
     ? "ko-home"
     : route.replace(/^\//, "").replaceAll("/", "-").replace(/-$/, "");
 
+test.describe("visual system v3", { tag: "@visual-v3" }, () => {
 test.beforeAll(async () => {
   await rm(visualRoot, { recursive: true, force: true });
   await mkdir(visualRoot, { recursive: true });
@@ -169,4 +170,5 @@ test("hero and media remain measurable and non-overlapping", async ({ page }) =>
       }
     }
   }
+});
 });

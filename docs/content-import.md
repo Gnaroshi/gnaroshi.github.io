@@ -62,4 +62,15 @@ Files under `.content-feed/assets/` are emitted by the static `/assets/[...path]
 
 ## Provenance
 
-The actual feed checkout SHA is resolved with `git rev-parse HEAD`, or from `CONTENT_FEED_COMMIT` in CI. It is recorded in page metadata and `/build-info.json`.
+The actual feed checkout SHA is resolved with `git rev-parse HEAD`, or from `CONTENT_FEED_COMMIT` in CI. It is recorded in page metadata and `/build-info.json` together with the manifest `contentHash` and schema version.
+
+Production manual dispatch accepts both `feed_ref` and `feed_commit`. `feed_ref` is a human-friendly branch, tag, or commit. `feed_commit` is an optional immutable 40-character SHA, takes precedence, and must exactly match the checkout. Studio publishing should always pass `feed_commit`; a moving branch name alone is not a deterministic release input.
+
+```bash
+gh workflow run deploy.yml \
+  --repo Gnaroshi/gnaroshi.github.io \
+  -f feed_commit=<FULL_SHA> \
+  -f feed_ref=<FULL_SHA>
+```
+
+The public feed needs no PAT because it is public. Credentials used to dispatch the website workflow belong only to Studio, a GitHub App, or the operator's authenticated local `gh` session.

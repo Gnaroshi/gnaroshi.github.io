@@ -11,6 +11,8 @@ Before structural changes, read:
 - `docs/architecture.md`
 - `docs/content-import.md`
 - `docs/deployment.md`
+- `docs/release-integrity.md`
+- `docs/rollback.md`
 - `docs/local-development.md`
 - `docs/design.md`
 - `docs/i18n.md`
@@ -39,6 +41,7 @@ npm run check
 npm run content:check
 npm run test:e2e
 npm run test:a11y
+npm run test:smoke
 npm run test:visual
 npm run check:i18n
 npm run check:links
@@ -48,6 +51,8 @@ npm run check:links
 - `content:check`: validate the manifest version, directory contract, and source commit metadata.
 - `dev`, `check`, and `build`: fail before Astro starts when the feed is unavailable or incompatible.
 - `check:links`: run after `build`.
+- `test:e2e`: automatically discovers non-visual, non-accessibility Playwright tests by tag.
+- `test:smoke`: runs the focused production route/provenance subset.
 
 Use `CONTENT_FEED_PATH` for an existing local public-feed checkout. Never point it to private paper or writing repositories.
 
@@ -86,7 +91,7 @@ The website may format dates, filter public records, calculate reading time for 
 
 The initial `bootstrap-empty` feed is valid only when every declared entry count is zero. Generated feeds must include `blog/`, `papers/`, and `data/`.
 
-Every production build exposes website and imported-feed commits through meta tags and `/build-info.json`. Development-only diagnostics use `/dev-diagnostics/content-feed/` and must not be emitted in production.
+Every production build exposes a minimal schema-v1 provenance record through meta tags and `/build-info.json`. It includes website/feed commits, content hash, feed schema, workflow run/attempt, build time, and environment. Development-only diagnostics use `/dev-diagnostics/content-feed/` and must not be emitted in production.
 
 ## Routing
 
@@ -123,6 +128,8 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Do not add `apps/api`, a database, OAuth, or a server runtime.
 - Do not recompute canonical Growth, weekly review, or graph outputs from page content.
 - Do not set an Astro repository subpath base.
+- Do not weaken exact `feed_commit` verification, post-deploy verification, or the shared `pages-production` concurrency group.
+- Do not add repository tokens to trigger feed-only releases; Studio or an authenticated local `gh` session dispatches the public workflow.
 
 ## Verification
 
@@ -134,6 +141,7 @@ npm run check
 npm run build
 npm run check:i18n
 npm run check:links
+npm run test:smoke
 ```
 
 For route or interaction changes, also run `npm run test:e2e` and `npm run test:a11y`.

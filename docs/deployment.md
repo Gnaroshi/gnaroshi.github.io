@@ -1,54 +1,83 @@
 # GitHub Pages Deployment
 
-## Workflow
+## Release Inputs
 
-`.github/workflows/deploy.yml` runs on pushes to `main` and manual dispatches.
+Every production artifact is defined by two immutable inputs:
 
-The build job:
+- a `gnaroshi.github.io` commit
+- a `gnaroshi-content-feed` commit
 
-1. Checks out `Gnaroshi/gnaroshi.github.io`.
-2. Checks out public `Gnaroshi/gnaroshi-content-feed` into `.content-feed/`.
-3. Records the website SHA, feed checkout SHA, and UTC build timestamp.
-4. Installs dependencies with `npm ci`.
-5. Runs `npm run content:check`.
-6. Runs `npm run build`.
-7. Uploads `dist/` as the GitHub Pages artifact.
-
-The deploy job publishes that artifact with GitHub Pages OIDC permissions. A final verification job fetches `https://gnaroshi.dev/build-info.json` and fails unless `websiteCommit` matches the workflow's `github.sha`.
-
-## Manual Feed Ref
-
-`workflow_dispatch` accepts `feed_ref`, defaulting to `main`. It may be a branch, tag, or commit available in the public feed repository.
-
-## Credentials
-
-The content feed is public. Do not configure a cross-repository PAT, private repository deploy key, or content-source token. The workflow does not access private paper or writing repositories.
-
-## Local Verification
+Pushes to website `main` deploy with feed `main` resolved and recorded at checkout time. Feed-only releases should dispatch `.github/workflows/deploy.yml` with an exact SHA:
 
 ```bash
-npm run content:pull
-npm install
-npm run content:check
-npm run check
-npm run build
-npm run check:links
+gh workflow run deploy.yml \
+  --repo Gnaroshi/gnaroshi.github.io \
+  -f feed_commit=<FULL_SHA> \
+  -f feed_ref=<FULL_SHA>
 ```
 
-Confirm `dist/build-info.json` contains `websiteCommit`, `contentFeedCommit`, and `builtAt`, and that production output does not contain `dist/dev-diagnostics/content-feed/index.html`.
+`feed_commit` wins when both inputs are present. The build fails unless it is a lowercase full SHA and exactly equals `git -C .content-feed rev-parse HEAD`. Studio should use this flow after pushing the public feed; the website does not need a new commit.
 
-## GitHub Pages Settings
+## Production Workflow
 
-- Settings -> Pages -> Source: **GitHub Actions**
+The `pages-production` concurrency group serializes deploy and rollback workflows. GitHub keeps at most one pending run, so a superseded pending artifact cannot deploy after a newer request.
+
+The build job runs:
+
+1. Checkout website and requested public feed.
+2. Validate and record website SHA, feed SHA, feed schema, and manifest content hash.
+3. `npm ci` and Chromium installation without a persisted browser cache.
+4. `npm run content:check`.
+5. `npm run check`.
+6. `npm run build`.
+7. `npm run check:i18n`.
+8. `npm run check:links`.
+9. `npm run test:smoke` against the existing production build.
+10. Upload and deploy the exact `dist/` artifact through the `github-pages` environment.
+
+Full visual regression remains a PR/manual QA task. Failed deploy checks upload logs, Playwright reports, screenshots, and traces for seven days.
+
+## Post-Deploy Verification
+
+`scripts/verify-deployment.mjs` retries with bounded exponential backoff and verifies:
+
+- `/build-info.json` schema version 1
+- exact website and feed commits
+- feed content hash and schema version
+- workflow run ID and attempt
+- `environment: production`
+- HTTP success for `/`, `/ko/`, `/research/`, and `/papers/`
+- the stable primary-navigation signature
+- absence of known scaffold phrases
+
+Failure marks the workflow failed, prints expected and actual provenance, retains the deployment URL in the run, and prints a rollback command. A Pages upload or successful Git push is not deployment proof; only the post-deploy verification job proves the live result.
+
+## Pull Request CI
+
+`.github/workflows/ci.yml` runs on pull requests and manual dispatch. It checks out the public feed, runs all static checks, automatically discovers all non-visual E2E tests, and runs axe accessibility tests. It has read-only repository permission and cannot deploy.
+
+Failure artifacts contain `artifacts/ci-logs/`, `playwright-report/`, and `test-results/`. Playwright browsers are installed per run instead of restoring an unsafe cross-version browser cache.
+
+## Stale-Site Diagnosis
+
+```bash
+gh api repos/Gnaroshi/gnaroshi.github.io/commits/main --jq .sha
+gh api repos/Gnaroshi/gnaroshi-content-feed/commits/main --jq .sha
+gh run list --repo Gnaroshi/gnaroshi.github.io --workflow deploy.yml --limit 5
+gh api repos/Gnaroshi/gnaroshi.github.io/pages
+curl -fsSL https://gnaroshi.dev/build-info.json
+```
+
+Compare website main SHA, workflow head SHA, Pages artifact/run, and live `websiteCommit`. Then compare the requested/resolved feed SHA with live `contentFeedCommit`. A successful build with a failed or blocked `github-pages` environment job leaves the previous site live.
+
+## Manual GitHub Settings
+
+- Settings -> Pages -> Build and deployment -> Source: **GitHub Actions**
 - Custom domain: `gnaroshi.dev`
-- Enforce HTTPS after certificate provisioning
+- Enforce HTTPS: enabled after certificate provisioning
+- Environment: `github-pages` must allow deployments from `main` and manual rollback runs
+- Actions: workflow permissions must permit Pages OIDC; no cross-repository PAT is needed
 
-`public/CNAME` must contain exactly `gnaroshi.dev`. `astro.config.mjs` must keep `site: "https://gnaroshi.dev"` and no repository subpath `base`.
+`public/CNAME` must contain exactly `gnaroshi.dev`. `astro.config.mjs` must keep `site: "https://gnaroshi.dev"` with no repository subpath base.
 
-## Failure Modes
-
-- Missing `manifest.json`: verify the feed checkout step and path.
-- Unsupported schema version: update the website adapter before deploying the new feed contract.
-- Missing directories: publish a complete generated feed with `blog/`, `papers/`, and `data/`, including for the zero-entry bootstrap state.
-- Wrong build provenance: inspect the feed checkout ref and `/build-info.json`.
-- Route 404: confirm the latest Pages artifact and existing Astro static path.
+See `docs/release-integrity.md` for provenance interpretation and `docs/rollback.md` for recovery.

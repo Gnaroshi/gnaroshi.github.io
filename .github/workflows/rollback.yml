@@ -1,19 +1,15 @@
-name: Deploy to GitHub Pages
+name: Roll back public website deployment
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
-      feed_ref:
-        description: Human-friendly branch, tag, or commit from the public content feed
-        required: false
-        default: main
+      website_ref:
+        description: Exact website commit or immutable tag to deploy
+        required: true
         type: string
       feed_commit:
-        description: Optional exact 40-character content-feed commit; takes precedence over feed_ref
-        required: false
-        default: ""
+        description: Exact 40-character public content-feed commit
+        required: true
         type: string
 
 permissions:
@@ -27,52 +23,56 @@ concurrency:
 
 jobs:
   build:
-    name: Build and validate production artifact
+    name: Rebuild exact public inputs
     runs-on: ubuntu-latest
     outputs:
       website_commit: ${{ steps.provenance.outputs.website_commit }}
       content_feed_commit: ${{ steps.provenance.outputs.content_feed_commit }}
       content_hash: ${{ steps.provenance.outputs.content_hash }}
-      feed_schema_version: ${{ steps.provenance.outputs.feed_schema_version }}
     steps:
-      - name: Checkout website
+      - name: Checkout current deployment tooling
         uses: actions/checkout@v7
+        with:
+          ref: main
+          path: .deployment-tooling
 
-      - name: Checkout requested public content feed
+      - name: Checkout requested website
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.website_ref }}
+          path: site
+
+      - name: Checkout exact public content feed
         uses: actions/checkout@v7
         with:
           repository: Gnaroshi/gnaroshi-content-feed
-          ref: ${{ inputs.feed_commit || inputs.feed_ref || 'main' }}
-          path: .content-feed
+          ref: ${{ inputs.feed_commit }}
+          path: site/.content-feed
           persist-credentials: false
 
-      - name: Pin and record build provenance
+      - name: Validate and record rollback provenance
         id: provenance
         env:
-          REQUESTED_FEED_COMMIT: ${{ inputs.feed_commit || '' }}
+          REQUESTED_FEED_COMMIT: ${{ inputs.feed_commit }}
         run: |
-          website_commit=$(git rev-parse HEAD)
-          content_feed_commit=$(git -C .content-feed rev-parse HEAD)
-          content_hash=$(jq -r '.contentHash // empty' .content-feed/manifest.json)
-          feed_schema_version=$(jq -r '.schemaVersion // empty' .content-feed/manifest.json)
+          website_commit=$(git -C site rev-parse HEAD)
+          content_feed_commit=$(git -C site/.content-feed rev-parse HEAD)
+          content_hash=$(jq -r '.contentHash // empty' site/.content-feed/manifest.json)
 
-          if [ -n "${REQUESTED_FEED_COMMIT}" ]; then
-            if ! [[ "${REQUESTED_FEED_COMMIT}" =~ ^[0-9a-f]{40}$ ]]; then
-              echo "feed_commit must be an exact lowercase 40-character SHA" >&2
-              exit 1
-            fi
-            if [ "${content_feed_commit}" != "${REQUESTED_FEED_COMMIT}" ]; then
-              echo "Requested feed ${REQUESTED_FEED_COMMIT}, checked out ${content_feed_commit}" >&2
-              exit 1
-            fi
+          if ! [[ "${REQUESTED_FEED_COMMIT}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "feed_commit must be an exact lowercase 40-character SHA" >&2
+            exit 1
           fi
-
+          if [ "${content_feed_commit}" != "${REQUESTED_FEED_COMMIT}" ]; then
+            echo "Requested feed ${REQUESTED_FEED_COMMIT}, checked out ${content_feed_commit}" >&2
+            exit 1
+          fi
           if ! [[ "${content_hash}" =~ ^[0-9a-f]{64}$ ]]; then
             echo "Feed manifest contentHash is missing or malformed" >&2
             exit 1
           fi
-          if [ "${feed_schema_version}" != "1" ]; then
-            echo "Unsupported feed schema ${feed_schema_version}" >&2
+          if [ "$(jq -r '.schemaVersion // empty' site/.content-feed/manifest.json)" != "1" ]; then
+            echo "Rollback feed uses an unsupported schema" >&2
             exit 1
           fi
 
@@ -83,67 +83,73 @@ jobs:
           echo "website_commit=${website_commit}" >> "${GITHUB_OUTPUT}"
           echo "content_feed_commit=${content_feed_commit}" >> "${GITHUB_OUTPUT}"
           echo "content_hash=${content_hash}" >> "${GITHUB_OUTPUT}"
-          echo "feed_schema_version=${feed_schema_version}" >> "${GITHUB_OUTPUT}"
 
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: site/package-lock.json
 
       - name: Install dependencies
+        working-directory: site
         run: npm ci
 
-      - name: Install Chromium for production smoke tests
+      - name: Install Chromium
+        working-directory: site
         run: npx playwright install --with-deps chromium
 
       - name: Prepare diagnostic logs
+        working-directory: site
         run: mkdir -p artifacts/ci-logs
 
-      - name: Validate content feed
-        run: npm run content:check 2>&1 | tee artifacts/ci-logs/content-check.log
+      - name: Run rollback validation
+        working-directory: site
+        run: |
+          npm run content:check 2>&1 | tee artifacts/ci-logs/content-check.log
+          npm run check 2>&1 | tee artifacts/ci-logs/astro-check.log
+          npm run build 2>&1 | tee artifacts/ci-logs/build.log
+          npm run check:i18n 2>&1 | tee artifacts/ci-logs/i18n.log
+          npm run check:links 2>&1 | tee artifacts/ci-logs/links.log
 
-      - name: Type-check Astro application
-        run: npm run check 2>&1 | tee artifacts/ci-logs/astro-check.log
-
-      - name: Build static site
-        run: npm run build 2>&1 | tee artifacts/ci-logs/build.log
-
-      - name: Validate localization
-        run: npm run check:i18n 2>&1 | tee artifacts/ci-logs/i18n.log
-
-      - name: Validate generated links
-        run: npm run check:links 2>&1 | tee artifacts/ci-logs/links.log
-
-      - name: Run focused production smoke tests
+      - name: Run focused smoke tests when supported by the target
+        working-directory: site
         env:
           PLAYWRIGHT_USE_EXISTING_BUILD: "1"
           PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/smoke
           PLAYWRIGHT_OUTPUT_DIR: test-results/smoke
-        run: npm run test:smoke 2>&1 | tee artifacts/ci-logs/smoke.log
+        run: npm run --if-present test:smoke 2>&1 | tee artifacts/ci-logs/smoke.log
+
+      - name: Write versioned rollback provenance
+        run: node .deployment-tooling/scripts/write-build-info.mjs --site-dir site
+
+      - name: Require deterministic build provenance contract
+        working-directory: site
+        run: |
+          node -e 'const info=require("./dist/build-info.json"); if(info.schemaVersion!==1||info.websiteCommit!==process.env.WEBSITE_COMMIT||info.contentFeedCommit!==process.env.CONTENT_FEED_COMMIT||info.environment!=="production") process.exit(1)'
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload GitHub Pages artifact
+      - name: Upload rollback Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist
+          path: site/dist
 
       - name: Upload failure diagnostics
         if: failure()
         uses: actions/upload-artifact@v6
         with:
-          name: deploy-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          name: rollback-failure-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: ignore
-          retention-days: 7
+          retention-days: 14
           path: |
-            artifacts/ci-logs/
-            playwright-report/
-            test-results/
+            site/artifacts/ci-logs/
+            site/playwright-report/
+            site/test-results/
 
   deploy:
-    name: Deploy exact Pages artifact
+    name: Deploy rollback artifact
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -157,14 +163,14 @@ jobs:
         uses: actions/deploy-pages@v5
 
   verify:
-    name: Verify live production provenance and routes
+    name: Verify rollback provenance and routes
     needs: [build, deploy]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout verification tooling
         uses: actions/checkout@v7
 
-      - name: Verify deployed site
+      - name: Verify deployed rollback
         env:
           DEPLOYMENT_URL: https://gnaroshi.dev
           EXPECTED_WEBSITE_COMMIT: ${{ needs.build.outputs.website_commit }}
@@ -173,11 +179,11 @@ jobs:
           EXPECTED_WORKFLOW_RUN_ID: ${{ github.run_id }}
           EXPECTED_WORKFLOW_RUN_ATTEMPT: ${{ github.run_attempt }}
           EXPECTED_ENVIRONMENT: production
+          SKIP_NAVIGATION_SIGNATURE: "true"
         run: node scripts/verify-deployment.mjs
 
-      - name: Record deployment URL
+      - name: Record rollback result
         run: |
-          echo "Deployment URL: ${{ needs.deploy.outputs.page_url }}" >> "${GITHUB_STEP_SUMMARY}"
-          echo "Custom domain: https://gnaroshi.dev" >> "${GITHUB_STEP_SUMMARY}"
+          echo "Rollback deployment URL: ${{ needs.deploy.outputs.page_url }}" >> "${GITHUB_STEP_SUMMARY}"
           echo "Website commit: ${{ needs.build.outputs.website_commit }}" >> "${GITHUB_STEP_SUMMARY}"
           echo "Content feed commit: ${{ needs.build.outputs.content_feed_commit }}" >> "${GITHUB_STEP_SUMMARY}"
