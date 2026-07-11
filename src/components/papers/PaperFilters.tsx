@@ -49,7 +49,7 @@ function sortPapers(papers: PaperRecord[], sortBy: string): PaperRecord[] {
   return [...papers].sort((a, b) => {
     if (sortBy === "title") return a.title.localeCompare(b.title);
     if (sortBy === "difficulty") return b.difficulty - a.difficulty || a.title.localeCompare(b.title);
-    if (sortBy === "reading-time") return b.readingTimeMinutes - a.readingTimeMinutes || a.title.localeCompare(b.title);
+    if (sortBy === "reading-time") return (b.readingTimeMinutes ?? 0) - (a.readingTimeMinutes ?? 0) || a.title.localeCompare(b.title);
     if (sortBy === "depth") return depthRank[b.depth] - depthRank[a.depth] || a.title.localeCompare(b.title);
 
     const aDate = a.readDate ?? "0000-00-00";

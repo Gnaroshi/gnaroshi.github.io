@@ -1,5 +1,4 @@
 import type { PaperEntry } from "./papers";
-import { getContentSlug } from "./localizedContent";
 
 export type FormulaRecallRecord = {
   id: string;
@@ -8,7 +7,6 @@ export type FormulaRecallRecord = {
   mainFormula: string;
   formulaInterpretation: string;
   formulaTerms: Array<{ symbol: string; meaning: string }>;
-  formulaRecallPrompts: string[];
   tags: string[];
 };
 
@@ -16,20 +14,18 @@ export function hasFormulaRecallMaterial(paper: PaperEntry): boolean {
   return Boolean(
     paper.data.mainFormula ||
       paper.data.formulaInterpretation ||
-      paper.data.formulaTerms.length > 0 ||
-      paper.data.formulaRecallPrompts.length > 0
+      (paper.data.formulaTerms?.length ?? 0) > 0
   );
 }
 
 export function toFormulaRecallRecord(paper: PaperEntry): FormulaRecallRecord {
   return {
-    id: getContentSlug(paper.id),
+    id: paper.data.canonicalSlug,
     title: paper.data.title,
-    href: `/papers/${getContentSlug(paper.id)}/`,
-    mainFormula: paper.data.mainFormula,
-    formulaInterpretation: paper.data.formulaInterpretation,
-    formulaTerms: paper.data.formulaTerms,
-    formulaRecallPrompts: paper.data.formulaRecallPrompts,
+    href: `/papers/${paper.data.canonicalSlug}/`,
+    mainFormula: paper.data.mainFormula ?? "",
+    formulaInterpretation: paper.data.formulaInterpretation ?? "",
+    formulaTerms: paper.data.formulaTerms ?? [],
     tags: paper.data.tags
   };
 }

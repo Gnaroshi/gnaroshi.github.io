@@ -1,17 +1,16 @@
 ---
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import { getBuildablePapers, type PaperEntry } from "../../../../utils/papers";
-import { getContentSlug } from "../../../../utils/localizedContent";
 
 export async function getStaticPaths() {
   const papers = await getBuildablePapers();
-  return papers.map((paper) => ({ params: { slug: getContentSlug(paper.id) }, props: { paper } }));
+  return papers.filter((paper) => (paper.data.oralExams?.length ?? 0) > 0).map((paper) => ({ params: { slug: paper.data.canonicalSlug }, props: { paper } }));
 }
 
 interface Props { paper: PaperEntry }
 const { paper } = Astro.props as Props;
-const slug = getContentSlug(paper.id);
-const exams = paper.data.oralExams;
+const slug = paper.data.canonicalSlug;
+const exams = paper.data.oralExams ?? [];
 const alternateUrls = { en: `/papers/${slug}/exam/live/`, ko: "/ko/papers/", xDefault: `/papers/${slug}/exam/live/`, translationAvailable: false } as const;
 ---
 
@@ -23,12 +22,8 @@ const alternateUrls = { en: `/papers/${slug}/exam/live/`, ko: "/ko/papers/", xDe
     <h1>{paper.data.title}</h1>
     <p class="lede">Published retrieval-practice summaries associated with this paper.</p>
   </header>
-  {exams.length > 0 ? (
-    <section class="section" aria-labelledby="oral-exam-history-heading">
+  <section class="section" aria-labelledby="oral-exam-history-heading">
       <h2 id="oral-exam-history-heading">Exam history</h2>
-      <div class="paper-note-list">{exams.map((exam) => <article><h3>{exam.date}</h3><p>{exam.questionsAnswered} of {exam.totalQuestions} questions answered · {exam.confidence} confidence{exam.overallScore === null ? "" : ` · score ${exam.overallScore}`}</p>{exam.followUpQuestion && <p>{exam.followUpQuestion}</p>}</article>)}</div>
+      <div class="paper-note-list">{exams.map((exam) => <article><h3>{exam.date}</h3><p>{exam.questionsAnswered} of {exam.totalQuestions} questions answered · {exam.confidence} confidence{exam.overallScore == null ? "" : ` · score ${exam.overallScore}`}</p>{exam.summary && <p>{exam.summary}</p>}</article>)}</div>
     </section>
-  ) : (
-    <section class="app-empty-state" aria-labelledby="oral-exam-empty-heading"><h2 id="oral-exam-empty-heading">No public oral exam record</h2><p>This paper does not currently include a published oral exam summary.</p><a class="button button--primary" href={`/papers/${slug}/`}>Return to paper note</a></section>
-  )}
 </BaseLayout>

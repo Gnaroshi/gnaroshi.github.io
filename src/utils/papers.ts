@@ -13,14 +13,14 @@ export type PaperEntry = CollectionEntry<"papers">;
 export type PaperStats = {
   total: number;
   activeDays: number;
-  today: number;
+  sessionsToday: number;
+  papersTouchedToday: number;
+  minutesToday: number;
   currentStreak: number;
   longestStreak: number;
-  thisWeek: number;
-  thisMonth: number;
-  thisYear: number;
-  deepReads: number;
-  implemented: number;
+  distinctPapersThisMonth: number;
+  deepSessions: number;
+  implementations: number;
   totalReadingMinutes: number;
 };
 
@@ -40,25 +40,25 @@ export type PaperRecord = {
   depth: PaperEntry["data"]["depth"];
   priority: PaperEntry["data"]["priority"];
   difficulty: number;
-  readingTimeMinutes: number;
+  readingTimeMinutes?: number;
   tags: string[];
   relatedTopics: string[];
-  oneLineSummary: string;
-  coreQuestion: string;
-  coreIdea: string;
-  mainFormula: string;
-  formulaInterpretation: string;
-  experimentTakeaway: string;
+  oneLineSummary?: string;
+  coreQuestion?: string;
+  coreIdea?: string;
+  mainFormula?: string;
+  formulaInterpretation?: string;
+  experimentTakeaway?: string;
   strengths: string[];
   weaknesses: string[];
-  myConnection: string;
-  nextAction: string;
+  myConnection?: string;
+  nextAction?: string;
   futureMe?: {
-    oneThingToRemember: string;
-    whyItMatters: string;
-    whenToUseThis: string;
-    whatToRevisit: string;
-    warning: string;
+    oneThingToRemember?: string;
+    whyItMatters?: string;
+    whenToUseThis?: string;
+    whatToRevisit?: string;
+    warning?: string;
   };
   futureMeExcerpt: string;
   reviewAfterDays?: number;
@@ -127,27 +127,24 @@ export function countPapersByDate(papers: PaperEntry[], options: PaperActivityOp
 }
 
 export function getActivityCountsByDate(activity = getActivityCalendar()): Map<string, number> {
-  return new Map(activity.map((day) => [day.date, day.sessions]));
+  return new Map(activity.map((day) => [day.date, day.readingSessions]));
 }
 
 export function getPaperStats(papers: PaperEntry[], today = getTodayKey(), activity: ActivityDay[] = getActivityCalendar()): PaperStats {
-  const activePapers = getActivePapers(papers);
   const counts = getActivityCountsByDate(activity);
-  const weekStart = toDateKey(addDays(parseDateKey(today), -(parseDateKey(today).getUTCDay() || 7) + 1));
-  const weekEnd = toDateKey(addDays(parseDateKey(weekStart), 6));
 
   return {
     total: papers.length,
     activeDays: counts.size,
-    today: counts.get(today) ?? 0,
+    sessionsToday: activity.find((day) => day.date === today)?.readingSessions ?? 0,
+    papersTouchedToday: activity.find((day) => day.date === today)?.distinctPapersTouched ?? 0,
+    minutesToday: activity.find((day) => day.date === today)?.readingMinutes ?? 0,
     currentStreak: getCurrentStreak(counts, today),
     longestStreak: getLongestStreak(counts),
-    thisWeek: activity.filter((day) => day.date >= weekStart && day.date <= weekEnd).reduce((total, day) => total + day.sessions, 0),
-    thisMonth: activity.filter((day) => day.date.startsWith(today.slice(0, 7))).reduce((total, day) => total + day.sessions, 0),
-    thisYear: activity.filter((day) => day.date.startsWith(today.slice(0, 4))).reduce((total, day) => total + day.sessions, 0),
-    deepReads: getDeepReadCount(activePapers),
-    implemented: getImplementedCount(activePapers),
-    totalReadingMinutes: activity.reduce((total, day) => total + day.minutes, 0)
+    distinctPapersThisMonth: new Set(activity.filter((day) => day.date.startsWith(today.slice(0, 7))).flatMap((day) => day.paperIds)).size,
+    deepSessions: activity.reduce((total, day) => total + day.deepSessions, 0),
+    implementations: activity.reduce((total, day) => total + day.implementations, 0),
+    totalReadingMinutes: activity.reduce((total, day) => total + day.readingMinutes, 0)
   };
 }
 
@@ -236,8 +233,8 @@ export function getPaperLastReviewedDate(paper: PaperEntry): string | undefined 
 
 export function toPaperRecord(paper: PaperEntry, review?: PaperReviewSummary, today = getTodayKey()): PaperRecord {
   return {
-    id: getContentSlug(paper.id),
-    href: getLocalePath(paper.data.locale, `/papers/${getContentSlug(paper.id)}/`),
+    id: paper.data.canonicalSlug,
+    href: getLocalePath(paper.data.locale, `/papers/${paper.data.canonicalSlug}/`),
     title: paper.data.title,
     authors: paper.data.authors,
     venue: paper.data.venue,
@@ -260,8 +257,8 @@ export function toPaperRecord(paper: PaperEntry, review?: PaperReviewSummary, to
     mainFormula: paper.data.mainFormula,
     formulaInterpretation: paper.data.formulaInterpretation,
     experimentTakeaway: paper.data.experimentTakeaway,
-    strengths: paper.data.strengths,
-    weaknesses: paper.data.weaknesses,
+    strengths: paper.data.strengths ?? [],
+    weaknesses: paper.data.weaknesses ?? [],
     myConnection: paper.data.myConnection,
     nextAction: paper.data.nextAction,
     futureMe: paper.data.futureMe,
@@ -324,6 +321,7 @@ function isPaperInRange(paper: PaperEntry, start: string, end: string): boolean 
 
 function getFutureMeExcerpt(paper: PaperEntry): string {
   const futureMe = paper.data.futureMe;
+  if (!futureMe) return "";
   return (
     futureMe.oneThingToRemember ||
     futureMe.whyItMatters ||

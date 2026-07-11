@@ -43,8 +43,7 @@ const newerAttempt = currentIndex > 0 ? publicAttempts[currentIndex - 1] : undef
 const olderAttempt = currentIndex >= 0 ? publicAttempts[currentIndex + 1] : undefined;
 const links = [
   attempt.data.repoUrl ? { label: "Repo", href: attempt.data.repoUrl } : null,
-  attempt.data.demoUrl ? { label: "Demo", href: attempt.data.demoUrl } : null,
-  attempt.data.paperUrl ? { label: "Paper", href: attempt.data.paperUrl } : null
+  attempt.data.demoUrl ? { label: "Demo", href: attempt.data.demoUrl } : null
 ].filter(Boolean) as Array<{ label: string; href: string }>;
 const implementationMessages = getIslandMessages("en").implementation;
 const alternateUrls = { en: `/implementations/${attempt.id}/`, ko: "/ko/implementations/", xDefault: `/implementations/${attempt.id}/`, translationAvailable: false } as const;

@@ -52,6 +52,11 @@ jobs:
       - name: Validate content feed
         run: npm run content:check 2>&1 | tee artifacts/ci-logs/content-check.log
 
+      - name: Test website against feed contract fixtures
+        env:
+          CONTENT_FEED_CONTRACT_PATH: .content-feed
+        run: npm run test:feed-contract 2>&1 | tee artifacts/ci-logs/feed-fixtures.log
+
       - name: Type-check Astro application
         run: npm run check 2>&1 | tee artifacts/ci-logs/astro-check.log
 

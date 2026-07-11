@@ -22,7 +22,7 @@ export default function PaperCard({ paper, locale, messages }: Props) {
           <h3>
             <a href={paper.href}>{paper.title}</a>
           </h3>
-          {paper.review ? (
+          {paper.review && paper.review.overallScore !== null && paper.review.scoreLevel ? (
             <span className={`paper-score-badge paper-score-badge--${paper.review.scoreLevel}`}>
               <span>{messages.aiReview}</span>
               <strong>{paper.review.overallScore}</strong>
@@ -34,7 +34,7 @@ export default function PaperCard({ paper, locale, messages }: Props) {
           {paper.draft ? <span className="paper-badge paper-badge--draft">{messages.draft}</span> : null}
           {paper.featured ? <span className="paper-badge paper-badge--featured">{messages.featured}</span> : null}
         </div>
-        <p className="paper-card__summary">{paper.oneLineSummary}</p>
+        {paper.oneLineSummary ? <p className="paper-card__summary">{paper.oneLineSummary}</p> : null}
         {paper.futureMeExcerpt ? <p className="metadata">{messages.futureMe}: {paper.futureMeExcerpt}</p> : null}
         <p className="metadata">
           {paper.authors.join(", ")} · {paper.venue} · {paper.year}
@@ -51,7 +51,7 @@ export default function PaperCard({ paper, locale, messages }: Props) {
         </span>
         <span className="paper-badge paper-badge--muted">{messages.priority}: {messages.priorities[paper.priority]}</span>
         <span className="paper-badge paper-badge--muted">{messages.difficulty} {paper.difficulty}/5</span>
-        <span className="paper-badge paper-badge--muted">{messages.minutes.replace("{count}", String(paper.readingTimeMinutes))}</span>
+        {paper.readingTimeMinutes !== undefined ? <span className="paper-badge paper-badge--muted">{messages.minutes.replace("{count}", String(paper.readingTimeMinutes))}</span> : null}
       </div>
 
       <div className="paper-card__tags" aria-label={messages.tags}>

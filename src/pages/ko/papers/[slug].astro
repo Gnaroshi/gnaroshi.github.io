@@ -1,0 +1,52 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getBuildablePapers, type PaperEntry } from "../../../utils/papers";
+import { getTranslationEntry } from "../../../utils/localizedContent";
+
+export async function getStaticPaths() {
+  const koreanPapers = await getBuildablePapers("ko");
+  const allPapers = [...koreanPapers, ...await getBuildablePapers("en")];
+  return koreanPapers.flatMap((paper) => {
+    const english = getTranslationEntry(allPapers, paper, "en");
+    const props = { paper, english };
+    return [{ params: { slug: paper.data.canonicalSlug }, props }, ...paper.data.aliases.map((alias) => ({ params: { slug: alias }, props: { ...props, redirectTo: `/ko/papers/${paper.data.canonicalSlug}/` } }))];
+  });
+}
+
+interface Props { paper: PaperEntry; english?: PaperEntry; redirectTo?: string }
+const { paper, english, redirectTo } = Astro.props as Props;
+if (redirectTo) return Astro.redirect(redirectTo, 301);
+const { Content } = await render(paper);
+const slug = paper.data.canonicalSlug;
+const alternateUrls = { en: english ? `/papers/${english.data.canonicalSlug}/` : "/papers/", ko: `/ko/papers/${slug}/`, xDefault: english ? `/papers/${english.data.canonicalSlug}/` : "/papers/", translationAvailable: Boolean(english) } as const;
+const futureMe = paper.data.futureMe;
+const structuredItems = [
+  ["한 줄 요약", paper.data.oneLineSummary], ["핵심 질문", paper.data.coreQuestion], ["핵심 아이디어", paper.data.coreIdea],
+  ["핵심 수식", paper.data.mainFormula], ["수식 해석", paper.data.formulaInterpretation], ["실험에서 얻은 결론", paper.data.experimentTakeaway]
+].filter((item): item is [string, string] => Boolean(item[1]));
+const critiqueItems = [["내 연구와의 연결", paper.data.myConnection], ["다음 행동", paper.data.nextAction]].filter((item): item is [string, string] => Boolean(item[1]));
+const hasBody = Boolean(paper.body?.trim());
+---
+
+<BaseLayout locale="ko" title={paper.data.title} description={paper.data.oneLineSummary} canonical={`/ko/papers/${slug}/`} alternateUrls={alternateUrls} type="article" paperLab>
+  <article class="paper-detail">
+    {!english && <p class="content-language-badge"><span class="paper-badge paper-badge--muted">한국어 콘텐츠</span> 영어 번역 없음</p>}
+    <header class="paper-detail-header">
+      <a class="paper-detail-header__back" href="/ko/papers/">논문 기록으로 돌아가기</a>
+      <div class="paper-detail-header__title"><p class="eyebrow">논문 노트</p><h1>{paper.data.title}</h1>{paper.data.oneLineSummary && <p class="lede">{paper.data.oneLineSummary}</p>}</div>
+      <div class="paper-detail-header__meta"><p>{paper.data.authors.join(", ")}</p><p>{paper.data.venue} · {paper.data.year}</p></div>
+      <div class="paper-detail-header__badges"><span class="paper-badge">{paper.data.status}</span><span class="paper-badge">{paper.data.depth}</span><span class="paper-badge paper-badge--muted">난이도 {paper.data.difficulty}/5</span></div>
+      <div class="paper-detail-header__links">{paper.data.paperUrl && <a href={paper.data.paperUrl} target="_blank" rel="noreferrer">논문</a>}{paper.data.codeUrl && <a href={paper.data.codeUrl} target="_blank" rel="noreferrer">코드</a>}{paper.data.projectUrl && <a href={paper.data.projectUrl} target="_blank" rel="noreferrer">프로젝트</a>}</div>
+    </header>
+
+    {paper.data.lastReviewed && <section class="section" aria-labelledby="ko-review-heading"><h2 id="ko-review-heading">공개 리뷰</h2><p>{paper.data.reviewHistory?.[0]?.note}</p><p class="metadata">{paper.data.lastReviewed.toISOString().slice(0, 10)}</p></section>}
+
+    {futureMe && Object.values(futureMe).some(Boolean) && <section class="learning-panel learning-panel--accent" aria-labelledby="ko-future-me"><div><p class="eyebrow">미래의 나에게</p><h2 id="ko-future-me">나중에도 기억할 것</h2></div><div class="paper-detail-grid">{futureMe.oneThingToRemember && <div><h3>기억할 한 가지</h3><p>{futureMe.oneThingToRemember}</p></div>}{futureMe.whyItMatters && <div><h3>중요한 이유</h3><p>{futureMe.whyItMatters}</p></div>}{futureMe.whenToUseThis && <div><h3>활용할 때</h3><p>{futureMe.whenToUseThis}</p></div>}{futureMe.whatToRevisit && <div><h3>다시 볼 것</h3><p>{futureMe.whatToRevisit}</p></div>}{futureMe.warning && <div><h3>주의할 점</h3><p>{futureMe.warning}</p></div>}</div></section>}
+
+    {structuredItems.length > 0 && <section class="section" aria-labelledby="ko-structured-note"><h2 id="ko-structured-note">구조화된 읽기 노트</h2><div class="paper-detail-grid">{structuredItems.map(([title, value]) => <div><h3>{title}</h3><p>{value}</p></div>)}</div></section>}
+    {((paper.data.strengths?.length ?? 0) > 0 || (paper.data.weaknesses?.length ?? 0) > 0 || critiqueItems.length > 0) && <section class="section" aria-labelledby="ko-critique"><h2 id="ko-critique">비판과 후속 작업</h2><div class="paper-detail-grid">{(paper.data.strengths?.length ?? 0) > 0 && <div><h3>강점</h3><ul>{paper.data.strengths?.map((item) => <li>{item}</li>)}</ul></div>}{(paper.data.weaknesses?.length ?? 0) > 0 && <div><h3>약점</h3><ul>{paper.data.weaknesses?.map((item) => <li>{item}</li>)}</ul></div>}{critiqueItems.map(([title, value]) => <div><h3>{title}</h3><p>{value}</p></div>)}</div></section>}
+    {(paper.data.tags.length > 0 || paper.data.relatedTopics.length > 0) && <section class="section" aria-labelledby="ko-paper-tags"><h2 id="ko-paper-tags">태그와 주제</h2><div class="badge-row">{paper.data.tags.map((tag) => <span class="paper-tag">{tag}</span>)}{paper.data.relatedTopics.map((topic) => <span class="paper-tag paper-tag--topic">{topic}</span>)}</div></section>}
+    {hasBody && <section class="section" aria-labelledby="ko-full-note"><h2 id="ko-full-note">전체 노트</h2><div class="prose"><Content /></div></section>}
+  </article>
+</BaseLayout>

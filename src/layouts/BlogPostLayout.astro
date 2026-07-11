@@ -38,6 +38,7 @@ const { post, headings, seriesPosts, previous, next, locale, alternateUrls } = A
   alternateUrls={alternateUrls}
 >
   <article class="blog-post">
+    {!alternateUrls.translationAvailable && <p class="content-language-badge"><span class="paper-badge paper-badge--muted">{locale === "ko" ? "한국어 콘텐츠" : "English content"}</span> {locale === "ko" ? "영어 번역 없음" : "Korean translation unavailable"}</p>}
     <header class="blog-post__header">
       <p class="eyebrow">{translate(locale, "nav.writing")}</p>
       <h1>{post.data.title}</h1>

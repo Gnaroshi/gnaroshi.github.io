@@ -47,7 +47,7 @@ The site may perform presentation transforms such as:
 - reading-time labels
 - public search, filtering, and sorting
 - route and tag generation
-- adapting feed node names to graph component props
+- deriving UI labels from validated enum values
 
 The following must come from `.content-feed/data/`:
 
@@ -58,7 +58,9 @@ The following must come from `.content-feed/data/`:
 - research graph
 - other public generated evidence
 
-The website does not regenerate these outputs from source notes.
+The website does not regenerate or silently rename these outputs. Missing evidence hides the corresponding section; adapters do not create empty review dimensions, badges, effort estimates, completion states, translation counterparts, or fallback graph types.
+
+Activity semantics remain distinct: reading sessions, distinct papers touched, minutes, active days, completed passes, revisits, implementations, and deep sessions. Weekly review metrics retain their native names and state. Unknown graph node or edge enums fail before Astro runs.
 
 ## Runtime
 

@@ -42,14 +42,15 @@ const imageUrl = new URL(ogImage ?? "/og/default.svg", profile.domain).toString(
 const englishAlternate = new URL(alternateUrls?.en ?? getLocalePath("en", Astro.url.pathname), profile.domain).toString();
 const koreanAlternate = new URL(alternateUrls?.ko ?? getLocalePath("ko", Astro.url.pathname), profile.domain).toString();
 const xDefaultAlternate = new URL(alternateUrls?.xDefault ?? englishAlternate, profile.domain).toString();
+const translationAvailable = alternateUrls?.translationAvailable ?? true;
 ---
 
 <title>{pageTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalUrl} />
-<link rel="alternate" hreflang="en" href={englishAlternate} />
-<link rel="alternate" hreflang="ko" href={koreanAlternate} />
-<link rel="alternate" hreflang="x-default" href={xDefaultAlternate} />
+{(!alternateUrls || translationAvailable || locale === "en") && <link rel="alternate" hreflang="en" href={englishAlternate} />}
+{(!alternateUrls || translationAvailable || locale === "ko") && <link rel="alternate" hreflang="ko" href={koreanAlternate} />}
+{(!alternateUrls || translationAvailable || locale === "en") && <link rel="alternate" hreflang="x-default" href={xDefaultAlternate} />}
 
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content={profile.siteName} />
@@ -58,7 +59,7 @@ const xDefaultAlternate = new URL(alternateUrls?.xDefault ?? englishAlternate, p
 <meta property="og:url" content={canonicalUrl} />
 <meta property="og:image" content={imageUrl} />
 <meta property="og:locale" content={ogLocale} />
-<meta property="og:locale:alternate" content={ogLocaleAlternate} />
+{translationAvailable && <meta property="og:locale:alternate" content={ogLocaleAlternate} />}
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={socialTitle} />

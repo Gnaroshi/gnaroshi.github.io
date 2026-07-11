@@ -10,14 +10,13 @@ interface Props {
 const { stats, messages } = Astro.props;
 
 const items = [
-  { label: messages.papersToday, value: stats.today },
+  { label: messages.sessionsToday, value: stats.sessionsToday },
+  { label: messages.papersTouchedToday, value: stats.papersTouchedToday },
+  { label: messages.minutesToday, value: stats.minutesToday },
   { label: messages.currentStreak, value: stats.currentStreak },
-  { label: messages.longestStreak, value: stats.longestStreak },
-  { label: messages.thisWeek, value: stats.thisWeek },
-  { label: messages.thisMonth, value: stats.thisMonth },
-  { label: messages.thisYear, value: stats.thisYear },
-  { label: messages.deepReads, value: stats.deepReads },
-  { label: messages.implementedReproduced, value: stats.implemented }
+  { label: messages.distinctPapersThisMonth, value: stats.distinctPapersThisMonth },
+  { label: messages.deepSessions, value: stats.deepSessions },
+  { label: messages.implementations, value: stats.implementations }
 ];
 ---
 

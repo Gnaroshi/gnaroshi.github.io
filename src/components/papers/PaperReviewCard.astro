@@ -16,12 +16,10 @@ const messages = getIslandMessages("en").paper;
       <p>{review.summary}</p>
       <p class="metadata">{review.reviewedAt.slice(0, 10)} · {review.confidence} confidence</p>
     </div>
-    <PaperScoreBadge score={review.overallScore} level={review.scoreLevel} label="Reading process score" messages={messages} />
+    {review.overallScore !== null && review.scoreLevel && <PaperScoreBadge score={review.overallScore} level={review.scoreLevel} label="Reading process score" messages={messages} />}
   </div>
 
-  <div class="paper-review-calibration-grid" aria-label="Review schedule">
-    <article><h3>Next review date</h3><p>{review.nextReviewDate}</p></article>
-  </div>
+  {review.nextReviewDate && <div class="paper-review-calibration-grid" aria-label="Review schedule"><article><h3>Next review date</h3><p>{review.nextReviewDate}</p></article></div>}
 
   {(review.strengths.length > 0 || review.gaps.length > 0) && (
     <div class="paper-review-two-col">
@@ -31,6 +29,6 @@ const messages = getIslandMessages("en").paper;
   )}
 
   {review.nextActions.length > 0 && (
-    <section aria-labelledby="review-next-actions-heading"><h3 id="review-next-actions-heading">Next actions</h3><ol class="paper-review-actions">{review.nextActions.map((item) => <li><span>{item.action}</span></li>)}</ol></section>
+    <section aria-labelledby="review-next-actions-heading"><h3 id="review-next-actions-heading">Next actions</h3><ol class="paper-review-actions">{review.nextActions.map((item) => <li><span>{item}</span></li>)}</ol></section>
   )}
 </section>

@@ -31,22 +31,23 @@ CONTENT_FEED_PATH=../gnaroshi-content-feed npm run content:check
 
 ## Manifest Contract
 
-`npm run content:check` supports manifest schema version `1`.
+`npm run content:check` executes the bundled canonical validator from the public feed. The JSON Schemas live in `gnaroshi-content-feed/schemas/v1/`; the website does not maintain a competing domain contract.
 
 A generated manifest must include:
 
 - `schemaVersion: 1`
 - full `sourceCommits.paperLab` SHA
 - full `sourceCommits.writing` SHA
-- `blog/`, `papers/`, and `data/` directories
+- state `generated`, a real `generatedAt`, matching file counts and reproducible content hash
+- `blog/`, `papers/`, `data/`, and declared `assets/` output
 
-The migration-only `bootstrap-empty` state may use `sourceRepository` and `sourceCommit`. The `blog/`, `papers/`, and `data/` directories are required even when every declared entry count is zero.
+`bootstrap-empty` requires zero counts, `contentStage: seed`, false eligibility, null `generatedAt`, and no activity, Growth, weekly, or graph claims.
 
-Unsupported versions, missing source metadata, missing expected directories, malformed JSON, or a missing manifest fail before Astro runs.
+Unsupported versions, schema violations, privacy patterns, relation/translation/route collisions, undeclared assets, count/hash drift, or a missing manifest fail before Astro runs. The loader never substitutes an empty collection for an invalid feed.
 
 ## Astro Collections
 
-`src/content.config.ts` loads public MDX directly from the feed and adapts contract version 1 into existing UI fields. Feed IDs remain locale-qualified internally while public slugs omit locale folders.
+`src/content.config.ts` loads validated public MDX and performs presentation-only transforms. Stable IDs, `canonicalSlug`, `aliases`, and feed-provided translation status remain distinct.
 
 The `dev`, `check`, and `build` commands clear Astro's content-layer cache before loading so switching feed paths or refs cannot retain stale entries.
 
@@ -58,7 +59,11 @@ Build-time adapters under `src/utils/` read `.content-feed/data/`. Missing optio
 
 ## Assets
 
-Files under `.content-feed/assets/` are emitted by the static `/assets/[...path]` endpoint. Hidden dotfiles are ignored. Feed asset metadata and public visibility are established by the publisher before import.
+Only entries declared by `.content-feed/assets/index.json` are emitted. Public paths must be `/assets/<sha256>/<filename>` and use a supported image media type. Arbitrary files and `application/octet-stream` fallback are forbidden; immutable caching applies only to declared hashed assets.
+
+## Contract Fixtures
+
+`npm run test:feed-contract` validates rejection fixtures and builds the site against bootstrap, English-only, Korean-only, complete/partial translation, renamed-slug alias, multi-session paper, simple/rich review, implementation, and graph feeds.
 
 ## Provenance
 

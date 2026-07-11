@@ -4,7 +4,7 @@ export type ReviewDueRecord = {
   id: string;
   href: string;
   title: string;
-  oneLineSummary: string;
+  oneLineSummary?: string;
   status: PaperEntry["data"]["status"];
   depth: PaperEntry["data"]["depth"];
   readDate?: string;
@@ -15,19 +15,12 @@ export type ReviewDueRecord = {
   isOverdue: boolean;
   reviewCount: number;
   tags: string[];
-  mainFormula: string;
-  retrievalQuestion: string;
+  mainFormula?: string;
+  retrievalQuestion?: string;
 };
 
 export function getNextReviewDate(paper: PaperEntry): string | undefined {
-  if (paper.data.nextReviewAt) return paper.data.nextReviewAt;
-  const baseDate = getLatestReviewBaseDate(paper);
-  if (!baseDate) return undefined;
-
-  const schedule = getReviewSchedule(paper);
-  const completedReviews = getReviewHistoryDates(paper).length;
-  const interval = schedule[Math.min(completedReviews, schedule.length - 1)];
-  return addDays(baseDate, interval);
+  return paper.data.nextReviewAt;
 }
 
 export function isReviewDue(paper: PaperEntry, date = getTodayKey()): boolean {
@@ -86,8 +79,8 @@ export function toReviewDueRecord(paper: PaperEntry, today = getTodayKey()): Rev
   const nextReviewDate = getNextReviewDate(paper);
   const daysUntilDue = nextReviewDate ? differenceInDays(nextReviewDate, today) : undefined;
   return {
-    id: paper.id,
-    href: `/papers/${paper.id}/`,
+    id: paper.data.canonicalSlug,
+    href: `/papers/${paper.data.canonicalSlug}/`,
     title: paper.data.title,
     oneLineSummary: paper.data.oneLineSummary,
     status: paper.data.status,
@@ -105,16 +98,6 @@ export function toReviewDueRecord(paper: PaperEntry, today = getTodayKey()): Rev
   };
 }
 
-export function getReviewSchedule(paper: PaperEntry): number[] {
-  if (paper.data.reviewSchedule && paper.data.reviewSchedule.length > 0) return paper.data.reviewSchedule;
-  if (paper.data.status === "pass1") return [1, 7];
-  if (paper.data.status === "pass2") return [1, 7, 30];
-  if (paper.data.status === "pass3" || paper.data.status === "implemented" || paper.data.depth === "deep") {
-    return [1, 7, 30, 90];
-  }
-  return [7, 30];
-}
-
 export function isReviewCandidate(paper: PaperEntry): boolean {
   return !paper.data.draft && !["planned", "abandoned"].includes(paper.data.status) && Boolean(paper.data.readDate);
 }
@@ -129,7 +112,7 @@ function getLatestReviewBaseDate(paper: PaperEntry): string | undefined {
 }
 
 function getReviewHistoryDates(paper: PaperEntry): string[] {
-  return paper.data.reviewHistory.map((item) => toDateKey(item.date)).filter(Boolean) as string[];
+  return (paper.data.reviewHistory ?? []).map((item) => toDateKey(item.date)).filter(Boolean) as string[];
 }
 
 function toDateKey(date?: Date): string | undefined {

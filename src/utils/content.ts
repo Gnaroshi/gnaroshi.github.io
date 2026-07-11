@@ -3,7 +3,7 @@ import { getYearMonthKey } from "./date";
 import { formatLocalizedMonth } from "../i18n/date";
 import type { Locale } from "../i18n/types";
 import { getLocalePath } from "../i18n/utils";
-import { getContentSlug, getTranslationEntry } from "./localizedContent";
+import { getTranslationEntry } from "./localizedContent";
 import { getReadingTime } from "./readingTime";
 import { slugify } from "./slug";
 import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
@@ -106,12 +106,12 @@ export function getAdjacentPosts(posts: BlogPost[], currentPost: BlogPost) {
 }
 
 export function getPostReadingTime(post: BlogPost): string {
-  return String(post.data.readingTime ?? getReadingTime(post.body ?? ""));
+  return String(getReadingTime(post.body ?? ""));
 }
 
 export function toBlogPostPreview(post: BlogPost): BlogPostPreview {
   return {
-    slug: getContentSlug(post.id),
+    slug: post.data.canonicalSlug,
     title: post.data.title,
     description: post.data.description,
     pubDate: post.data.pubDate.toISOString(),
@@ -123,7 +123,7 @@ export function toBlogPostPreview(post: BlogPost): BlogPostPreview {
 }
 
 export function getBlogPostSlug(post: BlogPost): string {
-  return getContentSlug(post.id);
+  return post.data.canonicalSlug;
 }
 
 export function getBlogPostHref(post: BlogPost): string {
