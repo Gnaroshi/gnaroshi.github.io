@@ -259,10 +259,6 @@ p {
   object-fit: cover;
 }
 
-:root[data-theme="dark"] .media-frame img[src$=".svg"] {
-  filter: brightness(0.82) saturate(0.88);
-}
-
 .section {
   display: grid;
   gap: var(--space-4);

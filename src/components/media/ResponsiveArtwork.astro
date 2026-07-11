@@ -1,0 +1,36 @@
+---
+import type { MediaAsset } from "../../data/mediaManifest";
+import type { Locale } from "../../i18n/types";
+
+interface Props {
+  asset: MediaAsset;
+  locale: Locale;
+  class?: string;
+  eager?: boolean;
+}
+
+const { asset, locale, class: className, eager = asset.loadingPriority === "high" } = Astro.props;
+const srcset = (format: "avif" | "webp") => asset.variants
+  .filter((variant) => variant.format === format)
+  .map((variant) => `${variant.src} ${variant.width}w`)
+  .join(", ");
+---
+
+<picture class:list={["responsive-artwork", className]} style={`--artwork-focal-point: ${asset.focalPoint}`}>
+  <source type="image/avif" srcset={srcset("avif")} sizes={asset.sizes} />
+  <source type="image/webp" srcset={srcset("webp")} sizes={asset.sizes} />
+  <img
+    src={asset.fallback}
+    alt={asset.alt[locale]}
+    width={asset.width}
+    height={asset.height}
+    loading={eager ? "eager" : "lazy"}
+    fetchpriority={eager ? "high" : "auto"}
+    decoding="async"
+  />
+</picture>
+
+<style>
+  .responsive-artwork { display: block; width: 100%; height: 100%; }
+  .responsive-artwork img { width: 100%; height: 100%; object-fit: cover; object-position: var(--artwork-focal-point, center); }
+</style>

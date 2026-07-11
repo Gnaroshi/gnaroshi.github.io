@@ -41,6 +41,8 @@ npm run build
 npm run preview
 npm run check
 npm run content:check
+npm run media:build
+npm run media:check
 npm run test:e2e
 npm run test:a11y
 npm run test:smoke
@@ -55,6 +57,8 @@ npm run check:links:external
 
 - `content:pull`: clone or fast-forward the public feed in ignored `.content-feed/`.
 - `content:check`: run the canonical bundled Content Feed JSON Schema and privacy validator.
+- `media:build`: generate optimized AVIF/WebP variants from ignored selected raster sources.
+- `media:check`: enforce the raster manifest, dimensions, budgets, provenance, uniqueness, and usage contract.
 - `test:feed-contract`: build against valid fixtures and require invalid feeds to fail.
 - `dev`, `check`, and `build`: fail before Astro starts when the feed is unavailable or incompatible.
 - `check:links`: run after `build`.
@@ -122,6 +126,8 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Avoid unnecessary dependencies and large chart libraries.
 - Do not commit `.content-feed/`, `dist/`, credentials, local caches, or machine-specific files.
 - Do not write into the content-feed checkout.
+- Keep functional SVG limited to interface icons, the favicon, and monogram. Public content artwork must use the raster manifest and `ResponsiveArtwork.astro`.
+- Do not commit candidate or selected source PNGs under `artifacts/`; commit only optimized public variants and prompt/provenance documentation.
 - Preserve stable IDs separately from `canonicalSlug`; render all declared aliases as static redirects.
 - Emit hreflang only for real public translation pairs and return unavailable locale switches to the collection index.
 - Serve only declared content-addressed assets with supported media types.
@@ -156,6 +162,7 @@ For code changes:
 
 ```bash
 npm run content:check
+npm run media:check
 npm run check
 npm run build
 npm run check:i18n

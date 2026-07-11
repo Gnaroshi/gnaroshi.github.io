@@ -5,6 +5,7 @@ import Hero from "../components/home/Hero.astro";
 import Section from "../components/layout/Section.astro";
 import { getLocalizedData } from "../data/locales";
 import { mediaManifest } from "../data/mediaManifest";
+import ResponsiveArtwork from "../components/media/ResponsiveArtwork.astro";
 import { formatLocalizedDate } from "../i18n/date";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
@@ -73,7 +74,7 @@ if (!focusIsFresh && import.meta.env.DEV) {
     <Section class="home-selected" labelledby="selected-work-heading">
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.selectedWork")}</p><h2 id="selected-work-heading">{selectedProject.title}</h2></div>
       <article class="home-featured-project">
-        <div class="home-featured-project__media media-frame"><img src={projectArtwork.light} alt={projectArtwork.alt[locale]} width="960" height="600" loading="lazy" decoding="async" /></div>
+        <div class="home-featured-project__media media-frame"><ResponsiveArtwork asset={projectArtwork} locale={locale} /></div>
         <div class="home-featured-project__copy"><p>{selectedProject.summary}</p><ul class="tag-row" aria-label={selectedProject.title}>{selectedProject.tags.map((tag) => <li>{tag}</li>)}</ul><a class="text-link" href={getLocalePath(locale, `/projects/${selectedProject.slug}/`)}>{translate(locale, "home.openCaseStudy")}</a></div>
       </article>
     </Section>
@@ -88,7 +89,7 @@ if (!focusIsFresh && import.meta.env.DEV) {
 
     <Section class="home-loop" labelledby="research-loop-heading">
       <div class="home-loop__copy"><p class="eyebrow">{translate(locale, "home.researchWorkspace")}</p><h2 id="research-loop-heading">{translate(locale, "home.researchLoopTitle")}</h2><p>{translate(locale, "home.researchLoopBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div>
-      <div class="home-loop__media media-frame"><img src={loopArtwork.light} alt={loopArtwork.alt[locale]} width="960" height="600" loading="lazy" decoding="async" /></div>
+      <div class="home-loop__media media-frame"><ResponsiveArtwork asset={loopArtwork} locale={locale} /></div>
     </Section>
   </div>
 </BaseLayout>

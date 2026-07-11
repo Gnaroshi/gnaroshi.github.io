@@ -103,6 +103,9 @@ jobs:
       - name: Validate content feed
         run: npm run content:check 2>&1 | tee artifacts/ci-logs/content-check.log
 
+      - name: Validate native raster media
+        run: npm run media:check 2>&1 | tee artifacts/ci-logs/media-check.log
+
       - name: Test website against feed contract fixtures
         env:
           CONTENT_FEED_CONTRACT_PATH: .content-feed

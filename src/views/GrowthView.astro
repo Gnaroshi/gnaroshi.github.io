@@ -4,6 +4,7 @@ import AppShell from "../components/layout/AppShell.astro";
 import PageHeader from "../components/layout/PageHeader.astro";
 import SectionHeader from "../components/common/SectionHeader.astro";
 import { mediaManifest } from "../data/mediaManifest";
+import ResponsiveArtwork from "../components/media/ResponsiveArtwork.astro";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getPublicGrowthSnapshot } from "../utils/feedData";
@@ -28,7 +29,7 @@ const artwork = mediaManifest.growthEvidence;
     {eligible && snapshot ? (
       <section class="momentum-score" aria-labelledby="growth-score-heading"><div><p class="eyebrow">{locale === "ko" ? "공개 피드 스냅샷" : "Public feed snapshot"}</p><h2 id="growth-score-heading">{snapshot.score}</h2><p>{locale === "ko" ? `신뢰도 ${snapshot.confidence}` : `${snapshot.confidence} confidence`}</p></div><dl><div><dt>{locale === "ko" ? "근거" : "Evidence"}</dt><dd>{snapshot.evidenceCount}</dd></div><div><dt>{locale === "ko" ? "활동일" : "Active days"}</dt><dd>{snapshot.activeDays}</dd></div></dl></section>
     ) : (
-      <section class="growth-onboarding" aria-labelledby="growth-collecting-heading"><div class="app-empty-state"><p class="eyebrow">{locale === "ko" ? "근거 수집 중" : "Collecting evidence"}</p><h2 id="growth-collecting-heading">{locale === "ko" ? "아직 공개 점수를 표시하지 않습니다" : "No public score yet"}</h2><p>{locale === "ko" ? "공개 피드가 충분한 활동 범위와 기간을 확인할 때까지 점수는 비워 둡니다." : "The score remains unavailable until the public feed reports sufficient activity breadth and duration."}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div><div class="growth-onboarding__media media-frame"><img src={artwork.light} alt={artwork.alt[locale]} width="960" height="600" loading="lazy" decoding="async" /></div></section>
+      <section class="growth-onboarding" aria-labelledby="growth-collecting-heading"><div class="app-empty-state"><p class="eyebrow">{locale === "ko" ? "근거 수집 중" : "Collecting evidence"}</p><h2 id="growth-collecting-heading">{locale === "ko" ? "아직 공개 점수를 표시하지 않습니다" : "No public score yet"}</h2><p>{locale === "ko" ? "공개 피드가 충분한 활동 범위와 기간을 확인할 때까지 점수는 비워 둡니다." : "The score remains unavailable until the public feed reports sufficient activity breadth and duration."}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div><div class="growth-onboarding__media media-frame"><ResponsiveArtwork asset={artwork} locale={locale} /></div></section>
     )}
 
     {components.length > 0 && <section class="section" aria-labelledby="growth-components-heading"><SectionHeader id="growth-components-heading" title={locale === "ko" ? "구성 요소" : "Components"} /><div class="growth-feed-components">{components.map(([key, value]) => <article><h3>{componentLabels[key]?.[locale] ?? key}</h3><strong>{Math.round(value)}</strong></article>)}</div></section>}

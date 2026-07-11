@@ -11,6 +11,7 @@ import type { AlternateUrls, Locale } from "../i18n/types";
 import { getLocaleFromUrl, getLocalePath, translate } from "../i18n/utils";
 import { getContentFeedBuildInfo, getWebsiteBuildInfo } from "../utils/contentFeed";
 import { getDefaultRobots } from "../utils/indexing";
+import { mediaManifest } from "../data/mediaManifest";
 
 interface Props {
   title: string;
@@ -72,6 +73,9 @@ const {
 const rssPath = getLocalePath(locale, "/rss.xml");
 const contentFeedBuildInfo = getContentFeedBuildInfo();
 const websiteBuildInfo = getWebsiteBuildInfo();
+const heroArtwork = mediaManifest.homeResearchConstellation;
+const heroAvifSrcset = heroArtwork.variants.filter((variant) => variant.format === "avif").map((variant) => `${variant.src} ${variant.width}w`).join(", ");
+const heroPreload = heroArtwork.variants.find((variant) => variant.format === "avif" && variant.src.includes("-768."))?.src ?? heroArtwork.variants.find((variant) => variant.format === "avif")?.src;
 ---
 
 <!doctype html>
@@ -83,7 +87,7 @@ const websiteBuildInfo = getWebsiteBuildInfo();
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="content-feed-commit" content={contentFeedBuildInfo.contentFeedCommit ?? "unavailable"} />
     <meta name="website-commit" content={websiteBuildInfo.websiteCommit ?? "unavailable"} />
-    {preloadHero && <link rel="preload" as="image" type="image/avif" href="/media/home-research-constellation-768.avif" imagesrcset="/media/home-research-constellation-480.avif 480w, /media/home-research-constellation-768.avif 768w, /media/home-research-constellation-1200.avif 1200w, /media/home-research-constellation-1600.avif 1600w" imagesizes="(min-width: 1024px) 45vw, 100vw" />}
+    {preloadHero && heroPreload && <link rel="preload" as="image" type="image/avif" href={heroPreload} imagesrcset={heroAvifSrcset} imagesizes={heroArtwork.sizes} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" href={rssPath} type="application/rss+xml" title={translate(locale, "site.rssTitle")} />
     <SEO

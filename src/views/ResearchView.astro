@@ -4,6 +4,7 @@ import PageHeader from "../components/layout/PageHeader.astro";
 import PageShell from "../components/layout/PageShell.astro";
 import { getLocalizedData } from "../data/locales";
 import { mediaManifest } from "../data/mediaManifest";
+import ResponsiveArtwork from "../components/media/ResponsiveArtwork.astro";
 import type { Locale } from "../i18n/types";
 import { translate } from "../i18n/utils";
 interface Props { locale: Locale }
@@ -17,7 +18,7 @@ const artwork = [mediaManifest.researchVla, mediaManifest.researchEfficientSyste
     <PageHeader eyebrow={translate(locale, "research.eyebrow")} title={translate(locale, "research.title")} description={translate(locale, "research.intro")} />
     <div class="research-themes">
       {data.researchAreas.map((area, index) => <article id={area.slug} class="research-theme">
-        <div class="research-theme__media media-frame"><img src={artwork[index].light} alt={artwork[index].alt[locale]} width="800" height="600" loading="lazy" decoding="async" /></div>
+        <div class="research-theme__media media-frame"><ResponsiveArtwork asset={artwork[index]} locale={locale} /></div>
         <div class="research-theme__copy"><p class="eyebrow">{String(index + 1).padStart(2, "0")}</p><h2>{area.question}</h2><p>{area.motivation}</p><dl><div><dt>{translate(locale, "research.hypothesis")}</dt><dd>{area.hypothesis}</dd></div><div><dt>{translate(locale, "research.uncertainty")}</dt><dd>{area.uncertainty}</dd></div></dl><div class="link-row">{area.related.map((link) => <a href={link.href}>{link.label}</a>)}</div></div>
       </article>)}
     </div>

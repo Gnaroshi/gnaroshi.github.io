@@ -13,6 +13,8 @@
     "check": "npm run content:check && ASTRO_TELEMETRY_DISABLED=1 astro sync --force && ASTRO_TELEMETRY_DISABLED=1 astro check",
     "content:pull": "node scripts/content-feed-pull.mjs",
     "content:check": "node scripts/content-feed-check.mjs",
+    "media:build": "node scripts/build-raster-media.mjs",
+    "media:check": "node scripts/check-raster-media.mjs",
     "test:e2e": "playwright test --grep-invert \"@a11y|@visual|@performance\"",
     "test:a11y": "playwright test --grep \"@a11y\"",
     "test:smoke": "playwright test --grep \"@smoke\"",
@@ -44,6 +46,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
     "linkedom": "^0.18.13",
+    "sharp": "^0.35.3",
     "typescript": "^6.0.3"
   }
 }

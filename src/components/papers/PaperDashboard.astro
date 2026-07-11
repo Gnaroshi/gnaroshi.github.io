@@ -13,6 +13,7 @@ import type { Locale } from "../../i18n/types";
 import { translate } from "../../i18n/utils";
 import { getIslandMessages } from "../../i18n/islands";
 import { mediaManifest } from "../../data/mediaManifest";
+import ResponsiveArtwork from "../media/ResponsiveArtwork.astro";
 
 interface Props {
   papers: PaperEntry[];
@@ -57,7 +58,7 @@ const onboardingArtwork = mediaManifest.paperLabCycle;
           <p>{translate(locale, "papers.firstDescription")}</p>
           <a class="button button--primary" href={locale === "ko" ? "/ko/research/" : "/research/"}>{translate(locale, "nav.research")}</a>
         </div>
-        <div class="paper-onboarding__media media-frame"><img src={onboardingArtwork.light} alt={onboardingArtwork.alt[locale]} width="960" height="600" loading="lazy" decoding="async" /></div>
+        <div class="paper-onboarding__media media-frame"><ResponsiveArtwork asset={onboardingArtwork} locale={locale} /></div>
       </section>
       <ReadingMethodPanel locale={locale} />
     </>

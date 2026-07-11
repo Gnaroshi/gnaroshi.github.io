@@ -1,127 +1,92 @@
+export type MediaVariant = {
+  src: string;
+  width: number;
+  format: "avif" | "webp";
+};
+
 export type MediaAsset = {
   id: string;
   purpose: string;
   route: string;
   alt: { en: string; ko: string };
+  width: number;
+  height: number;
   aspectRatio: string;
-  light: string;
-  dark?: string;
-  source: string;
-  provenance: string;
+  variants: MediaVariant[];
+  fallback: string;
   focalPoint: string;
+  sizes: string;
   loadingPriority: "high" | "low";
+  generation: {
+    tool: string;
+    generatedAt: string;
+    promptFile: string;
+    selectedCandidate: string;
+  };
+  provenance: string;
 };
 
-const diagramSource = "Original SVG diagram authored for gnaroshi.dev using the shared editorial media palette.";
+const generation = (selectedCandidate: string) => ({
+  tool: "OpenAI built-in image_gen.imagegen",
+  generatedAt: "2026-07-11T12:59:22Z",
+  promptFile: "docs/raster-image-prompts.md",
+  selectedCandidate
+});
+
+const variants = (id: string, largestWidth: number): MediaVariant[] => [
+  { src: `/media/${id}-480.avif`, width: 480, format: "avif" },
+  { src: `/media/${id}-768.avif`, width: 768, format: "avif" },
+  { src: `/media/${id}-1200.avif`, width: 1200, format: "avif" },
+  { src: `/media/${id}-1600.avif`, width: largestWidth, format: "avif" },
+  { src: `/media/${id}-480.webp`, width: 480, format: "webp" },
+  { src: `/media/${id}-768.webp`, width: 768, format: "webp" },
+  { src: `/media/${id}-1200.webp`, width: 1200, format: "webp" },
+  { src: `/media/${id}-1600.webp`, width: largestWidth, format: "webp" }
+];
 
 export const mediaManifest = {
   homeResearchConstellation: {
     id: "home-research-constellation",
-    purpose: "Introduce the connected reading, reasoning, and implementation practice behind the site.",
+    purpose: "Introduce the connected reading, reasoning, building, and revisiting practice behind the site.",
     route: "/",
-    alt: {
-      en: "Research desk with connected paper notes, diagrams, code, and experiment traces.",
-      ko: "논문 노트와 도식, 코드, 실험 기록이 서로 연결된 연구 책상."
-    },
-    aspectRatio: "5:4",
-    light: "/media/home-research-constellation-1200.webp",
-    dark: "/media/home-research-constellation-1200.webp",
-    source: "Generated from a production prompt describing an editorial overhead research workspace without people, logos, or readable text.",
-    provenance: "Original image generated for Gnaroshi with OpenAI image generation on 2026-07-11.",
-    focalPoint: "center",
-    loadingPriority: "high"
+    alt: { en: "Blank research cards, a notebook, a computation tile, prototype hardware, and translucent tokens arranged as a calm workspace.", ko: "빈 연구 카드와 노트, 연산 타일, 프로토타입 부품, 반투명 토큰을 차분하게 배치한 연구 공간." },
+    width: 1600, height: 1280, aspectRatio: "5:4", variants: variants("home-research-constellation", 1400),
+    fallback: "/media/home-research-constellation-1200.webp", focalPoint: "center center", sizes: "(min-width: 1024px) 45vw, 100vw", loadingPriority: "high",
+    generation: generation("candidate-c"), provenance: "Original native raster artwork generated for Gnaroshi; no prior SVG composition was traced."
   },
   researchVla: {
-    id: "research-vla",
-    purpose: "Explain the observation-to-action structure of a vision-language-action system.",
-    route: "/research/",
-    alt: { en: "Observation, language, state, and action linked through a shared representation.", ko: "관찰과 언어, 상태, 행동이 공통 표현을 통해 연결된 구조." },
-    aspectRatio: "4:3", light: "/media/research-vla.svg", dark: "/media/research-vla.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
+    id: "research-vla", purpose: "Express observation, language, shared representation, and action as a tactile VLA still-life.", route: "/research/",
+    alt: { en: "Observation lens, blank language cards, shared representation block, and robot gripper connected by a material trace.", ko: "관찰 렌즈와 빈 언어 카드, 공통 표현 블록, 로봇 그리퍼를 재료의 흐름으로 연결한 장면." },
+    width: 1600, height: 1200, aspectRatio: "4:3", variants: variants("research-vla", 1448), fallback: "/media/research-vla-1200.webp", focalPoint: "center center", sizes: "(min-width: 768px) 44vw, 100vw", loadingPriority: "low", generation: generation("candidate-b"), provenance: "Original native raster artwork generated for Gnaroshi."
   },
   researchEfficientSystems: {
-    id: "research-efficient-systems",
-    purpose: "Show reusable model state and lightweight update paths.",
-    route: "/research/",
-    alt: { en: "Model backbone reusing cached state through small delta updates.", ko: "작은 델타 갱신으로 캐시된 상태를 재사용하는 모델 구조." },
-    aspectRatio: "4:3", light: "/media/research-efficient-systems.svg", dark: "/media/research-efficient-systems.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
+    id: "research-efficient-systems", purpose: "Communicate stored-state reuse, incremental update, and modularity.", route: "/research/",
+    alt: { en: "Matte computation block, cached state layers, and compact update modules arranged for reuse.", ko: "재사용을 위해 배치한 무광 연산 블록과 캐시 상태 레이어, 작은 갱신 모듈." },
+    width: 1600, height: 1200, aspectRatio: "4:3", variants: variants("research-efficient-systems", 1448), fallback: "/media/research-efficient-systems-1200.webp", focalPoint: "center center", sizes: "(min-width: 768px) 44vw, 100vw", loadingPriority: "low", generation: generation("candidate-b"), provenance: "Original native raster artwork generated for Gnaroshi."
   },
   researchWorkflow: {
-    id: "research-workflow",
-    purpose: "Summarize the recurring research loop.",
-    route: "/research/",
-    alt: { en: "A research loop connecting reading, recall, critique, implementation, and revisit.", ko: "읽기와 회상, 비평, 구현, 다시 보기를 잇는 연구 순환." },
-    aspectRatio: "4:3", light: "/media/research-workflow.svg", dark: "/media/research-workflow.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
-  },
-  projectGnaroshiDev: {
-    id: "project-gnaroshi-dev",
-    purpose: "Show the public publishing boundary for gnaroshi.dev.",
-    route: "/projects/",
-    alt: { en: "Studio publishing private paper and writing repositories through a sanitized public feed to the website.", ko: "Studio가 비공개 논문·글 저장소를 정제된 공개 피드를 거쳐 웹사이트로 발행하는 구조." },
-    aspectRatio: "16:10", light: "/media/project-gnaroshi-dev.svg", dark: "/media/project-gnaroshi-dev.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
+    id: "research-workflow", purpose: "Represent the recurring reading, recall, critique, implementation, and revisit loop.", route: "/research/",
+    alt: { en: "Open blank paper, recall object, pencil, computation module, and prototype arranged along an incomplete loop.", ko: "빈 펼친 종이와 회상 도구, 연필, 연산 모듈, 프로토타입을 열린 순환 형태로 배치한 장면." },
+    width: 1600, height: 1200, aspectRatio: "4:3", variants: variants("research-workflow", 1448), fallback: "/media/research-workflow-1200.webp", focalPoint: "center center", sizes: "(min-width: 768px) 44vw, 100vw", loadingPriority: "low", generation: generation("candidate-a"), provenance: "Original native raster artwork generated for Gnaroshi."
   },
   projectGnaroshiVla: {
-    id: "project-gnaroshi-vla",
-    purpose: "Show the architecture-neutral separation used by the VLA experiment workspace.",
-    route: "/projects/gnaroshi-vla/",
-    alt: {
-      en: "Observation, language, state, and action interfaces organized around replaceable VLA architecture adapters.",
-      ko: "교체 가능한 VLA 아키텍처 어댑터를 중심으로 구성한 관찰, 언어, 상태, 행동 인터페이스."
-    },
-    aspectRatio: "16:10",
-    light: "/media/research-vla.svg",
-    dark: "/media/research-vla.svg",
-    source: diagramSource,
-    provenance: "Original project artwork.",
-    focalPoint: "center",
-    loadingPriority: "low"
+    id: "project-gnaroshi-vla", purpose: "Show a modular VLA experiment bench with replaceable architecture adapters.", route: "/projects/gnaroshi-vla/",
+    alt: { en: "Robot gripper, replaceable adapter dock, observation tile, blank language cards, and organized experiment tray.", ko: "로봇 그리퍼와 교체형 어댑터 도크, 관찰 타일, 빈 언어 카드, 정돈된 실험 트레이." },
+    width: 1600, height: 1000, aspectRatio: "16:10", variants: variants("project-gnaroshi-vla", 1584), fallback: "/media/project-gnaroshi-vla-1200.webp", focalPoint: "center center", sizes: "(min-width: 768px) 58vw, 100vw", loadingPriority: "low", generation: generation("candidate-b"), provenance: "Original native raster artwork generated specifically for the gnaroshi_vla project."
+  },
+  projectGnaroshiDev: {
+    id: "project-gnaroshi-dev", purpose: "Show private sources passing through a controlled public projection boundary.", route: "/projects/gnaroshi-dev/",
+    alt: { en: "Private notebook and paper cards separated from clean public cards by a translucent filtering gate.", ko: "비공개 노트와 종이 카드를 반투명 필터 경계로 정제된 공개 카드와 구분한 장면." },
+    width: 1600, height: 1000, aspectRatio: "16:10", variants: variants("project-gnaroshi-dev", 1584), fallback: "/media/project-gnaroshi-dev-1200.webp", focalPoint: "center center", sizes: "(min-width: 768px) 58vw, 100vw", loadingPriority: "low", generation: generation("candidate-b"), provenance: "Original native raster artwork generated specifically for the gnaroshi.dev project."
   },
   paperLabCycle: {
-    id: "paper-lab-cycle",
-    purpose: "Orient new Paper Lab visitors without presenting empty metrics.",
-    route: "/papers/",
-    alt: { en: "Paper workflow from queue through three reading passes, review, recall, and implementation.", ko: "읽을 논문에서 3단계 읽기와 복습, 회상, 구현으로 이어지는 논문 흐름." },
-    aspectRatio: "16:10", light: "/media/paper-lab-cycle.svg", dark: "/media/paper-lab-cycle.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
+    id: "paper-lab-cycle", purpose: "Orient new Paper Lab visitors through reading, recall, review, explanation, and implementation objects.", route: "/papers/",
+    alt: { en: "Blank paper, question and formula tiles, voice capsule, code module, prototype, and progress cells.", ko: "빈 종이와 질문·공식 타일, 음성 캡슐, 코드 모듈, 프로토타입, 진행 셀을 배치한 장면." },
+    width: 1600, height: 1000, aspectRatio: "16:10", variants: variants("paper-lab-cycle", 1584), fallback: "/media/paper-lab-cycle-1200.webp", focalPoint: "center center", sizes: "(min-width: 768px) 55vw, 100vw", loadingPriority: "low", generation: generation("candidate-b"), provenance: "Original native raster artwork generated for Paper Lab onboarding."
   },
   growthEvidence: {
-    id: "growth-evidence",
-    purpose: "Explain how distinct public evidence streams form a longitudinal view.",
-    route: "/growth/",
-    alt: { en: "Reading, recall, coding, and writing evidence converging into a restrained timeline.", ko: "읽기와 회상, 코딩, 글쓰기 근거가 하나의 시간 흐름으로 모이는 구조." },
-    aspectRatio: "16:10", light: "/media/growth-evidence.svg", dark: "/media/growth-evidence.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
-  },
-  blogCoverPaperReading: {
-    id: "blog-cover-paper-reading",
-    purpose: "Identify the paper-reading series without forcing unique artwork onto each note.",
-    route: "/blog/",
-    alt: { en: "Connected reading passes arranged as an editorial diagram.", ko: "여러 읽기 단계를 연결한 편집형 도식." },
-    aspectRatio: "16:9", light: "/media/blog-cover-paper-reading.svg", dark: "/media/blog-cover-paper-reading.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
-  },
-  blogCoverResearchSystems: {
-    id: "blog-cover-research-systems",
-    purpose: "Identify the research-systems writing series.",
-    route: "/blog/",
-    alt: { en: "Research inputs connected through a compact systems diagram.", ko: "연구 입력을 잇는 간결한 시스템 도식." },
-    aspectRatio: "16:9", light: "/media/blog-cover-research-systems.svg", dark: "/media/blog-cover-research-systems.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
-  },
-  blogCoverImplementationNotes: {
-    id: "blog-cover-implementation-notes",
-    purpose: "Identify the implementation-notes writing series.",
-    route: "/blog/",
-    alt: { en: "Code and implementation steps connected in sequence.", ko: "코드와 구현 단계를 순서대로 연결한 도식." },
-    aspectRatio: "16:9", light: "/media/blog-cover-implementation-notes.svg", dark: "/media/blog-cover-implementation-notes.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
-  },
-  blogCoverAiWorkflow: {
-    id: "blog-cover-ai-workflow",
-    purpose: "Identify the AI-workflow writing series.",
-    route: "/blog/",
-    alt: { en: "Human review checkpoints arranged around an AI workflow.", ko: "AI 작업 흐름 주위에 배치된 사람의 검토 지점." },
-    aspectRatio: "16:9", light: "/media/blog-cover-ai-workflow.svg", dark: "/media/blog-cover-ai-workflow.svg", source: diagramSource, provenance: "Original project artwork.", focalPoint: "center", loadingPriority: "low"
+    id: "growth-evidence", purpose: "Represent reading, recall, implementation, and writing evidence accumulating over time.", route: "/growth/",
+    alt: { en: "Paper, memory capsule, implementation module, and writing card converging into a field of timeline cells.", ko: "종이와 기억 캡슐, 구현 모듈, 글쓰기 카드가 시간 셀의 흐름으로 모이는 장면." },
+    width: 1600, height: 1000, aspectRatio: "16:10", variants: variants("growth-evidence", 1584), fallback: "/media/growth-evidence-1200.webp", focalPoint: "center center", sizes: "(min-width: 768px) 55vw, 100vw", loadingPriority: "low", generation: generation("candidate-b"), provenance: "Original native raster artwork generated for the evidence-gated Growth view."
   }
 } satisfies Record<string, MediaAsset>;
-
-export const blogCoverFamily = [
-  mediaManifest.blogCoverPaperReading,
-  mediaManifest.blogCoverResearchSystems,
-  mediaManifest.blogCoverImplementationNotes,
-  mediaManifest.blogCoverAiWorkflow
-];
