@@ -4,7 +4,7 @@ test("desktop navigation stays concise", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
   const primary = page.getByRole("navigation", { name: "Primary navigation" });
-  await expect(primary.getByRole("link")).toHaveCount(6);
+  await expect(primary.getByRole("link")).toHaveCount(5);
   await expect(primary.getByRole("link", { name: "Writing" })).toHaveAttribute("href", "/blog");
   await expect(primary.getByRole("link", { name: "Paper Lab" })).toHaveAttribute("href", "/papers");
 });

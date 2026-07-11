@@ -26,6 +26,12 @@ export type ContentFeedBuildInfo = {
   sourceCommits: Record<string, string>;
 };
 
+export type WebsiteBuildInfo = {
+  websiteCommit: string | null;
+  contentFeedCommit: string | null;
+  builtAt: string;
+};
+
 let manifestCache: ContentFeedManifest | undefined;
 
 function safePath(path: string): string {
@@ -62,6 +68,22 @@ export function getContentFeedCommit(): string | null {
   } catch {
     return null;
   }
+}
+
+function getGitCommit(directory: string): string | null {
+  try {
+    return execFileSync("git", ["-C", directory, "rev-parse", "HEAD"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+  } catch {
+    return null;
+  }
+}
+
+export function getWebsiteBuildInfo(): WebsiteBuildInfo {
+  return {
+    websiteCommit: process.env.WEBSITE_COMMIT ?? process.env.GITHUB_SHA ?? getGitCommit(projectRoot),
+    contentFeedCommit: getContentFeedCommit(),
+    builtAt: process.env.BUILD_TIMESTAMP ?? new Date().toISOString()
+  };
 }
 
 export function getContentFeedBuildInfo(): ContentFeedBuildInfo {

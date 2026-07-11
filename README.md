@@ -39,6 +39,7 @@ npm run content:pull
 npm run content:check
 npm run test:e2e
 npm run test:a11y
+npm run test:visual
 npm run check:i18n
 npm run check:links
 ```
@@ -74,7 +75,7 @@ Every page includes:
 <meta name="content-feed-commit" content="...">
 ```
 
-The same commit and manifest metadata are available at `/build-info.json`. A richer diagnostics page exists at `/dev-diagnostics/content-feed/` only in development.
+Website commit, imported feed commit, and build time are available at `/build-info.json`. A richer diagnostics page exists at `/dev-diagnostics/content-feed/` only in development.
 
 ## Profile And Project Data
 

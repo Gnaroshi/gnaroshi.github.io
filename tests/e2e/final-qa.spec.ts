@@ -91,7 +91,7 @@ test("locale shells and dates remain consistent", async ({ page }) => {
 
 test("homepage, blog, evidence gates, and empty tools remain truthful", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator(".home-editorial > .home-band")).toHaveCount(4);
+  await expect(page.locator(".home-editorial > .content-section")).toHaveCount(3);
   await expect(page.locator(".home-editorial > .identity-hero")).toHaveCount(1);
   await expect(page.locator(".paper-stat-card")).toHaveCount(0);
 

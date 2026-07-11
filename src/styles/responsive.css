@@ -1,18 +1,4 @@
-@media (max-width: 820px) {
-  .site-header__inner {
-    grid-template-columns: 1fr auto;
-  }
-
-  .theme-toggle {
-    grid-row: 1;
-    grid-column: 2;
-  }
-
-  .site-nav {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-  }
-
+@media (max-width: 767px) {
   .site-footer__inner {
     display: grid;
   }
@@ -70,21 +56,7 @@
   }
 }
 
-@media (max-width: 560px) {
-  .site-header__inner,
-  .site-footer__inner,
-  .site-main {
-    width: min(100% - 24px, 100%);
-  }
-
-  .site-main {
-    padding-top: var(--space-6);
-  }
-
-  h1 {
-    font-size: var(--text-2xl);
-  }
-
+@media (max-width: 479px) {
   .paper-method-panel,
   .paper-heatmap,
   .paper-filter-panel,

@@ -12,6 +12,7 @@ import ReadingMethodPanel from "./ReadingMethodPanel.astro";
 import type { Locale } from "../../i18n/types";
 import { translate } from "../../i18n/utils";
 import { getIslandMessages } from "../../i18n/islands";
+import { mediaManifest } from "../../data/mediaManifest";
 
 interface Props {
   papers: PaperEntry[];
@@ -35,6 +36,7 @@ const hasAdvancedNotebook = papers.length >= evidenceGates.paperLab.filtersAt;
 const hasReviewSummary = reviewStats.reviewedCount >= evidenceGates.paperLab.aiReviewSummaryAt;
 const islandMessages = getIslandMessages(locale);
 const messages = islandMessages.paper;
+const onboardingArtwork = mediaManifest.paperLabCycle;
 ---
 
 <div class="paper-dashboard">
@@ -49,12 +51,13 @@ const messages = islandMessages.paper;
   {papers.length === 0 ? (
     <>
       <section class="paper-onboarding" aria-labelledby="paper-onboarding-heading">
-        <div>
+        <div class="paper-onboarding__copy">
           <p class="eyebrow">{translate(locale, "papers.startSmall")}</p>
           <h2 id="paper-onboarding-heading">{translate(locale, "papers.firstEnough")}</h2>
           <p>{translate(locale, "papers.firstDescription")}</p>
+          <a class="button button--primary" href={locale === "ko" ? "/ko/research/" : "/research/"}>{translate(locale, "nav.research")}</a>
         </div>
-        <a class="button button--primary" href={locale === "ko" ? "/ko/research/" : "/research/"}>{translate(locale, "nav.research")}</a>
+        <div class="paper-onboarding__media media-frame"><img src={onboardingArtwork.light} alt={onboardingArtwork.alt[locale]} width="960" height="600" loading="lazy" decoding="async" /></div>
       </section>
       <ReadingMethodPanel locale={locale} />
     </>
@@ -133,19 +136,21 @@ const messages = islandMessages.paper;
 
   .paper-onboarding {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, .9fr) minmax(300px, 1.1fr);
     gap: var(--space-6);
-    align-items: end;
+    align-items: center;
     padding: var(--space-6);
-    border-left: 3px solid var(--color-reading);
-    background: var(--color-surface-quiet);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
   }
 
-  .paper-onboarding > div {
+  .paper-onboarding__copy {
     display: grid;
     max-width: 62ch;
     gap: var(--space-3);
   }
+  .paper-onboarding__copy .button { width: fit-content; margin-top: var(--space-2); }
+  .paper-onboarding__media { aspect-ratio: 16 / 10; }
 
   .paper-onboarding p:last-child,
   .paper-workflow-notes p,
@@ -196,8 +201,9 @@ const messages = islandMessages.paper;
     color: var(--color-text-muted);
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 767px) {
     .paper-onboarding { grid-template-columns: 1fr; padding: var(--space-5); }
+    .paper-onboarding__copy .button { width: 100%; }
     .paper-workflow-notes { grid-template-columns: 1fr; }
   }
 </style>

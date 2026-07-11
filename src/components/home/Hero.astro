@@ -1,108 +1,33 @@
 ---
+import HeroShell from "../layout/HeroShell.astro";
 import { profile } from "../../data/profile";
 import { getLocalizedData } from "../../data/locales";
+import { mediaManifest } from "../../data/mediaManifest";
 import type { Locale } from "../../i18n/types";
 import { getLocalePath, translate } from "../../i18n/utils";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const data = getLocalizedData(locale);
+const artwork = mediaManifest.homeResearchConstellation;
 ---
 
-<section class="identity-hero" aria-labelledby="home-title">
+<HeroShell class="identity-hero" labelledby="home-title">
   <div class="identity-hero__copy">
     <p class="eyebrow">{data.profile.location}</p>
     <h1 id="home-title">{profile.displayName}</h1>
     <p class="identity-hero__headline">{data.profile.headline}</p>
     <p class="identity-hero__bio">{data.profile.shortBio}</p>
-    <div class="identity-hero__actions" aria-label={translate(locale, "a11y.primaryNavigation")}>
-      <a class="button button--primary" href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.readWriting")}</a>
-      <a class="button" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewResearch")}</a>
+    <div class="identity-hero__actions">
+      <a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewResearch")}</a>
+      <a class="button" href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.readWriting")}</a>
     </div>
+    <p class="identity-hero__focus"><span>{translate(locale, "home.currentFocus")}</span>{data.now.currentQuestions[0]}</p>
   </div>
-  <aside class="identity-hero__current" aria-label={translate(locale, "home.currentFocus")}>
-    <span>{translate(locale, "home.exploring")}</span>
-    <strong>{data.now.currentQuestions[0]}</strong>
-    <a href={getLocalePath(locale, "/now/")}>{translate(locale, "home.currentFocus")}</a>
-  </aside>
-</section>
-
-<style>
-  .identity-hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.5fr);
-    gap: var(--space-8);
-    align-items: end;
-    min-height: min(68vh, 42rem);
-    padding: var(--space-8) 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .identity-hero__copy {
-    display: grid;
-    gap: var(--space-4);
-  }
-
-  .identity-hero h1 {
-    max-width: none;
-    font-size: var(--display-md);
-    line-height: 1;
-  }
-
-  .identity-hero__headline {
-    color: var(--color-text);
-    font-size: var(--text-xl);
-    font-weight: 720;
-  }
-
-  .identity-hero__bio {
-    max-width: 56ch;
-    color: var(--color-text-secondary);
-    font-size: var(--editorial-body);
-    line-height: 1.75;
-  }
-
-  .identity-hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: var(--space-2);
-  }
-
-  .identity-hero__current {
-    display: grid;
-    gap: var(--space-3);
-    padding-top: var(--space-4);
-    border-top: 3px solid var(--color-reading);
-  }
-
-  .identity-hero__current span {
-    color: var(--color-text-muted);
-    font-size: var(--text-xs);
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-
-  .identity-hero__current strong {
-    font-size: var(--text-lg);
-    line-height: 1.45;
-  }
-
-  .identity-hero__current a {
-    width: fit-content;
-    font-size: var(--text-sm);
-    font-weight: 700;
-  }
-
-  @media (max-width: 760px) {
-    .identity-hero {
-      grid-template-columns: 1fr;
-      gap: var(--space-6);
-      min-height: auto;
-      padding: var(--space-7) 0;
-    }
-  }
-
-  @media (max-width: 420px) {
-    .identity-hero h1 { font-size: var(--display-sm); }
-  }
-</style>
+  <figure class="identity-hero__art media-frame">
+    <picture>
+      <source type="image/avif" srcset="/media/home-research-constellation-480.avif 480w, /media/home-research-constellation-768.avif 768w, /media/home-research-constellation-1200.avif 1200w, /media/home-research-constellation-1600.avif 1600w" sizes="(min-width: 1024px) 45vw, 100vw" />
+      <source type="image/webp" srcset="/media/home-research-constellation-480.webp 480w, /media/home-research-constellation-768.webp 768w, /media/home-research-constellation-1200.webp 1200w, /media/home-research-constellation-1600.webp 1600w" sizes="(min-width: 1024px) 45vw, 100vw" />
+      <img src={artwork.light} alt={artwork.alt[locale]} width="1600" height="1280" loading="eager" fetchpriority="high" decoding="async" />
+    </picture>
+  </figure>
+</HeroShell>

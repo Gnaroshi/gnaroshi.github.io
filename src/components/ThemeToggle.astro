@@ -1,6 +1,8 @@
 ---
 import type { Locale } from "../i18n/types";
 import { translate } from "../i18n/utils";
+import MoonIcon from "./icons/MoonIcon.astro";
+import SunIcon from "./icons/SunIcon.astro";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 ---
@@ -14,7 +16,8 @@ const { locale } = Astro.props;
   data-light-label={translate(locale, "theme.switchToLight")}
   data-dark-label={translate(locale, "theme.switchToDark")}
 >
-  <span data-theme-toggle-icon aria-hidden="true">☾</span>
+  <span class="theme-toggle__icon theme-toggle__icon--moon"><MoonIcon /></span>
+  <span class="theme-toggle__icon theme-toggle__icon--sun"><SunIcon /></span>
 </button>
 
 <script>
@@ -38,7 +41,6 @@ const { locale } = Astro.props;
   const applyThemeToggleState = (button: Element) => {
     const theme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
     const nextTheme = theme === "dark" ? "light" : "dark";
-    const icon = button.querySelector("[data-theme-toggle-icon]");
     const label = nextTheme === "dark"
       ? button.getAttribute("data-dark-label")
       : button.getAttribute("data-light-label");
@@ -46,7 +48,6 @@ const { locale } = Astro.props;
       button.setAttribute("aria-label", label);
       button.setAttribute("title", label);
     }
-    if (icon) icon.textContent = theme === "dark" ? "☀" : "☾";
   };
 
   for (const button of document.querySelectorAll("[data-theme-toggle]")) {

@@ -1,6 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import AppShell from "../components/layout/AppShell.astro";
+import PageHeader from "../components/layout/PageHeader.astro";
 import SectionHeader from "../components/common/SectionHeader.astro";
+import { mediaManifest } from "../data/mediaManifest";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getPublicGrowthSnapshot } from "../utils/feedData";
@@ -10,53 +13,39 @@ const { locale } = Astro.props;
 const snapshot = getPublicGrowthSnapshot();
 const eligible = Boolean(snapshot?.metricEligible && snapshot.score !== null);
 const componentLabels: Record<string, { en: string; ko: string }> = {
-  consistency: { en: "Consistency", ko: "꾸준함" },
-  depth: { en: "Reading depth", ko: "읽기 깊이" },
-  retrieval: { en: "Retrieval", ko: "회상" },
-  output: { en: "Research output", ko: "연구 결과물" }
+  consistency: { en: "Consistency", ko: "꾸준함" }, depth: { en: "Reading depth", ko: "읽기 깊이" }, retrieval: { en: "Retrieval", ko: "회상" }, output: { en: "Research output", ko: "연구 결과물" }
 };
 const components = Object.entries(snapshot?.components ?? {}).filter((entry): entry is [string, number] => typeof entry[1] === "number");
+const artwork = mediaManifest.growthEvidence;
 ---
 
 <BaseLayout locale={locale} title={translate(locale, "growth.title")} description={translate(locale, "growth.intro")} width="dashboard" mode="application">
-  <div class="momentum-page">
-    <header class="momentum-hero">
-      <div><p class="eyebrow">{translate(locale, "growth.eyebrow")}</p><h1>{translate(locale, "growth.title")}</h1><p class="lede">{translate(locale, "growth.intro")}</p></div>
-    </header>
+  <AppShell class="momentum-page">
+    <PageHeader eyebrow={translate(locale, "growth.eyebrow")} title={translate(locale, "growth.title")} description={translate(locale, "growth.intro")} />
 
     {eligible && snapshot ? (
-      <section class="momentum-score" aria-labelledby="growth-score-heading">
-        <div><p class="eyebrow">{locale === "ko" ? "공개 피드 스냅샷" : "Public feed snapshot"}</p><h2 id="growth-score-heading">{snapshot.score}</h2><p>{locale === "ko" ? `신뢰도 ${snapshot.confidence}` : `${snapshot.confidence} confidence`}</p></div>
-        <dl><div><dt>{locale === "ko" ? "근거" : "Evidence"}</dt><dd>{snapshot.evidenceCount}</dd></div><div><dt>{locale === "ko" ? "활동일" : "Active days"}</dt><dd>{snapshot.activeDays}</dd></div></dl>
-      </section>
+      <section class="momentum-score" aria-labelledby="growth-score-heading"><div><p class="eyebrow">{locale === "ko" ? "공개 피드 스냅샷" : "Public feed snapshot"}</p><h2 id="growth-score-heading">{snapshot.score}</h2><p>{locale === "ko" ? `신뢰도 ${snapshot.confidence}` : `${snapshot.confidence} confidence`}</p></div><dl><div><dt>{locale === "ko" ? "근거" : "Evidence"}</dt><dd>{snapshot.evidenceCount}</dd></div><div><dt>{locale === "ko" ? "활동일" : "Active days"}</dt><dd>{snapshot.activeDays}</dd></div></dl></section>
     ) : (
-      <section class="app-empty-state" aria-labelledby="growth-collecting-heading">
-        <p class="eyebrow">{locale === "ko" ? "근거 수집 중" : "Collecting evidence"}</p>
-        <h2 id="growth-collecting-heading">{locale === "ko" ? "아직 공개 점수를 표시하지 않습니다" : "No public score yet"}</h2>
-        <p>{locale === "ko" ? "공개 피드가 충분한 활동 범위와 기간을 확인할 때까지 점수는 비워 둡니다." : "The score remains unavailable until the public feed reports sufficient activity breadth and duration."}</p>
-        <a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a>
-      </section>
+      <section class="growth-onboarding" aria-labelledby="growth-collecting-heading"><div class="app-empty-state"><p class="eyebrow">{locale === "ko" ? "근거 수집 중" : "Collecting evidence"}</p><h2 id="growth-collecting-heading">{locale === "ko" ? "아직 공개 점수를 표시하지 않습니다" : "No public score yet"}</h2><p>{locale === "ko" ? "공개 피드가 충분한 활동 범위와 기간을 확인할 때까지 점수는 비워 둡니다." : "The score remains unavailable until the public feed reports sufficient activity breadth and duration."}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div><div class="growth-onboarding__media media-frame"><img src={artwork.light} alt={artwork.alt[locale]} width="960" height="600" loading="lazy" decoding="async" /></div></section>
     )}
 
-    {components.length > 0 && (
-      <section class="section" aria-labelledby="growth-components-heading">
-        <SectionHeader id="growth-components-heading" title={locale === "ko" ? "구성 요소" : "Components"} />
-        <div class="growth-feed-components">{components.map(([key, value]) => <article><h3>{componentLabels[key]?.[locale] ?? key}</h3><strong>{Math.round(value)}</strong></article>)}</div>
-      </section>
-    )}
-
-    <details class="momentum-methodology"><summary>{locale === "ko" ? "데이터 출처" : "Data source"}</summary><p>{locale === "ko" ? "점수, 신뢰도, 근거 수, 구성 요소는 public content-feed에서 생성된 스냅샷을 그대로 표시합니다." : "Score, confidence, evidence counts, and components come directly from the generated public content-feed snapshot."}</p></details>
-  </div>
+    {components.length > 0 && <section class="section" aria-labelledby="growth-components-heading"><SectionHeader id="growth-components-heading" title={locale === "ko" ? "구성 요소" : "Components"} /><div class="growth-feed-components">{components.map(([key, value]) => <article><h3>{componentLabels[key]?.[locale] ?? key}</h3><strong>{Math.round(value)}</strong></article>)}</div></section>}
+    <details class="momentum-methodology"><summary>{locale === "ko" ? "데이터 출처" : "Data source"}</summary><p>{locale === "ko" ? "점수와 신뢰도, 근거 수, 구성 요소는 공개 콘텐츠 피드의 스냅샷을 그대로 표시합니다." : "Score, confidence, evidence counts, and components come directly from the generated public content-feed snapshot."}</p></details>
+  </AppShell>
 </BaseLayout>
 
 <style>
-  .momentum-score{display:flex;justify-content:space-between;gap:var(--space-6);padding:var(--space-6);border:1px solid var(--color-border);background:var(--color-surface-quiet)}
-  .momentum-score h2{font-size:var(--text-4xl)}
-  .momentum-score dl{display:flex;gap:var(--space-6)}
-  .momentum-score dl div{display:grid;gap:var(--space-1)}
-  .momentum-score dt{color:var(--color-text-muted);font-size:var(--text-sm)}
-  .momentum-score dd{font-size:var(--text-xl);font-weight:700}
-  .growth-feed-components{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:var(--space-4)}
-  .growth-feed-components article{padding:var(--space-4);border-top:2px solid var(--color-border-strong)}
-  @media(max-width:600px){.momentum-score{display:grid}.momentum-score dl{justify-content:space-between}}
+  .growth-onboarding { display: grid; gap: var(--space-5); align-items: stretch; }
+  .growth-onboarding .app-empty-state { max-width: none; align-content: center; }
+  .growth-onboarding__media { aspect-ratio: 16 / 10; }
+  .momentum-score { display:flex; justify-content:space-between; gap:var(--space-6); padding:var(--space-6); border:1px solid var(--color-border); background:var(--color-surface-raised); }
+  .momentum-score h2 { font-size:var(--text-4xl); }
+  .momentum-score dl { display:flex; gap:var(--space-6); }
+  .momentum-score dl div { display:grid; gap:var(--space-1); }
+  .momentum-score dt { color:var(--color-text-muted); font-size:var(--text-sm); }
+  .momentum-score dd { font-size:var(--text-xl); font-weight:700; }
+  .growth-feed-components { display:grid; grid-template-columns:repeat(auto-fit,minmax(10rem,1fr)); gap:var(--space-4); }
+  .growth-feed-components article { padding:var(--space-4); border-top:2px solid var(--color-border-strong); }
+  @media (min-width: 768px) { .growth-onboarding { grid-template-columns: minmax(0, .9fr) minmax(300px, 1.1fr); } }
+  @media (max-width: 479px) { .momentum-score { display:grid; } .momentum-score dl { justify-content:space-between; } }
 </style>
