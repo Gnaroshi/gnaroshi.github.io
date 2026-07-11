@@ -148,17 +148,16 @@ test("header switches before navigation can wrap", async ({ page }) => {
   }
 });
 
-test("hero and media remain measurable and non-overlapping", async ({ page }) => {
+test("temporary text-only hero and remaining media stay measurable", async ({ page }) => {
   for (const locale of ["/", "/ko/"]) {
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
       await page.setViewportSize(viewport);
       await page.goto(locale);
       const copy = await page.locator(".identity-hero__copy").boundingBox();
-      const art = await page.locator(".identity-hero__art").boundingBox();
       expect(copy).not.toBeNull();
-      expect(art).not.toBeNull();
-      if (viewport.width >= 768) expect(copy!.x + copy!.width).toBeLessThanOrEqual(art!.x + 1);
-      else expect(copy!.y + copy!.height).toBeLessThanOrEqual(art!.y + 1);
+      await expect(page.locator(".identity-hero--text-only")).toBeVisible();
+      await expect(page.locator(".identity-hero__art")).toHaveCount(0);
+      expect(copy!.x + copy!.width).toBeLessThanOrEqual(viewport.width);
       await expect(page.locator(".identity-hero__actions .button")).toHaveCount(2);
       const images = page.locator("main img");
       for (let index = 0; index < await images.count(); index += 1) {

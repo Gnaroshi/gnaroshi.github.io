@@ -1,5 +1,7 @@
 # Visual QA V3
 
+This is a historical QA record. Its media conclusions were superseded by the semantic rebuild audit on 2026-07-12; current media policy is defined in `docs/media-principles.md`.
+
 ## Deployment Verification
 
 Pre-redesign source commit: `6d5dcd1b85cbc0a6bccf086d082a5e356189e767`.
@@ -43,9 +45,9 @@ At 1440px, Research, Projects, Writing, and About titles all begin at Y=174px. P
 - Unicode theme glyphs were replaced with 18px SVG icons centered inside 36px desktop and 40px touch targets. Measured center difference is at most 1px.
 - Homepage content is limited to Hero, Selected Work, Latest Notes, and Research Loop.
 - Current focus is part of the Hero; collaboration links remain in About and the footer.
-- Research alternates three meaningful diagrams with concise question-led text.
+- Research uses concise question-led text while replacement media is under review.
 - Projects use one evidence-backed featured case rather than treating internal tools as separate projects.
-- Paper Lab and Growth use illustrations only in evidence-gated onboarding; real feed data replaces them when eligible.
+- Empty Paper Lab and Growth states use no large decorative media.
 - About uses an abstract monogram and does not invent a portrait.
 - Korean headings, controls, and tags fit at 360px without forced English line-length rules.
 
@@ -55,14 +57,12 @@ At 1440px, Research, Projects, Writing, and About titles all begin at Y=174px. P
 
 ## Image Manifest
 
-`src/data/mediaManifest.ts` contains route, purpose, localized alt text, aspect ratio, source, provenance, focal point, and loading priority. The asset system includes one original generated Hero, six explanatory diagrams, and four reusable blog cover family members. See `docs/image-system.md`.
+The V3 abstract media system is retired. Legacy records remain only for rollback until Stage 2 removes the corresponding files. New candidates remain outside `public/` and require explicit approval. See `docs/media-rebuild-audit.md`.
 
 ## Performance
 
 - No runtime dependency or chart library was added.
-- Hero AVIF/WebP variants range from 24KB to 232KB; the normal desktop selection is the 768px source, about 68KB as AVIF.
-- Only the Hero is preloaded. Other images are lazy-loaded with explicit dimensions.
-- SVG diagrams are 4KB each and share one visual grammar.
+- No unapproved candidate image is part of the public bundle or preloaded.
 - React islands remain limited to existing interactive tools and do not power the redesigned editorial pages.
 
 ## Remaining Owner Content
@@ -75,7 +75,7 @@ At 1440px, Research, Projects, Writing, and About titles all begin at Y=174px. P
 
 Before V3, the site was typographically clean but visually sparse, used inconsistent page-title offsets, exposed a six-item primary navigation, and relied on Unicode theme glyphs. Long Korean research content became a text wall while empty application pages had little visual orientation.
 
-After V3, all pages share one gutter and shell system, navigation never wraps, titles align by mode, the Homepage introduces the person before the system, and media explains actual research structure. Dark mode has distinct background/surface/raised levels, restrained borders, and reduced-glare diagram surfaces.
+After the semantic media audit, the shell and navigation improvements remain while ambiguous artwork is temporarily replaced by typography-only layouts. Dark mode retains distinct background, surface, and raised levels.
 
 ## Commands
 

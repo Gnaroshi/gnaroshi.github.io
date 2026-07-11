@@ -1,0 +1,17 @@
+$ bash scripts/run_experiment.sh \
+    architecture=seer method=lrnode env=seer_libero \
+    experiment=seer_lrnode_debug action=sanity
+
+[RUN CONTEXT] architecture=seer
+[RUN CONTEXT] method=lrnode
+[RUN CONTEXT] env=seer_libero
+[RUN CONTEXT] action=sanity
+[OK] architecture upstream
+[OK] architecture adapters
+[OK] architecture wrappers
+[OK] env config
+[OK] method config
+[OK] results schema
+[OK] excluded heavy path absent: checkpoints
+[OK] excluded heavy path absent: wandb
+[RUN DONE] result_dir=[redacted temporary workspace]/results/...

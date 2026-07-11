@@ -1,0 +1,8 @@
+name: seer_lrnode_debug
+architecture: seer
+method: lrnode
+env: seer_libero
+action: sanity
+result_subdir: results/seer/lrnode/seer_lrnode_debug
+upstream_workdir: architectures/seer/upstream
+notes: Lightweight debug composition for the current LR-NODE Seer method.

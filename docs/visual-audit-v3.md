@@ -40,4 +40,4 @@ Baseline title Y values below are `desktop/mobile`; widths are the baseline desk
 
 ## Redesign Response
 
-V3 uses one gutter scale, four named container widths, 480/768/1024/1280 breakpoints, SVG theme icons, a five-item primary navigation, shared page shells, and a single coherent media system. Homepage repetition is removed and application illustrations appear only in evidence-gated onboarding states.
+V3 uses one gutter scale, four named container widths, 480/768/1024/1280 breakpoints, SVG theme icons, a five-item primary navigation, and shared page shells. Its original abstract media response was retired by `docs/media-rebuild-audit.md`; empty application states now use no large artwork, and replacement media is selected by semantic category rather than one shared composition style.
