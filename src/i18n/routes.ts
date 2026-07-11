@@ -34,20 +34,20 @@ export function getPaperLabNavigation(locale: Locale) {
     ] },
     { label: translate(locale, "paperLab.read"), items: [
       { href: path("/queue/"), label: translate(locale, "paperLab.readingQueue") },
-      { href: path("/papers/#paper-notes"), label: translate(locale, "paperLab.paperNotes") }
+      { href: path("/papers/"), label: translate(locale, "paperLab.paperNotes") }
     ] },
     { label: translate(locale, "paperLab.review"), items: [
       { href: path("/reviews/"), label: translate(locale, "paperLab.reviewsDue") },
-      { href: path("/papers/#ai-review-workflow"), label: translate(locale, "paperLab.aiReview") }
+      { href: path("/reviews/"), label: translate(locale, "paperLab.aiReview") }
     ] },
     { label: translate(locale, "paperLab.practice"), items: [
-      { href: path("/papers/#oral-exam-entry"), label: translate(locale, "paperLab.oralExam") },
+      { href: path("/papers/"), label: translate(locale, "paperLab.oralExam") },
       { href: path("/formula/"), label: translate(locale, "paperLab.formulaRecall") },
       { href: path("/questions/"), label: translate(locale, "paperLab.questionBank") }
     ] },
     { label: translate(locale, "paperLab.build"), items: [
       { href: path("/implementations/"), label: translate(locale, "paperLab.implementations") },
-      { href: path("/papers/#paper-to-blog"), label: translate(locale, "paperLab.paperToBlog") }
+      { href: path("/blog/"), label: translate(locale, "paperLab.paperToBlog") }
     ] },
     { label: translate(locale, "paperLab.insights"), items: [
       { href: path("/week/"), label: translate(locale, "paperLab.weeklyReviews") },

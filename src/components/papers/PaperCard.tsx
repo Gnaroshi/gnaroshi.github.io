@@ -65,7 +65,7 @@ export default function PaperCard({ paper, locale, messages }: Props) {
       <div className="paper-card__links">
         <a href={paper.href}>{messages.detail}</a>
         {links.map((link) => (
-          <a href={link.href} target="_blank" rel="noreferrer" key={link.label}>
+          <a href={link.href} target="_blank" rel="noopener noreferrer external" key={link.label}>
             {link.label}
           </a>
         ))}

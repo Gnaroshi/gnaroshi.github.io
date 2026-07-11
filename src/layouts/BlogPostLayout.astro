@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import FeatureStyles from "../components/FeatureStyles.astro";
+import StructuredData from "../components/StructuredData.astro";
 import BlogMeta from "../components/blog/BlogMeta.astro";
 import SeriesNav from "../components/blog/SeriesNav.astro";
 import TableOfContents from "../components/blog/TableOfContents.astro";
@@ -8,6 +11,12 @@ import type { BlogPost } from "../utils/content";
 import { getBlogPostHref } from "../utils/content";
 import type { AlternateUrls, Locale } from "../i18n/types";
 import { translate } from "../i18n/utils";
+import { profile } from "../data/profile";
+import { hasMathSyntax } from "../utils/math";
+import { getPublicAssetMetadata } from "../utils/contentFeed";
+import "../styles/blog.css";
+import "../styles/code.css";
+import "../styles/prose.css";
 
 interface Heading {
   depth: number;
@@ -26,18 +35,50 @@ interface Props {
 }
 
 const { post, headings, seriesPosts, previous, next, locale, alternateUrls } = Astro.props;
+const canonicalPath = getBlogPostHref(post);
+const hasMath = hasMathSyntax(post.body);
+const requestedSocialImage = post.data.ogImage ?? post.data.heroImage;
+const socialAsset = getPublicAssetMetadata(requestedSocialImage);
+const socialImage = socialAsset && socialAsset.mediaType !== "image/svg+xml" ? requestedSocialImage : undefined;
+const blogPosting = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+  author: { "@type": "Person", name: profile.publicAlias, url: profile.domain },
+  mainEntityOfPage: new URL(canonicalPath, profile.domain).toString(),
+  inLanguage: locale === "ko" ? "ko-KR" : "en-US",
+  keywords: post.data.tags
+};
 ---
 
 <BaseLayout
   title={post.data.title}
   description={post.data.description}
-  canonical={getBlogPostHref(post)}
-  ogImage={post.data.ogImage ?? post.data.heroImage}
+  canonical={canonicalPath}
+  ogImage={socialImage}
+  ogImageWidth={socialImage ? socialAsset?.width : undefined}
+  ogImageHeight={socialImage ? socialAsset?.height : undefined}
+  ogImageAlt={socialImage ? socialAsset?.alt : undefined}
   type="article"
   locale={locale}
   alternateUrls={alternateUrls}
+  robots={post.data.visibility === "unlisted" ? "noindex, follow" : "index, follow"}
+  publishedTime={post.data.pubDate}
+  modifiedTime={post.data.updatedDate ?? post.data.pubDate}
+  articleTags={post.data.tags}
+  author={profile.publicAlias}
 >
+  <FeatureStyles slot="head" styles={hasMath ? ["katex"] : []} />
   <article class="blog-post">
+    <Breadcrumbs label={locale === "ko" ? "현재 위치" : "Breadcrumb"} items={[
+      { name: locale === "ko" ? "홈" : "Home", href: locale === "ko" ? "/ko/" : "/" },
+      { name: locale === "ko" ? "글" : "Writing", href: locale === "ko" ? "/ko/blog/" : "/blog/" },
+      { name: post.data.title, href: canonicalPath }
+    ]} />
+    <StructuredData data={blogPosting} />
     {!alternateUrls.translationAvailable && <p class="content-language-badge"><span class="paper-badge paper-badge--muted">{locale === "ko" ? "한국어 콘텐츠" : "English content"}</span> {locale === "ko" ? "영어 번역 없음" : "Korean translation unavailable"}</p>}
     <header class="blog-post__header">
       <p class="eyebrow">{translate(locale, "nav.writing")}</p>

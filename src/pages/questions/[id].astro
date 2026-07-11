@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import "../../styles/application.css";
+import "../../styles/papers.css";
 import SectionHeader from "../../components/common/SectionHeader.astro";
 import { getActiveQuestions, type QuestionBankItem } from "../../utils/questionBank";
 
@@ -17,6 +20,7 @@ const alternateUrls = { en: `/questions/${question.id}/`, ko: "/ko/questions/", 
 
 <BaseLayout title="Question" description={question.question} canonical={`/questions/${question.id}/`} alternateUrls={alternateUrls} mode="application">
   <article class="paper-detail">
+    <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Questions", href: "/questions/" }, { name: question.question, href: `/questions/${question.id}/` }]} />
     <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/questions">Back to questions</a>

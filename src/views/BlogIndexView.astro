@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import StructuredData from "../components/StructuredData.astro";
 import BlogSearch from "../components/blog/BlogSearch";
 import TagList from "../components/blog/TagList.astro";
 import SectionHeader from "../components/common/SectionHeader.astro";
@@ -11,6 +12,8 @@ import { getLocalizedTagLabel } from "../i18n/tags";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getAllBlogTags, getBlogPostHref, getPostReadingTime, getPublishedBlogPosts, toBlogPostPreview } from "../utils/content";
+import { profile } from "../data/profile";
+import "../styles/blog.css";
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
@@ -28,6 +31,15 @@ const tagLabels = Object.fromEntries(tags.map((tag) => [tag, getLocalizedTagLabe
 ---
 
 <BaseLayout locale={locale} title={translate(locale, "nav.writing")} description={translate(locale, "writing.intro")} width="wide">
+  <StructuredData data={{
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: locale === "ko" ? "Gnaroshi 글" : "Gnaroshi Writing",
+    description: translate(locale, "writing.intro"),
+    url: new URL(getLocalePath(locale, "/blog/"), profile.domain).toString(),
+    inLanguage: locale === "ko" ? "ko-KR" : "en-US",
+    author: { "@type": "Person", name: profile.publicAlias, url: profile.domain }
+  }} />
   <PageShell class="writing-page">
   <PageHeader eyebrow={translate(locale, "writing.eyebrow")} title={translate(locale, "writing.title")} description={translate(locale, "writing.intro")} />
   <section class="writing-index" aria-labelledby="writing-index-heading">

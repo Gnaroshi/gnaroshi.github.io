@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import StructuredData from "../components/StructuredData.astro";
 import Hero from "../components/home/Hero.astro";
 import Section from "../components/layout/Section.astro";
 import { getLocalizedData } from "../data/locales";
@@ -9,6 +10,7 @@ import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getBlogPostHref, getPublishedBlogPosts } from "../utils/content";
 import { getPublishedPapers } from "../utils/papers";
+import { profile } from "../data/profile";
 import "../styles/home.css";
 
 interface Props { locale: Locale }
@@ -23,6 +25,37 @@ const loopArtwork = mediaManifest.paperLabCycle;
 ---
 
 <BaseLayout locale={locale} title={translate(locale, "home.seoTitle")} description={translate(locale, "home.seoDescription")} absoluteTitle canonical={getLocalePath(locale, "/")} width="wide" flush preloadHero>
+  <StructuredData data={{
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": `${profile.domain}/#person`,
+        name: profile.publicAlias,
+        url: profile.domain,
+        description: locale === "ko" ? data.profile.shortBio : profile.shortBio,
+        jobTitle: locale === "ko" ? data.profile.currentRole : profile.currentRole,
+        homeLocation: { "@type": "Country", name: profile.location },
+        sameAs: [profile.links.github]
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${profile.domain}/#website`,
+        name: profile.siteName,
+        url: profile.domain,
+        inLanguage: ["en-US", "ko-KR"],
+        publisher: { "@id": `${profile.domain}/#person` }
+      },
+      {
+        "@type": "ProfilePage",
+        "@id": `${new URL(getLocalePath(locale, "/"), profile.domain)}#profile`,
+        url: new URL(getLocalePath(locale, "/"), profile.domain).toString(),
+        mainEntity: { "@id": `${profile.domain}/#person` },
+        isPartOf: { "@id": `${profile.domain}/#website` },
+        inLanguage: locale === "ko" ? "ko-KR" : "en-US"
+      }
+    ]
+  }} />
   <div class="home-editorial">
     <Hero locale={locale} />
 
@@ -38,7 +71,7 @@ const loopArtwork = mediaManifest.paperLabCycle;
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.latestWork")}</p><h2 id="latest-notes-heading">{translate(locale, "home.writingAndPapers")}</h2></div>
       <div class="home-notes__columns">
         <div><div class="home-list-heading"><h3>{translate(locale, "nav.writing")}</h3><a href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.allWriting")}</a></div>{recentPosts.length > 0 ? <ol class="editorial-record-list">{recentPosts.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time></li>)}</ol> : <p class="home-empty-note">{translate(locale, "writing.noPosts")}</p>}</div>
-        <div><div class="home-list-heading"><h3>{translate(locale, "home.paperNotes")}</h3><a href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div>{recentPapers.length > 0 ? <ol class="editorial-record-list">{recentPapers.map((paper) => <li><a href={getLocalePath(locale, `/papers/${paper.data.feedId}/`)}>{paper.data.title}</a><span>{translate(locale, `status.${paper.data.status}`)}</span></li>)}</ol> : <p class="home-empty-note">{translate(locale, "home.noPaperNotes")}</p>}</div>
+        <div><div class="home-list-heading"><h3>{translate(locale, "home.paperNotes")}</h3><a href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div>{recentPapers.length > 0 ? <ol class="editorial-record-list">{recentPapers.map((paper) => <li><a href={getLocalePath(locale, `/papers/${paper.data.canonicalSlug}/`)}>{paper.data.title}</a><span>{translate(locale, `status.${paper.data.status}`)}</span></li>)}</ol> : <p class="home-empty-note">{translate(locale, "home.noPaperNotes")}</p>}</div>
       </div>
     </Section>
 

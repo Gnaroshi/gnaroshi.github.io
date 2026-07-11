@@ -123,7 +123,7 @@ export default function ResearchGraphExplorer({ graph, locale, messages }: Props
         <section className="graph-detail-panel" aria-labelledby="graph-detail-heading">
           <div className="graph-section-header">
             <h2 id="graph-detail-heading">{messages.detail}</h2>
-            {selectedNode && <a href={`${locale === "ko" ? "/ko" : ""}/graph/${selectedNode.type}/${selectedNode.slug}/`}>{messages.openDetail}</a>}
+            {selectedNode && <a href={`/graph/${selectedNode.type}/${selectedNode.slug}/`}>{messages.openDetail}</a>}
           </div>
           {selectedNode ? <NodeDetail node={selectedNode} edges={selectedEdges} nodeById={nodeById} messages={messages} /> : <p>{messages.noSelection}</p>}
         </section>

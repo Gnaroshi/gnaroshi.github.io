@@ -1,5 +1,9 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import "../../../styles/application.css";
+import "../../../styles/insights.css";
+import "../../../styles/papers.css";
 import SectionHeader from "../../../components/common/SectionHeader.astro";
 import { getConnectedEdges, getNodeById, researchGraph, type ResearchGraphNode } from "../../../utils/researchGraph";
 
@@ -22,6 +26,7 @@ const alternateUrls = { en: `/graph/${node.type}/${node.slug}/`, ko: "/ko/graph/
 
 <BaseLayout title={node.label} description={node.description || `Research graph node: ${node.label}`} canonical={`/graph/${node.type}/${node.slug}/`} alternateUrls={alternateUrls} mode="application">
   <article class="paper-detail">
+    <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Research graph", href: "/graph/" }, { name: node.label, href: `/graph/${node.type}/${node.slug}/` }]} />
     <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/graph/">Back to graph</a>

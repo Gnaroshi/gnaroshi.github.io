@@ -1,0 +1,16 @@
+---
+import katexUrl from "katex/dist/katex.min.css?url";
+
+export type FeatureStyle = "katex";
+
+interface Props {
+  styles: FeatureStyle[];
+}
+
+const urls: Record<FeatureStyle, string> = {
+  katex: katexUrl
+};
+const styles = [...new Set(Astro.props.styles)];
+---
+
+{styles.map((style) => <link rel="stylesheet" href={urls[style]} data-feature-style={style} />)}

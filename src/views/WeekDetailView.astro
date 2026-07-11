@@ -1,19 +1,47 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import { formatLocalizedDate, formatLocalizedNumber } from "../i18n/date";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
-import { formatLocalizedDate, formatLocalizedNumber } from "../i18n/date";
 import type { WeeklyReview } from "../utils/weeklyReviews";
+import "../styles/application.css";
+import "../styles/insights.css";
+
 interface Props { locale: Locale; review: WeeklyReview }
 const { locale, review } = Astro.props;
 const sufficient = review.state === "complete" && review.meaningfulEventCount >= 2;
 const summary = sufficient
-  ? locale === "ko" ? `이번 주에는 의미 있는 연구 활동 ${formatLocalizedNumber(review.meaningfulEventCount ?? 0, locale)}건을 기록했습니다.` : review.summary
+  ? locale === "ko" ? `이번 주에는 의미 있는 연구 활동 ${formatLocalizedNumber(review.meaningfulEventCount, locale)}건을 기록했습니다.` : review.summary
   : locale === "ko" ? "이번 주 연구 기록은 아직 진행 중입니다." : review.summary;
 const koreanWins = [
   (review.metrics.readingSessions ?? 0) > 0 ? `읽기 세션 ${formatLocalizedNumber(review.metrics.readingSessions ?? 0, locale)}회 · 논문 ${formatLocalizedNumber(review.metrics.distinctPapersTouched ?? 0, locale)}편` : "",
   (review.metrics.reviews ?? 0) + (review.metrics.oralExams ?? 0) + (review.metrics.formulaRecalls ?? 0) > 0 ? `회상과 복습 ${formatLocalizedNumber((review.metrics.reviews ?? 0) + (review.metrics.oralExams ?? 0) + (review.metrics.formulaRecalls ?? 0), locale)}건` : "",
   (review.metrics.posts ?? 0) + (review.metrics.implementations ?? 0) > 0 ? `글 ${formatLocalizedNumber(review.metrics.posts ?? 0, locale)}건 · 구현 ${formatLocalizedNumber(review.metrics.implementations ?? 0, locale)}건` : ""
 ].filter(Boolean);
+const canonicalPath = getLocalePath(locale, `/week/${review.weekId}/`);
 ---
-<BaseLayout locale={locale} title={review.weekId} description={summary} canonical={getLocalePath(locale, `/week/${review.weekId}/`)} mode="application"><article class="weekly-review-detail"><header class="page-header"><a href={getLocalePath(locale, "/week/")}>{translate(locale, "common.back")}</a><p class="eyebrow">{translate(locale, "paperLab.weeklyReviews")}</p><h1>{review.weekId}</h1><p class="lede">{summary}</p><p class="metadata">{formatLocalizedDate(review.startDate, locale)} — {formatLocalizedDate(review.endDate, locale)} · {sufficient ? (locale === "ko" ? "완료" : "Complete") : translate(locale, "common.inProgress")}</p></header>{sufficient ? <><section><h2>{locale === "ko" ? "이번 주의 진전" : "Wins"}</h2><ul>{(locale === "ko" ? koreanWins : review.wins).map((item) => <li>{item}</li>)}</ul></section><section><h2>{locale === "ko" ? "남은 흐름" : "Open loops"}</h2>{locale === "ko" ? <p>다음 주에는 가장 약한 연구 흐름에서 작은 행동 하나를 이어갑니다.</p> : <ul>{review.openLoops.map((item) => <li>{item}</li>)}</ul>}</section></> : <section class="app-empty-state"><h2>{translate(locale, "common.inProgress")}</h2><p>{translate(locale, "week.emptyBody")}</p><a href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></section>}</article></BaseLayout>
+
+<BaseLayout locale={locale} title={review.weekId} description={summary} canonical={canonicalPath} mode="application" robots={sufficient ? "index, follow" : "noindex, follow"}>
+  <article class="weekly-review-detail">
+    <Breadcrumbs label={locale === "ko" ? "현재 위치" : "Breadcrumb"} items={[
+      { name: locale === "ko" ? "홈" : "Home", href: getLocalePath(locale, "/") },
+      { name: locale === "ko" ? "주간 리뷰" : "Weekly reviews", href: getLocalePath(locale, "/week/") },
+      { name: review.weekId, href: canonicalPath }
+    ]} />
+    <header class="page-header">
+      <p class="eyebrow">{translate(locale, "paperLab.weeklyReviews")}</p>
+      <h1>{review.weekId}</h1>
+      <p class="lede">{summary}</p>
+      <p class="metadata">{formatLocalizedDate(review.startDate, locale)} — {formatLocalizedDate(review.endDate, locale)} · {sufficient ? (locale === "ko" ? "완료" : "Complete") : translate(locale, "common.inProgress")}</p>
+    </header>
+    {sufficient ? (
+      <>
+        <section><h2>{locale === "ko" ? "이번 주의 진전" : "Wins"}</h2><ul>{(locale === "ko" ? koreanWins : review.wins).map((item) => <li>{item}</li>)}</ul></section>
+        <section><h2>{locale === "ko" ? "남은 흐름" : "Open loops"}</h2>{locale === "ko" ? <p>다음 주에는 가장 약한 연구 흐름에서 작은 행동 하나를 이어갑니다.</p> : <ul>{review.openLoops.map((item) => <li>{item}</li>)}</ul>}</section>
+      </>
+    ) : (
+      <section class="app-empty-state"><h2>{translate(locale, "common.inProgress")}</h2><p>{translate(locale, "week.emptyBody")}</p><a href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></section>
+    )}
+  </article>
+</BaseLayout>

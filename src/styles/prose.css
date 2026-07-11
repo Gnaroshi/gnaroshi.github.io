@@ -1,0 +1,55 @@
+.prose {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 72ch;
+}
+
+.prose :where(h2, h3, h4) {
+  position: relative;
+  scroll-margin-top: calc(var(--header-height) + var(--space-4));
+}
+
+.prose h2 {
+  padding-top: var(--space-4);
+  margin-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.prose :where(p, ul, ol, blockquote) {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.prose :where(ul, ol) {
+  padding-left: var(--space-5);
+}
+
+.prose li + li {
+  margin-top: var(--space-2);
+}
+
+.prose blockquote {
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--color-border-strong);
+}
+
+.heading-anchor {
+  margin-left: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  opacity: 0;
+}
+
+.prose :where(h2, h3, h4):hover .heading-anchor,
+.heading-anchor:focus {
+  opacity: 1;
+}
+
+.prose :where(img, video, table, pre, .katex-display) {
+  max-width: 100%;
+}
+
+.prose :where(table, pre, .katex-display) {
+  overflow-x: auto;
+}

@@ -17,6 +17,8 @@ Before structural changes, read:
 - `docs/design.md`
 - `docs/i18n.md`
 - `docs/i18n-terminology.md`
+- `docs/technical-hardening-report.md`
+- `docs/route-budget-report.md`
 
 ## Stack
 
@@ -44,8 +46,10 @@ npm run test:a11y
 npm run test:smoke
 npm run test:visual
 npm run test:feed-contract
+npm run test:performance
 npm run check:i18n
 npm run check:links
+npm run check:links:external
 ```
 
 - `content:pull`: clone or fast-forward the public feed in ignored `.content-feed/`.
@@ -55,6 +59,9 @@ npm run check:links
 - `check:links`: run after `build`.
 - `test:e2e`: automatically discovers non-visual, non-accessibility Playwright tests by tag.
 - `test:smoke`: runs the focused production route/provenance subset.
+- `test:performance`: enforces route gzip/image/island budgets and runs mobile Chromium CSS coverage/LCP/CLS.
+- `check:links`: validates generated routes, fragments, canonical/hreflang/RSS/sitemap/asset targets, redirects, JSON-LD, URL schemes, and path privacy.
+- `check:links:external`: bounded report-only third-party link audit; do not add it to deployment blocking checks.
 
 Use `CONTENT_FEED_PATH` for an existing local public-feed checkout. Never point it to private paper or writing repositories.
 
@@ -116,6 +123,9 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Preserve stable IDs separately from `canonicalSlug`; render all declared aliases as static redirects.
 - Emit hreflang only for real public translation pairs and return unavailable locale switches to the collection index.
 - Serve only declared content-addressed assets with supported media types.
+- Keep `BaseLayout` limited to tokens, base typography/accessibility, and navigation CSS. Load blog, paper, insight, prose, code, and KaTeX styles only from routes that use them.
+- Use `StructuredData.astro` and `Breadcrumbs.astro`; serialize only factual public values and omit unknown identity fields.
+- Keep noindex pages out of the sitemap by preserving the post-build sitemap pruning step.
 
 ## Design And Accessibility
 

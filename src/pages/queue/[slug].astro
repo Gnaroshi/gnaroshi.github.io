@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import "../../styles/application.css";
+import "../../styles/papers.css";
 import ExternalLink from "../../components/common/ExternalLink.astro";
 import SectionHeader from "../../components/common/SectionHeader.astro";
 import { getBuildableQueueItems, toQueueDateKey, type QueueEntry } from "../../utils/queue";
@@ -17,8 +20,9 @@ const { item } = Astro.props as Props;
 const alternateUrls = { en: `/queue/${item.id}/`, ko: "/ko/queue/", xDefault: `/queue/${item.id}/`, translationAvailable: false } as const;
 ---
 
-<BaseLayout title={item.data.title} description={item.data.reasonToRead} canonical={`/queue/${item.id}/`} alternateUrls={alternateUrls} type="article" mode="application">
+<BaseLayout title={item.data.title} description={item.data.reasonToRead} canonical={`/queue/${item.id}/`} alternateUrls={alternateUrls} type="article" mode="application" robots="noindex, follow">
   <article class="paper-detail">
+    <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Reading queue", href: "/queue/" }, { name: item.data.title, href: `/queue/${item.id}/` }]} />
     <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <header class="paper-detail-header">
       <a class="paper-detail-header__back" href="/queue">Back to queue</a>

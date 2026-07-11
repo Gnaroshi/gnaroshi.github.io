@@ -5,9 +5,31 @@ import SectionHeader from "../components/common/SectionHeader.astro";
 import { getLocalizedTagLabel } from "../i18n/tags";
 import type { Locale } from "../i18n/types";
 import { translate } from "../i18n/utils";
-import type { BlogPost } from "../utils/content";
+import { getPublishedBlogPosts, type BlogPost } from "../utils/content";
+import { slugify } from "../utils/slug";
+import "../styles/blog.css";
+
 interface Props { locale: Locale; tag: string; posts: BlogPost[] }
 const { locale, tag, posts } = Astro.props;
 const label = getLocalizedTagLabel(tag, locale);
+const otherLocale = locale === "en" ? "ko" : "en";
+const counterpartExists = (await getPublishedBlogPosts(otherLocale)).some((post) => post.data.tags.some((value) => slugify(value) === tag));
+const alternateUrls = {
+  en: locale === "en" ? `/blog/tags/${tag}/` : counterpartExists ? `/blog/tags/${tag}/` : "/blog/",
+  ko: locale === "ko" ? `/ko/blog/tags/${tag}/` : counterpartExists ? `/ko/blog/tags/${tag}/` : "/ko/blog/",
+  xDefault: locale === "en" || counterpartExists ? `/blog/tags/${tag}/` : "/blog/",
+  translationAvailable: counterpartExists
+};
 ---
-<BaseLayout locale={locale} title={`${translate(locale, "writing.tags")}: ${label}`} description={`${label} · ${translate(locale, "common.items", { count: posts.length })}`} width="wide"><header class="page-header"><p class="eyebrow">{translate(locale, "writing.tags")}</p><h1>{label}</h1><p class="lede">{translate(locale, "common.items", { count: posts.length })}</p></header><section class="section" aria-labelledby="tag-posts-heading"><SectionHeader id="tag-posts-heading" title={translate(locale, "writing.all")} description={translate(locale, "writing.findDescription")} /><div class="card-list">{posts.map((post) => <BlogCard post={post} locale={locale} />)}</div></section></BaseLayout>
+
+<BaseLayout locale={locale} title={`${translate(locale, "writing.tags")}: ${label}`} description={`${label} · ${translate(locale, "common.items", { count: posts.length })}`} width="wide" alternateUrls={alternateUrls}>
+  <header class="page-header">
+    <p class="eyebrow">{translate(locale, "writing.tags")}</p>
+    <h1>{label}</h1>
+    <p class="lede">{translate(locale, "common.items", { count: posts.length })}</p>
+  </header>
+  <section class="section" aria-labelledby="tag-posts-heading">
+    <SectionHeader id="tag-posts-heading" title={translate(locale, "writing.all")} description={translate(locale, "writing.findDescription")} />
+    <div class="card-list">{posts.map((post) => <BlogCard post={post} locale={locale} />)}</div>
+  </section>
+</BaseLayout>

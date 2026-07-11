@@ -1,13 +1,7 @@
 ---
-import "katex/dist/katex.min.css";
 import "../styles/tokens.css";
 import "../styles/global.css";
-import "../styles/blog.css";
-import "../styles/papers.css";
-import "../styles/insights.css";
-import "../styles/responsive.css";
 import "../styles/navigation.css";
-import "../styles/application.css";
 import SEO from "../components/SEO.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
@@ -16,6 +10,7 @@ import { ogLocales } from "../i18n/config";
 import type { AlternateUrls, Locale } from "../i18n/types";
 import { getLocaleFromUrl, getLocalePath, translate } from "../i18n/utils";
 import { getContentFeedBuildInfo, getWebsiteBuildInfo } from "../utils/contentFeed";
+import { getDefaultRobots } from "../utils/indexing";
 
 interface Props {
   title: string;
@@ -35,6 +30,15 @@ interface Props {
   alternateUrls?: AlternateUrls;
   ogLocale?: string;
   ogLocaleAlternate?: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
+  ogImageAlt?: string;
+  robots?: "index, follow" | "noindex, follow";
+  publishedTime?: Date | string;
+  modifiedTime?: Date | string;
+  articleTags?: string[];
+  author?: string;
+  minimalChrome?: boolean;
 }
 
 const {
@@ -54,7 +58,16 @@ const {
   locale = getLocaleFromUrl(Astro.url),
   alternateUrls,
   ogLocale = ogLocales[locale],
-  ogLocaleAlternate = ogLocales[locale === "en" ? "ko" : "en"]
+  ogLocaleAlternate = ogLocales[locale === "en" ? "ko" : "en"],
+  ogImageWidth,
+  ogImageHeight,
+  ogImageAlt,
+  robots = getDefaultRobots(Astro.url.pathname),
+  publishedTime,
+  modifiedTime,
+  articleTags,
+  author,
+  minimalChrome = false
 } = Astro.props;
 const rssPath = getLocalePath(locale, "/rss.xml");
 const contentFeedBuildInfo = getContentFeedBuildInfo();
@@ -66,8 +79,8 @@ const websiteBuildInfo = getWebsiteBuildInfo();
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#101211" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f4f5f2" data-theme-color />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="content-feed-commit" content={contentFeedBuildInfo.contentFeedCommit ?? "unavailable"} />
     <meta name="website-commit" content={websiteBuildInfo.websiteCommit ?? "unavailable"} />
     {preloadHero && <link rel="preload" as="image" type="image/avif" href="/media/home-research-constellation-768.avif" imagesrcset="/media/home-research-constellation-480.avif 480w, /media/home-research-constellation-768.avif 768w, /media/home-research-constellation-1200.avif 1200w, /media/home-research-constellation-1600.avif 1600w" imagesizes="(min-width: 1024px) 45vw, 100vw" />}
@@ -86,15 +99,29 @@ const websiteBuildInfo = getWebsiteBuildInfo();
       alternateUrls={alternateUrls}
       ogLocale={ogLocale}
       ogLocaleAlternate={ogLocaleAlternate}
+      ogImageWidth={ogImageWidth}
+      ogImageHeight={ogImageHeight}
+      ogImageAlt={ogImageAlt}
+      robots={robots}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      articleTags={articleTags}
+      author={author}
     />
+    <slot name="head" />
     <script is:inline>
       (() => {
+        const colors = { light: "#f4f5f2", dark: "#0f1311" };
+        const setTheme = (theme) => {
+          document.documentElement.dataset.theme = theme;
+          document.querySelector('meta[data-theme-color]')?.setAttribute("content", colors[theme]);
+        };
         try {
           const stored = window.localStorage.getItem("theme");
           const system = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-          document.documentElement.dataset.theme = stored === "light" || stored === "dark" ? stored : system;
+          setTheme(stored === "light" || stored === "dark" ? stored : system);
         } catch {
-          document.documentElement.dataset.theme = "light";
+          setTheme("light");
         }
       })();
     </script>
@@ -109,11 +136,11 @@ const websiteBuildInfo = getWebsiteBuildInfo();
   </head>
   <body data-mode={mode}>
     <a class="skip-link" href="#content">{translate(locale, "a11y.skipToContent")}</a>
-    <SiteHeader locale={locale} alternateUrls={alternateUrls} />
-    {paperLab && <PaperLabNav currentPath={Astro.url.pathname} locale={locale} />}
+    {!minimalChrome && <SiteHeader locale={locale} alternateUrls={alternateUrls} />}
+    {!minimalChrome && paperLab && <PaperLabNav currentPath={Astro.url.pathname} locale={locale} />}
     <main id="content" class:list={["site-main", `site-main--${width}`, flush && "site-main--flush"]}>
       <slot />
     </main>
-    <SiteFooter locale={locale} />
+    {!minimalChrome && <SiteFooter locale={locale} />}
   </body>
 </html>

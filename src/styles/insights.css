@@ -449,3 +449,28 @@
   margin: 0;
   font-weight: 700;
 }
+@media (max-width: 767px) {
+  .graph-layout,
+  .graph-filter-grid,
+  .graph-edge-row,
+  .momentum-hero,
+  .momentum-score,
+  .momentum-component-grid,
+  .momentum-methodology dl {
+    grid-template-columns: 1fr;
+  }
+
+  .momentum-confidence {
+    border-top: 1px solid var(--color-border);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 479px) {
+  .momentum-score__summary,
+  .momentum-confidence,
+  .momentum-component,
+  .momentum-notice {
+    padding: var(--space-3);
+  }
+}

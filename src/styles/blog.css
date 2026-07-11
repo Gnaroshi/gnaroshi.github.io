@@ -34,54 +34,6 @@
   max-width: 20ch;
 }
 
-.prose {
-  display: grid;
-  gap: var(--space-4);
-  max-width: 72ch;
-}
-
-.prose :where(h2, h3, h4) {
-  position: relative;
-  scroll-margin-top: var(--space-6);
-}
-
-.prose h2 {
-  padding-top: var(--space-4);
-  margin-top: var(--space-3);
-  border-top: 1px solid var(--color-border);
-}
-
-.prose :where(p, ul, ol, blockquote) {
-  margin: 0;
-  color: var(--color-text-secondary);
-}
-
-.prose :where(ul, ol) {
-  padding-left: var(--space-5);
-}
-
-.prose li + li {
-  margin-top: var(--space-2);
-}
-
-.prose blockquote {
-  padding-left: var(--space-4);
-  border-left: 3px solid var(--color-border-strong);
-}
-
-.heading-anchor {
-  margin-left: var(--space-2);
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-  text-decoration: none;
-  opacity: 0;
-}
-
-.prose :where(h2, h3, h4):hover .heading-anchor,
-.heading-anchor:focus {
-  opacity: 1;
-}
-
 .post-nav {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -173,4 +125,15 @@
 .archive-group h2 {
   padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--color-border);
+}
+
+@media (max-width: 767px) {
+  .blog-layout,
+  .post-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .post-nav div:last-child {
+    text-align: left;
+  }
 }

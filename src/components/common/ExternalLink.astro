@@ -1,10 +1,13 @@
 ---
+import { assertSafePublicUrl } from "../../utils/safeUrl";
+
 interface Props {
   href: string;
   label?: string;
 }
 
-const { href, label } = Astro.props;
+const { href: rawHref, label } = Astro.props;
+const href = assertSafePublicUrl(rawHref);
 const isExternal = /^https?:\/\//.test(href);
 ---
 
@@ -12,7 +15,7 @@ const isExternal = /^https?:\/\//.test(href);
   class="external-link"
   href={href}
   target={isExternal ? "_blank" : undefined}
-  rel={isExternal ? "noreferrer" : undefined}
+  rel={isExternal ? "noopener noreferrer external" : undefined}
 >
   <slot>{label}</slot>
   {isExternal && <span aria-hidden="true">↗</span>}
@@ -27,4 +30,3 @@ const isExternal = /^https?:\/\//.test(href);
     font-weight: 600;
   }
 </style>
-

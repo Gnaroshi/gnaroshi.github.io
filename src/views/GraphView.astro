@@ -6,6 +6,9 @@ import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getIslandMessages } from "../i18n/islands";
 import { researchGraph } from "../utils/researchGraph";
+import "../styles/application.css";
+import "../styles/insights.css";
+import "../styles/papers.css";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const ready = Boolean(researchGraph.eligible ?? ((researchGraph.stats.meaningfulNodeCount ?? 0) >= evidenceGates.researchGraph.minimumMeaningfulNodes && (researchGraph.stats.nonTagEdgeCount ?? 0) >= evidenceGates.researchGraph.minimumNonTagEdges));

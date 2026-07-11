@@ -184,12 +184,12 @@ export default function QueueDashboard({ items, topics, tags, locale, messages }
                 <div className="paper-card__links">
                   <a href={item.href}>{messages.open}</a>
                   {item.paperUrl ? (
-                    <a href={item.paperUrl} target="_blank" rel="noreferrer">
+                    <a href={item.paperUrl} target="_blank" rel="noopener noreferrer external">
                       {messages.paper}
                     </a>
                   ) : null}
                   {item.codeUrl ? (
-                    <a href={item.codeUrl} target="_blank" rel="noreferrer">
+                    <a href={item.codeUrl} target="_blank" rel="noopener noreferrer external">
                       {messages.code}
                     </a>
                   ) : null}
