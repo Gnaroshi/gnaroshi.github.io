@@ -4,6 +4,8 @@ Presentation-only Astro application for [gnaroshi.dev](https://gnaroshi.dev).
 
 The website renders public research and writing exported by [`Gnaroshi/gnaroshi-content-feed`](https://github.com/Gnaroshi/gnaroshi-content-feed). Canonical paper notes and writing do not live in this repository.
 
+**Status:** Active presentation layer deployed from `main` to GitHub Pages.
+
 ## Repository Boundary
 
 - This repository owns Astro routes, layouts, components, localization, SEO, accessibility, theme, profile data, project metadata, and public display transforms.
@@ -115,3 +117,9 @@ gh workflow run deploy.yml \
 No cross-repository PAT or private repository token is required. See [`docs/deployment.md`](docs/deployment.md), [`docs/release-integrity.md`](docs/release-integrity.md), and [`docs/rollback.md`](docs/rollback.md).
 
 Search, privacy, asset-boundary, CSP, and performance decisions are documented in [`docs/technical-hardening-report.md`](docs/technical-hardening-report.md).
+
+## Related Repositories
+
+- [`Gnaroshi/gnaroshi-content-feed`](https://github.com/Gnaroshi/gnaroshi-content-feed): generated public input
+- [`Gnaroshi/gnaroshi-studio`](https://github.com/Gnaroshi/gnaroshi-studio): private authoring and publishing engine
+- [`Gnaroshi/gnaroshi-api`](https://github.com/Gnaroshi/gnaroshi-api): optional private AI runtime
