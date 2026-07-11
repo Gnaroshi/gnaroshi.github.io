@@ -22,6 +22,9 @@
     "check:links:external": "node scripts/check-external-links.mjs",
     "check:i18n": "node scripts/check-i18n.mjs",
     "check:launch-content": "node scripts/check-launch-content.mjs",
+    "media:check": "node scripts/check-media.mjs",
+    "media:review:build": "node scripts/build-media-review.mjs",
+    "icons:check": "node scripts/check-icons.mjs",
     "og:render": "node scripts/render-og-images.mjs",
     "performance:report": "node scripts/report-route-budgets.mjs",
     "test:performance": "npm run performance:report && playwright test --grep \"@performance\""
@@ -44,6 +47,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
     "linkedom": "^0.18.13",
+    "sharp": "^0.35.3",
     "typescript": "^6.0.3"
   }
 }

@@ -1,0 +1,152 @@
+---
+import { existsSync, statSync } from "node:fs";
+import { resolve } from "node:path";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Icon from "../../../components/icons/Icon.astro";
+import { iconRegistry } from "../../../components/icons/iconRegistry";
+import { brandCandidates, heroCandidates } from "../../../data/mediaReview";
+
+export function getStaticPaths() {
+  return process.env.NODE_ENV !== "production"
+    ? ["hero", "icons", "brand"].map((section) => ({ params: { section } }))
+    : [];
+}
+
+const section = Astro.params.section as "hero" | "icons" | "brand";
+const heroRoot = resolve("artifacts/media-review/hero");
+const availableHeroes = heroCandidates.map((candidate) => {
+  const path = resolve(heroRoot, candidate.file);
+  return {
+    ...candidate,
+    available: existsSync(path),
+    bytes: existsSync(path) ? statSync(path).size : 0,
+    src: `/dev/media-review/assets/hero/${candidate.file}`
+  };
+});
+const formatBytes = (bytes: number) => bytes ? `${(bytes / 1024 / 1024).toFixed(2)} MB` : "not generated";
+---
+
+<BaseLayout title={`Media review: ${section}`} description="Development-only media candidate review." robots="noindex, follow" width="wide">
+  <div class="review-shell">
+    <header class="review-header">
+      <p>Development only · not production media</p>
+      <h1>{section === "hero" ? "Hero candidates" : section === "icons" ? "Icon candidates" : "Brand candidates"}</h1>
+      <nav aria-label="Media review sections">
+        <a href="/dev/media-review/hero/">Hero</a>
+        <a href="/dev/media-review/icons/">Icons</a>
+        <a href="/dev/media-review/brand/">Brand</a>
+      </nav>
+    </header>
+
+    {section === "hero" && (
+      <div class="hero-review">
+        {availableHeroes.map((candidate) => (
+          <article class="candidate" id={candidate.id}>
+            <header><div><p>Direction {candidate.direction}</p><h2>{candidate.id}</h2></div><span>{formatBytes(candidate.bytes)}</span></header>
+            {candidate.available ? (
+              <>
+                <figure class="candidate__full"><img src={candidate.src} alt={`${candidate.label}, generated concept candidate`} width="2000" height="1600" /></figure>
+                <div class="crop-grid" style={`--focal:${candidate.focalPoint}`}>
+                  <figure><div class="crop crop--desktop"><img src={candidate.src} alt="" /></div><figcaption>Desktop crop</figcaption></figure>
+                  <figure><div class="crop crop--tablet"><img src={candidate.src} alt="" /></div><figcaption>Tablet crop</figcaption></figure>
+                  <figure><div class="crop crop--mobile"><img src={candidate.src} alt="" /></div><figcaption>Mobile crop</figcaption></figure>
+                </div>
+                <div class="placement-grid" style={`--focal:${candidate.focalPoint}`}>
+                  <figure class="placement placement--light"><img src={candidate.src} alt="" /><figcaption>Light placement</figcaption></figure>
+                  <figure class="placement placement--dark"><img src={candidate.src} alt="" /><figcaption>Dark placement</figcaption></figure>
+                  <figure class="thumbnail"><img src={candidate.src} alt="" width="128" height="102" /><figcaption>128px thumbnail</figcaption></figure>
+                </div>
+              </>
+            ) : <p class="missing">Run image generation and `npm run media:review:build` to prepare this candidate.</p>}
+          </article>
+        ))}
+      </div>
+    )}
+
+    {section === "icons" && (
+      <div class="icon-review">
+        {iconRegistry.map((icon) => (
+          <article class="icon-card">
+            <header><h2>{icon.name}</h2><p>{icon.purpose}</p></header>
+            <div class="size-row">
+              {[16, 20, 24].map((size) => <span><Icon size={size} label={`${icon.name} at ${size} pixels`}>{icon.component.paths.map((path) => <path d={path.d} />)}</Icon><small>{size}</small></span>)}
+            </div>
+            <div class="icon-contexts">
+              <button class="icon-button" type="button" aria-label={`${icon.name} icon-only button`}><Icon size={20}>{icon.component.paths.map((path) => <path d={path.d} />)}</Icon></button>
+              <a href={`#${icon.name}`}><Icon size={18}>{icon.component.paths.map((path) => <path d={path.d} />)}</Icon><span>Link label</span></a>
+              <span class="nav-context"><Icon size={24}>{icon.component.paths.map((path) => <path d={path.d} />)}</Icon><span>Navigation</span></span>
+              <button class="icon-button" type="button" disabled aria-label={`${icon.name} disabled button`}><Icon size={20}>{icon.component.paths.map((path) => <path d={path.d} />)}</Icon></button>
+            </div>
+            <div class="optical-guide" aria-label={`${icon.name} optical alignment guide`}>
+              <i></i><b></b>
+              <Icon size={24} label={`${icon.name} with optical guides`}>{icon.component.paths.map((path) => <path d={path.d} />)}</Icon>
+            </div>
+            <footer><code>{icon.usedBy.join(" · ")}</code></footer>
+          </article>
+        ))}
+      </div>
+    )}
+
+    {section === "brand" && (
+      <div class="brand-review">
+        {brandCandidates.map((candidate) => (
+          <article class="brand-card">
+            <header><p>{candidate.id}</p><h2>{candidate.direction}</h2></header>
+            <div class="brand-background brand-background--light">
+              {[16, 24, 32, 48, 64, 128].map((size) => (
+                <span><svg viewBox={candidate.viewBox} width={size} height={size} aria-label={`${candidate.direction} at ${size} pixels`}>{candidate.paths.map((d) => <path d={d} />)}</svg><small>{size}</small></span>
+              ))}
+            </div>
+            <div class="brand-background brand-background--dark">
+              {[16, 24, 32, 48, 64].map((size) => <svg viewBox={candidate.viewBox} width={size} height={size} aria-hidden="true">{candidate.paths.map((d) => <path d={d} />)}</svg>)}
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .review-shell { width: min(100% - 2rem, 1280px); margin: 0 auto; padding: 3rem 0 6rem; }
+  .review-header { border-bottom: 1px solid var(--border-default); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  .review-header > p, article header p { color: var(--text-muted); font-size: .78rem; text-transform: uppercase; }
+  .review-header h1 { margin: .25rem 0 1rem; }
+  .review-header nav { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .candidate, .icon-card, .brand-card { border-top: 1px solid var(--border-default); padding: 1.5rem 0 2.5rem; }
+  .candidate > header { display: flex; justify-content: space-between; align-items: end; gap: 1rem; }
+  .candidate h2, .icon-card h2, .brand-card h2 { margin: .15rem 0; font-size: 1.1rem; }
+  figure { margin: 0; }
+  figcaption, small, article footer { color: var(--text-muted); font-size: .78rem; }
+  .candidate__full img { display: block; width: 100%; height: auto; margin-top: 1rem; }
+  .crop-grid, .placement-grid { display: grid; grid-template-columns: 1.4fr 1fr .72fr; gap: 1rem; margin-top: 1rem; }
+  .crop, .placement { overflow: hidden; border: 1px solid var(--border-default); background: var(--surface-muted); }
+  .crop img, .placement img { width: 100%; height: 100%; object-fit: cover; object-position: var(--focal, 50% 50%); }
+  .crop--desktop { aspect-ratio: 16 / 10; }
+  .crop--tablet { aspect-ratio: 4 / 3; }
+  .crop--mobile { aspect-ratio: 4 / 5; }
+  .placement { padding: 1rem; display: grid; grid-template-rows: 1fr auto; aspect-ratio: 5 / 4; }
+  .placement img { min-height: 0; }
+  .placement--light { background: #f4f5f2; color: #111713; }
+  .placement--dark { background: #101512; color: #f4f5f2; }
+  .thumbnail img { display: block; width: 128px; height: 102px; object-fit: cover; object-position: var(--focal); border: 1px solid var(--border-default); }
+  .missing { padding: 2rem; background: var(--surface-muted); }
+  .icon-review { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1.5rem; }
+  .icon-card { min-width: 0; }
+  .size-row, .icon-contexts, .brand-background { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+  .size-row span, .brand-background span { display: grid; justify-items: center; gap: .35rem; }
+  .icon-contexts a, .nav-context { display: inline-flex; align-items: center; gap: .4rem; }
+  .icon-button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--border-default); background: var(--surface-raised); color: inherit; }
+  .optical-guide { position: relative; display: grid; place-items: center; width: 64px; height: 64px; margin-top: 1rem; border: 1px solid var(--border-strong); }
+  .optical-guide::before, .optical-guide::after, .optical-guide i, .optical-guide b { content: ""; position: absolute; background: color-mix(in srgb, var(--accent) 45%, transparent); }
+  .optical-guide::before { width: 1px; height: 100%; left: 50%; }
+  .optical-guide::after { height: 1px; width: 100%; top: 50%; }
+  .optical-guide i { height: 1px; width: 100%; top: 44px; }
+  .optical-guide b { inset: 19px; background: transparent; border: 1px dashed color-mix(in srgb, var(--accent) 55%, transparent); }
+  .brand-review { display: grid; gap: 1rem; }
+  .brand-background { padding: 1.25rem; border: 1px solid var(--border-default); }
+  .brand-background svg { fill: currentColor; flex: none; }
+  .brand-background--light { background: #f4f5f2; color: #111713; }
+  .brand-background--dark { background: #101512; color: #f4f5f2; }
+  @media (max-width: 720px) { .crop-grid, .placement-grid { grid-template-columns: 1fr; } .candidate > header { align-items: start; } }
+</style>

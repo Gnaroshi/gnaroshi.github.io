@@ -1,5 +1,7 @@
 # Visual QA V3
 
+> Historical production baseline. The Stage 1 media/icon redesign audit is documented in `media-and-icon-audit.md`. No candidate prepared there changes the production state described below until `media-approval.md` records explicit approved IDs.
+
 ## Deployment Verification
 
 Pre-redesign source commit: `6d5dcd1b85cbc0a6bccf086d082a5e356189e767`.
@@ -70,6 +72,14 @@ At 1440px, Research, Projects, Writing, and About titles all begin at Y=174px. P
 - The public feed currently contains no published writing or paper notes, so those pages intentionally show minimal evidence-gated states.
 - A real owner-supplied portrait can replace the About monogram later; no synthetic likeness was created.
 - Formal education, publications, and contact details remain absent until the owner supplies verified information.
+
+## Media System V2 Stage 1
+
+- Existing production media was inventoried before edits.
+- Six ignored Hero candidates and four monochrome brand candidates are reviewed only through development routes.
+- `/dev/media-review/hero/`, `/dev/media-review/icons/`, and `/dev/media-review/brand/` are omitted from production static output.
+- Real project screenshots are specified in `docs/project-media/` and are not captured or integrated before approval.
+- Current flat content SVGs, unused covers, duplicated project artwork, and Unicode icon debt are isolated in a Stage 1 policy allowlist. Stage 2 removes the allowlist entries together with the replaced production assets.
 
 ## Before And After
 

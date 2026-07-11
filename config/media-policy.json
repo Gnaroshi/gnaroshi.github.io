@@ -1,0 +1,37 @@
+{
+  "stage": "candidate-review",
+  "contentImageSvgAllowlist": [
+    "/media/blog-cover-ai-workflow.svg",
+    "/media/blog-cover-implementation-notes.svg",
+    "/media/blog-cover-paper-reading.svg",
+    "/media/blog-cover-research-systems.svg",
+    "/media/growth-evidence.svg",
+    "/media/paper-lab-cycle.svg",
+    "/media/project-gnaroshi-dev.svg",
+    "/media/research-efficient-systems.svg",
+    "/media/research-vla.svg",
+    "/media/research-workflow.svg"
+  ],
+  "unusedProductionAllowlist": [
+    "/media/blog-cover-ai-workflow.svg",
+    "/media/blog-cover-implementation-notes.svg",
+    "/media/blog-cover-paper-reading.svg",
+    "/media/blog-cover-research-systems.svg"
+  ],
+  "unrelatedReuseAllowlist": [
+    "/media/research-vla.svg"
+  ],
+  "legacyUnicodeUiAllowlist": [
+    {
+      "file": "src/components/common/ExternalLink.astro",
+      "symbol": "↗"
+    }
+  ],
+  "budgets": {
+    "hero1200Avif": 184320,
+    "hero1200Webp": 266240,
+    "project1200Avif": 163840,
+    "project1200Webp": 235520,
+    "thumbnail": 81920
+  }
+}

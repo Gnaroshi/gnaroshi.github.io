@@ -132,6 +132,12 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 ## Design And Accessibility
 
 - Maintain the minimal academic/editorial design.
+- Follow `docs/media-system-v2.md`, `docs/icon-system.md`, and `docs/media-approval.md` for any visual asset work.
+- Functional icons use one custom SVG language. Do not add emoji, Unicode UI glyphs, raster icons, or a general icon library.
+- Prefer real project screenshots and research artifacts over generated media. Never generate fake product UI, research results, owner portraits, or evidence.
+- Generated concept imagery is limited to approved identity/Hero use. Raster format alone is not evidence of visual quality.
+- Do not replace production Hero, brand, project media, or icons until the owner supplies explicit approved candidate IDs.
+- Keep media provenance, localized alt text, explicit dimensions, responsive variants, privacy review, and byte budgets enforceable through `npm run media:check` and `npm run icons:check`.
 - Keep application mode limited to public Paper Lab and Growth views.
 - Use semantic landmarks and heading order.
 - Preserve visible focus states, keyboard navigation, contrast, and mobile overflow protection.
@@ -166,6 +172,15 @@ npm run test:feed-contract
 ```
 
 For route or interaction changes, also run `npm run test:e2e` and `npm run test:a11y`.
+
+For media or icon changes, also run:
+
+```bash
+npm run media:check
+npm run icons:check
+npm run test:visual
+npm run test:performance
+```
 
 ## Git Discipline
 

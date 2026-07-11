@@ -39,6 +39,20 @@ Use a restrained academic interface:
 
 The homepage may have personality, but it should remain text-forward and direct.
 
+### Media Hierarchy
+
+Use real screenshots and real research/project artifacts first. Use typography, layout, whitespace, color, and subtle texture second. Limit generated conceptual raster imagery to one or two explicitly approved identity uses.
+
+Do not fill each section with an illustration. Research topics without a real artifact remain text-only. Paper Lab and Growth empty states use concise copy, one small functional icon, and one action rather than decorative onboarding artwork. About uses an owner-supplied photograph or a simple approved monogram and never a generated portrait.
+
+Content imagery is not required to be raster by principle. Data visualizations, functional diagrams, brand marks, and icons should use the format appropriate to their truthful source. A rasterized flat infographic is still a weak image; raster format does not guarantee visual quality.
+
+Production media replacement requires the explicit approval recorded in `docs/media-approval.md`.
+
+### Icon Language
+
+Functional icons use custom, single-color SVG with a 24x24 viewBox, 1.8 stroke, round caps/joins, and `currentColor`. Icons support visible labels and never decorate every navigation item or heading. Primary desktop navigation remains text-only. Icon-only controls require an accessible name and a 44x44 touch target.
+
 ## Layout
 
 Use a global shell with:
@@ -184,3 +198,6 @@ A future implementation satisfies this document when:
 - The paper dashboard reveals density only when data supports it and offers focused onboarding when empty.
 - Styling decisions are centralized through tokens.
 - No corporate or lab-homepage visual pattern dominates the site.
+- Project imagery is real evidence or omitted; no fake interface or generated result is presented.
+- Functional icons share one optical system and no emoji or Unicode glyph acts as a UI icon.
+- Concept media and brand changes have explicit owner approval and provenance.
