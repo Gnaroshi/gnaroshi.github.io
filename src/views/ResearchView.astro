@@ -9,7 +9,7 @@ import { translate } from "../i18n/utils";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const data = getLocalizedData(locale);
-const artwork = [mediaManifest.researchWorkflow, mediaManifest.researchVla, mediaManifest.researchEfficientSystems];
+const artwork = [mediaManifest.researchVla, mediaManifest.researchEfficientSystems, mediaManifest.researchWorkflow];
 ---
 
 <BaseLayout locale={locale} title={translate(locale, "nav.research")} description={translate(locale, "research.intro")} width="wide">

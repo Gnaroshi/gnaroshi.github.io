@@ -15,11 +15,16 @@ test("home emits raster social metadata and factual structured data", async ({ p
 });
 
 test("project detail has breadcrumbs and source-code structured data", async ({ page }) => {
-  await page.goto("/projects/gnaroshi-dev/");
-  await expect(page.getByRole("navigation", { name: "Breadcrumb" })).toBeVisible();
-  const records = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((script) => JSON.parse(script.textContent ?? "{}")));
-  expect(records.some((record) => record["@type"] === "BreadcrumbList")).toBe(true);
-  expect(records.some((record) => record["@type"] === "SoftwareSourceCode")).toBe(true);
+  for (const slug of ["gnaroshi-vla", "gnaroshi-dev"]) {
+    await page.goto(`/projects/${slug}/`);
+    await expect(page.getByRole("navigation", { name: "Breadcrumb" })).toBeVisible();
+    const records = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((script) => JSON.parse(script.textContent ?? "{}")));
+    expect(records.some((record) => record["@type"] === "BreadcrumbList")).toBe(true);
+    expect(records.some((record) => record["@type"] === "SoftwareSourceCode")).toBe(true);
+  }
+  await page.goto("/projects/gnaroshi-vla/");
+  await expect(page.getByRole("heading", { level: 2, name: "Current state" })).toBeVisible();
+  await expect(page.getByText("No benchmark result is published here", { exact: false })).toBeVisible();
 });
 
 test("404 variants are noindex and root 404 localizes the preserved path", async ({ page }) => {

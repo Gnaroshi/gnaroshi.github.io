@@ -5,15 +5,15 @@ import { getLocalizedData } from "../../data/locales";
 import { mediaManifest } from "../../data/mediaManifest";
 import type { Locale } from "../../i18n/types";
 import { getLocalePath, translate } from "../../i18n/utils";
-interface Props { locale: Locale }
-const { locale } = Astro.props;
+interface Props { locale: Locale; currentFocus?: string }
+const { locale, currentFocus } = Astro.props;
 const data = getLocalizedData(locale);
 const artwork = mediaManifest.homeResearchConstellation;
 ---
 
 <HeroShell class="identity-hero" labelledby="home-title">
   <div class="identity-hero__copy">
-    <p class="eyebrow">{data.profile.location}</p>
+    {data.profile.location && <p class="eyebrow">{data.profile.location}</p>}
     <h1 id="home-title">{profile.displayName}</h1>
     <p class="identity-hero__headline">{data.profile.headline}</p>
     <p class="identity-hero__bio">{data.profile.shortBio}</p>
@@ -21,7 +21,7 @@ const artwork = mediaManifest.homeResearchConstellation;
       <a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewResearch")}</a>
       <a class="button" href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.readWriting")}</a>
     </div>
-    <p class="identity-hero__focus"><span>{translate(locale, "home.currentFocus")}</span>{data.now.currentQuestions[0]}</p>
+    {currentFocus && <p class="identity-hero__focus"><span>{translate(locale, "home.currentFocus")}</span>{currentFocus}</p>}
   </div>
   <figure class="identity-hero__art media-frame">
     <picture>

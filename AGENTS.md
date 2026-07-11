@@ -48,6 +48,7 @@ npm run test:visual
 npm run test:feed-contract
 npm run test:performance
 npm run check:i18n
+npm run check:launch-content
 npm run check:links
 npm run check:links:external
 ```
@@ -116,6 +117,7 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Keep React limited to search, filter, theme, and other genuine islands.
 - Keep Node filesystem access in build-time feed adapters only; never bundle it into client islands.
 - Keep personal identity centralized in `src/data/profile.ts`.
+- Keep factual IDs, dates, status, links, and verified project properties in `src/data/facts/`; locale files contain copy only.
 - Keep feed-specific compatibility logic out of UI components.
 - Avoid unnecessary dependencies and large chart libraries.
 - Do not commit `.content-feed/`, `dist/`, credentials, local caches, or machine-specific files.
@@ -157,6 +159,7 @@ npm run content:check
 npm run check
 npm run build
 npm run check:i18n
+npm run check:launch-content
 npm run check:links
 npm run test:smoke
 npm run test:feed-contract
