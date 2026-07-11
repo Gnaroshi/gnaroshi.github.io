@@ -13,8 +13,8 @@ export type ContentFeedManifest = {
   sourceCommits?: { paperLab: string; writing: string };
   sourceRepository?: string;
   sourceCommit?: string;
-  counts?: { papers?: number; blogPosts?: number };
-  entries?: { papers?: number; blog?: number };
+  counts?: Record<string, number>;
+  entries?: Record<string, number>;
 };
 
 export type ContentFeedBuildInfo = {
@@ -23,13 +23,20 @@ export type ContentFeedBuildInfo = {
   generatedAt: string | null;
   contentHash: string | null;
   state: string;
+  counts: Record<string, number>;
   sourceCommits: Record<string, string>;
 };
 
 export type WebsiteBuildInfo = {
+  schemaVersion: 1;
   websiteCommit: string | null;
   contentFeedCommit: string | null;
   builtAt: string;
+  workflowRunId: string;
+  workflowRunAttempt: string;
+  environment: "local" | "ci" | "production";
+  contentHash: string | null;
+  feedSchemaVersion: number;
 };
 
 let manifestCache: ContentFeedManifest | undefined;
@@ -79,10 +86,18 @@ function getGitCommit(directory: string): string | null {
 }
 
 export function getWebsiteBuildInfo(): WebsiteBuildInfo {
+  const manifest = getContentFeedManifest();
+  const environment = process.env.DEPLOYMENT_ENVIRONMENT;
   return {
+    schemaVersion: 1,
     websiteCommit: process.env.WEBSITE_COMMIT ?? process.env.GITHUB_SHA ?? getGitCommit(projectRoot),
     contentFeedCommit: getContentFeedCommit(),
-    builtAt: process.env.BUILD_TIMESTAMP ?? new Date().toISOString()
+    builtAt: process.env.BUILD_TIMESTAMP ?? new Date().toISOString(),
+    workflowRunId: process.env.GITHUB_RUN_ID ?? "local",
+    workflowRunAttempt: process.env.GITHUB_RUN_ATTEMPT ?? "0",
+    environment: environment === "production" || environment === "ci" ? environment : "local",
+    contentHash: manifest.contentHash ?? null,
+    feedSchemaVersion: manifest.schemaVersion
   };
 }
 
@@ -99,6 +114,7 @@ export function getContentFeedBuildInfo(): ContentFeedBuildInfo {
     generatedAt: manifest.generatedAt ?? null,
     contentHash: manifest.contentHash ?? null,
     state: manifest.state ?? "generated",
+    counts: manifest.counts ?? manifest.entries ?? {},
     sourceCommits
   };
 }

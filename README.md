@@ -39,6 +39,7 @@ npm run content:pull
 npm run content:check
 npm run test:e2e
 npm run test:a11y
+npm run test:smoke
 npm run test:visual
 npm run check:i18n
 npm run check:links
@@ -75,7 +76,7 @@ Every page includes:
 <meta name="content-feed-commit" content="...">
 ```
 
-Website commit, imported feed commit, and build time are available at `/build-info.json`. A richer diagnostics page exists at `/dev-diagnostics/content-feed/` only in development.
+`/build-info.json` exposes a versioned public provenance record: website and feed commits, feed content hash and schema, build time, workflow run and attempt, and environment. A richer diagnostics page with public feed state and counts exists at `/dev-diagnostics/content-feed/` only in development.
 
 ## Profile And Project Data
 
@@ -92,6 +93,15 @@ Do not place private research notes, blog drafts, API credentials, or authoring 
 
 ## Deployment
 
-Pushes to `main` deploy through GitHub Actions. The workflow checks out this repository and the public content feed, validates the feed, builds Astro, and uploads the GitHub Pages artifact. Manual runs accept a `feed_ref` input, defaulting to `main`.
+Pushes to `main` deploy through GitHub Actions. A feed-only release can dispatch the same workflow with an immutable feed SHA:
 
-No cross-repository PAT or private repository token is required. See [`docs/deployment.md`](docs/deployment.md).
+```bash
+gh workflow run deploy.yml \
+  --repo Gnaroshi/gnaroshi.github.io \
+  -f feed_commit=<FULL_SHA> \
+  -f feed_ref=<FULL_SHA>
+```
+
+`feed_commit` takes precedence and is verified against the checkout before build. Pull requests run non-deploying CI; production deployment runs static checks and a focused smoke suite, then verifies the live provenance and core routes. Use the manual rollback workflow only with an explicit public website ref and public feed SHA.
+
+No cross-repository PAT or private repository token is required. See [`docs/deployment.md`](docs/deployment.md), [`docs/release-integrity.md`](docs/release-integrity.md), and [`docs/rollback.md`](docs/rollback.md).
