@@ -14,7 +14,7 @@ const data = getLocalizedData(locale);
 
 <BaseLayout locale={locale} title={translate(locale, "nav.projects")} description={translate(locale, "projects.intro")} width="wide">
   <PageShell class="projects-page">
-    <PageHeader eyebrow={translate(locale, "projects.eyebrow")} title={translate(locale, "projects.title")} description={translate(locale, "projects.intro")} />
+    <PageHeader title={translate(locale, "projects.title")} description={translate(locale, "projects.intro")} />
     <section class="project-showcase" aria-labelledby="projects-heading">
       <h2 id="projects-heading" class="sr-only">{translate(locale, "projects.selected")}</h2>
       {data.projects.map((project) => <article id={project.slug} class="project-feature">

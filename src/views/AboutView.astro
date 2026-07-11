@@ -13,11 +13,10 @@ const data = getLocalizedData(locale);
 const links = [{ label: "GitHub", href: profile.links.github }, profile.links.email ? { label: "Email", href: `mailto:${profile.links.email}` } : null, profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar } : null, profile.links.linkedin ? { label: "LinkedIn", href: profile.links.linkedin } : null, profile.links.cv ? { label: "CV", href: profile.links.cv } : null].filter(Boolean) as Array<{ label: string; href: string }>;
 ---
 
-<BaseLayout locale={locale} title={translate(locale, "about.title")} description={`${profile.displayName}, ${data.profile.headline}.`}>
+<BaseLayout locale={locale} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction}>
   <PageShell class="about-page">
-    <div class="about-intro"><PageHeader eyebrow={translate(locale, "about.title")} title={profile.displayName} description={data.profile.shortBio}>{(data.profile.currentRole || data.profile.location) && <dl class="profile-facts">{data.profile.currentRole && <div><dt>{translate(locale, "about.role")}</dt><dd>{data.profile.currentRole}</dd></div>}{data.profile.location && <div><dt>{translate(locale, "about.location")}</dt><dd>{data.profile.location}</dd></div>}</dl>}</PageHeader><div class="about-monogram" aria-hidden="true"><span>G</span><i></i><i></i><i></i></div></div>
+    <div class="about-intro"><PageHeader eyebrow={translate(locale, "about.title")} title={profile.displayName} description={data.profile.aboutIntroduction} /><div class="about-monogram" aria-hidden="true"><span>G</span><i></i><i></i><i></i></div></div>
     <section class="section" aria-labelledby="about-bio"><h2 id="about-bio">{translate(locale, "about.bio")}</h2><div class="prose-stack">{data.profile.bio.map((paragraph) => <p>{paragraph}</p>)}</div></section>
-    <section class="section" aria-labelledby="about-background"><h2 id="about-background">{translate(locale, "about.background")}</h2><div class="prose-stack">{data.profile.researchBackground.map((paragraph) => <p>{paragraph}</p>)}</div></section>
     <section class="section" aria-labelledby="about-skills"><h2 id="about-skills">{translate(locale, "about.skills")}</h2><div class="plain-groups">{data.skillGroups.map((group) => <div><h3>{group.title}</h3><p>{group.skills.join(" · ")}</p></div>)}</div></section>
     <section class="section" aria-labelledby="about-values"><h2 id="about-values">{translate(locale, "about.values")}</h2><ul>{data.profile.researcherValues.map((value) => <li>{value}</li>)}</ul></section>
     {links.length > 0 && <section class="section" aria-labelledby="about-links"><h2 id="about-links">{translate(locale, "about.links")}</h2><div class="link-row">{links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}</div></section>}
@@ -32,5 +31,5 @@ const links = [{ label: "GitHub", href: profile.links.github }, profile.links.em
   .about-monogram i { position: absolute; width: 70%; height: 1px; background: var(--color-border-strong); transform: rotate(45deg); }
   .about-monogram i:nth-of-type(2) { transform: rotate(-45deg); }
   .about-monogram i:nth-of-type(3) { width: 1px; height: 70%; transform: none; }
-  @media (min-width: 768px) { .about-intro { grid-template-columns: minmax(0, 1fr) 15rem; align-items: end; } .about-monogram { justify-self: end; } }
+  @media (min-width: 768px) { .about-intro { grid-template-columns: minmax(0, 1fr) 15rem; align-items: start; } .about-monogram { justify-self: end; } }
 </style>

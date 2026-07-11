@@ -177,6 +177,11 @@ video {
   margin-bottom: var(--space-7);
 }
 
+.page-header--without-eyebrow::before {
+  height: 1.4rem;
+  content: "";
+}
+
 .eyebrow {
   margin: 0;
   color: var(--color-accent);

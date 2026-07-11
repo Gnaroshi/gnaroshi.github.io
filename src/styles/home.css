@@ -12,6 +12,7 @@
 .identity-hero__copy { display: grid; gap: var(--space-4); }
 .identity-hero h1 { max-width: none; font-size: var(--display-sm); line-height: 1; }
 .identity-hero__headline { font-size: var(--text-xl); font-weight: 720; }
+.identity-hero__headline span { display: block; }
 .identity-hero__bio { max-width: 55ch; color: var(--color-text-secondary); font-size: var(--editorial-body); line-height: 1.72; }
 .identity-hero__actions { display: grid; gap: var(--space-3); margin-top: var(--space-2); }
 .identity-hero__actions .button { width: 100%; min-height: 46px; }

@@ -5,7 +5,6 @@ export const profileFacts = {
   englishName: "",
   siteName: "Gnaroshi",
   domain: "https://gnaroshi.dev",
-  locationCode: "KR",
   profileImage: "",
   links: {
     github: "https://github.com/Gnaroshi",

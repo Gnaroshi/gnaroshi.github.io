@@ -41,7 +41,7 @@ const tagLabels = Object.fromEntries(tags.map((tag) => [tag, getLocalizedTagLabe
     author: { "@type": "Person", name: profile.publicAlias, url: profile.domain }
   }} />
   <PageShell class="writing-page">
-  <PageHeader eyebrow={translate(locale, "writing.eyebrow")} title={translate(locale, "writing.title")} description={translate(locale, "writing.intro")} />
+  <PageHeader title={translate(locale, "writing.title")} description={translate(locale, "writing.intro")} />
   <section class="writing-index" aria-labelledby="writing-index-heading">
     <div class="writing-index__header"><h2 id="writing-index-heading">{translate(locale, "writing.all")}</h2><a href={getLocalePath(locale, "/blog/archive/")}>{translate(locale, "writing.archive")}</a></div>
     {posts.length > 0 ? <ol>{posts.map((post) => { const minutes = Number.parseInt(getPostReadingTime(post), 10) || 1; return <li><div class="writing-index__meta"><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time><span>{translate(locale, "writing.readingTime", { count: minutes })}</span>{post.data.featured && <span>{translate(locale, "writing.selected")}</span>}</div><h2><a href={getBlogPostHref(post)}>{post.data.title}</a></h2><p>{post.data.description}</p><div class="writing-index__tags">{post.data.tags.map((tag) => <span>{getLocalizedTagLabel(tag, locale)}</span>)}</div></li>; })}</ol> : <p class="empty-state">{translate(locale, "writing.noPosts")}</p>}

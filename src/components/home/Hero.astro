@@ -13,9 +13,8 @@ const artwork = mediaManifest.homeResearchConstellation;
 
 <HeroShell class="identity-hero" labelledby="home-title">
   <div class="identity-hero__copy">
-    {data.profile.location && <p class="eyebrow">{data.profile.location}</p>}
     <h1 id="home-title">{profile.displayName}</h1>
-    <p class="identity-hero__headline">{data.profile.headline}</p>
+    <p class="identity-hero__headline">{data.profile.headline.split("\n").map((line) => <span>{line}</span>)}</p>
     <p class="identity-hero__bio">{data.profile.shortBio}</p>
     <div class="identity-hero__actions">
       <a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewResearch")}</a>

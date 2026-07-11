@@ -11,7 +11,7 @@ interface Props { locale: Locale; alternateUrls?: AlternateUrls }
 const { locale, alternateUrls } = Astro.props;
 ---
 
-<header class="site-header" data-navigation-signature="research|projects|writing|paper-lab|about">
+<header class="site-header" data-navigation-signature="research|projects|writing|papers|about">
   <div class="site-header__inner">
     <a class="site-header__brand" href={getLocalePath(locale, "/")} aria-label={`${profile.siteName} ${translate(locale, "nav.home")}`}>
       <span class="site-header__name">{profile.siteName}</span>

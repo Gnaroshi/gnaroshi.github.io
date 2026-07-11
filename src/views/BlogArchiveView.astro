@@ -13,14 +13,14 @@ const posts = await getPublishedBlogPosts(locale);
 const groups = getArchiveGroups(posts, locale);
 ---
 
-<BaseLayout locale={locale} title={translate(locale, "writing.archive")} description={translate(locale, "writing.intro")} width="wide">
+<BaseLayout locale={locale} title={translate(locale, "writing.archive")} description={translate(locale, "writing.archiveIntro")} width="wide">
   <header class="page-header">
-    <p class="eyebrow">{translate(locale, "writing.archive")}</p>
+    <p class="eyebrow">{translate(locale, "writing.eyebrow")}</p>
     <h1>{translate(locale, "writing.archive")}</h1>
-    <p class="lede">{translate(locale, "writing.intro")}</p>
+    <p class="lede">{translate(locale, "writing.archiveIntro")}</p>
   </header>
   <section class="section" aria-labelledby="archive-heading">
-    <SectionHeader id="archive-heading" title={translate(locale, "writing.archive")} description={translate(locale, "common.items", { count: posts.length })} />
+    <SectionHeader id="archive-heading" title={translate(locale, "writing.all")} description={translate(locale, "common.items", { count: posts.length })} />
     <div class="archive-list">
       {groups.map((group) => (
         <section class="archive-group" aria-labelledby={`archive-${group.key}`}>

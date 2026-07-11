@@ -21,7 +21,7 @@ const attempts = Number(option("attempts", "8"));
 const initialDelayMs = Number(option("initial-delay-ms", "5000"));
 const maxDelayMs = Number(option("max-delay-ms", "30000"));
 const skipNavigationSignature = args.includes("--skip-navigation-signature") || process.env.SKIP_NAVIGATION_SIGNATURE === "true";
-const navigationSignature = "research|projects|writing|paper-lab|about";
+const navigationSignature = "research|projects|writing|papers|about";
 const routes = ["/", "/ko/", "/research/", "/papers/"];
 const scaffoldPhrases = [
   "editable in src",

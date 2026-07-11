@@ -43,9 +43,9 @@ test("localized SEO, date formatting, RSS, and sitemap are emitted", async ({ pa
   expect(sitemap).toContain("https://gnaroshi.dev/ko/");
 });
 
-test("Korean Paper Lab renders translated shell and controls", async ({ page }) => {
+test("Korean Papers page renders translated shell and controls", async ({ page }) => {
   await page.goto("/ko/papers/");
-  await expect(page.getByRole("navigation", { name: "논문 연구실 메뉴" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "논문 메뉴" })).toBeVisible();
   await expect(page.getByText("3단계 읽기", { exact: true })).toBeVisible();
   await expect(page.getByText("Paper Reading Queue", { exact: true })).toHaveCount(0);
 });

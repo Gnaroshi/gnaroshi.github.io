@@ -2,13 +2,13 @@
 
 ## Identity
 
-Gnaroshi is a personal academic and research site for an AI/software researcher. It should feel personal, technical, clean, and research-oriented. It is not a company site, not a lab homepage, and not a portfolio template.
+Gnaroshi is a personal academic and research site about studying AI systems, building software for research, and keeping useful notes. It should feel personal, technical, clean, and research-oriented. It is not a company site, not a lab homepage, and not a portfolio template.
 
 The design should make writing, reading, and research activity feel primary. Visual style should support dense technical content without feeling crowded.
 
 ## Audience
 
-- AI researchers who want to understand research interests and technical depth.
+- People working with AI who want to understand the questions and technical work.
 - Lab members who want to read notes, logs, and project writeups.
 - Recruiters and collaborators who need a concise signal of background, work, and contact links.
 - Future self, using the site as an external memory for papers, questions, experiments, and progress.
@@ -66,16 +66,16 @@ Primary navigation is limited to five destinations; the brand links to Home:
 - Research
 - Projects
 - Writing
-- Paper Lab
+- Papers
 - About
 
-Growth is a utility destination. Now and public links belong in the homepage, About, and footer. Paper workflow tools stay grouped under a local Paper Lab navigation instead of competing in the global header.
+Activity is a utility destination. Now and public links belong in the homepage, About, and footer. Paper workflow tools stay grouped under a local Papers navigation instead of competing in the global header.
 
 ### Visual Modes
 
 Editorial mode covers Home, About, Research, Projects, Writing, and long-form detail pages. It uses narrative hierarchy, generous whitespace, narrow prose, and dividers before cards.
 
-Application mode covers Paper Lab workflows and Growth. It uses compact controls, explicit state, one primary action, semantic surfaces, and progressive disclosure. It must not turn empty routes into zero-filled dashboards.
+Application mode covers paper workflows and Activity. It uses compact controls, explicit state, one primary action, semantic surfaces, and progressive disclosure. It must not turn empty routes into zero-filled dashboards.
 
 ## Typography
 
@@ -178,7 +178,7 @@ Avoid page-load animation, scroll animation, parallax, and motion-heavy effects.
 A future implementation satisfies this document when:
 
 - The site loads fast and remains mostly static.
-- The homepage clearly introduces Gnaroshi as an AI/software researcher.
+- The homepage clearly introduces Gnaroshi through current study, projects, and software work without an unsupported professional title.
 - Blog and paper pages are more prominent than decorative presentation.
 - Technical writing is comfortable to read on desktop and mobile.
 - The paper dashboard reveals density only when data supports it and offers focused onboarding when empty.

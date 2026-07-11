@@ -5,9 +5,10 @@ Use these terms consistently in Korean public copy. Choose the contextual altern
 | English | Korean | Notes |
 | --- | --- | --- |
 | Paper Log | 논문 기록 | Use for the reading record, not the whole application. |
-| Paper Lab | 논문 연구실 | Preferred application-area name. |
-| research workspace | 연구 작업실 | Use for the broader connected workflow. |
-| Research Momentum | 연구 흐름 | Avoid transliterating "cockpit." |
+| Papers | 논문 | Public navigation label. Do not use `Paper Lab` or `논문 연구실` publicly. |
+| Paper Notes | 논문 기록 | Public page title. |
+| Research Activity | 연구 활동 | Page title for `/growth/`. |
+| Activity | 활동 기록 | Public navigation label for `/growth/`. |
 | evidence of understanding | 이해를 뒷받침하는 기록 | May shorten to `이해의 근거` in compact labels. |
 | retrieval | 회상 / 기억에서 꺼내기 | `회상` for controls; the longer phrase in explanatory copy. |
 | Review due | 복습 예정 | Use `기한 지남` only when overdue. |
@@ -20,5 +21,7 @@ Use these terms consistently in Korean public copy. Choose the contextual altern
 | longest streak | 최장 연속 기록 | |
 | deep read | 깊이 읽기 | |
 | source-only | 원문만 제공 | Content state, not a visible achievement. |
+
+Internal component and route names may retain historical identifiers such as `PaperLabView` or `growth`, but visible copy must use the public terms above.
 
 Do not translate proper nouns and canonical technical names such as GitHub, Astro, React, MDX, arXiv, model names, dataset names, paper titles, code identifiers, and formulas unless an official localized name is supplied.
