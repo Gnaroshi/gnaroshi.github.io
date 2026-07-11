@@ -15,7 +15,6 @@ const { locale, alternateUrls } = Astro.props;
   <div class="site-header__inner">
     <a class="site-header__brand" href={getLocalePath(locale, "/")} aria-label={`${profile.siteName} ${translate(locale, "nav.home")}`}>
       <span class="site-header__name">{profile.siteName}</span>
-      <span class="site-header__role">{translate(locale, "site.role")}</span>
     </a>
     <DesktopNav currentPath={currentPath} locale={locale} />
     <UtilityNav currentPath={currentPath} locale={locale} alternateUrls={alternateUrls} />

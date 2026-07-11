@@ -37,7 +37,10 @@ jobs:
           persist-credentials: false
 
       - name: Record content feed commit
-        run: echo "CONTENT_FEED_COMMIT=$(git -C .content-feed rev-parse HEAD)" >> "$GITHUB_ENV"
+        run: |
+          echo "CONTENT_FEED_COMMIT=$(git -C .content-feed rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "WEBSITE_COMMIT=${GITHUB_SHA}" >> "$GITHUB_ENV"
+          echo "BUILD_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -69,7 +72,31 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+  verify:
+    name: Verify deployed commit
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Match live build metadata to this deployment
+        env:
+          EXPECTED_COMMIT: ${{ github.sha }}
+          BUILD_INFO_URL: https://gnaroshi.dev/build-info.json
+        run: |
+          for attempt in $(seq 1 18); do
+            deployed_commit=$(curl --fail --silent --show-error --location --header "Cache-Control: no-cache" "${BUILD_INFO_URL}?expected=${EXPECTED_COMMIT}" | jq -r '.websiteCommit // empty') || true
+            if [ "${deployed_commit}" = "${EXPECTED_COMMIT}" ]; then
+              echo "Verified website commit ${deployed_commit}"
+              exit 0
+            fi
+            echo "Attempt ${attempt}: expected ${EXPECTED_COMMIT}, received ${deployed_commit:-unavailable}"
+            sleep 10
+          done
+          echo "Deployed build metadata did not match ${EXPECTED_COMMIT}" >&2
+          exit 1

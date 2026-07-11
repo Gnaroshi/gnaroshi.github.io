@@ -8,13 +8,13 @@ The build job:
 
 1. Checks out `Gnaroshi/gnaroshi.github.io`.
 2. Checks out public `Gnaroshi/gnaroshi-content-feed` into `.content-feed/`.
-3. Records the feed checkout SHA.
+3. Records the website SHA, feed checkout SHA, and UTC build timestamp.
 4. Installs dependencies with `npm ci`.
 5. Runs `npm run content:check`.
 6. Runs `npm run build`.
 7. Uploads `dist/` as the GitHub Pages artifact.
 
-The deploy job publishes that artifact with GitHub Pages OIDC permissions.
+The deploy job publishes that artifact with GitHub Pages OIDC permissions. A final verification job fetches `https://gnaroshi.dev/build-info.json` and fails unless `websiteCommit` matches the workflow's `github.sha`.
 
 ## Manual Feed Ref
 
@@ -35,7 +35,7 @@ npm run build
 npm run check:links
 ```
 
-Confirm `dist/build-info.json` contains the expected feed commit and that production output does not contain `dist/dev-diagnostics/content-feed/index.html`.
+Confirm `dist/build-info.json` contains `websiteCommit`, `contentFeedCommit`, and `builtAt`, and that production output does not contain `dist/dev-diagnostics/content-feed/index.html`.
 
 ## GitHub Pages Settings
 

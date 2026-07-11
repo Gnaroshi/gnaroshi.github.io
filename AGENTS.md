@@ -39,6 +39,7 @@ npm run check
 npm run content:check
 npm run test:e2e
 npm run test:a11y
+npm run test:visual
 npm run check:i18n
 npm run check:links
 ```
@@ -85,7 +86,7 @@ The website may format dates, filter public records, calculate reading time for 
 
 The initial `bootstrap-empty` feed is valid only when every declared entry count is zero. Generated feeds must include `blog/`, `papers/`, and `data/`.
 
-Every production build exposes the imported feed commit in a meta tag and `/build-info.json`. Development-only diagnostics use `/dev-diagnostics/content-feed/` and must not be emitted in production.
+Every production build exposes website and imported-feed commits through meta tags and `/build-info.json`. Development-only diagnostics use `/dev-diagnostics/content-feed/` and must not be emitted in production.
 
 ## Routing
 

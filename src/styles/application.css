@@ -3,7 +3,7 @@ body[data-mode="application"] {
 }
 
 body[data-mode="application"] .site-main {
-  padding-top: var(--space-6);
+  padding-top: 24px;
 }
 
 .app-empty-state {
@@ -32,7 +32,15 @@ body[data-mode="application"] textarea {
     color var(--duration-fast) ease;
 }
 
-@media (max-width: 560px) {
+@media (min-width: 768px) {
+  body[data-mode="application"] .site-main { padding-top: 32px; }
+}
+
+@media (min-width: 1024px) {
+  body[data-mode="application"] .site-main { padding-top: 40px; }
+}
+
+@media (max-width: 479px) {
   .app-empty-state { padding: var(--space-5); }
 }
 

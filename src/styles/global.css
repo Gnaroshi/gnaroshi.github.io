@@ -17,6 +17,7 @@ body {
   margin: 0;
   background: var(--color-bg);
   color: var(--color-text);
+  overflow-x: clip;
 }
 
 :lang(en) body {
@@ -120,43 +121,22 @@ pre code {
   color: var(--color-bg);
 }
 
-.skip-link:focus {
+:root[data-keyboard-navigation="true"] .skip-link:focus {
   transform: translateY(0);
 }
 
-.site-header {
-  border-bottom: 1px solid var(--color-border);
-  background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.site-header__inner {
-  display: grid;
-  grid-template-columns: minmax(180px, auto) 1fr auto;
-  gap: var(--space-4);
-  align-items: center;
-  width: var(--width-dashboard);
-  margin: 0 auto;
-  padding: var(--space-4) 0;
-}
-
-.site-header__brand {
-  display: grid;
-  gap: 0.05rem;
-  color: var(--color-text);
-  text-decoration: none;
-}
-
-.site-header__name {
-  font-size: var(--text-lg);
-  font-weight: 700;
-}
-
-.site-header__role {
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-}
-
-.site-nav,
 .site-footer__links {
   display: flex;
   flex-wrap: wrap;
@@ -164,44 +144,20 @@ pre code {
   align-items: center;
 }
 
-.site-nav {
-  justify-content: flex-end;
-}
-
-.site-nav a,
 .site-footer__links a {
   color: var(--color-text-secondary);
   font-size: var(--text-sm);
   text-decoration: none;
 }
 
-.site-nav a:hover,
-.site-footer__links a:hover,
-.site-nav a[aria-current="page"] {
-  color: var(--color-accent);
-}
-
-.theme-toggle {
-  display: inline-grid;
-  width: 2rem;
-  height: 2rem;
-  place-items: center;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  background: var(--color-surface);
-  color: var(--color-text);
-  cursor: pointer;
-}
-
-.theme-toggle:hover {
-  border-color: var(--color-border-strong);
+.site-footer__links a:hover {
   color: var(--color-accent);
 }
 
 .site-main {
   width: var(--width-prose);
   margin: 0 auto;
-  padding: var(--space-7) 0 var(--space-8);
+  padding: 40px 0 var(--space-9);
 }
 
 .site-main--wide {
@@ -210,6 +166,10 @@ pre code {
 
 .site-main--dashboard {
   width: var(--width-dashboard);
+}
+
+.site-main--flush {
+  padding-top: 0;
 }
 
 .site-footer {
@@ -223,7 +183,7 @@ pre code {
   justify-content: space-between;
   width: var(--width-dashboard);
   margin: 0 auto;
-  padding: var(--space-5) 0;
+  padding: var(--space-6) 0;
 }
 
 .site-footer__title,
@@ -243,7 +203,7 @@ pre code {
 .page-header {
   display: grid;
   gap: var(--space-3);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-7);
 }
 
 .eyebrow {
@@ -281,6 +241,55 @@ p {
   max-width: 68ch;
   color: var(--color-text-secondary);
   font-size: var(--text-lg);
+  line-height: 1.65;
+}
+
+.layout-container {
+  width: 100%;
+  margin-inline: auto;
+}
+
+.layout-container--prose { max-width: var(--container-prose); }
+.layout-container--content { max-width: var(--container-content); }
+.layout-container--wide { max-width: var(--container-wide); }
+.layout-container--full { max-width: var(--container-full); }
+
+.page-shell,
+.app-shell {
+  display: grid;
+  gap: var(--space-7);
+}
+
+.hero-shell {
+  min-height: 600px;
+}
+
+.content-section {
+  display: grid;
+  gap: var(--space-5);
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--color-border);
+}
+
+.media-frame {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: #e8e9e5;
+}
+
+.media-frame img,
+.media-frame picture {
+  width: 100%;
+  height: 100%;
+}
+
+.media-frame img {
+  object-fit: cover;
+}
+
+:root[data-theme="dark"] .media-frame img[src$=".svg"] {
+  filter: brightness(0.82) saturate(0.88);
 }
 
 .section {
@@ -410,4 +419,19 @@ p {
   html {
     scroll-behavior: auto;
   }
+}
+
+@media (min-width: 768px) {
+  .site-main { padding-top: 56px; }
+  .site-main--flush { padding-top: 0; }
+}
+
+@media (min-width: 1024px) {
+  .site-main { padding-top: 72px; }
+  .site-main--flush { padding-top: 0; }
+}
+
+@media (max-width: 479px) {
+  h1 { font-size: var(--text-2xl); }
+  .content-section { padding-block: var(--space-7); }
 }

@@ -48,11 +48,7 @@ Use a global shell with:
 - Wider layout option for dashboards such as `/papers`.
 - Footer with links, RSS if implemented, and small metadata.
 
-Suggested widths:
-
-- Standard prose: `min(100% - 32px, 760px)`.
-- Research/project index: `min(100% - 32px, 1040px)`.
-- Paper dashboard: `min(100% - 32px, 1180px)`.
+Container widths are centralized as 720px prose, 1040px content, 1200px wide, and a 1440px-capped full shell. Gutters step from 16px to 20px, 28px, 32px, and 40px at the shared 480/768/1024/1280 breakpoints.
 
 The first viewport of `/` should immediately identify:
 
@@ -65,9 +61,8 @@ Avoid generic hero copy. The homepage should read like a concise personal academ
 
 ### Information Architecture
 
-Primary navigation is limited to six destinations:
+Primary navigation is limited to five destinations; the brand links to Home:
 
-- Home
 - Research
 - Projects
 - Writing

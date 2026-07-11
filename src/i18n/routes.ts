@@ -3,7 +3,6 @@ import { getLocalePath, translate } from "./utils";
 
 export function getPrimaryNavigation(locale: Locale) {
   return [
-    { href: getLocalePath(locale, "/"), label: translate(locale, "nav.home") },
     { href: getLocalePath(locale, "/research"), label: translate(locale, "nav.research") },
     { href: getLocalePath(locale, "/projects"), label: translate(locale, "nav.projects") },
     { href: getLocalePath(locale, "/blog"), label: translate(locale, "nav.writing") },
@@ -18,6 +17,7 @@ export function getUtilityNavigation(locale: Locale) {
 
 export function getFooterNavigation(locale: Locale) {
   return [
+    { href: getLocalePath(locale, "/"), label: translate(locale, "nav.home") },
     ...getPrimaryNavigation(locale),
     ...getUtilityNavigation(locale),
     { href: getLocalePath(locale, "/now"), label: translate(locale, "nav.now") },

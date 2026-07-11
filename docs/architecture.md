@@ -75,7 +75,7 @@ Feed access uses Node filesystem APIs only at build time. Browser bundles receiv
 The imported feed checkout commit is exposed as:
 
 - `<meta name="content-feed-commit">` on every page.
-- `/build-info.json` with commit and manifest metadata.
+- `/build-info.json` with website commit, imported feed commit, and UTC build time.
 - `/dev-diagnostics/content-feed/` during development only.
 
 ## Deployment

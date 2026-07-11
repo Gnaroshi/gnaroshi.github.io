@@ -26,7 +26,7 @@ test("Korean mobile navigation fits in the menu", async ({ page }) => {
   await trigger.click();
   const panel = page.locator("[data-mobile-nav-panel]");
   await expect(panel).toBeVisible();
-  await expect(panel.getByText("언어", { exact: true })).toBeVisible();
+  await expect(page.locator(".utility-nav .language-switcher")).toHaveAttribute("aria-label", "언어");
   const box = await panel.boundingBox();
   expect(box?.width ?? 9999).toBeLessThanOrEqual(390);
 });

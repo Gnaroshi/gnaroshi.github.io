@@ -26,13 +26,14 @@ npm run check
 npm run build
 npm run check:i18n
 npm run check:links
+npm run test:visual
 ```
 
 Run `check:links` after `build`. Use `test:e2e` and `test:a11y` for route, interaction, or layout changes.
 
 ## Diagnostics
 
-- `/build-info.json` exists in development and production.
+- `/build-info.json` exists in development and production and records the website commit, imported feed commit, and build time.
 - `/dev-diagnostics/content-feed/` exists only in development.
 - Every page contains a `content-feed-commit` meta tag.
 
