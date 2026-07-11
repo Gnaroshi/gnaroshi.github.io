@@ -129,16 +129,16 @@ jobs:
           node -e 'const info=require("./dist/build-info.json"); if(info.schemaVersion!==1||info.websiteCommit!==process.env.WEBSITE_COMMIT||info.contentFeedCommit!==process.env.CONTENT_FEED_COMMIT||info.environment!=="production") process.exit(1)'
 
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload rollback Pages artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: site/dist
 
       - name: Upload failure diagnostics
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: rollback-failure-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: ignore
