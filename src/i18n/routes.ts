@@ -1,58 +1,65 @@
 import type { Locale } from "./types";
 import { getLocalePath, translate } from "./utils";
+import { publicFeatureFlags } from "../config/publicFeatureFlags";
+import { getPublicCapabilities, type PublicCapabilities } from "../utils/publicCapabilities";
 
-export function getPrimaryNavigation(locale: Locale) {
-  return [
+export function getPrimaryNavigation(locale: Locale, capabilities: PublicCapabilities = getPublicCapabilities()) {
+  const navigation = [
     { href: getLocalePath(locale, "/research"), label: translate(locale, "nav.research") },
     { href: getLocalePath(locale, "/projects"), label: translate(locale, "nav.projects") },
-    { href: getLocalePath(locale, "/blog"), label: translate(locale, "nav.writing") },
-    { href: getLocalePath(locale, "/papers"), label: translate(locale, "nav.paperLab") },
+    ...(capabilities.hasWriting || publicFeatureFlags.writingOnboarding
+      ? [{ href: getLocalePath(locale, "/blog"), label: translate(locale, "nav.writing") }]
+      : []),
+    ...(capabilities.hasPapers || publicFeatureFlags.paperLabOnboarding
+      ? [{ href: getLocalePath(locale, "/papers"), label: translate(locale, "nav.paperLab") }]
+      : []),
     { href: getLocalePath(locale, "/about"), label: translate(locale, "nav.about") }
   ];
+  return navigation;
 }
 
-export function getUtilityNavigation(locale: Locale) {
-  return [{ href: getLocalePath(locale, "/growth"), label: translate(locale, "nav.growth") }];
+export function getUtilityNavigation(locale: Locale, capabilities: PublicCapabilities = getPublicCapabilities()) {
+  return capabilities.hasEligibleGrowth
+    ? [{ href: getLocalePath(locale, "/growth"), label: translate(locale, "nav.growth") }]
+    : [];
 }
 
-export function getFooterNavigation(locale: Locale) {
+export function getFooterNavigation(locale: Locale, capabilities: PublicCapabilities = getPublicCapabilities()) {
   return [
     { href: getLocalePath(locale, "/"), label: translate(locale, "nav.home") },
-    ...getPrimaryNavigation(locale),
-    ...getUtilityNavigation(locale),
+    ...getPrimaryNavigation(locale, capabilities),
+    ...getUtilityNavigation(locale, capabilities),
     { href: getLocalePath(locale, "/now"), label: translate(locale, "nav.now") },
     { href: getLocalePath(locale, "/contact"), label: translate(locale, "nav.links") }
   ];
 }
 
-export function getPaperLabNavigation(locale: Locale) {
+export function getPaperLabNavigation(locale: Locale, capabilities: PublicCapabilities = getPublicCapabilities()) {
   const path = (value: string) => getLocalePath(locale, value);
   return [
-    { label: translate(locale, "paperLab.overview"), items: [
-      { href: path("/papers/"), label: translate(locale, "paperLab.paperLog") },
-      { href: path("/growth/"), label: translate(locale, "nav.growth") }
-    ] },
-    { label: translate(locale, "paperLab.read"), items: [
-      { href: path("/queue/"), label: translate(locale, "paperLab.readingQueue") },
-      { href: path("/papers/"), label: translate(locale, "paperLab.paperNotes") }
-    ] },
-    { label: translate(locale, "paperLab.review"), items: [
-      { href: path("/reviews/"), label: translate(locale, "paperLab.reviewsDue") },
-      { href: path("/reviews/"), label: translate(locale, "paperLab.aiReview") }
-    ] },
-    { label: translate(locale, "paperLab.practice"), items: [
-      { href: path("/papers/"), label: translate(locale, "paperLab.oralExam") },
-      { href: path("/formula/"), label: translate(locale, "paperLab.formulaRecall") },
-      { href: path("/questions/"), label: translate(locale, "paperLab.questionBank") }
-    ] },
-    { label: translate(locale, "paperLab.build"), items: [
-      { href: path("/implementations/"), label: translate(locale, "paperLab.implementations") },
-      { href: path("/blog/"), label: translate(locale, "paperLab.paperToBlog") }
-    ] },
-    { label: translate(locale, "paperLab.insights"), items: [
-      { href: path("/week/"), label: translate(locale, "paperLab.weeklyReviews") },
-      { href: path("/graph/"), label: translate(locale, "paperLab.researchGraph") }
-    ] }
+    { href: path("/papers/"), label: translate(locale, "paperLab.overview") },
+    { href: path("/papers/#reading-method"), label: translate(locale, "papers.method") },
+    ...(capabilities.hasPapers
+      ? [{ href: path("/papers/#paper-notes"), label: translate(locale, "paperLab.paperNotes") }]
+      : []),
+    ...(capabilities.hasReviews
+      ? [
+          { href: path("/reviews/"), label: translate(locale, "paperLab.aiReview") },
+          { href: path("/reviews/due/"), label: translate(locale, "paperLab.reviewsDue") }
+        ]
+      : []),
+    ...(capabilities.hasOralExams || capabilities.hasFormulaRecall
+      ? [{ href: capabilities.hasFormulaRecall ? path("/formula/") : path("/papers/#paper-notes"), label: translate(locale, "paperLab.practice") }]
+      : []),
+    ...(capabilities.hasImplementations
+      ? [{ href: path("/implementations/"), label: translate(locale, "paperLab.build") }]
+      : []),
+    ...(capabilities.hasWeeklyReviews || capabilities.hasResearchGraph || capabilities.hasEligibleGrowth
+      ? [{
+          href: capabilities.hasWeeklyReviews ? path("/week/") : capabilities.hasResearchGraph ? path("/graph/") : path("/growth/"),
+          label: translate(locale, "paperLab.insights")
+        }]
+      : [])
   ];
 }
 

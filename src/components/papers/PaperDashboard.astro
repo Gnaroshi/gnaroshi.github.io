@@ -49,7 +49,7 @@ const messages = islandMessages.paper;
 
   {papers.length === 0 ? (
     <>
-      <section class="paper-onboarding" aria-labelledby="paper-onboarding-heading">
+      <section id="paper-notes" class="paper-onboarding" aria-labelledby="paper-onboarding-heading">
         <div class="paper-onboarding__copy">
           <PaperIcon class="empty-state-icon" />
           <p class="eyebrow">{translate(locale, "papers.startSmall")}</p>
@@ -67,6 +67,8 @@ const messages = islandMessages.paper;
           {messages.publicNotes.replace("{count}", String(papers.length))}
         </p>
       )}
+
+      <ReadingMethodPanel locale={locale} />
 
       {hasReviewSummary && (
         <section id="ai-review-workflow" class="paper-review-summary" aria-labelledby="paper-review-summary-heading">

@@ -4,9 +4,10 @@ test("desktop navigation stays concise", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
   const primary = page.getByRole("navigation", { name: "Primary navigation" });
-  await expect(primary.getByRole("link")).toHaveCount(5);
-  await expect(primary.getByRole("link", { name: "Writing" })).toHaveAttribute("href", "/blog");
+  await expect(primary.getByRole("link")).toHaveCount(4);
+  await expect(primary.getByRole("link", { name: "Writing" })).toHaveCount(0);
   await expect(primary.getByRole("link", { name: "Papers" })).toHaveAttribute("href", "/papers");
+  await expect(page.getByRole("link", { name: "Activity", exact: true })).toHaveCount(0);
 });
 
 test("mobile menu traps focus, locks scroll, and returns focus on Escape", async ({ page }) => {
@@ -28,11 +29,14 @@ test("mobile menu traps focus, locks scroll, and returns focus on Escape", async
   await expect(trigger).toBeFocused();
 });
 
-test("Papers local navigation groups existing tools", async ({ page }) => {
+test("Papers local navigation exposes only available destinations without expandable menus", async ({ page }) => {
   await page.goto("/papers");
   const localNav = page.getByRole("navigation", { name: "Papers navigation" });
   await expect(localNav).toBeVisible();
-  await expect(localNav.locator("details")).toHaveCount(6);
-  await localNav.getByText("Practice", { exact: true }).click();
-  await expect(localNav.getByRole("link", { name: "Formula Recall" })).toBeVisible();
+  await expect(localNav.locator("details")).toHaveCount(0);
+  await expect(localNav.getByRole("link")).toHaveCount(3);
+  await expect(localNav.getByRole("link", { name: "Overview" })).toHaveAttribute("href", "/papers/");
+  await expect(localNav.getByRole("link", { name: "Method" })).toHaveAttribute("href", "/papers/#reading-method");
+  await expect(localNav.getByRole("link", { name: "Read" })).toHaveCount(0);
+  await expect(localNav).not.toContainText("+");
 });

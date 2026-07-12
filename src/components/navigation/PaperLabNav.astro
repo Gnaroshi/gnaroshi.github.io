@@ -11,17 +11,10 @@ const paperLabNavigation = getPaperLabNavigation(locale);
 <nav class="paper-lab-nav" aria-label={translate(locale, "a11y.paperLabNavigation")}>
   <a class="paper-lab-nav__brand" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a>
   <div class="paper-lab-nav__groups">
-    {paperLabNavigation.map((group) => (
-      <details>
-        <summary>{group.label}</summary>
-        <div>
-          {group.items.map((item) => (
-            <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
-              {item.label}
-            </a>
-          ))}
-        </div>
-      </details>
+    {paperLabNavigation.map((item) => (
+      <a href={item.href} aria-current={!item.href.includes("#") && isNavigationActive(currentPath, item.href) ? "page" : undefined}>
+        {item.label}
+      </a>
     ))}
   </div>
 </nav>
