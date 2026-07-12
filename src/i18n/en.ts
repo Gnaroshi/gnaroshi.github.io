@@ -112,6 +112,7 @@ export const en = {
   "projects.selectedDescription": "Work in progress, completed work, and questions that remain.",
   "projects.applications": "Gnaroshi applications",
   "projects.applicationsDescription": "Standalone tools that Studio can discover, check, open, or hand work to without taking ownership of their data.",
+  "projects.applicationIndex": "Browse all {count} applications",
   "projects.group.researchWorkflow": "Research workflow",
   "projects.group.systemUtilities": "System utilities",
   "projects.group.learningTools": "Learning tools",

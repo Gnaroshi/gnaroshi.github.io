@@ -19,6 +19,8 @@ test.describe("verified Gnaroshi applications", () => {
   for (const route of ["/projects/", "/ko/projects/"] as const) {
     test(`${route} preserves the requested grouping and feature hierarchy`, async ({ page }) => {
       await page.goto(route);
+      await expect(page.locator(".project-index-link")).toHaveAttribute("href", "#applications-heading");
+      await expect(page.locator(".project-index-link")).toContainText("6");
       const applications = page.locator(".applications");
       await expect(applications.locator(".application-card")).toHaveCount(6);
       await expect(applications.locator(".application-card--featured")).toHaveCount(3);
