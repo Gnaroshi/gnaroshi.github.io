@@ -24,6 +24,7 @@ const recentPosts = posts.filter((post) => post.data.contentStage === "substanti
 const recentPapers = papers.filter((paper) => paper.data.contentStage === "substantive").slice(0, 3);
 const selectedProject = data.projects.find((project) => project.featured) ?? data.projects[0];
 const selectedProjectMedia = getProjectMedia(selectedProject.id);
+if (!selectedProjectMedia) throw new Error(`Featured project is missing approved media: ${selectedProject.id}`);
 const focusIsFresh = isCurrentFocusFresh(data.now.lastUpdated);
 if (!focusIsFresh && import.meta.env.DEV) {
   console.warn(`[current-focus] Hidden from Home because ${data.now.lastUpdated} is ${currentFocusAgeDays(data.now.lastUpdated)} days old.`);

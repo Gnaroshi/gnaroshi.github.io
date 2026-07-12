@@ -1,6 +1,7 @@
 import type { projectFacts } from "../facts/projects";
 import type { researchFacts } from "../facts/research";
 import type { SystemRepository } from "../facts/systemArchitecture";
+import type { ManagedApplication } from "../facts/managedApplications";
 
 export type LocalizedProfileCopy = {
   headline: string;
@@ -27,6 +28,7 @@ export type LocalizedProjectCopy = {
   architecture: readonly string[];
   supportedAdapters: readonly string[];
   reproducibility: readonly string[];
+  studioRelationship: string;
   currentState: string;
   openProblems: readonly string[];
   relatedWriting: readonly string[];
@@ -55,6 +57,7 @@ export type LocalizedSystemRepositoryCopy = {
 export type LocalizedSystemArchitectureCopy = {
   eyebrow: string;
   title: string;
+  fullTitle: string;
   description: string;
   stages: {
     sources: string;
@@ -83,6 +86,15 @@ export type LocalizedSystemArchitectureCopy = {
   };
 };
 
+export type LocalizedManagedApplicationsCopy = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  caption: string;
+  studio: { title: string; role: string };
+  applications: Readonly<Record<ManagedApplication["id"], { title: string; role: string }>>;
+};
+
 export type LocaleCopy = {
   copyUpdatedAt: string;
   profile: LocalizedProfileCopy;
@@ -91,6 +103,7 @@ export type LocaleCopy = {
   now: LocalizedNowCopy;
   skillGroups: readonly LocalizedSkillGroup[];
   systemArchitecture: LocalizedSystemArchitectureCopy;
+  managedApplications: LocalizedManagedApplicationsCopy;
 };
 
 type ProjectFactWithoutLinks<T> = T extends unknown ? Omit<T, "links"> : never;
@@ -110,4 +123,5 @@ export type LocalizedData = {
   now: LocalizedNowCopy & { lastUpdated: string };
   skillGroups: readonly LocalizedSkillGroup[];
   systemArchitecture: LocalizedSystemArchitectureCopy;
+  managedApplications: LocalizedManagedApplicationsCopy;
 };
