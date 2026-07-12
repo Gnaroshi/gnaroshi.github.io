@@ -8,12 +8,9 @@ const { ids, locale } = Astro.props;
 const labels = locale === "ko" ? { language:"언어",ui:"인터페이스",runtime:"런타임",framework:"프레임워크",data:"데이터",integration:"연결",distribution:"배포" } : { language:"Languages",ui:"Interface",runtime:"Runtime",framework:"Frameworks",data:"Data",integration:"Integrations",distribution:"Delivery" };
 const groups = Object.entries(Object.groupBy(ids, (id) => techCatalog[id].category));
 ---
-<div class="tech-groups">
-  {groups.map(([category, techIds]) => <section><h3>{labels[category as keyof typeof labels]}</h3><ul>{techIds!.map((id) => <li><TechIcon id={id}/><span>{techCatalog[id].label}</span></li>)}</ul></section>)}
-</div>
+<div class="tech-groups" data-tech-stack="grid">{groups.map(([category, techIds]) => <section><h3>{labels[category as keyof typeof labels]}</h3><ul>{techIds!.map((id) => <li><TechIcon id={id}/><span>{techCatalog[id].label}</span></li>)}</ul></section>)}</div>
 <style>
-  .tech-groups{display:grid;gap:var(--space-5)}
-  .tech-groups section{display:grid;grid-template-columns:minmax(7rem,.35fr) 1fr;gap:var(--space-4);align-items:start}
-  h3{font-size:var(--step-0)} ul{display:flex;flex-wrap:wrap;gap:var(--space-3);margin:0;padding:0;list-style:none} li{display:inline-flex;align-items:center;gap:.45rem;color:var(--color-text-secondary)}
+  .tech-groups{display:grid;gap:var(--space-5)}.tech-groups section{display:grid;grid-template-columns:minmax(7rem,.35fr) 1fr;gap:var(--space-4);align-items:start}
+  h3{font-size:var(--step-0)}ul{display:flex;flex-wrap:wrap;gap:var(--space-3);margin:0;padding:0;list-style:none}li{display:inline-flex;align-items:center;gap:.45rem;color:var(--color-text-secondary)}
   @media(max-width:520px){.tech-groups section{grid-template-columns:1fr;gap:var(--space-2)}}
 </style>

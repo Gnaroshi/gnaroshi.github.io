@@ -1,0 +1,15 @@
+---
+import { platformLabels } from "../../data/facts/techCatalog";
+import type { ProjectFact } from "../../data/facts/projects";
+import { getProjectUi } from "../../data/projectUi";
+import type { ProjectStory } from "../../data/projectStories";
+import { productStatusLabels } from "../../data/projectStories";
+import type { Locale } from "../../i18n/types";
+interface Props { project: ProjectFact; story: ProjectStory; locale: Locale }
+const { project, story, locale } = Astro.props;
+const labels = getProjectUi(locale);
+---
+<section class="at-a-glance" aria-labelledby="at-a-glance-heading"><h2 id="at-a-glance-heading">{labels.atGlance}</h2><dl>
+  <div><dt>{labels.audience}</dt><dd>{story.audience}</dd></div><div><dt>{labels.primaryUse}</dt><dd>{story.primaryUse}</dd></div>
+  <div><dt>{labels.status}</dt><dd>{productStatusLabels[locale][project.productStatus]}</dd></div><div><dt>{labels.platforms}</dt><dd>{project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</dd></div>
+</dl></section>

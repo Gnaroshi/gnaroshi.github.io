@@ -3,29 +3,28 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import StructuredData from "../components/StructuredData.astro";
 import ExternalLink from "../components/common/ExternalLink.astro";
-import ResponsiveImage from "../components/media/ResponsiveImage.astro";
-import ApplicationRoleIcon from "../components/projects/ApplicationRoleIcon.astro";
-import ProjectScenario from "../components/projects/ProjectScenario.astro";
-import TechStackGroups from "../components/projects/TechStackGroups.astro";
-import SystemWorkflow from "../components/system/SystemWorkflow.astro";
-import ManagedApplicationsWorkflow from "../components/system/ManagedApplicationsWorkflow.astro";
+import ApplicationProjectDetail from "../components/projects/ApplicationProjectDetail.astro";
+import InfrastructureProjectDetail from "../components/projects/InfrastructureProjectDetail.astro";
+import ResearchProjectDetail from "../components/projects/ResearchProjectDetail.astro";
 import { getProjectMedia } from "../data/approvedMedia";
 import { getApprovedProjectShowcase } from "../data/approvedProjectShowcases";
-import { platformLabels, techCatalog } from "../data/facts/techCatalog";
+import { techCatalog } from "../data/facts/techCatalog";
 import { projectFacts } from "../data/facts/projects";
 import { getLocalizedData } from "../data/locales";
-import { getProjectStory, productStatusLabels } from "../data/projectStories";
+import { getProjectUi } from "../data/projectUi";
+import { getProjectStory } from "../data/projectStories";
 import { profile } from "../data/profile";
-import { formatLocalizedDate } from "../i18n/date";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getBlogPostHref, getPublishedBlogPosts } from "../utils/content";
+import "../styles/project-detail.css";
 
 interface Props { locale: Locale; slug: string }
 const { locale, slug } = Astro.props;
 const project = projectFacts.find((item) => item.slug === slug);
 if (!project) throw new Error(`Unknown project: ${slug}`);
 const story = getProjectStory(locale, project.id);
+const labels = getProjectUi(locale);
 const localizedProject = getLocalizedData(locale).projects.find((item) => item.id === project.id)!;
 const posts = await getPublishedBlogPosts(locale);
 const relatedKeys = new Set(localizedProject.relatedWriting);
@@ -33,73 +32,25 @@ const related = posts.filter((post) => relatedKeys.has(post.data.translationKey)
 const canonicalPath = getLocalePath(locale, `/projects/${project.slug}/`);
 const repositoryUrl = project.links.find((link) => link.id === "repository")?.href;
 const applicationMedia = project.kind === "application" ? getApprovedProjectShowcase(project.primaryShowcaseId) : undefined;
-const projectMedia = applicationMedia ?? getProjectMedia(project.id);
-const labels = locale === "ko" ? {
-  atGlance:"한눈에 보기", audience:"대상", primaryUse:"주요 용도", platforms:"지원 환경", status:"제품 상태", features:"주요 기능", stack:"기술 구성", privacy:"데이터와 개인정보", relationship:"Studio와의 관계", state:"현재 상태", limitations:"현재 한계", notes:"기술 메모", milestones:"다음 단계", links:"링크", source:"소스 출처", sourceCommit:"소스 커밋", integration:"Studio 연결 상태", updated:"내용 확인일", approach:"접근 방식", evidence:"현재 근거", evidenceBoundary:"근거 범위", unknowns:"남은 질문", reproducibility:"재현 가능성", architecture:"구조", workflow:"공개 흐름", boundaries:"저장소 경계", verification:"배포 확인", back:"프로젝트로 돌아가기"
-} : {
-  atGlance:"At a glance", audience:"For", primaryUse:"Primary use", platforms:"Platforms", status:"Product status", features:"Key features", stack:"Tech stack", privacy:"Data and privacy", relationship:"Studio relationship", state:"Current state", limitations:"Current limitations", notes:"Technical notes", milestones:"Next milestones", links:"Links", source:"Source provenance", sourceCommit:"Source commit", integration:"Studio integration", updated:"Content reviewed", approach:"Approach", evidence:"Current evidence", evidenceBoundary:"Evidence boundary", unknowns:"Open questions", reproducibility:"Reproducibility", architecture:"Architecture", workflow:"Public workflow", boundaries:"Repository boundaries", verification:"Deployment verification", back:"Back to Projects"
-};
-const integrationLabels = locale === "ko" ? { "not-planned":"계획 없음", planned:"계획됨", "in-review":"검토 중", available:"사용 가능" } : { "not-planned":"Not planned", planned:"Planned", "in-review":"Under review", available:"Available" };
-const detailSections = project.kind === "research" ? [
-  [labels.approach, story.detail.approach], [labels.evidence, story.detail.verifiedArtifact], [labels.reproducibility, story.detail.reproducibility], [labels.evidenceBoundary, story.detail.currentEvidence], [labels.unknowns, story.detail.unknowns]
-] : project.kind === "infrastructure" ? [
-  [locale === "ko" ? "해결하려는 문제" : "Problem", story.detail.problem], [labels.workflow, story.detail.publicWorkflow], [labels.boundaries, story.detail.repositoryBoundaries], [labels.verification, story.detail.deploymentVerification]
-] : [];
+const selectedMedia = project.kind !== "application" ? getProjectMedia(project.id) : undefined;
+if (project.kind === "application" && !applicationMedia) throw new Error(`${project.id}: approved application media is missing`);
+if (project.kind !== "application" && !selectedMedia) throw new Error(`${project.id}: selected-project evidence is missing`);
 ---
 
 <BaseLayout locale={locale} title={story.title} description={story.heroSummary} canonical={canonicalPath} type="article" width="wide" modifiedTime={project.updatedAt} articleTags={[...project.tags]}>
   <article class:list={["project-detail", `project-detail--${project.kind}`]}>
-    <Breadcrumbs label={locale === "ko" ? "현재 위치" : "Breadcrumb"} items={[{ name:locale === "ko" ? "홈" : "Home",href:getLocalePath(locale,"/") },{ name:locale === "ko" ? "프로젝트" : "Projects",href:getLocalePath(locale,"/projects/") },{ name:story.title,href:canonicalPath }]}/>
+    <Breadcrumbs label={locale === "ko" ? "현재 위치" : "Breadcrumb"} items={[{name:locale === "ko" ? "홈" : "Home",href:getLocalePath(locale,"/")},{name:locale === "ko" ? "프로젝트" : "Projects",href:getLocalePath(locale,"/projects/")},{name:story.title,href:canonicalPath}]}/>
     <StructuredData data={{
-      "@context":"https://schema.org", "@type":repositoryUrl ? "SoftwareSourceCode" : "CreativeWork", name:story.title, description:story.heroSummary,
-      url:new URL(canonicalPath,profile.domain).toString(), dateModified:project.updatedAt, author:{"@type":"Person",name:profile.publicAlias,url:profile.domain}, keywords:project.tags,
+      "@context":"https://schema.org","@type":repositoryUrl ? "SoftwareSourceCode" : "CreativeWork",name:story.title,description:story.heroSummary,
+      url:new URL(canonicalPath,profile.domain).toString(),dateModified:project.updatedAt,author:{"@type":"Person",name:profile.publicAlias,url:profile.domain},keywords:project.tags,
       ...(repositoryUrl ? {codeRepository:repositoryUrl,programmingLanguage:project.techStack.map((id) => techCatalog[id].label)} : {})
     }}/>
 
-    <header class="project-hero">
-      <a class="back-link" href={getLocalePath(locale,"/projects/")}>← {labels.back}</a>
-      <div class="project-hero__identity">{project.kind === "application" && <ApplicationRoleIcon role={project.applicationGroup} label={`${story.title} application role`} size="large"/>}<div><p class="eyebrow">{project.kind === "application" ? (locale === "ko" ? "애플리케이션" : "Application") : translate(locale,"nav.projects")}</p><h1>{story.title}</h1></div></div>
-      <p class="lede">{story.heroSummary}</p>
-      <div class="status-row"><strong>{productStatusLabels[locale][project.productStatus]}</strong><span>{project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</span></div>
-    </header>
-
-    {projectMedia && <figure class="primary-evidence" style={`aspect-ratio:${projectMedia.width}/${projectMedia.height}`}><ResponsiveImage asset={projectMedia} locale={locale} sizes="(min-width:1200px) 1040px, 100vw" loading="eager" fetchpriority="high"/>{applicationMedia && <figcaption>{applicationMedia.caption[locale]} <span>{applicationMedia.demoDisclosure[locale]}</span></figcaption>}</figure>}
-
-    <section class="at-a-glance" aria-labelledby="at-a-glance-heading"><h2 id="at-a-glance-heading">{labels.atGlance}</h2><dl><div><dt>{labels.audience}</dt><dd>{story.audience}</dd></div><div><dt>{labels.primaryUse}</dt><dd>{story.primaryUse}</dd></div><div><dt>{labels.status}</dt><dd>{productStatusLabels[locale][project.productStatus]}</dd></div><div><dt>{labels.platforms}</dt><dd>{project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</dd></div></dl></section>
-
-    <section class="prose-section"><h2>{locale === "ko" ? "개요" : "Overview"}</h2><p>{story.overview}</p></section>
-    <ProjectScenario projectId={project.id} scenario={story.scenario} locale={locale} withMedia={project.kind === "application"}/>
-
-    {project.slug === "gnaroshi-dev" && <SystemWorkflow locale={locale} variant="full" showBuildDetails/>}
-    {project.slug === "gnaroshi-dev" && <ManagedApplicationsWorkflow locale={locale}/>}
-
-    {detailSections.map(([heading, value]) => value && <section class="prose-section"><h2>{heading}</h2>{Array.isArray(value) ? <ul>{value.map((item) => <li>{item}</li>)}</ul> : <p>{value}</p>}</section>)}
-
-    <section class="split-section"><div><h2>{labels.features}</h2><ul>{story.keyFeatures.map((item) => <li>{item}</li>)}</ul></div><div><h2>{labels.privacy}</h2><p>{story.privacySummary}</p></div></section>
-
-    <section class="tech-section"><h2>{labels.stack}</h2><TechStackGroups ids={project.techStack} locale={locale}/><p class="attribution">{locale === "ko" ? "기술 아이콘은 저장소에 포함된 범주 심볼이며, 실제 기술 이름을 함께 표시합니다." : "Technology icons are repository-owned category symbols; the verified technology name remains visible."}</p></section>
-
-    {story.studioRelationship && <section class="prose-section"><h2>{labels.relationship}</h2><p>{story.studioRelationship}</p></section>}
-    <section class="split-section"><div><h2>{labels.state}</h2><p>{story.currentState}</p></div><div><h2>{labels.limitations}</h2><ul>{story.currentLimitations.map((item) => <li>{item}</li>)}</ul></div></section>
-    <section class="split-section"><div><h2>{labels.notes}</h2><ul>{story.technicalNotes.map((item) => <li>{item}</li>)}</ul></div><div><h2>{labels.milestones}</h2><ul>{story.nextMilestones.map((item) => <li>{item}</li>)}</ul></div></section>
-
-    {project.kind === "application" && <section class="technical-facts"><h2>{locale === "ko" ? "기술 사실" : "Technical facts"}</h2><dl><div><dt>{labels.source}</dt><dd>{repositoryUrl ? project.sourceRepository : (locale === "ko" ? "비공개 소스 저장소" : "Private source repository")}</dd></div><div><dt>{labels.sourceCommit}</dt><dd><code>{project.sourceCommit.slice(0,12)}</code></dd></div><div><dt>{labels.integration}</dt><dd>{integrationLabels[project.studioIntegrationStatus]}</dd></div><div><dt>{labels.updated}</dt><dd>{formatLocalizedDate(project.updatedAt,locale)}</dd></div></dl></section>}
+    {project.kind === "application" && applicationMedia && <ApplicationProjectDetail project={project} story={story} locale={locale} media={applicationMedia} hasPublicRepository={Boolean(repositoryUrl)}/>}
+    {project.kind === "research" && selectedMedia && <ResearchProjectDetail project={project} story={story} locale={locale} media={selectedMedia}/>}
+    {project.kind === "infrastructure" && selectedMedia && <InfrastructureProjectDetail project={project} story={story} locale={locale} media={selectedMedia}/>}
 
     {related.length > 0 && <section class="prose-section"><h2>{translate(locale,"projects.relatedWriting")}</h2><ul>{related.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a></li>)}</ul></section>}
     {project.links.length > 0 && <footer class="project-links" aria-label={labels.links}>{project.links.map((link) => <ExternalLink href={link.href}>{story.linkLabels[link.id] ?? link.id}</ExternalLink>)}</footer>}
   </article>
 </BaseLayout>
-
-<style>
-  .project-detail{display:grid;gap:var(--space-8)}.project-hero{display:grid;gap:var(--space-4);max-width:900px;padding-block:var(--space-5)}.back-link{width:fit-content;color:var(--color-text-secondary)}
-  .project-hero__identity{display:flex;gap:var(--space-4);align-items:center}.project-hero h1{margin-top:var(--space-2)}.lede{max-width:74ch;color:var(--color-text-secondary);font-size:var(--editorial-body);line-height:1.72}
-  .status-row{display:flex;flex-wrap:wrap;gap:var(--space-3);align-items:center}.status-row strong{padding:.35rem .6rem;color:var(--color-surface);background:var(--color-text);font-size:var(--step--1)}.status-row span{color:var(--color-text-secondary)}
-  .primary-evidence{margin:0;overflow:hidden;border:1px solid var(--color-border);background:var(--color-surface)}.primary-evidence :global(.responsive-media){width:100%;height:100%}.primary-evidence :global(img){object-fit:contain}.primary-evidence figcaption{padding:var(--space-3);color:var(--color-text-secondary);font-size:var(--step--1);line-height:1.55;border-top:1px solid var(--color-border)}.primary-evidence figcaption span{display:block;margin-top:.2rem}
-  .at-a-glance,.prose-section,.tech-section,.technical-facts{display:grid;gap:var(--space-4);padding-top:var(--space-6);border-top:1px solid var(--color-border)}
-  .at-a-glance dl,.technical-facts dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0}.at-a-glance dl>div,.technical-facts dl>div{display:grid;gap:var(--space-2);padding:var(--space-4) 0;border-bottom:1px solid var(--color-border)}.at-a-glance dl>div:nth-child(odd),.technical-facts dl>div:nth-child(odd){padding-right:var(--space-5)}
-  dt{color:var(--color-text-secondary);font-size:var(--step--1)}dd{margin:0;line-height:1.6}.prose-section p,.prose-section li,.split-section p,.split-section li,.tech-section p{max-width:74ch;color:var(--color-text-secondary);line-height:1.75}
-  .split-section{display:grid;gap:var(--space-7);padding-top:var(--space-6);border-top:1px solid var(--color-border)}.split-section>div{display:grid;gap:var(--space-3)}ul{display:grid;gap:var(--space-2);padding-left:1.2rem}.attribution{font-size:var(--step--1)}
-  .project-links{display:flex;flex-wrap:wrap;gap:var(--space-4);padding-top:var(--space-6);border-top:1px solid var(--color-border)}
-  @media(min-width:768px){.split-section{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-9)}}
-  @media(max-width:520px){.at-a-glance dl,.technical-facts dl{grid-template-columns:1fr}.at-a-glance dl>div:nth-child(odd),.technical-facts dl>div:nth-child(odd){padding-right:0}.project-hero__identity{align-items:flex-start}}
-</style>

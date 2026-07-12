@@ -1,0 +1,22 @@
+---
+import { platformLabels } from "../../data/facts/techCatalog";
+import type { ProjectFact } from "../../data/facts/projects";
+import { getProjectUi } from "../../data/projectUi";
+import type { ProjectStory } from "../../data/projectStories";
+import { productStatusLabels } from "../../data/projectStories";
+import type { Locale } from "../../i18n/types";
+import { getLocalePath, translate } from "../../i18n/utils";
+import ApplicationRoleIcon from "./ApplicationRoleIcon.astro";
+interface Props { project: ProjectFact; story: ProjectStory; locale: Locale }
+const { project, story, locale } = Astro.props;
+const labels = getProjectUi(locale);
+---
+<header class="project-hero">
+  <a class="back-link" href={getLocalePath(locale,"/projects/")}>← {labels.back}</a>
+  <div class="project-hero__identity">
+    {project.kind === "application" && <ApplicationRoleIcon role={project.applicationGroup} label={`${story.title} ${locale === "ko" ? "애플리케이션 역할" : "application role"}`} size="large"/>}
+    <div><p class="eyebrow">{project.kind === "application" ? (locale === "ko" ? "애플리케이션" : "Application") : translate(locale,"nav.projects")}</p><h1>{story.title}</h1></div>
+  </div>
+  <p class="lede">{story.heroSummary}</p>
+  <div class="status-row"><strong data-product-status={project.productStatus}>{productStatusLabels[locale][project.productStatus]}</strong><span>{project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</span></div>
+</header>

@@ -1,0 +1,33 @@
+---
+import type { ApprovedMediaAsset } from "../../data/approvedMedia";
+import type { InfrastructureProjectFacts } from "../../data/facts/projects";
+import { getProjectUi } from "../../data/projectUi";
+import type { ProjectStory } from "../../data/projectStories";
+import type { Locale } from "../../i18n/types";
+import ManagedApplicationsWorkflow from "../system/ManagedApplicationsWorkflow.astro";
+import SystemWorkflow from "../system/SystemWorkflow.astro";
+import ProjectDetailHeader from "./ProjectDetailHeader.astro";
+import ProjectPrimaryMedia from "./ProjectPrimaryMedia.astro";
+import ProjectScenario from "./ProjectScenario.astro";
+import ProjectTechStack from "./ProjectTechStack.astro";
+interface Props { project: InfrastructureProjectFacts; story: ProjectStory; locale: Locale; media: ApprovedMediaAsset }
+const { project, story, locale, media } = Astro.props;
+const labels = getProjectUi(locale);
+const problem = story.detail.problem as string;
+const publicWorkflow = story.detail.publicWorkflow as readonly string[];
+const boundaries = story.detail.repositoryBoundaries as readonly string[];
+const verification = story.detail.deploymentVerification as readonly string[];
+---
+<div data-project-template="infrastructure">
+  <ProjectDetailHeader project={project} story={story} locale={locale}/>
+  <section class="prose-section"><h2>{labels.problem}</h2><p>{problem}</p><p>{story.overview}</p></section>
+  <section class="prose-section"><h2>{labels.workflow}</h2><ul>{publicWorkflow.map((item) => <li>{item}</li>)}</ul></section>
+  <section class="prose-section"><h2>{labels.boundaries}</h2><ul>{boundaries.map((item) => <li>{item}</li>)}</ul><p>{story.privacySummary}</p></section>
+  <ProjectScenario projectId={project.id} scenario={story.scenario} locale={locale}/>
+  <ProjectPrimaryMedia asset={media} locale={locale} label={labels.systemEvidence}/>
+  <SystemWorkflow locale={locale} variant="full" showBuildDetails/>
+  <ManagedApplicationsWorkflow locale={locale}/>
+  <ProjectTechStack ids={project.techStack} locale={locale}/>
+  <section class="prose-section"><h2>{labels.verification}</h2><ul>{verification.map((item) => <li>{item}</li>)}</ul></section>
+  <section class="split-section"><div><h2>{labels.state}</h2><p>{story.currentState}</p></div><div><h2>{labels.limitations}</h2><ul>{story.currentLimitations.map((item) => <li>{item}</li>)}</ul></div></section>
+</div>

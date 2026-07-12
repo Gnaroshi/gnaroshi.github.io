@@ -1,0 +1,14 @@
+---
+import type { ApprovedMediaAsset } from "../../data/approvedMedia";
+import type { Locale } from "../../i18n/types";
+import ResponsiveImage from "../media/ResponsiveImage.astro";
+interface Props { asset: ApprovedMediaAsset; locale: Locale; caption?: string; disclosure?: string; label?: string }
+const { asset, locale, caption, disclosure, label } = Astro.props;
+---
+<section class="evidence-section" aria-label={label}>
+  {label && <h2>{label}</h2>}
+  <figure class="primary-evidence" style={`aspect-ratio:${asset.width}/${asset.height}`}>
+    <ResponsiveImage asset={asset} locale={locale} sizes="(min-width:1200px) 1040px, 100vw" loading="eager" fetchpriority="high"/>
+    {caption && <figcaption>{caption}{disclosure && <span>{disclosure}</span>}</figcaption>}
+  </figure>
+</section>
