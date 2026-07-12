@@ -4,16 +4,21 @@ export const englishQaRoutes = [
   "/research",
   "/projects",
   "/projects/gnaroshi-dev/",
+  "/projects/gnaroshi-vla/",
   "/blog",
+  "/blog/archive/",
   "/papers",
   "/growth",
   "/queue",
   "/reviews",
+  "/reviews/due/",
   "/formula",
   "/questions",
   "/implementations",
   "/graph",
   "/week",
+  "/now",
+  "/contact",
   "/404"
 ] as const;
 
@@ -23,16 +28,21 @@ export const koreanQaRoutes = [
   "/ko/research",
   "/ko/projects",
   "/ko/projects/gnaroshi-dev/",
+  "/ko/projects/gnaroshi-vla/",
   "/ko/blog",
+  "/ko/blog/archive/",
   "/ko/papers",
   "/ko/growth",
   "/ko/queue",
   "/ko/reviews",
+  "/ko/reviews/due/",
   "/ko/formula",
   "/ko/questions",
   "/ko/implementations",
   "/ko/graph",
   "/ko/week",
+  "/ko/now",
+  "/ko/contact",
   "/ko/404"
 ] as const;
 
