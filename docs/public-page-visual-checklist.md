@@ -68,10 +68,13 @@ The checklist is complete only after:
 
 Completed on 2026-07-12:
 
-- 42 English/Korean routes reviewed in 336 screenshots across four viewport sizes and two themes.
+- 54 English/Korean routes reviewed in 432 screenshots across four viewport sizes and two themes.
 - 24 workflow-only screenshots reviewed across English/Korean, three viewport sizes, and two themes.
-- 43 accessibility tests passed with no automatically detectable violations.
-- 77 functional browser tests, 32 visual tests, 7 performance tests, and 17 feed-contract fixtures passed.
+- 55 accessibility tests passed with no automatically detectable violations.
+- 91 functional browser tests, 32 visual tests, 7 performance tests, and 17 feed-contract fixtures passed.
 - 48 approved AVIF/WebP outputs validated for eight reviewed source assets.
 - The workflow number-centering test measures each SVG label against its circle center on desktop and mobile.
+- Paper navigation now exposes direct, evidence-backed destinations instead of independently open disclosure menus.
+- The three-pass method is an unframed ordered sequence rather than nested cards, with centered numbered markers at every viewport.
+- All eight current project records render in English and Korean; private repository URLs remain omitted.
 - Empty About, Writing, Papers, Activity, paper-tool, insight, Contact, and 404 states intentionally remain image-free when no truthful subject or public evidence exists.
