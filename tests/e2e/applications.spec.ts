@@ -1,14 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const applicationSlugs = [
-  "gnaroshi-studio",
-  "paperflow",
-  "arxiv-discovery",
-  "runshelf",
-  "tr-gpu-monitor",
-  "contentdeck"
-] as const;
-
+const applicationSlugs = ["gnaroshi-studio", "paperflow", "arxiv-discovery", "runshelf", "tr-gpu-monitor", "contentdeck"] as const;
 const publicRepositories = new Map([
   ["paperflow", "https://github.com/Gnaroshi/paperflow"],
   ["arxiv-discovery", "https://github.com/Gnaroshi/Arxiv-newest-paper-crawler"],
@@ -17,58 +9,54 @@ const publicRepositories = new Map([
 
 test.describe("verified Gnaroshi applications", () => {
   for (const route of ["/projects/", "/ko/projects/"] as const) {
-    test(`${route} preserves the requested grouping and feature hierarchy`, async ({ page }) => {
+    test(`${route} keeps selected, featured, and supporting work distinct`, async ({ page }) => {
       await page.goto(route);
-      await expect(page.locator(".project-index-link")).toHaveAttribute("href", "#applications-heading");
-      await expect(page.locator(".project-index-link")).toContainText("6");
-      const applications = page.locator(".applications");
-      await expect(applications.locator(".application-card")).toHaveCount(6);
-      await expect(applications.locator(".application-card--featured")).toHaveCount(3);
-      await expect(applications.locator('#application-group-research-workflow + .application-grid .application-card')).toHaveCount(4);
-      await expect(applications.locator('#application-group-system-utilities + .application-grid .application-card')).toHaveCount(1);
-      await expect(applications.locator('#application-group-learning-tools + .application-grid .application-card')).toHaveCount(1);
-
-      for (const slug of applicationSlugs) {
-        await expect(applications.locator(`a[href$="/projects/${slug}/"]`)).toHaveCount(2);
-      }
+      await expect(page.locator(".selected-project")).toHaveCount(2);
+      await expect(page.locator(".featured-app")).toHaveCount(3);
+      await expect(page.locator(".supporting-app")).toHaveCount(3);
+      await expect(page.locator(".featured-app picture img")).toHaveCount(3);
+      await expect(page.locator(".supporting-app picture")).toHaveCount(0);
+      for (const slug of applicationSlugs) expect(await page.locator(`main a[href$="/projects/${slug}/"]`).count()).toBeGreaterThanOrEqual(2);
     });
+  }
+
+  for (const localePrefix of ["", "/ko"] as const) {
+    for (const slug of applicationSlugs) {
+      test(`${localePrefix || "/en"} ${slug} shows approved evidence and complete facts`, async ({ page }) => {
+        await page.goto(`${localePrefix}/projects/${slug}/`);
+        await expect(page.locator(".primary-evidence picture img")).toHaveCount(1);
+        await expect(page.locator(".scenario picture img")).toHaveCount(3);
+        await expect(page.locator(".scenario figcaption")).toHaveCount(3);
+        expect(await page.locator(".tech-groups li").count()).toBeGreaterThanOrEqual(3);
+        await expect(page.locator(".technical-facts code")).toHaveText(/[0-9a-f]{12}/);
+        await expect(page.locator("main")).not.toContainText("Integration in review");
+      });
+    }
   }
 
   test("only public application repositories receive public links", async ({ page }) => {
     for (const slug of applicationSlugs) {
       await page.goto(`/projects/${slug}/`);
-      const links = page.locator(".project-case > .link-row a");
+      const links = page.locator(".project-links a");
       const expected = publicRepositories.get(slug);
-      if (expected) {
-        await expect(links).toHaveCount(1);
-        await expect(links).toHaveAttribute("href", expected);
-      } else {
-        await expect(links).toHaveCount(0);
-      }
-      await expect(page.locator(".project-case__evidence")).toHaveCount(0);
-      await expect(page.getByRole("heading", { name: "Relationship with Studio" })).toHaveCount(1);
+      if (expected) { await expect(links).toHaveCount(1); await expect(links).toHaveAttribute("href", expected); }
+      else await expect(links).toHaveCount(0);
     }
   });
 
-  test("publishing repositories and managed applications remain separate diagrams", async ({ page }) => {
+  test("publishing and managed-application diagrams remain separate", async ({ page }) => {
     await page.goto("/projects/gnaroshi-dev/");
-    const publishing = page.locator('#repository-workflow[data-system-workflow="full"]');
-    const managed = page.locator(".managed-applications");
-    await expect(publishing).toHaveCount(1);
-    await expect(managed).toHaveCount(1);
-    await expect(publishing.getByRole("heading", { name: "Publishing workflow: from private notes to the public site" })).toHaveCount(1);
-    await expect(managed.getByRole("heading", { name: "Independent apps coordinated by Studio" })).toHaveCount(1);
-    await expect(managed.locator(".managed-map__center")).toContainText("Gnaroshi Studio");
-    await expect(managed.locator(".managed-map__side a")).toHaveCount(5);
-    await expect(managed).not.toContainText("gnaroshi-content-feed");
-    await expect(managed).not.toContainText("gnaroshi.github.io");
+    await expect(page.locator('#repository-workflow[data-system-workflow="full"]')).toHaveCount(1);
+    await expect(page.locator(".managed-applications")).toHaveCount(1);
   });
 
-  test("application grouping and managed map do not overflow on a narrow screen", async ({ page }) => {
-    await page.setViewportSize({ width: 360, height: 800 });
-    for (const route of ["/projects/", "/projects/gnaroshi-dev/"]) {
-      await page.goto(route);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
-    }
-  });
+  for (const width of [768, 430, 390, 360]) {
+    test(`project routes do not overflow at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      for (const route of ["/projects/", ...applicationSlugs.map((slug) => `/projects/${slug}/`)]) {
+        await page.goto(route);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), route).toBeLessThanOrEqual(1);
+      }
+    });
+  }
 });

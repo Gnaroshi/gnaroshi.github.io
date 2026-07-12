@@ -5,7 +5,7 @@ import ExternalLink from "../common/ExternalLink.astro";
 import SectionHeader from "../common/SectionHeader.astro";
 import { projects } from "../../data/projects";
 
-const featuredProjects = projects.filter((project) => project.featured);
+const featuredProjects = projects.filter((project) => project.portfolio === "selected-projects");
 ---
 
 <section class="section" aria-labelledby="featured-projects-heading">
@@ -22,7 +22,7 @@ const featuredProjects = projects.filter((project) => project.featured);
     {featuredProjects.map((project) => (
       <Card title={project.title} description={project.summary}>
         <div class="badge-row">
-          <Badge tone={project.status === "active" ? "accent" : "default"}>{project.status}</Badge>
+          <Badge tone="accent">{project.statusLabel}</Badge>
           {project.tags.map((tag) => <Badge tone="muted">{tag}</Badge>)}
         </div>
         <div class="link-row">

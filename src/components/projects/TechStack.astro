@@ -1,0 +1,15 @@
+---
+import { techCatalog } from "../../data/facts/techCatalog";
+import type { TechId } from "../../data/facts/projects";
+import TechIcon from "./TechIcon.astro";
+interface Props { ids: readonly TechId[]; max?: number; label: string }
+const { ids, max, label } = Astro.props;
+const visible = max ? ids.slice(0, max) : ids;
+---
+<ul class="tech-stack" aria-label={label}>
+  {visible.map((id) => <li><TechIcon id={id}/><span>{techCatalog[id].label}</span></li>)}
+</ul>
+<style>
+  .tech-stack{display:flex;flex-wrap:wrap;gap:var(--space-2);margin:0;padding:0;list-style:none}
+  .tech-stack li{display:inline-flex;align-items:center;gap:.4rem;min-width:0;padding:.35rem .55rem;color:var(--color-text-secondary);background:var(--color-surface);border:1px solid var(--color-border);font-size:var(--step--1);line-height:1.2}
+</style>

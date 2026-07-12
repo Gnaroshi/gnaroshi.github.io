@@ -1,0 +1,17 @@
+---
+import { techCatalog, type TechItem } from "../../data/facts/techCatalog";
+import type { TechId } from "../../data/facts/projects";
+interface Props { id: TechId }
+const { id } = Astro.props;
+const tech: TechItem = techCatalog[id];
+---
+<svg viewBox="0 0 20 20" role="img" aria-label={tech.label} class="tech-icon">
+  {tech.iconId === "code" && <path d="m7 5-5 5 5 5M13 5l5 5-5 5M12 3 8 17"/>}
+  {tech.iconId === "window" && <><rect x="2" y="3" width="16" height="14" rx="1"/><path d="M2 7h16M5 5h.01M8 5h.01"/></>}
+  {tech.iconId === "terminal" && <><rect x="2" y="3" width="16" height="14" rx="1"/><path d="m5 8 3 2-3 2M10 13h5"/></>}
+  {tech.iconId === "layers" && <><path d="m10 2 8 4-8 4-8-4 8-4Z"/><path d="m2 10 8 4 8-4M2 14l8 4 8-4"/></>}
+  {tech.iconId === "database" && <><ellipse cx="10" cy="4" rx="7" ry="2.5"/><path d="M3 4v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V4M3 10v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5"/></>}
+  {tech.iconId === "link" && <><path d="M8 12 6.5 13.5a3 3 0 0 1-4-4L6 6a3 3 0 0 1 4 0M12 8l1.5-1.5a3 3 0 0 1 4 4L14 14a3 3 0 0 1-4 0"/><path d="m7 13 6-6"/></>}
+  {tech.iconId === "package" && <><path d="m10 2 7 4v8l-7 4-7-4V6l7-4Z"/><path d="m3 6 7 4 7-4M10 10v8"/></>}
+</svg>
+<style>.tech-icon{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}</style>

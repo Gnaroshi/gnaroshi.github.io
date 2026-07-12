@@ -22,7 +22,7 @@ const data = getLocalizedData(locale);
 const [papers, posts] = await Promise.all([getPublishedPapers(locale), getPublishedBlogPosts(locale)]);
 const recentPosts = posts.filter((post) => post.data.contentStage === "substantive" && post.data.category !== "build-note").slice(0, 3);
 const recentPapers = papers.filter((paper) => paper.data.contentStage === "substantive").slice(0, 3);
-const selectedProject = data.projects.find((project) => project.featured) ?? data.projects[0];
+const selectedProject = data.projects.find((project) => project.portfolio === "selected-projects") ?? data.projects[0];
 const selectedProjectMedia = getProjectMedia(selectedProject.id);
 if (!selectedProjectMedia) throw new Error(`Featured project is missing approved media: ${selectedProject.id}`);
 const focusIsFresh = isCurrentFocusFresh(data.now.lastUpdated);

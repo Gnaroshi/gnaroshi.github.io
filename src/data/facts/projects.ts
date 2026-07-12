@@ -1,217 +1,125 @@
+export type ProjectKind = "research" | "application" | "infrastructure";
+export type ProductStatus = "prototype" | "active-development" | "working" | "released" | "archived";
+export type PlatformId = "web" | "macos" | "cli" | "static-site";
+export type TechId =
+  | "python" | "shell" | "yaml" | "astro" | "typescript" | "github-actions" | "playwright"
+  | "react" | "rust" | "tauri" | "swift" | "swiftui" | "zotero-local-api" | "flask"
+  | "jinja" | "sqlite" | "electron" | "vite" | "fastify";
+
+export type ProjectLink = { id: "repository" | "live-site"; href: string };
+export type ProjectScenario = {
+  id: string;
+  stepIds: readonly string[];
+  mediaIds: readonly string[];
+  usesDemoData: boolean;
+};
+
+export type CommonProjectFacts = {
+  id: string;
+  slug: string;
+  kind: ProjectKind;
+  productStatus: ProductStatus;
+  contentStage: "seed" | "working" | "substantive";
+  platforms: readonly PlatformId[];
+  techStack: readonly TechId[];
+  links: readonly ProjectLink[];
+  updatedAt: string;
+  tags: readonly string[];
+  portfolio: "selected-projects" | "managed-applications";
+  scenario: ProjectScenario;
+};
+
+export type ApplicationProjectFacts = CommonProjectFacts & {
+  kind: "application";
+  applicationGroup: "research-workflow" | "system-utilities" | "learning-tools";
+  applicationFeatured: boolean;
+  studioIntegrationStatus: "not-planned" | "planned" | "in-review" | "available";
+  distribution: "local-development" | "packaged" | "release";
+  dataOwner: string;
+  sourceRepository: string;
+  sourceCommit: string;
+  primaryShowcaseId: string;
+  textOnlyExemption: null;
+};
+
+export type ResearchProjectFacts = CommonProjectFacts & {
+  kind: "research";
+  applicationGroup: null;
+  applicationFeatured: false;
+  primaryMediaId: "project-gnaroshi-vla";
+};
+
+export type InfrastructureProjectFacts = CommonProjectFacts & {
+  kind: "infrastructure";
+  applicationGroup: null;
+  applicationFeatured: false;
+  primaryMediaId: "project-gnaroshi-dev";
+};
+
+export type ProjectFact = ResearchProjectFacts | InfrastructureProjectFacts | ApplicationProjectFacts;
+
 export const projectFacts = [
   {
-    id: "gnaroshi-vla",
-    slug: "gnaroshi-vla",
-    status: "active",
-    featured: true,
-    portfolio: "selected-projects",
-    applicationGroup: null,
-    applicationFeatured: false,
-    contentStage: "working",
-    metricEligible: false,
-    graphEligible: false,
-    weeklyReviewEligible: false,
-    updatedAt: "2026-07-11",
-    tags: ["vision-language-action", "research-infrastructure", "reproducibility"],
-    artworkId: "projectGnaroshiVla",
-    codeLanguages: ["Python", "Shell", "YAML"],
-    verifiedProperties: [
-      "architecture-neutral-workspace",
-      "architecture-method-environment-results-separation",
-      "seer-adapter",
-      "simvla-adapter",
-      "explicit-run-context",
-      "explicit-result-directories"
-    ],
-    links: [
-      { id: "repository", href: "https://github.com/Gnaroshi/gnaroshi_vla" }
-    ]
+    id: "gnaroshi-vla", slug: "gnaroshi-vla", kind: "research", productStatus: "active-development", contentStage: "working",
+    platforms: ["cli"], techStack: ["python", "shell", "yaml"], links: [{ id: "repository", href: "https://github.com/Gnaroshi/gnaroshi_vla" }],
+    updatedAt: "2026-07-11", tags: ["VLA", "experiments", "reproducibility"], portfolio: "selected-projects", applicationGroup: null,
+    applicationFeatured: false, primaryMediaId: "project-gnaroshi-vla",
+    scenario: { id: "configure-and-check-run", stepIds: ["configure", "sanity-check", "inspect-manifest", "open-results"], mediaIds: ["project-gnaroshi-vla"], usesDemoData: true }
   },
   {
-    id: "gnaroshi-dev",
-    slug: "gnaroshi-dev",
-    status: "active",
-    featured: false,
-    portfolio: "selected-projects",
-    applicationGroup: null,
-    applicationFeatured: false,
-    contentStage: "working",
-    metricEligible: false,
-    graphEligible: false,
-    weeklyReviewEligible: false,
-    updatedAt: "2026-07-11",
-    tags: ["astro", "content-projection", "research-workflow"],
-    artworkId: "projectGnaroshiDev",
-    codeLanguages: ["TypeScript", "Astro"],
-    verifiedProperties: [
-      "private-canonical-sources",
-      "deterministic-public-feed",
-      "presentation-only-astro",
-      "bilingual-routes",
-      "evidence-gated-metrics",
-      "github-pages-deployment"
-    ],
-    links: [
-      { id: "repository", href: "https://github.com/Gnaroshi/gnaroshi.github.io" },
-      { id: "live-site", href: "https://gnaroshi.dev" }
-    ]
+    id: "gnaroshi-dev", slug: "gnaroshi-dev", kind: "infrastructure", productStatus: "working", contentStage: "substantive",
+    platforms: ["static-site", "web"], techStack: ["astro", "typescript", "github-actions", "playwright"],
+    links: [{ id: "repository", href: "https://github.com/Gnaroshi/gnaroshi.github.io" }, { id: "live-site", href: "https://gnaroshi.dev" }],
+    updatedAt: "2026-07-12", tags: ["Astro", "publishing", "i18n"], portfolio: "selected-projects", applicationGroup: null,
+    applicationFeatured: false, primaryMediaId: "project-gnaroshi-dev",
+    scenario: { id: "private-to-public-release", stepIds: ["write-private", "preview-fields", "publish-feed", "verify-deploy"], mediaIds: ["project-gnaroshi-dev"], usesDemoData: true }
   },
   {
-    id: "gnaroshi-studio",
-    slug: "gnaroshi-studio",
-    status: "integration-review",
-    featured: false,
-    portfolio: "managed-applications",
-    applicationGroup: "research-workflow",
-    applicationFeatured: true,
-    contentStage: "working",
-    metricEligible: false,
-    graphEligible: false,
-    weeklyReviewEligible: false,
-    updatedAt: "2026-07-12",
-    tags: ["research-workflow", "authoring", "local-first"],
-    artworkId: null,
-    codeLanguages: ["TypeScript", "Rust"],
-    verifiedProperties: [
-      "local-first-authoring",
-      "managed-app-discovery",
-      "managed-app-status-and-health",
-      "preview-first-handoffs",
-      "provider-owned-data"
-    ],
-    links: []
+    id: "gnaroshi-studio", slug: "gnaroshi-studio", kind: "application", productStatus: "active-development", contentStage: "working",
+    platforms: ["macos", "cli"], techStack: ["typescript", "react", "rust", "tauri"], links: [], updatedAt: "2026-07-12",
+    tags: ["authoring", "publishing", "local-first"], portfolio: "managed-applications", applicationGroup: "research-workflow", applicationFeatured: true,
+    studioIntegrationStatus: "available", distribution: "local-development", dataOwner: "Gnaroshi Studio and canonical Markdown repositories",
+    sourceRepository: "Gnaroshi/gnaroshi-studio", sourceCommit: "e6115c90ab866adde9ed1ea2cecda178fca96cdd", primaryShowcaseId: "gnaroshi-studio-managed-apps", textOnlyExemption: null,
+    scenario: { id: "managed-paper-handoff", stepIds: ["review-apps", "review-candidates", "preview-handoff", "checkpoint-preview"], mediaIds: ["gnaroshi-studio-managed-apps", "gnaroshi-studio-candidate-review", "gnaroshi-studio-handoff-preview"], usesDemoData: true }
   },
   {
-    id: "paperflow",
-    slug: "paperflow",
-    status: "integration-review",
-    featured: false,
-    portfolio: "managed-applications",
-    applicationGroup: "research-workflow",
-    applicationFeatured: true,
-    contentStage: "working",
-    metricEligible: false,
-    graphEligible: false,
-    weeklyReviewEligible: false,
-    updatedAt: "2026-07-12",
-    tags: ["papers", "zotero", "safe-planning"],
-    artworkId: null,
-    codeLanguages: ["Python", "Swift"],
-    verifiedProperties: [
-      "read-only-zotero-local-api",
-      "dry-run-organization-plans",
-      "explicit-apply-boundary",
-      "pdf-and-url-import-preview",
-      "standalone-cli-and-macos-app"
-    ],
-    links: [
-      { id: "repository", href: "https://github.com/Gnaroshi/paperflow" }
-    ]
+    id: "paperflow", slug: "paperflow", kind: "application", productStatus: "working", contentStage: "working",
+    platforms: ["macos", "cli"], techStack: ["python", "swift", "swiftui", "zotero-local-api"], links: [{ id: "repository", href: "https://github.com/Gnaroshi/paperflow" }], updatedAt: "2026-07-12",
+    tags: ["Zotero", "planning", "local-first"], portfolio: "managed-applications", applicationGroup: "research-workflow", applicationFeatured: true,
+    studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "PaperFlow and Zotero",
+    sourceRepository: "Gnaroshi/paperflow", sourceCommit: "7c7bd013d171e2e58e0a5cee97faacd0c02ee8a8", primaryShowcaseId: "paperflow-plan-review", textOnlyExemption: null,
+    scenario: { id: "zotero-plan-before-apply", stepIds: ["scan-library", "generate-plan", "review-changes", "stop-before-apply"], mediaIds: ["paperflow-scan-summary", "paperflow-plan-review", "paperflow-apply-boundary"], usesDemoData: true }
   },
   {
-    id: "arxiv-discovery",
-    slug: "arxiv-discovery",
-    status: "integration-review",
-    featured: false,
-    portfolio: "managed-applications",
-    applicationGroup: "research-workflow",
-    applicationFeatured: true,
-    contentStage: "working",
-    metricEligible: false,
-    graphEligible: false,
-    weeklyReviewEligible: false,
-    updatedAt: "2026-07-12",
-    tags: ["papers", "discovery", "arxiv"],
-    artworkId: null,
-    codeLanguages: ["Python", "HTML", "CSS"],
-    verifiedProperties: [
-      "standalone-flask-ui",
-      "legacy-command-compatibility",
-      "no-download-discovery-default",
-      "versioned-candidate-json",
-      "preview-first-handoff"
-    ],
-    links: [
-      { id: "repository", href: "https://github.com/Gnaroshi/Arxiv-newest-paper-crawler" }
-    ]
+    id: "arxiv-discovery", slug: "arxiv-discovery", kind: "application", productStatus: "prototype", contentStage: "working",
+    platforms: ["web", "cli"], techStack: ["python", "flask", "jinja"], links: [{ id: "repository", href: "https://github.com/Gnaroshi/Arxiv-newest-paper-crawler" }], updatedAt: "2026-07-12",
+    tags: ["arXiv", "discovery", "papers"], portfolio: "managed-applications", applicationGroup: "research-workflow", applicationFeatured: true,
+    studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "Arxiv Discovery",
+    sourceRepository: "Gnaroshi/Arxiv-newest-paper-crawler", sourceCommit: "e48da6e1434adbeee8d6570816141d0f393a0fda", primaryShowcaseId: "arxiv-discovery-discovery-list", textOnlyExemption: null,
+    scenario: { id: "no-download-discovery", stepIds: ["discover", "filter", "inspect-candidate", "preview-handoff"], mediaIds: ["arxiv-discovery-discovery-list", "arxiv-discovery-candidate-detail", "arxiv-discovery-handoff-preview"], usesDemoData: true }
   },
   {
-    id: "runshelf",
-    slug: "runshelf",
-    status: "integration-review",
-    featured: false,
-    portfolio: "managed-applications",
-    applicationGroup: "research-workflow",
-    applicationFeatured: false,
-    contentStage: "working",
-    metricEligible: false,
-    graphEligible: false,
-    weeklyReviewEligible: false,
-    updatedAt: "2026-07-12",
-    tags: ["experiments", "run-index", "local-first"],
-    artworkId: null,
-    codeLanguages: ["TypeScript", "Rust"],
-    verifiedProperties: [
-      "local-run-ledger",
-      "external-artifact-references",
-      "run-metadata-and-metrics",
-      "read-only-studio-summary",
-      "standalone-run-browser"
-    ],
-    links: []
+    id: "runshelf", slug: "runshelf", kind: "application", productStatus: "active-development", contentStage: "working",
+    platforms: ["macos", "cli"], techStack: ["python", "swift", "swiftui"], links: [], updatedAt: "2026-07-12",
+    tags: ["experiments", "runs", "local-first"], portfolio: "managed-applications", applicationGroup: "research-workflow", applicationFeatured: false,
+    studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "RunShelf workspace files",
+    sourceRepository: "Gnaroshi/runshelf", sourceCommit: "7657067cfeae56259a5a7a714a046d2b57308b79", primaryShowcaseId: "runshelf-run-list", textOnlyExemption: null,
+    scenario: { id: "inspect-failed-run", stepIds: ["open-runs", "filter-failed", "inspect-context", "review-references"], mediaIds: ["runshelf-run-list", "runshelf-failed-run", "runshelf-artifact-references"], usesDemoData: true }
   },
   {
-    id: "tr-gpu-monitor",
-    slug: "tr-gpu-monitor",
-    status: "integration-review",
-    featured: false,
-    portfolio: "managed-applications",
-    applicationGroup: "system-utilities",
-    applicationFeatured: false,
-    contentStage: "working",
-    metricEligible: false,
-    graphEligible: false,
-    weeklyReviewEligible: false,
-    updatedAt: "2026-07-12",
-    tags: ["gpu", "telemetry", "remote-hosts"],
-    artworkId: null,
-    codeLanguages: ["Swift"],
-    verifiedProperties: [
-      "remote-nvidia-monitoring",
-      "credential-owned-by-monitor",
-      "sanitized-status-summary",
-      "host-and-process-visibility",
-      "standalone-macos-app"
-    ],
-    links: []
+    id: "tr-gpu-monitor", slug: "tr-gpu-monitor", kind: "application", productStatus: "working", contentStage: "working",
+    platforms: ["macos"], techStack: ["swift", "swiftui", "sqlite"], links: [], updatedAt: "2026-07-12",
+    tags: ["GPU", "monitoring", "SSH"], portfolio: "managed-applications", applicationGroup: "system-utilities", applicationFeatured: false,
+    studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "TR GPU Monitor",
+    sourceRepository: "Gnaroshi/tr-gpu-monitor", sourceCommit: "3a2fa8173f3bb9d09ef67be66933070e1d350adc", primaryShowcaseId: "tr-gpu-monitor-host-overview", textOnlyExemption: null,
+    scenario: { id: "compare-gpu-hosts", stepIds: ["check-hosts", "spot-pressure", "compare-hosts", "review-warning"], mediaIds: ["tr-gpu-monitor-host-overview", "tr-gpu-monitor-gpu-detail", "tr-gpu-monitor-warning-state"], usesDemoData: true }
   },
   {
-    id: "contentdeck",
-    slug: "contentdeck",
-    status: "integration-review",
-    featured: false,
-    portfolio: "managed-applications",
-    applicationGroup: "learning-tools",
-    applicationFeatured: false,
-    contentStage: "working",
-    metricEligible: false,
-    graphEligible: false,
-    weeklyReviewEligible: false,
-    updatedAt: "2026-07-12",
-    tags: ["media", "looping", "subtitles"],
-    artworkId: null,
-    codeLanguages: ["TypeScript", "JavaScript"],
-    verifiedProperties: [
-      "web-and-electron-modes",
-      "supported-provider-detection",
-      "full-and-segment-looping",
-      "subtitle-state-owned-by-player",
-      "validated-media-deep-links"
-    ],
-    links: [
-      { id: "repository", href: "https://github.com/Gnaroshi/content-looper" }
-    ]
+    id: "contentdeck", slug: "contentdeck", kind: "application", productStatus: "working", contentStage: "working",
+    platforms: ["web", "macos"], techStack: ["typescript", "react", "electron", "vite", "fastify"], links: [{ id: "repository", href: "https://github.com/Gnaroshi/content-looper" }], updatedAt: "2026-07-12",
+    tags: ["media", "subtitles", "looping"], portfolio: "managed-applications", applicationGroup: "learning-tools", applicationFeatured: false,
+    studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "ContentDeck local session state",
+    sourceRepository: "Gnaroshi/content-looper", sourceCommit: "5c6e2f94d1e1a18b6381ad65ee443609356426df", primaryShowcaseId: "contentdeck-active-loop", textOnlyExemption: null,
+    scenario: { id: "subtitle-loop-practice", stepIds: ["open-media", "confirm-subtitles", "select-segment", "repeat"], mediaIds: ["contentdeck-loaded-player", "contentdeck-segment-selection", "contentdeck-active-loop"], usesDemoData: true }
   }
-] as const;
-
-export type ProjectFact = (typeof projectFacts)[number];
+] as const satisfies readonly ProjectFact[];
