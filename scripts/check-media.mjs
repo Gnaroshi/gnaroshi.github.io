@@ -3,6 +3,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { extname, resolve } from "node:path";
 import sharp from "sharp";
 import { approvedMediaCandidateIds, candidatePassesThreshold, mediaReviewCandidates, totalSemanticScore } from "../src/data/mediaReview.ts";
+import { approvedProjectShowcases } from "../src/data/approvedProjectShowcases.ts";
 
 const failures = [];
 
@@ -52,6 +53,8 @@ const approvedOutputs = [
   { id: "project-gnaroshi-vla", ratio: 16 / 10 },
   { id: "project-gnaroshi-dev", ratio: 16 / 10 }
 ].flatMap((asset) => [640, 1200, 1600].flatMap((width) => ["avif", "webp"].map((format) => ({ ...asset, width, format }))));
+
+approvedOutputs.push(...approvedProjectShowcases.flatMap((asset) => asset.widths.flatMap((width) => ["avif", "webp"].map((format) => ({ id: asset.id, ratio: asset.width / asset.height, width, format })))));
 
 for (const item of expected) {
   if (!existsSync(item.path)) {

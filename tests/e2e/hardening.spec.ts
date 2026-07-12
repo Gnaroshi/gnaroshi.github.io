@@ -26,7 +26,7 @@ test("project detail has breadcrumbs and source-code structured data", async ({ 
     expect(records.some((record) => record["@type"] === "SoftwareSourceCode")).toBe(true);
   }
   await page.goto("/projects/gnaroshi-vla/");
-  await expect(page.getByRole("heading", { level: 2, name: "What works now" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Current state" })).toBeVisible();
   await expect(page.getByText("It does not present benchmark results", { exact: false })).toBeVisible();
 });
 

@@ -1,0 +1,30 @@
+---
+import ResponsiveImage from "../media/ResponsiveImage.astro";
+import { getProjectShowcases } from "../../data/approvedProjectShowcases";
+import type { LocalizedScenario } from "../../data/projectStories";
+import type { Locale } from "../../i18n/types";
+interface Props { projectId: string; scenario: LocalizedScenario; locale: Locale; withMedia?: boolean }
+const { projectId, scenario, locale, withMedia = false } = Astro.props;
+const media = withMedia ? getProjectShowcases(projectId) : [];
+const mediaByStep = new Map(media.map((asset) => [asset.stepId, asset]));
+---
+<section class="scenario" aria-labelledby="scenario-heading">
+  <header><p class="eyebrow">{locale === "ko" ? "사용 흐름" : "Example workflow"}</p><h2 id="scenario-heading">{scenario.title}</h2><p>{scenario.context}</p></header>
+  <ol>
+    {scenario.steps.map((step, index) => { const asset = mediaByStep.get(step.id); return <li>
+      <div class="scenario__step"><span aria-hidden="true">{index + 1}</span><div><h3>{step.title}</h3><p>{step.description}</p></div></div>
+      {asset && <figure style={`aspect-ratio:${asset.width}/${asset.height}`}><ResponsiveImage asset={asset} locale={locale} sizes="(min-width: 1024px) 820px, 100vw"/><figcaption>{asset.caption[locale]} <span>{asset.demoDisclosure[locale]}</span></figcaption></figure>}
+    </li>})}
+  </ol>
+  {!withMedia && <p class="scenario__disclosure">{scenario.demoDisclosure}</p>}
+</section>
+<style>
+  .scenario{display:grid;gap:var(--space-6);padding-block:var(--space-8);border-block:1px solid var(--color-border)}
+  header{display:grid;gap:var(--space-3);max-width:72ch} header>p:not(.eyebrow){color:var(--color-text-secondary);line-height:1.7}
+  ol{display:grid;gap:var(--space-8);margin:0;padding:0;list-style:none} li{display:grid;gap:var(--space-4)}
+  .scenario__step{display:grid;grid-template-columns:2.25rem minmax(0,1fr);gap:var(--space-3);align-items:start;max-width:72ch}
+  .scenario__step>span{display:grid;place-items:center;width:2.25rem;height:2.25rem;border-radius:50%;color:var(--color-surface);background:var(--color-text);font-variant-numeric:tabular-nums}
+  h3{padding-top:.25rem;font-size:var(--step-1)} .scenario__step p,.scenario__disclosure{margin-top:var(--space-2);color:var(--color-text-secondary);line-height:1.7}
+  figure{margin:0;overflow:hidden;border:1px solid var(--color-border);background:var(--color-surface)} figure :global(.responsive-media){width:100%;height:100%} figure :global(img){object-fit:contain}
+  figcaption{padding:var(--space-3);color:var(--color-text-secondary);font-size:var(--step--1);line-height:1.55;border-top:1px solid var(--color-border)} figcaption span{display:block;margin-top:.2rem}
+</style>

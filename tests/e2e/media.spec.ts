@@ -28,16 +28,17 @@ test.describe("approved public media", () => {
   }
 
   for (const route of ["/projects/", "/ko/projects/"]) {
-    test(`${route} renders evidence for both projects`, async ({ page }) => {
+    test(`${route} renders selected evidence and approved featured-app screenshots`, async ({ page }) => {
       await page.goto(route);
-      await expect(page.locator(".project-feature picture img")).toHaveCount(2);
+      await expect(page.locator(".selected-project picture img")).toHaveCount(2);
+      await expect(page.locator(".featured-app picture img")).toHaveCount(3);
     });
   }
 
   for (const route of ["/projects/gnaroshi-vla/", "/projects/gnaroshi-dev/", "/ko/projects/gnaroshi-vla/", "/ko/projects/gnaroshi-dev/"]) {
     test(`${route} renders project-specific evidence`, async ({ page }) => {
       await page.goto(route);
-      await expect(page.locator(".project-case__evidence picture img")).toHaveCount(1);
+      await expect(page.locator(".primary-evidence picture img")).toHaveCount(1);
     });
   }
 

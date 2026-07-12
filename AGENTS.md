@@ -52,6 +52,8 @@ npm run test:smoke
 npm run test:visual
 npm run test:feed-contract
 npm run test:performance
+npm run media:check
+npm run check:project-readiness
 npm run check:i18n
 npm run check:launch-content
 npm run check:links
@@ -67,6 +69,7 @@ npm run check:links:external
 - `test:smoke`: runs the focused production route/provenance subset.
 - `test:performance`: enforces route gzip/image/island budgets and runs mobile Chromium CSS coverage/LCP/CLS.
 - `check:links`: validates generated routes, fragments, canonical/hreflang/RSS/sitemap/asset targets, redirects, JSON-LD, URL schemes, and path privacy.
+- `check:project-readiness`: validates public project facts, EN/KO stories, verified stacks, scenarios, approved media provenance, demo disclosure, and private-link boundaries.
 - `check:links:external`: bounded report-only third-party link audit; do not add it to deployment blocking checks.
 
 Use `CONTENT_FEED_PATH` for an existing local public-feed checkout. Never point it to private paper or writing repositories.
