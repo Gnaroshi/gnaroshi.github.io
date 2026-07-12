@@ -1,0 +1,8 @@
+{
+  "applications": [
+    {
+      "id": "gnaroshi-studio",
+      "sourcePath": "/path/to/local/gnaroshi-studio"
+    }
+  ]
+}

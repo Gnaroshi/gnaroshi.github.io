@@ -16,6 +16,10 @@ media-sources/candidates/*.png
 .codex/mcp-secrets.*
 .mcp.env
 mcp-secrets.*
-artifacts/
+artifacts/*
+!artifacts/project-showcases/
+artifacts/project-showcases/*
+!artifacts/project-showcases/.gitkeep
+.project-showcases.local.json
 playwright-report/
 test-results/

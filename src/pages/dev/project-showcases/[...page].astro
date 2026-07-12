@@ -1,0 +1,24 @@
+---
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+export function getStaticPaths() { return process.env.NODE_ENV === "production" ? [] : [{ params: { page: undefined } }]; }
+const path = resolve("artifacts/project-showcases/candidates.json");
+const payload = existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : { candidates: [] };
+---
+<BaseLayout title="Project showcase review" description="Development-only project screenshot review." robots="noindex, follow" width="wide" minimalChrome>
+  <main class="showcase-review">
+    <header><p class="eyebrow">Development only · never published automatically</p><h1>Project showcase review</h1><p>Compare actual application screenshots, demo disclosure, crop behavior, and alt text before any production approval.</p></header>
+    {payload.candidates.length === 0 ? <section class="empty"><h2>No imported candidates</h2><p>Run <code>npm run showcases:import</code> with an untracked local config after application manifests contain reviewed screenshots.</p></section> : <div class="candidate-list">{payload.candidates.map((candidate:any) => <article>
+      <header><div><p class="eyebrow">{candidate.applicationId} · {candidate.stepId}</p><h2>{candidate.id}</h2></div><strong>{candidate.theme} · {candidate.locale}</strong></header>
+      <p class="disclosure">Example workflow · Uses deterministic demo data</p>
+      <picture><source srcset={`/dev/project-showcases/assets/${candidate.avif}`} type="image/avif"/><img src={`/dev/project-showcases/assets/${candidate.webp}`} alt={candidate.alt} width="1600" height="1000"/></picture>
+      <div class="crop"><figure><img src={`/dev/project-showcases/assets/${candidate.webp}`} alt=""/><figcaption>Desktop 16:10</figcaption></figure><figure><img src={`/dev/project-showcases/assets/${candidate.webp}`} alt=""/><figcaption>Mobile crop</figcaption></figure></div>
+      <dl><div><dt>Scenario</dt><dd>{candidate.scenarioId}</dd></div><div><dt>Source commit</dt><dd><code>{candidate.sourceCommit}</code></dd></div><div><dt>Alt</dt><dd>{candidate.alt}</dd></div><div><dt>Privacy</dt><dd>{candidate.privacyReviewed ? "Reviewed" : "Not reviewed"}</dd></div></dl>
+    </article>)}</div>}
+  </main>
+</BaseLayout>
+<style>
+.showcase-review{width:min(100% - 2rem,1280px);margin:auto;padding:var(--space-8) 0}.showcase-review>header{display:grid;gap:var(--space-3);padding-bottom:var(--space-6);border-bottom:2px solid var(--color-border-strong)}.showcase-review>header p{max-width:70ch;color:var(--color-text-secondary)}.empty,.candidate-list article{padding:var(--space-7) 0;border-bottom:1px solid var(--color-border)}.candidate-list article{display:grid;gap:var(--space-4)}.candidate-list article>header{display:flex;justify-content:space-between;gap:var(--space-4);align-items:end}.candidate-list picture img{display:block;width:100%;height:auto;border:1px solid var(--color-border)}.disclosure{padding:.65rem .8rem;border-left:3px solid var(--color-accent);background:var(--color-surface-muted)}.crop{display:grid;grid-template-columns:1fr .45fr;gap:var(--space-4)}.crop figure{margin:0}.crop img{width:100%;height:100%;max-height:380px;object-fit:cover;border:1px solid var(--color-border)}.crop figure:last-child img{aspect-ratio:4/5}.crop figcaption{color:var(--color-text-muted);font-size:var(--text-xs)}dl{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--color-border)}dl div{display:grid;grid-template-columns:120px 1fr;gap:var(--space-3);padding:var(--space-3);border-bottom:1px solid var(--color-border)}dd{margin:0;overflow-wrap:anywhere}@media(max-width:640px){.candidate-list article>header,.crop,dl{display:grid;grid-template-columns:1fr}.candidate-list article>header{align-items:start}dl div{grid-template-columns:90px 1fr}}
+</style>
