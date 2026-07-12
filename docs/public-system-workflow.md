@@ -27,16 +27,16 @@ Localized titles, descriptions, responsibilities, and exclusions live in `src/da
 
 ## Variants
 
-`SystemWorkflow.astro` renders both variants from the same facts and localized copy:
+`SystemWorkflow.astro` renders both variants from the same facts and localized copy. `SystemFlowDiagram.astro` uses `@dagrejs/dagre` at build time to place the directed graph and emits static SVG only:
 
-- `compact`: replaces the former Home Research Loop section. It groups private sources, Studio and its optional AI sidecar, the public feed, and the website into four ordered stages. It contains one link to the full architecture.
-- `full`: appears at `/projects/gnaroshi-dev/#repository-workflow` and its Korean counterpart. It adds repository roles, responsibilities, collapsed exclusions, public links, and optional public build provenance.
+- `compact`: replaces the former Home Research Loop section. It shows one directed graph and one link to the full architecture.
+- `full`: appears at `/projects/gnaroshi-dev/#repository-workflow` and its Korean counterpart. The directed graph remains primary; repository responsibilities, exclusions, and public links are in one collapsed secondary section, followed by optional public build provenance.
 
-The workflow uses semantic sections, an ordered list, headings, text badges, and repository names. CSS connectors are decorative and hidden from assistive technology; the DOM order retains the complete meaning when CSS is unavailable.
+The graph uses localized SVG titles/descriptions and a screen-reader-only ordered text fallback. Connectors are decorative. Step numbers use explicit center coordinates, `text-anchor="middle"`, and `dominant-baseline="central"`.
 
 ## Responsive Behavior
 
-On mobile, the four stages form a vertical source-to-output sequence. The API appears after Studio as an indented optional sidecar. At tablet and desktop widths, the two private sources share a row, Studio and the API share a row, and later stages can use available columns without changing DOM order. No stage requires horizontal scrolling.
+Mobile receives a Dagre top-to-bottom layout; tablet and desktop receive a left-to-right layout. Both are built statically from the same facts. No route hydrates a graph island or requires horizontal scrolling.
 
 ## Public Build Details
 

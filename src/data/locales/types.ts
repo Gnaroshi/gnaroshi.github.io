@@ -71,6 +71,7 @@ export type LocalizedSystemArchitectureCopy = {
   responsibilityLabel: string;
   exclusionsLabel: string;
   repositoryLinkLabel: string;
+  boundariesTitle: string;
   cta: string;
   buildDetails: {
     title: string;

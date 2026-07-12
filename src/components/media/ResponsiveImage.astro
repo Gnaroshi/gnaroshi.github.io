@@ -1,0 +1,44 @@
+---
+import type { ApprovedMediaAsset } from "../../data/approvedMedia";
+import type { Locale } from "../../i18n/types";
+
+interface Props {
+  asset: ApprovedMediaAsset;
+  locale: Locale;
+  class?: string;
+  sizes?: string;
+  loading?: "eager" | "lazy";
+  fetchpriority?: "high" | "low" | "auto";
+}
+
+const {
+  asset,
+  locale,
+  class: className,
+  sizes = "(min-width: 1024px) 50vw, 100vw",
+  loading = "lazy",
+  fetchpriority = "auto"
+} = Astro.props;
+const src = (width: number, format: "avif" | "webp") => `/media/approved/${asset.id}-${width}.${format}`;
+const srcset = (format: "avif" | "webp") => asset.widths.map((width) => `${src(width, format)} ${width}w`).join(", ");
+---
+
+<picture class:list={["responsive-media", className]}>
+  <source type="image/avif" srcset={srcset("avif")} sizes={sizes} />
+  <source type="image/webp" srcset={srcset("webp")} sizes={sizes} />
+  <img
+    src={src(asset.widths.at(-1)!, "webp")}
+    width={asset.width}
+    height={asset.height}
+    alt={asset.alt[locale]}
+    loading={loading}
+    decoding="async"
+    fetchpriority={fetchpriority}
+    style={`object-position:${asset.focalPoint}`}
+  />
+</picture>
+
+<style>
+  .responsive-media { display:block; overflow:hidden; }
+  .responsive-media img { width:100%; height:100%; object-fit:cover; }
+</style>

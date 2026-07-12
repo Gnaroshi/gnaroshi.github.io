@@ -1,5 +1,7 @@
 ---
 import HeroShell from "../layout/HeroShell.astro";
+import ResponsiveImage from "../media/ResponsiveImage.astro";
+import { approvedMedia } from "../../data/approvedMedia";
 import { profile } from "../../data/profile";
 import { getLocalizedData } from "../../data/locales";
 import type { Locale } from "../../i18n/types";
@@ -9,7 +11,10 @@ const { locale, currentFocus } = Astro.props;
 const data = getLocalizedData(locale);
 ---
 
-<HeroShell class="identity-hero identity-hero--text-only" labelledby="home-title">
+<HeroShell class="identity-hero" labelledby="home-title">
+  <div class="identity-hero__media" aria-hidden="true">
+    <ResponsiveImage asset={approvedMedia.homeHero} locale={locale} sizes="(min-width: 1200px) 1040px, 100vw" loading="eager" fetchpriority="high" />
+  </div>
   <div class="identity-hero__copy">
     <h1 id="home-title">{profile.displayName}</h1>
     <p class="identity-hero__headline">{data.profile.headline.split("\n").map((line) => <span>{line}</span>)}</p>

@@ -80,6 +80,7 @@ export const koCopy = {
     responsibilityLabel: "이곳에 두는 것",
     exclusionsLabel: "다른 곳에 두는 것",
     repositoryLinkLabel: "공개 저장소 열기",
+    boundariesTitle: "저장소별 역할과 경계",
     cta: "전체 구조 보기",
     buildDetails: {
       title: "현재 공개 빌드",

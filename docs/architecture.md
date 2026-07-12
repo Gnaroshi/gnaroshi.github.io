@@ -30,6 +30,8 @@ The website never checks out or imports private authoring repositories.
 
 Home and the `gnaroshi.dev` project detail explain the stable roles of the two private source repositories, Studio, the optional API, the public content feed, and the website. This model is website-owned and renders even when the feed is empty. It is presentation architecture, not a live operations dashboard.
 
+The directed layout is calculated by Dagre during the Astro build. The browser receives static SVG plus an ordered text fallback, with no graph runtime or GitHub API client.
+
 Current diffs, dirty state, validation results, private commits, and deployment monitoring remain in Gnaroshi Studio. The public site exposes only public build provenance already covered by the build-info contract. See `docs/public-system-workflow.md`.
 
 ## Build Inputs

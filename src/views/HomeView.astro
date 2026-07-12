@@ -4,6 +4,8 @@ import StructuredData from "../components/StructuredData.astro";
 import Hero from "../components/home/Hero.astro";
 import Section from "../components/layout/Section.astro";
 import SystemWorkflow from "../components/system/SystemWorkflow.astro";
+import ResponsiveImage from "../components/media/ResponsiveImage.astro";
+import { getProjectMedia } from "../data/approvedMedia";
 import { getLocalizedData } from "../data/locales";
 import { formatLocalizedDate } from "../i18n/date";
 import type { Locale } from "../i18n/types";
@@ -21,6 +23,7 @@ const [papers, posts] = await Promise.all([getPublishedPapers(locale), getPublis
 const recentPosts = posts.filter((post) => post.data.contentStage === "substantive" && post.data.category !== "build-note").slice(0, 3);
 const recentPapers = papers.filter((paper) => paper.data.contentStage === "substantive").slice(0, 3);
 const selectedProject = data.projects.find((project) => project.featured) ?? data.projects[0];
+const selectedProjectMedia = getProjectMedia(selectedProject.id);
 const focusIsFresh = isCurrentFocusFresh(data.now.lastUpdated);
 if (!focusIsFresh && import.meta.env.DEV) {
   console.warn(`[current-focus] Hidden from Home because ${data.now.lastUpdated} is ${currentFocusAgeDays(data.now.lastUpdated)} days old.`);
@@ -69,6 +72,9 @@ if (!focusIsFresh && import.meta.env.DEV) {
     <Section class="home-selected" labelledby="selected-work-heading">
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.selectedWork")}</p><h2 id="selected-work-heading">{selectedProject.title}</h2></div>
       <article class="home-featured-project">
+        <a class="home-featured-project__media" href={getLocalePath(locale, `/projects/${selectedProject.slug}/`)} tabindex="-1" aria-hidden="true">
+          <ResponsiveImage asset={selectedProjectMedia} locale={locale} sizes="(min-width: 768px) 50vw, 100vw" />
+        </a>
         <div class="home-featured-project__copy"><p>{selectedProject.summary}</p><ul class="tag-row" aria-label={selectedProject.title}>{selectedProject.tags.map((tag) => <li>{tag}</li>)}</ul><a class="text-link" href={getLocalePath(locale, `/projects/${selectedProject.slug}/`)}>{translate(locale, "home.openCaseStudy")}</a></div>
       </article>
     </Section>

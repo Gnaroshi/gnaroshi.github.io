@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { readFile, readdir } from "node:fs/promises";
 import { extname, resolve } from "node:path";
 import sharp from "sharp";
-import { candidatePassesThreshold, mediaReviewCandidates, totalSemanticScore } from "../src/data/mediaReview.ts";
+import { approvedMediaCandidateIds, candidatePassesThreshold, mediaReviewCandidates, totalSemanticScore } from "../src/data/mediaReview.ts";
 
 const failures = [];
 
@@ -16,6 +16,12 @@ for (const candidate of mediaReviewCandidates) {
   }
   const shouldPass = candidate.score.semanticClarity >= 4 && candidate.score.pageRelevance >= 4 && candidate.score.credibility >= 4 && totalSemanticScore(candidate.score) >= 25;
   if (candidatePassesThreshold(candidate) !== shouldPass) failures.push(`${candidate.id}: threshold calculation drift`);
+}
+
+for (const id of approvedMediaCandidateIds) {
+  const candidate = mediaReviewCandidates.find((item) => item.id === id);
+  if (!candidate) failures.push(`approved candidate is missing from review registry: ${id}`);
+  else if (!candidatePassesThreshold(candidate)) failures.push(`approved candidate does not pass the semantic threshold: ${id}`);
 }
 
 async function walk(directory) {
@@ -36,6 +42,17 @@ const expected = [
   ...["project-gnaroshi-vla", "project-gnaroshi-dev"].flatMap((id) => ["png", "avif", "webp"].map((format) => ({ path: `media-sources/exports/${id}.${format}`, width: 1600, height: 1000 })))
 ];
 
+const approvedOutputs = [
+  { id: "home-research-workspace", ratio: 5 / 4 },
+  { id: "research-vla-task", ratio: 4 / 3 },
+  { id: "efficient-execution-en", ratio: 4 / 3 },
+  { id: "efficient-execution-ko", ratio: 4 / 3 },
+  { id: "research-workflow-en", ratio: 4 / 3 },
+  { id: "research-workflow-ko", ratio: 4 / 3 },
+  { id: "project-gnaroshi-vla", ratio: 16 / 10 },
+  { id: "project-gnaroshi-dev", ratio: 16 / 10 }
+].flatMap((asset) => [640, 1200, 1600].flatMap((width) => ["avif", "webp"].map((format) => ({ ...asset, width, format }))));
+
 for (const item of expected) {
   if (!existsSync(item.path)) {
     failures.push(`missing candidate output: ${item.path}`);
@@ -43,6 +60,17 @@ for (const item of expected) {
   }
   const metadata = await sharp(item.path).metadata();
   if (metadata.width !== item.width || metadata.height !== item.height) failures.push(`${item.path}: expected ${item.width}x${item.height}, found ${metadata.width}x${metadata.height}`);
+}
+
+for (const item of approvedOutputs) {
+  const path = `public/media/approved/${item.id}-${item.width}.${item.format}`;
+  if (!existsSync(path)) {
+    failures.push(`missing approved production asset: ${path}`);
+    continue;
+  }
+  const metadata = await sharp(path).metadata();
+  const expectedHeight = Math.round(item.width / item.ratio);
+  if (metadata.width !== item.width || metadata.height !== expectedHeight) failures.push(`${path}: expected ${item.width}x${expectedHeight}, found ${metadata.width}x${metadata.height}`);
 }
 
 for (const sheet of ["home-hero", "research-vla", "technical-diagrams", "project-evidence"]) {
@@ -85,5 +113,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.warn("[media:check] Stage 1 only: legacy production files remain on disk but are not rendered; delete them after candidate approval.");
-console.log(`[media:check] passed (${expected.length} outputs, ${productionSources.length} production source files scanned)`);
+console.log(`[media:check] passed (${expected.length} review outputs, ${approvedOutputs.length} approved production outputs, ${productionSources.length} production source files scanned)`);

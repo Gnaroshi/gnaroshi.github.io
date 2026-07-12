@@ -37,6 +37,17 @@ export const mediaReviewCandidates: MediaReviewCandidate[] = [
   { id:"project-gnaroshi-dev", section:"project-evidence", category:"real-project-evidence", route:"/projects/gnaroshi-dev/", pageContext:"project-site", file:"exports/project-gnaroshi-dev.png", aspectRatio:"16:10", focalPoint:"50% 45%", score:{ semanticClarity:5, pageRelevance:5, focalHierarchy:4, credibility:5, responsiveCrop:4, visualQuality:4 }, rejectionNotes:["Screenshots must be recaptured if the approved production layout changes."] }
 ];
 
+export const approvedMediaCandidateIds = [
+  "home-hero-c",
+  "research-vla-b",
+  "efficient-execution-en",
+  "efficient-execution-ko",
+  "research-workflow-en",
+  "research-workflow-ko",
+  "project-gnaroshi-vla",
+  "project-gnaroshi-dev"
+] as const;
+
 export function totalSemanticScore(score: SemanticScore) {
   return Object.values(score).reduce((total, value) => total + value, 0);
 }

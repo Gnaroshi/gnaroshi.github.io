@@ -1,0 +1,112 @@
+---
+import { Graph, layout } from "@dagrejs/dagre";
+import { systemConnections, systemRepositories, type SystemConnection, type SystemRepository } from "../../data/facts/systemArchitecture";
+import type { LocalizedSystemArchitectureCopy } from "../../data/locales/types";
+
+interface Props {
+  copy: LocalizedSystemArchitectureCopy;
+}
+
+type Direction = "LR" | "TB";
+type PositionedNode = SystemRepository & { x: number; y: number; width: number; height: number };
+type PositionedEdge = SystemConnection & { points: Array<{ x: number; y: number }> };
+
+const { copy } = Astro.props;
+
+function buildLayout(direction: Direction) {
+  const mobile = direction === "TB";
+  const nodeWidth = mobile ? 140 : 190;
+  const nodeHeight = mobile ? 82 : 92;
+  const graph = new Graph()
+    .setGraph({ rankdir: direction, nodesep: mobile ? 20 : 40, ranksep: mobile ? 58 : 70, marginx: 20, marginy: 20 })
+    .setDefaultEdgeLabel(() => ({}));
+
+  for (const repository of systemRepositories) graph.setNode(repository.id, { width: nodeWidth, height: nodeHeight });
+  for (const connection of systemConnections) graph.setEdge(connection.from, connection.to, { type: connection.type });
+  layout(graph, { constraints: [{ left: "paper-lab", right: "writing" }] });
+
+  const nodes = systemRepositories.map((repository) => ({ ...repository, ...graph.node(repository.id) })) as PositionedNode[];
+  const edges = systemConnections.map((connection) => {
+    const edge = graph.edge({ v: connection.from, w: connection.to });
+    return { ...connection, points: edge.points } as PositionedEdge;
+  });
+  const dimensions = graph.graph();
+  return { nodes, edges, width: Math.ceil(dimensions.width ?? 0), height: Math.ceil(dimensions.height ?? 0) };
+}
+
+const desktop = buildLayout("LR");
+const mobile = buildLayout("TB");
+const stepByRepository: Partial<Record<SystemRepository["id"], string>> = {
+  "paper-lab": "1",
+  writing: "1",
+  studio: "2",
+  "content-feed": "3",
+  website: "4"
+};
+const pathFor = (points: PositionedEdge["points"]) => points.map((point, index) => `${index === 0 ? "M" : "L"}${point.x},${point.y}`).join(" ");
+---
+
+<figure class="system-diagram">
+  {[{ name: "desktop", layout: desktop }, { name: "mobile", layout: mobile }].map(({ name, layout: diagram }) => (
+    <svg
+      class:list={["system-diagram__svg", `system-diagram__svg--${name}`]}
+      viewBox={`0 0 ${diagram.width} ${diagram.height}`}
+      role="img"
+      aria-labelledby={`system-diagram-title-${name} system-diagram-description-${name}`}
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <title id={`system-diagram-title-${name}`}>{copy.title}</title>
+      <desc id={`system-diagram-description-${name}`}>{copy.description}</desc>
+      <defs>
+        <marker id={`system-arrow-${name}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" class="system-diagram__arrow" />
+        </marker>
+      </defs>
+
+      <g class="system-diagram__edges" aria-hidden="true">
+        {diagram.edges.map((edge) => (
+          <path
+            d={pathFor(edge.points)}
+            class:list={["system-diagram__edge", edge.type === "optional-service" && "system-diagram__edge--optional"]}
+            marker-end={`url(#system-arrow-${name})`}
+            data-connection-from={edge.from}
+            data-connection-to={edge.to}
+            data-connection-type={edge.type}
+          />
+        ))}
+      </g>
+
+      <g class="system-diagram__nodes">
+        {diagram.nodes.map((node) => {
+          const left = node.x - node.width / 2;
+          const top = node.y - node.height / 2;
+          const repositoryCopy = copy.repositories[node.id];
+          const step = stepByRepository[node.id];
+          const optional = node.id === "api";
+          return (
+            <g class:list={["system-diagram__node", `system-diagram__node--${node.visibility}`, optional && "system-diagram__node--optional"]} data-diagram-node={node.id}>
+              <rect x={left} y={top} width={node.width} height={node.height} rx="8" />
+              {step && (
+                <g class="system-diagram__step" data-diagram-step={step}>
+                  <circle cx={left + 19} cy={top + 19} r="12" />
+                  <text x={left + 19} y={top + 19} text-anchor="middle" dominant-baseline="central">{step}</text>
+                </g>
+              )}
+              <text class="system-diagram__title" x={left + (step ? 39 : 14)} y={top + 22}>{repositoryCopy.title}</text>
+              <text class="system-diagram__repo" x={left + 14} y={top + 50}>{node.repositoryName}</text>
+              <text class="system-diagram__role" x={left + 14} y={top + 72}>{repositoryCopy.role}</text>
+              {optional && <text class="system-diagram__optional" x={left + node.width - 12} y={top + 20} text-anchor="end">{copy.badges.optional}</text>}
+            </g>
+          );
+        })}
+      </g>
+    </svg>
+  ))}
+
+  <ol class="sr-only">
+    <li>{copy.stages.sources}: {copy.repositories["paper-lab"].title}, {copy.repositories.writing.title}</li>
+    <li>{copy.stages.control}: {copy.repositories.studio.title}; {copy.repositories.api.title} ({copy.badges.optional})</li>
+    <li>{copy.stages.projection}: {copy.repositories["content-feed"].title}</li>
+    <li>{copy.stages.presentation}: {copy.repositories.website.title}</li>
+  </ol>
+</figure>

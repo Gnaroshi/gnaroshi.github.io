@@ -21,6 +21,7 @@ Before structural changes, read:
 - `docs/technical-hardening-report.md`
 - `docs/route-budget-report.md`
 - `docs/public-system-workflow.md`
+- `docs/public-page-visual-checklist.md`
 
 ## Stack
 
@@ -144,6 +145,7 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Empty functional states usually use no large image.
 - Do not reuse Research media as project evidence or approve candidates automatically.
 - Keep unapproved sources outside `public/` and review them through the development-only `/dev/media-review/` route.
+- Publish only IDs recorded in `approvedMediaCandidateIds`; regenerate responsive production variants with `npm run media:publish`.
 - Write public copy in the modest, activity-based voice defined in `docs/public-voice.md`.
 - Keep the brand name-only. Do not infer or display a professional title, affiliation, degree, laboratory, award, or location.
 - Home may show the compact, stable repository-role workflow defined in `docs/public-system-workflow.md`. Keep live operational state in Studio and detailed publishing architecture on the `gnaroshi.dev` project detail; keep it out of About, Research, and Writing introductions.
