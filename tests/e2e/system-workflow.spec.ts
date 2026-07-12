@@ -16,28 +16,32 @@ const publicRepositories = new Map([
 
 test.describe("public system workflow", () => {
   for (const route of ["/", "/ko/"] as const) {
-    test(`${route} replaces the old Research Loop with one compact workflow`, async ({ page }) => {
+    test(`${route} renders one compact static flow diagram`, async ({ page }) => {
       await page.goto(route);
-      await expect(page.locator('[data-system-workflow="compact"]')).toHaveCount(1);
-      await expect(page.locator('[data-system-workflow="full"]')).toHaveCount(0);
+      const workflow = page.locator('[data-system-workflow="compact"]');
+      await expect(workflow).toHaveCount(1);
+      await expect(workflow.locator(".system-diagram")).toBeVisible();
+      await expect(workflow.locator("astro-island")).toHaveCount(0);
+      await expect(workflow.locator(".system-repository")).toHaveCount(0);
       await expect(page.locator(".home-loop, #research-loop-heading")).toHaveCount(0);
-      await expect(page.locator('[data-system-workflow="compact"] img')).toHaveCount(0);
 
-      const sourceStage = page.locator('[data-system-stage$="-sources"]');
-      await expect(sourceStage.locator('[data-repository-id="paper-lab"]')).toHaveCount(1);
-      await expect(sourceStage.locator('[data-repository-id="writing"]')).toHaveCount(1);
-      await expect(page.locator('[data-repository-id="api"] .system-badge--optional')).toBeVisible();
+      for (const repositoryName of repositoryNames) {
+        await expect(workflow.locator("svg").first().getByText(repositoryName, { exact: true })).toHaveCount(1);
+      }
+      await expect(workflow.locator('[data-connection-type="optional-service"]').first()).toHaveClass(/system-diagram__edge--optional/);
     });
   }
 
   for (const route of ["/projects/gnaroshi-dev/", "/ko/projects/gnaroshi-dev/"] as const) {
-    test(`${route} renders all six repositories with the same public boundary`, async ({ page }) => {
+    test(`${route} renders the diagram before collapsed repository boundaries`, async ({ page }) => {
       await page.goto(route);
       const workflow = page.locator('#repository-workflow[data-system-workflow="full"]');
       await expect(workflow).toBeVisible();
+      await expect(workflow.locator(".system-diagram")).toBeVisible();
+      await expect(workflow.locator(".system-workflow__boundaries")).not.toHaveAttribute("open", "");
 
       for (const repositoryName of repositoryNames) {
-        await expect(workflow.getByText(repositoryName, { exact: true })).toBeVisible();
+        await expect(workflow.locator(".system-workflow__boundaries").getByText(repositoryName, { exact: true })).toHaveCount(1);
       }
 
       for (const id of ["paper-lab", "writing", "studio", "api"] as const) {
@@ -53,37 +57,59 @@ test.describe("public system workflow", () => {
 
       const details = workflow.locator(".system-build-details");
       await expect(details).toHaveCount(1);
-      const buildText = await details.textContent();
-      expect(buildText).not.toMatch(/dirty state|branch name|API health|private CI/i);
+      expect(await details.textContent()).not.toMatch(/dirty state|branch name|API health|private CI/i);
     });
   }
 
-  test("English and Korean variants expose the same repository model", async ({ page }) => {
-    const idsByLocale: string[][] = [];
+  test("English and Korean variants expose the same repository and edge model", async ({ page }) => {
+    const models = [];
     for (const route of ["/projects/gnaroshi-dev/", "/ko/projects/gnaroshi-dev/"]) {
       await page.goto(route);
-      idsByLocale.push(await page.locator('#repository-workflow [data-repository-id]').evaluateAll((items) => items.map((item) => item.getAttribute("data-repository-id") ?? "")));
+      const diagram = page.locator(".system-diagram__svg--desktop");
+      models.push({
+        nodes: await diagram.locator("[data-diagram-node]").evaluateAll((items) => items.map((item) => item.getAttribute("data-diagram-node"))),
+        edges: await diagram.locator("[data-connection-from]").evaluateAll((items) => items.map((item) => `${item.getAttribute("data-connection-from")}->${item.getAttribute("data-connection-to")}:${item.getAttribute("data-connection-type")}`))
+      });
     }
-    expect(idsByLocale[0]).toEqual(idsByLocale[1]);
-    expect(idsByLocale[0]).toEqual(["paper-lab", "writing", "studio", "api", "content-feed", "website"]);
+    expect(models[0]).toEqual(models[1]);
   });
 
-  test("mobile workflow keeps source-to-output order without overflow", async ({ page }) => {
+  test("step numbers are mathematically centered in desktop and mobile diagrams", async ({ page }) => {
+    for (const viewport of [{ width: 1440, height: 1000 }, { width: 360, height: 800 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto("/projects/gnaroshi-dev/");
+      const visibleDiagram = page.locator(viewport.width < 768 ? ".system-diagram__svg--mobile" : ".system-diagram__svg--desktop");
+      const offsets = await visibleDiagram.locator(".system-diagram__step").evaluateAll((steps) => steps.map((step) => {
+        const circle = step.querySelector("circle")!.getBBox();
+        const text = step.querySelector("text")!.getBBox();
+        return {
+          x: Math.abs((circle.x + circle.width / 2) - (text.x + text.width / 2)),
+          y: Math.abs((circle.y + circle.height / 2) - (text.y + text.height / 2))
+        };
+      }));
+      for (const offset of offsets) {
+        expect(offset.x).toBeLessThanOrEqual(0.75);
+        expect(offset.y).toBeLessThanOrEqual(1.25);
+      }
+    }
+  });
+
+  test("mobile diagram preserves source-to-site order without page overflow", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 });
     await page.goto("/ko/");
-    const workflow = page.locator('[data-system-workflow="compact"]');
-    const positions = await workflow.locator(":scope > .system-workflow__flow > .system-stage").evaluateAll((stages) => stages.map((stage) => Math.round(stage.getBoundingClientRect().top)));
-    expect(positions).toEqual([...positions].sort((a, b) => a - b));
-
-    const [studioTop, apiTop, feedTop, websiteTop] = await Promise.all([
-      workflow.locator('[data-repository-id="studio"]').evaluate((item) => item.getBoundingClientRect().top),
-      workflow.locator('[data-repository-id="api"]').evaluate((item) => item.getBoundingClientRect().top),
-      workflow.locator('[data-repository-id="content-feed"]').evaluate((item) => item.getBoundingClientRect().top),
-      workflow.locator('[data-repository-id="website"]').evaluate((item) => item.getBoundingClientRect().top)
-    ]);
-    expect(studioTop).toBeLessThan(apiTop);
-    expect(apiTop).toBeLessThan(feedTop);
-    expect(feedTop).toBeLessThan(websiteTop);
+    const diagram = page.locator(".system-diagram__svg--mobile");
+    const positions = await diagram.locator("[data-diagram-node]").evaluateAll((nodes) =>
+      Object.fromEntries(
+        nodes.map((node) => {
+          const group = node as SVGGElement;
+          return [group.getAttribute("data-diagram-node"), group.getBBox().y];
+        }),
+      ),
+    );
+    expect(positions["paper-lab"]).toBeLessThan(positions.studio);
+    expect(positions.writing).toBeLessThan(positions.studio);
+    expect(positions.studio).toBeLessThan(positions["content-feed"]);
+    expect(positions["content-feed"]).toBeLessThan(positions.website);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
   });
 

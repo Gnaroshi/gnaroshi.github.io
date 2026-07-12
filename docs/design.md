@@ -88,7 +88,7 @@ Activity is a utility destination. Now and public links belong in the homepage, 
 
 Home uses one compact semantic workflow in place of a separate Research Loop section. It explains stable repository roles in four ordered stages and links once to the complete `gnaroshi.dev` project architecture. The full variant uses repository cards, restrained visibility badges, collapsed exclusions, and an optional API sidecar.
 
-The workflow is HTML and CSS, not an infographic image or client-rendered graph. Repository names remain readable text, connectors are decorative, and mobile preserves the private-source-to-public-site order without horizontal scrolling.
+The workflow is a static directed graph laid out by Dagre during the build, not a client-rendered dashboard. Repository names remain readable text, connectors are decorative, an ordered fallback carries the semantics, and mobile preserves the private-source-to-public-site order without horizontal scrolling.
 
 ### Visual Modes
 

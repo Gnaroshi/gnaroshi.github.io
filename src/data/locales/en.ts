@@ -79,6 +79,7 @@ export const enCopy = {
     responsibilityLabel: "What belongs here",
     exclusionsLabel: "What stays elsewhere",
     repositoryLinkLabel: "Open public repository",
+    boundariesTitle: "Repository boundaries",
     cta: "See the full architecture",
     buildDetails: {
       title: "Current public build",
