@@ -39,4 +39,4 @@ Project evidence alt text must name the real screenshots or artifacts in the com
 
 ## Stage Gate
 
-Candidate preparation does not authorize production use. An owner must name approved candidate IDs before responsive production variants are generated and `src/data/mediaManifest.ts` is changed.
+Candidate preparation does not authorize production use. Owner approval or an explicit owner request for review-led selection is required before responsive production variants are generated and `src/data/approvedMedia.ts` is changed.

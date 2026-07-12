@@ -148,15 +148,14 @@ test("header switches before navigation can wrap", async ({ page }) => {
   }
 });
 
-test("temporary text-only hero and remaining media stay measurable", async ({ page }) => {
+test("approved Hero and evidence media stay measurable", async ({ page }) => {
   for (const locale of ["/", "/ko/"]) {
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
       await page.setViewportSize(viewport);
       await page.goto(locale);
       const copy = await page.locator(".identity-hero__copy").boundingBox();
       expect(copy).not.toBeNull();
-      await expect(page.locator(".identity-hero--text-only")).toBeVisible();
-      await expect(page.locator(".identity-hero__art")).toHaveCount(0);
+      await expect(page.locator(".identity-hero__media picture img")).toBeVisible();
       expect(copy!.x + copy!.width).toBeLessThanOrEqual(viewport.width);
       await expect(page.locator(".identity-hero__actions .button")).toHaveCount(2);
       const images = page.locator("main img");

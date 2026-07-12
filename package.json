@@ -23,6 +23,7 @@
     "check:i18n": "node scripts/check-i18n.mjs",
     "media:capture": "node scripts/capture-project-screenshots.mjs",
     "media:build": "node scripts/build-media-candidates.mjs",
+    "media:publish": "node scripts/publish-approved-media.mjs",
     "media:check": "node scripts/check-media.mjs",
     "check:public-tone": "npm run build && node scripts/check-public-tone.mjs",
     "check:launch-content": "node scripts/check-launch-content.mjs",

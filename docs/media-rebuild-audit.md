@@ -26,12 +26,12 @@ The previous system favored a shared abstract visual grammar over immediate subj
 - There are no real project screenshots in `public/media/`.
 - There are no functional icons in `public/media/`; functional icons and `public/favicon.svg` are outside this removal.
 
-## Stage 1 Production State
+## Stage 2 Production State
 
-- Home Hero, selected project, and Research Loop are temporarily typography-only.
-- Research questions are temporarily typography-only.
-- Project list and detail pages are temporarily typography-only.
+- Home uses the approved `home-hero-c` scene and actual project evidence.
+- Research uses `research-vla-b` plus paired English/Korean technical diagrams.
+- Project list and detail pages use actual repository and site evidence.
 - Zero-paper Paper Lab and ineligible Growth states no longer render large illustrations.
-- No candidate file under `media-sources/` is imported by production code.
+- Approved candidates are published as responsive AVIF/WebP variants; rejected and pending candidates remain outside `public/`.
 
-Legacy files remain on disk until Stage 2 so rollback is a source-control operation rather than asset recovery. `npm run media:check` fails if production code begins referencing them again.
+Legacy files remain on disk for rollback but are not referenced by production source. `npm run media:check` validates approved outputs and fails if legacy ambiguous paths return.
