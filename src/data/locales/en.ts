@@ -17,6 +17,78 @@ export const enCopy = {
       "I check automated results myself."
     ]
   },
+  systemArchitecture: {
+    eyebrow: "How this site works",
+    title: "From private notes to the public site",
+    description: "Papers and writing begin in private repositories. Studio reviews what should be shared, builds a public record, and the website presents it.",
+    stages: {
+      sources: "Private sources",
+      control: "Review and publish",
+      projection: "Public record",
+      presentation: "Presentation"
+    },
+    badges: {
+      private: "Private",
+      public: "Public",
+      optional: "Optional"
+    },
+    repositories: {
+      "paper-lab": {
+        title: "Paper notes",
+        role: "Private paper workspace",
+        description: "Stores paper notes, reading sessions, reviews, and oral practice.",
+        responsibilities: ["Paper notes", "Reading sessions", "Reviews", "Oral-practice source", "Implementation attempts"],
+        exclusions: ["Website UI", "Blog drafts", "Public deployment"]
+      },
+      writing: {
+        title: "Writing",
+        role: "Private writing workspace",
+        description: "Stores drafts, English and Korean versions, and writing assets.",
+        responsibilities: ["Blog drafts", "Translations", "Writing assets", "Series metadata"],
+        exclusions: ["Paper review records", "Public website UI", "Generated feed output"]
+      },
+      studio: {
+        title: "Gnaroshi Studio",
+        role: "Review and publishing control",
+        description: "Creates and reviews content, tracks changes, and publishes selected material.",
+        responsibilities: ["macOS app", "CLI", "Shared contracts", "Git operations", "Validation", "Publisher"],
+        exclusions: ["Canonical notes", "Website presentation", "Worker runtime"]
+      },
+      api: {
+        title: "AI service",
+        role: "Optional AI request service",
+        description: "Optionally handles paper review and oral-practice requests.",
+        responsibilities: ["AI request handling", "Session generation", "Scoring", "Rate limits", "CORS"],
+        exclusions: ["Canonical content", "Website rendering", "Publishing"]
+      },
+      "content-feed": {
+        title: "Public content",
+        role: "Generated public record",
+        description: "Generated data containing only the material selected for publication.",
+        responsibilities: ["Public generated records", "Public assets", "Manifest", "Public snapshots"],
+        exclusions: ["Drafts", "Private notes", "Full transcripts", "Manual editing"]
+      },
+      website: {
+        title: "Website",
+        role: "Presentation and deployment",
+        description: "Presents the public content in English and Korean and deploys it to gnaroshi.dev.",
+        responsibilities: ["Routes", "Presentation", "Localization", "SEO", "Accessibility", "GitHub Pages deployment"],
+        exclusions: ["Canonical authoring", "AI generation", "Private repository access"]
+      }
+    },
+    responsibilityLabel: "What belongs here",
+    exclusionsLabel: "What stays elsewhere",
+    repositoryLinkLabel: "Open public repository",
+    cta: "See the full architecture",
+    buildDetails: {
+      title: "Current public build",
+      websiteCommit: "Website commit",
+      contentFeedCommit: "Content feed commit",
+      builtAt: "Built",
+      feedSchema: "Feed schema",
+      unavailable: "Unavailable"
+    }
+  },
   researchAreas: {
     "practical-vla-systems": {
       question: "What kind of experiment structure makes different VLA models comparable on common ground?",

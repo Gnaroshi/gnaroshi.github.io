@@ -18,6 +18,78 @@ export const koCopy = {
       "자동화된 결과는 직접 확인합니다."
     ]
   },
+  systemArchitecture: {
+    eyebrow: "이 사이트의 구조",
+    title: "기록이 공개되기까지",
+    description: "논문과 글은 비공개로 작성합니다. Studio에서 공개할 내용을 확인한 뒤, 공개용 데이터로 정리해 이 사이트에 반영합니다.",
+    stages: {
+      sources: "비공개 원본",
+      control: "확인하고 발행",
+      projection: "공개 기록",
+      presentation: "화면과 배포"
+    },
+    badges: {
+      private: "비공개",
+      public: "공개",
+      optional: "선택 사항"
+    },
+    repositories: {
+      "paper-lab": {
+        title: "논문 기록",
+        role: "비공개 논문 작업 공간",
+        description: "논문 노트와 읽기 세션, 복습과 구술 연습을 보관합니다.",
+        responsibilities: ["논문 노트", "읽기 세션", "리뷰", "구술 연습 원본", "구현 시도"],
+        exclusions: ["웹사이트 UI", "글 초안", "공개 배포"]
+      },
+      writing: {
+        title: "글",
+        role: "비공개 글 작업 공간",
+        description: "글 초안과 영문·국문 번역, 글에 사용할 자료를 보관합니다.",
+        responsibilities: ["글 초안", "번역", "글 자료", "시리즈 정보"],
+        exclusions: ["논문 리뷰 기록", "공개 웹사이트 UI", "생성된 피드 출력"]
+      },
+      studio: {
+        title: "Gnaroshi Studio",
+        role: "검토와 발행 제어",
+        description: "논문과 글을 작성하고, 변경사항을 확인해 공개할 내용을 발행합니다.",
+        responsibilities: ["macOS 앱", "CLI", "공유 계약", "Git 작업", "검증", "발행 도구"],
+        exclusions: ["원본 노트", "웹사이트 화면", "Worker 런타임"]
+      },
+      api: {
+        title: "AI 기능",
+        role: "선택형 AI 요청 서비스",
+        description: "논문 리뷰와 구술 연습에 필요한 AI 요청을 선택적으로 처리합니다.",
+        responsibilities: ["AI 요청 처리", "세션 생성", "점수 계산", "요청 제한", "CORS"],
+        exclusions: ["원본 콘텐츠", "웹사이트 렌더링", "발행"]
+      },
+      "content-feed": {
+        title: "공개 콘텐츠",
+        role: "자동 생성 공개 기록",
+        description: "공개하기로 선택한 내용만 담는 자동 생성 데이터입니다.",
+        responsibilities: ["공개 생성 기록", "공개 자산", "manifest", "공개 snapshot"],
+        exclusions: ["초안", "비공개 노트", "전체 대화 기록", "수동 편집"]
+      },
+      website: {
+        title: "웹사이트",
+        role: "화면과 배포",
+        description: "공개 콘텐츠를 영문·국문 화면으로 표시하고 gnaroshi.dev에 배포합니다.",
+        responsibilities: ["경로", "화면", "다국어", "SEO", "접근성", "GitHub Pages 배포"],
+        exclusions: ["원본 작성", "AI 생성", "비공개 저장소 접근"]
+      }
+    },
+    responsibilityLabel: "이곳에 두는 것",
+    exclusionsLabel: "다른 곳에 두는 것",
+    repositoryLinkLabel: "공개 저장소 열기",
+    cta: "전체 구조 보기",
+    buildDetails: {
+      title: "현재 공개 빌드",
+      websiteCommit: "웹사이트 커밋",
+      contentFeedCommit: "콘텐츠 피드 커밋",
+      builtAt: "빌드 시각",
+      feedSchema: "피드 스키마",
+      unavailable: "확인할 수 없음"
+    }
+  },
   researchAreas: {
     "practical-vla-systems": {
       question: "서로 다른 VLA 모델을 같은 기준에서 비교하려면 어떤 실험 구조가 필요할까?",

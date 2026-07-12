@@ -1,0 +1,13 @@
+---
+import type { SystemConnection } from "../../data/facts/systemArchitecture";
+
+interface Props {
+  type: SystemConnection["type"];
+}
+
+const { type } = Astro.props;
+---
+
+<span class:list={["system-connection", `system-connection--${type}`]} data-connection-type={type} aria-hidden="true">
+  <span></span>
+</span>

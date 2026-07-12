@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import StructuredData from "../components/StructuredData.astro";
 import Hero from "../components/home/Hero.astro";
 import Section from "../components/layout/Section.astro";
+import SystemWorkflow from "../components/system/SystemWorkflow.astro";
 import { getLocalizedData } from "../data/locales";
 import { formatLocalizedDate } from "../i18n/date";
 import type { Locale } from "../i18n/types";
@@ -80,8 +81,6 @@ if (!focusIsFresh && import.meta.env.DEV) {
       </div>
     </Section>}
 
-    <Section class="home-loop" labelledby="research-loop-heading">
-      <div class="home-loop__copy"><p class="eyebrow">{translate(locale, "home.researchWorkspace")}</p><h2 id="research-loop-heading">{translate(locale, "home.researchLoopTitle")}</h2><p>{translate(locale, "home.researchLoopBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div>
-    </Section>
+    <SystemWorkflow locale={locale} variant="compact" />
   </div>
 </BaseLayout>

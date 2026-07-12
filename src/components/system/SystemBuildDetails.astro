@@ -1,0 +1,30 @@
+---
+import type { Locale } from "../../i18n/types";
+import type { WebsiteBuildInfo } from "../../utils/contentFeed";
+import type { LocalizedSystemArchitectureCopy } from "../../data/locales/types";
+
+interface Props {
+  locale: Locale;
+  info: WebsiteBuildInfo;
+  copy: LocalizedSystemArchitectureCopy["buildDetails"];
+}
+
+const { locale, info, copy } = Astro.props;
+const builtAt = Number.isNaN(Date.parse(info.builtAt))
+  ? info.builtAt
+  : new Intl.DateTimeFormat(locale === "ko" ? "ko-KR" : "en-US", {
+      dateStyle: "medium",
+      timeStyle: "short",
+      timeZone: "UTC"
+    }).format(new Date(info.builtAt));
+---
+
+<details class="system-build-details">
+  <summary>{copy.title}</summary>
+  <dl>
+    <div><dt>{copy.websiteCommit}</dt><dd><code>{info.websiteCommit ?? copy.unavailable}</code></dd></div>
+    <div><dt>{copy.contentFeedCommit}</dt><dd><code>{info.contentFeedCommit ?? copy.unavailable}</code></dd></div>
+    <div><dt>{copy.builtAt}</dt><dd><time datetime={info.builtAt}>{builtAt} UTC</time></dd></div>
+    <div><dt>{copy.feedSchema}</dt><dd><code>v{info.feedSchemaVersion}</code></dd></div>
+  </dl>
+</details>
