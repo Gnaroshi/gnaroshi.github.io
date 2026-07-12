@@ -36,7 +36,8 @@ function buildLocalizedData(locale: Locale, copy: LocaleCopy): LocalizedData {
       }))
     })),
     now: { lastUpdated: currentFocusFact.lastUpdated, ...copy.now },
-    skillGroups: copy.skillGroups
+    skillGroups: copy.skillGroups,
+    systemArchitecture: copy.systemArchitecture
   };
 }
 

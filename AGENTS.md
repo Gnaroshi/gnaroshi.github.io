@@ -20,6 +20,7 @@ Before structural changes, read:
 - `docs/public-voice.md`
 - `docs/technical-hardening-report.md`
 - `docs/route-budget-report.md`
+- `docs/public-system-workflow.md`
 
 ## Stack
 
@@ -145,7 +146,7 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Keep unapproved sources outside `public/` and review them through the development-only `/dev/media-review/` route.
 - Write public copy in the modest, activity-based voice defined in `docs/public-voice.md`.
 - Keep the brand name-only. Do not infer or display a professional title, affiliation, degree, laboratory, award, or location.
-- Keep publishing architecture on the `gnaroshi.dev` project detail and out of Home, About, Research, and Writing introductions.
+- Home may show the compact, stable repository-role workflow defined in `docs/public-system-workflow.md`. Keep live operational state in Studio and detailed publishing architecture on the `gnaroshi.dev` project detail; keep it out of About, Research, and Writing introductions.
 
 ## Prohibited Changes
 

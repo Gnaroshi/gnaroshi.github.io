@@ -1,0 +1,73 @@
+---
+import AiServiceIcon from "../icons/AiServiceIcon.astro";
+import FeedIcon from "../icons/FeedIcon.astro";
+import PaperIcon from "../icons/PaperIcon.astro";
+import StudioIcon from "../icons/StudioIcon.astro";
+import WebsiteIcon from "../icons/WebsiteIcon.astro";
+import WritingIcon from "../icons/WritingIcon.astro";
+import type { SystemRepository } from "../../data/facts/systemArchitecture";
+import type { LocalizedSystemArchitectureCopy, LocalizedSystemRepositoryCopy } from "../../data/locales/types";
+
+interface Props {
+  repository: SystemRepository;
+  copy: LocalizedSystemRepositoryCopy;
+  labels: Pick<LocalizedSystemArchitectureCopy, "badges" | "responsibilityLabel" | "exclusionsLabel" | "repositoryLinkLabel">;
+  variant: "compact" | "full";
+  optional?: boolean;
+}
+
+const { repository, copy, labels, variant, optional = false } = Astro.props;
+const icons = {
+  paper: PaperIcon,
+  writing: WritingIcon,
+  studio: StudioIcon,
+  ai: AiServiceIcon,
+  feed: FeedIcon,
+  website: WebsiteIcon
+};
+const Icon = icons[repository.icon];
+---
+
+<article
+  class:list={["system-repository", `system-repository--${variant}`, optional && "system-repository--optional"]}
+  data-repository-id={repository.id}
+  data-repository-visibility={repository.visibility}
+>
+  <header class="system-repository__header">
+    <span class="system-repository__icon"><Icon size={24} /></span>
+    <div class="system-repository__identity">
+      <h4>{copy.title}</h4>
+      <code>{repository.repositoryName}</code>
+    </div>
+    <div class="system-repository__badges" aria-label={repository.visibility === "private" ? labels.badges.private : labels.badges.public}>
+      <span class:list={["system-badge", `system-badge--${repository.visibility}`]}>{labels.badges[repository.visibility]}</span>
+      {optional && <span class="system-badge system-badge--optional">{labels.badges.optional}</span>}
+    </div>
+  </header>
+
+  {variant === "full" && <p class="system-repository__role">{copy.role}</p>}
+  <p class="system-repository__description">{copy.description}</p>
+
+  {variant === "full" && (
+    <div class="system-repository__scope">
+      <div>
+        <h5>{labels.responsibilityLabel}</h5>
+        <ul>{copy.responsibilities.map((item) => <li>{item}</li>)}</ul>
+      </div>
+      <details>
+        <summary>{labels.exclusionsLabel}</summary>
+        <ul>{copy.exclusions.map((item) => <li>{item}</li>)}</ul>
+      </details>
+    </div>
+  )}
+
+  {repository.publicUrl && (
+    <a
+      class="system-repository__link"
+      href={repository.publicUrl}
+      target="_blank"
+      rel="noreferrer noopener"
+      aria-label={`${labels.repositoryLinkLabel}: ${repository.repositoryName}`}
+    >{labels.repositoryLinkLabel}<span aria-hidden="true"> ↗</span></a>
+  )}
+</article>

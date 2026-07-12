@@ -84,6 +84,12 @@ Primary navigation is limited to five destinations; the brand links to Home:
 
 Activity is a utility destination. Now and public links belong in the homepage, About, and footer. Paper workflow tools stay grouped under a local Papers navigation instead of competing in the global header.
 
+### System Workflow
+
+Home uses one compact semantic workflow in place of a separate Research Loop section. It explains stable repository roles in four ordered stages and links once to the complete `gnaroshi.dev` project architecture. The full variant uses repository cards, restrained visibility badges, collapsed exclusions, and an optional API sidecar.
+
+The workflow is HTML and CSS, not an infographic image or client-rendered graph. Repository names remain readable text, connectors are decorative, and mobile preserves the private-source-to-public-site order without horizontal scrolling.
+
 ### Visual Modes
 
 Editorial mode covers Home, About, Research, Projects, Writing, and long-form detail pages. It uses narrative hierarchy, generous whitespace, narrow prose, and dividers before cards.

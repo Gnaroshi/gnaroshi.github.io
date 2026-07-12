@@ -1,5 +1,6 @@
 import type { projectFacts } from "../facts/projects";
 import type { researchFacts } from "../facts/research";
+import type { SystemRepository } from "../facts/systemArchitecture";
 
 export type LocalizedProfileCopy = {
   headline: string;
@@ -43,6 +44,44 @@ export type LocalizedSkillGroup = {
   skills: readonly string[];
 };
 
+export type LocalizedSystemRepositoryCopy = {
+  title: string;
+  role: string;
+  description: string;
+  responsibilities: readonly string[];
+  exclusions: readonly string[];
+};
+
+export type LocalizedSystemArchitectureCopy = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  stages: {
+    sources: string;
+    control: string;
+    projection: string;
+    presentation: string;
+  };
+  badges: {
+    private: string;
+    public: string;
+    optional: string;
+  };
+  repositories: Readonly<Record<SystemRepository["id"], LocalizedSystemRepositoryCopy>>;
+  responsibilityLabel: string;
+  exclusionsLabel: string;
+  repositoryLinkLabel: string;
+  cta: string;
+  buildDetails: {
+    title: string;
+    websiteCommit: string;
+    contentFeedCommit: string;
+    builtAt: string;
+    feedSchema: string;
+    unavailable: string;
+  };
+};
+
 export type LocaleCopy = {
   copyUpdatedAt: string;
   profile: LocalizedProfileCopy;
@@ -50,6 +89,7 @@ export type LocaleCopy = {
   projects: Readonly<Record<(typeof projectFacts)[number]["id"], LocalizedProjectCopy>>;
   now: LocalizedNowCopy;
   skillGroups: readonly LocalizedSkillGroup[];
+  systemArchitecture: LocalizedSystemArchitectureCopy;
 };
 
 type ProjectFactWithoutLinks<T> = T extends unknown ? Omit<T, "links"> : never;
@@ -68,4 +108,5 @@ export type LocalizedData = {
   projects: readonly LocalizedProject[];
   now: LocalizedNowCopy & { lastUpdated: string };
   skillGroups: readonly LocalizedSkillGroup[];
+  systemArchitecture: LocalizedSystemArchitectureCopy;
 };

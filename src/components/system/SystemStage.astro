@@ -1,0 +1,26 @@
+---
+import SystemConnection from "./SystemConnection.astro";
+import type { SystemConnection as SystemConnectionFact } from "../../data/facts/systemArchitecture";
+
+interface Props {
+  id: string;
+  title: string;
+  step: number;
+  connection?: SystemConnectionFact["type"];
+}
+
+const { id, title, step, connection } = Astro.props;
+---
+
+<li class="system-stage" data-system-stage={id}>
+  <section aria-labelledby={`system-stage-${id}`}>
+    <header class="system-stage__header">
+      <span class="system-stage__step" aria-hidden="true">{step}</span>
+      <h3 id={`system-stage-${id}`}>{title}</h3>
+    </header>
+    <div class="system-stage__content">
+      <slot />
+    </div>
+  </section>
+  {connection && <SystemConnection type={connection} />}
+</li>

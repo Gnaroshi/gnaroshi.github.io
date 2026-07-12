@@ -1,0 +1,87 @@
+---
+import SystemBuildDetails from "./SystemBuildDetails.astro";
+import SystemConnection from "./SystemConnection.astro";
+import SystemRepositoryCard from "./SystemRepositoryCard.astro";
+import SystemStage from "./SystemStage.astro";
+import { getSystemConnection, getSystemRepository } from "../../data/facts/systemArchitecture";
+import { getLocalizedData } from "../../data/locales";
+import type { Locale } from "../../i18n/types";
+import { getLocalePath } from "../../i18n/utils";
+import { getWebsiteBuildInfo } from "../../utils/contentFeed";
+import "../../styles/system-workflow.css";
+
+interface Props {
+  locale: Locale;
+  variant: "compact" | "full";
+  showBuildDetails?: boolean;
+}
+
+const { locale, variant, showBuildDetails = false } = Astro.props;
+const copy = getLocalizedData(locale).systemArchitecture;
+const repositories = {
+  paperLab: getSystemRepository("paper-lab"),
+  writing: getSystemRepository("writing"),
+  studio: getSystemRepository("studio"),
+  api: getSystemRepository("api"),
+  contentFeed: getSystemRepository("content-feed"),
+  website: getSystemRepository("website")
+};
+const labels = {
+  badges: copy.badges,
+  responsibilityLabel: copy.responsibilityLabel,
+  exclusionsLabel: copy.exclusionsLabel,
+  repositoryLinkLabel: copy.repositoryLinkLabel
+};
+const connections = {
+  sources: getSystemConnection("paper-lab", "studio"),
+  publish: getSystemConnection("studio", "content-feed"),
+  build: getSystemConnection("content-feed", "website"),
+  api: getSystemConnection("studio", "api")
+};
+const buildInfo = variant === "full" && showBuildDetails ? getWebsiteBuildInfo() : undefined;
+---
+
+<section
+  id={variant === "full" ? "repository-workflow" : "repository-workflow-home"}
+  class:list={["content-section", "system-workflow", `system-workflow--${variant}`]}
+  data-system-workflow={variant}
+  aria-labelledby={`system-workflow-title-${variant}`}
+>
+  <header class="system-workflow__heading">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h2 id={`system-workflow-title-${variant}`}>{copy.title}</h2>
+    <p>{copy.description}</p>
+  </header>
+
+  <ol class="system-workflow__flow">
+    <SystemStage id={`${variant}-sources`} title={copy.stages.sources} step={1} connection={connections.sources.type}>
+      <div class="system-stage__repositories system-stage__repositories--sources">
+        <SystemRepositoryCard repository={repositories.paperLab} copy={copy.repositories["paper-lab"]} labels={labels} variant={variant} />
+        <SystemRepositoryCard repository={repositories.writing} copy={copy.repositories.writing} labels={labels} variant={variant} />
+      </div>
+    </SystemStage>
+
+    <SystemStage id={`${variant}-control`} title={copy.stages.control} step={2} connection={connections.publish.type}>
+      <div class="system-stage__repositories system-stage__repositories--control">
+        <SystemRepositoryCard repository={repositories.studio} copy={copy.repositories.studio} labels={labels} variant={variant} />
+        <aside class="system-workflow__api" aria-label={`${copy.repositories.api.title} · ${copy.badges.optional}`}>
+          <SystemConnection type={connections.api.type} />
+          <SystemRepositoryCard repository={repositories.api} copy={copy.repositories.api} labels={labels} variant={variant} optional />
+        </aside>
+      </div>
+    </SystemStage>
+
+    <SystemStage id={`${variant}-projection`} title={copy.stages.projection} step={3} connection={connections.build.type}>
+      <SystemRepositoryCard repository={repositories.contentFeed} copy={copy.repositories["content-feed"]} labels={labels} variant={variant} />
+    </SystemStage>
+
+    <SystemStage id={`${variant}-presentation`} title={copy.stages.presentation} step={4}>
+      <SystemRepositoryCard repository={repositories.website} copy={copy.repositories.website} labels={labels} variant={variant} />
+    </SystemStage>
+  </ol>
+
+  {variant === "compact" && (
+    <a class="button button--primary system-workflow__cta" href={getLocalePath(locale, "/projects/gnaroshi-dev/#repository-workflow")}>{copy.cta}</a>
+  )}
+  {buildInfo && <SystemBuildDetails locale={locale} info={buildInfo} copy={copy.buildDetails} />}
+</section>

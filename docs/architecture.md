@@ -26,6 +26,12 @@ GitHub Pages
 
 The website never checks out or imports private authoring repositories.
 
+## Public System Workflow
+
+Home and the `gnaroshi.dev` project detail explain the stable roles of the two private source repositories, Studio, the optional API, the public content feed, and the website. This model is website-owned and renders even when the feed is empty. It is presentation architecture, not a live operations dashboard.
+
+Current diffs, dirty state, validation results, private commits, and deployment monitoring remain in Gnaroshi Studio. The public site exposes only public build provenance already covered by the build-info contract. See `docs/public-system-workflow.md`.
+
 ## Build Inputs
 
 - `.content-feed/blog/`: public English/Korean blog MDX.
