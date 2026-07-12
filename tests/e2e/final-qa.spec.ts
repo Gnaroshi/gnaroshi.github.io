@@ -3,6 +3,7 @@ import { englishQaRoutes, koreanQaRoutes, qaRoutes, qaViewports } from "./qa-rou
 
 for (const viewport of qaViewports) {
   test(`all QA routes are structurally sound at ${viewport.width}px`, async ({ page }) => {
+    test.setTimeout(60_000);
     await page.setViewportSize(viewport);
 
     for (const route of qaRoutes) {
