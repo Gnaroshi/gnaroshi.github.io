@@ -1,0 +1,35 @@
+# Site Identity
+
+## Source
+
+The website mark is a derivative of the owner-approved raster master in `gnaroshi_mds/identity/approved/gnaroshi-base-v1.png`. The immutable master is not copied over or replaced. The website derivative lives at:
+
+```text
+media-sources/identity/gnaroshi-site-v1/gnaroshi-site-mark-v1.png
+```
+
+The production mark keeps the large pointed ears, sharp teal eyes, broad lower face, white teeth, and orange armor silhouette. It removes the body, most armor facets, small ornaments, lettering, and background decoration so the subject remains legible at 16px.
+
+## Production Uses
+
+`npm run media:publish` generates:
+
+- 16px, 32px, and 48px browser icons
+- 180px Apple touch icon
+- 192px and 512px web manifest icons
+- 64px and 128px header/footer identity marks
+
+These are raster outputs. Do not recreate the mascot as SVG or replace it with a letter tile.
+
+## Color Boundary
+
+The existing site green remains the primary interaction color. The shared Gnaroshi identity colors are additional restrained cues:
+
+- `--color-identity-teal: #3fa6a0`
+- `--color-identity-orange: #e88945`
+
+Use them for the identity mark, project-evidence accents, and similarly small ownership cues. Do not recolor the full website, status system, heatmap, or body typography to match the mascot.
+
+## Small-Size Check
+
+Review the 16px, 32px, and 64px outputs on light and dark backgrounds after changing the master. The ears, teal eyes, and teeth must remain distinguishable; internal armor detail is secondary.

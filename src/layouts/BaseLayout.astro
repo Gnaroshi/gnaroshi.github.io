@@ -81,7 +81,10 @@ const websiteBuildInfo = getWebsiteBuildInfo();
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="content-feed-commit" content={contentFeedBuildInfo.contentFeedCommit ?? "unavailable"} />
     <meta name="website-commit" content={websiteBuildInfo.websiteCommit ?? "unavailable"} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" href={rssPath} type="application/rss+xml" title={translate(locale, "site.rssTitle")} />
     <SEO
       title={title}
