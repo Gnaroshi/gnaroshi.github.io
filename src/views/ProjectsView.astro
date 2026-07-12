@@ -11,6 +11,17 @@ import { getLocalePath, translate } from "../i18n/utils";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const data = getLocalizedData(locale);
+const selectedProjects = data.projects.filter((project) => project.portfolio === "selected-projects");
+const selectedProjectEntries = selectedProjects.map((project) => {
+  const media = getProjectMedia(project.id);
+  if (!media) throw new Error(`Selected project is missing approved media: ${project.id}`);
+  return { project, media };
+});
+const applicationGroups = [
+  { id: "research-workflow", label: translate(locale, "projects.group.researchWorkflow") },
+  { id: "system-utilities", label: translate(locale, "projects.group.systemUtilities") },
+  { id: "learning-tools", label: translate(locale, "projects.group.learningTools") }
+] as const;
 ---
 
 <BaseLayout locale={locale} title={translate(locale, "nav.projects")} description={translate(locale, "projects.intro")} width="wide">
@@ -18,12 +29,33 @@ const data = getLocalizedData(locale);
     <PageHeader title={translate(locale, "projects.title")} description={translate(locale, "projects.intro")} />
     <section class="project-showcase" aria-labelledby="projects-heading">
       <h2 id="projects-heading" class="sr-only">{translate(locale, "projects.selected")}</h2>
-      {data.projects.map((project) => <article id={project.slug} class="project-feature">
+      {selectedProjectEntries.map(({ project, media }) => <article id={project.slug} class="project-feature">
         <a class="project-feature__media" href={getLocalePath(locale, `/projects/${project.slug}/`)} tabindex="-1" aria-hidden="true">
-          <ResponsiveImage asset={getProjectMedia(project.id)} locale={locale} sizes="(min-width: 1024px) 52vw, 100vw" />
+          <ResponsiveImage asset={media} locale={locale} sizes="(min-width: 1024px) 52vw, 100vw" />
         </a>
         <div class="project-feature__copy"><p class="eyebrow">{project.statusLabel} · {formatLocalizedDate(project.updatedAt, locale)}</p><h2><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{project.title}</a></h2><p>{project.summary}</p><ul class="tag-row" aria-label={project.title}>{project.tags.map((tag) => <li>{tag}</li>)}</ul><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{translate(locale, "projects.caseStudy")}</a></div>
       </article>)}
+    </section>
+    <section class="applications" aria-labelledby="applications-heading">
+      <header class="applications__header">
+        <h2 id="applications-heading">{translate(locale, "projects.applications")}</h2>
+        <p>{translate(locale, "projects.applicationsDescription")}</p>
+      </header>
+      {applicationGroups.map((group) => {
+        const projects = data.projects.filter((project) => project.applicationGroup === group.id);
+        return <section class="application-group" aria-labelledby={`application-group-${group.id}`}>
+          <h3 id={`application-group-${group.id}`}>{group.label}</h3>
+          <div class="application-grid">
+            {projects.map((project) => <article class:list={["application-card", { "application-card--featured": project.applicationFeatured }]}>
+              <p class="eyebrow">{project.statusLabel} · {formatLocalizedDate(project.updatedAt, locale)}</p>
+              <h4><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{project.title}</a></h4>
+              <p>{project.summary}</p>
+              <ul class="tag-row" aria-label={project.title}>{project.tags.map((tag) => <li>{tag}</li>)}</ul>
+              <a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{translate(locale, "projects.caseStudy")}</a>
+            </article>)}
+          </div>
+        </section>;
+      })}
     </section>
   </PageShell>
 </BaseLayout>
@@ -38,6 +70,21 @@ const data = getLocalizedData(locale);
   .project-feature__copy { display: grid; gap: var(--space-4); align-content: center; }
   .project-feature h2 a { color: var(--color-text); text-decoration: none; }
   .project-feature__copy > p:not(.eyebrow) { color: var(--color-text-secondary); font-size: var(--editorial-body); line-height: 1.7; }
+  .applications { display:grid; gap:var(--space-8); margin-top:var(--space-10); padding-top:var(--space-9); border-top:1px solid var(--color-border); }
+  .applications__header { display:grid; gap:var(--space-3); max-width:72ch; }
+  .applications__header p, .application-card > p:not(.eyebrow) { color:var(--color-text-secondary); line-height:1.7; }
+  .application-group { display:grid; gap:var(--space-4); }
+  .application-grid { display:grid; gap:var(--space-4); }
+  .application-card { display:grid; align-content:start; gap:var(--space-3); min-width:0; padding:var(--space-5); border:1px solid var(--color-border); background:var(--color-surface); }
+  .application-card h4 { font-size:var(--step-1); }
+  .application-card h4 a { color:var(--color-text); text-decoration:none; }
+  .application-card--featured { padding:var(--space-6); border-top:3px solid var(--color-accent); }
   @media (min-width: 768px) { .project-feature { gap:var(--space-8); } }
+  @media (min-width: 768px) {
+    .application-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    .application-card--featured { grid-column:span 2; grid-template-columns:minmax(0, 1fr) auto; }
+    .application-card--featured > :not(.text-link) { grid-column:1; }
+    .application-card--featured .text-link { grid-column:2; grid-row:1 / span 4; align-self:center; }
+  }
   @media (min-width: 1024px) { .project-feature { grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr); align-items:center; gap: var(--space-8); padding-block: var(--space-9); } }
 </style>

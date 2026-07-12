@@ -1,0 +1,54 @@
+---
+import { managedApplications } from "../../data/facts/managedApplications";
+import { getLocalizedData } from "../../data/locales";
+import type { Locale } from "../../i18n/types";
+import { getLocalePath } from "../../i18n/utils";
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const copy = getLocalizedData(locale).managedApplications;
+const leftIds = managedApplications.slice(0, 3);
+const rightIds = managedApplications.slice(3);
+---
+
+<section class="managed-applications" aria-labelledby="managed-applications-title">
+  <header>
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h2 id="managed-applications-title">{copy.title}</h2>
+    <p>{copy.description}</p>
+  </header>
+  <figure class="managed-map">
+    <div class="managed-map__side managed-map__side--left">
+      {leftIds.map((app) => <a href={getLocalePath(locale, `/projects/${app.id}/`)}><strong>{copy.applications[app.id].title}</strong><span>{copy.applications[app.id].role}</span></a>)}
+    </div>
+    <div class="managed-map__center">
+      <strong>{copy.studio.title}</strong>
+      <span>{copy.studio.role}</span>
+    </div>
+    <div class="managed-map__side managed-map__side--right">
+      {rightIds.map((app) => <a href={getLocalePath(locale, `/projects/${app.id}/`)}><strong>{copy.applications[app.id].title}</strong><span>{copy.applications[app.id].role}</span></a>)}
+    </div>
+    <figcaption>{copy.caption}</figcaption>
+  </figure>
+</section>
+
+<style>
+  .managed-applications { display:grid; gap:var(--space-6); padding-top:var(--space-5); border-top:1px solid var(--color-border); }
+  .managed-applications > header { display:grid; gap:var(--space-3); }
+  .managed-applications > header > p:last-child { max-width:72ch; color:var(--color-text-secondary); line-height:1.75; }
+  .managed-map { display:grid; grid-template-columns:minmax(0,1fr); gap:var(--space-4); margin:0; padding:var(--space-5); border:1px solid var(--color-border); background:var(--color-surface); }
+  .managed-map__side { display:grid; gap:var(--space-3); }
+  .managed-map__side a, .managed-map__center { display:grid; gap:var(--space-1); padding:var(--space-4); border:1px solid var(--color-border); background:var(--color-background); color:var(--color-text); text-decoration:none; }
+  .managed-map__side a:hover strong { text-decoration:underline; text-underline-offset:.2em; }
+  .managed-map__side span, .managed-map__center span { color:var(--color-text-secondary); font-size:var(--step--1); line-height:1.5; }
+  .managed-map__center { order:-1; border:2px solid var(--color-accent); text-align:center; }
+  .managed-map figcaption { color:var(--color-text-secondary); font-size:var(--step--1); line-height:1.6; }
+  @media (min-width:768px) {
+    .managed-map { grid-template-columns:minmax(0,1fr) minmax(180px,.8fr) minmax(0,1fr); align-items:center; gap:var(--space-6); }
+    .managed-map__center { order:0; position:relative; }
+    .managed-map__center::before, .managed-map__center::after { content:""; position:absolute; top:50%; width:var(--space-6); border-top:1px solid var(--color-accent); }
+    .managed-map__center::before { right:100%; }
+    .managed-map__center::after { left:100%; }
+    .managed-map figcaption { grid-column:1 / -1; }
+  }
+</style>

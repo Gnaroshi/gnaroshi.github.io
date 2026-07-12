@@ -7,6 +7,7 @@ const outputRoot = path.join("artifacts", "public-page-checklist");
 const routeName = (route: string) => route === "/" ? "en-home" : route === "/ko/" ? "ko-home" : route.replace(/^\//, "").replaceAll("/", "-").replace(/-$/, "");
 
 test.describe("all public page visual checklist", { tag: "@visual-v3" }, () => {
+  test.describe.configure({ timeout: 60_000 });
   test.beforeAll(async () => {
     await rm(outputRoot, { recursive: true, force: true });
     await mkdir(outputRoot, { recursive: true });

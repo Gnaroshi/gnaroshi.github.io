@@ -106,6 +106,8 @@ export function getResearchMedia(areaId: string, locale: Locale): ApprovedMediaA
   return locale === "ko" ? approvedMedia.researchWorkflowKo : approvedMedia.researchWorkflowEn;
 }
 
-export function getProjectMedia(projectId: string): ApprovedMediaAsset {
-  return projectId === "gnaroshi-vla" ? approvedMedia.projectVla : approvedMedia.projectSite;
+export function getProjectMedia(projectId: string): ApprovedMediaAsset | undefined {
+  if (projectId === "gnaroshi-vla") return approvedMedia.projectVla;
+  if (projectId === "gnaroshi-dev") return approvedMedia.projectSite;
+  return undefined;
 }

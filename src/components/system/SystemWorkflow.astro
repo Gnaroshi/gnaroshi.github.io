@@ -17,6 +17,7 @@ interface Props {
 
 const { locale, variant, showBuildDetails = false } = Astro.props;
 const copy = getLocalizedData(locale).systemArchitecture;
+const presentationCopy = variant === "full" ? { ...copy, title: copy.fullTitle } : copy;
 const repositories = {
   paperLab: getSystemRepository("paper-lab"),
   writing: getSystemRepository("writing"),
@@ -42,11 +43,11 @@ const buildInfo = variant === "full" && showBuildDetails ? getWebsiteBuildInfo()
 >
   <header class="system-workflow__heading">
     <p class="eyebrow">{copy.eyebrow}</p>
-    <h2 id={`system-workflow-title-${variant}`}>{copy.title}</h2>
+    <h2 id={`system-workflow-title-${variant}`}>{presentationCopy.title}</h2>
     <p>{copy.description}</p>
   </header>
 
-  <SystemFlowDiagram copy={copy} />
+  <SystemFlowDiagram copy={presentationCopy} />
 
   {variant === "full" && (
     <details class="system-workflow__boundaries">

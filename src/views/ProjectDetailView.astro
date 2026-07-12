@@ -4,6 +4,7 @@ import Breadcrumbs from "../components/Breadcrumbs.astro";
 import StructuredData from "../components/StructuredData.astro";
 import ExternalLink from "../components/common/ExternalLink.astro";
 import SystemWorkflow from "../components/system/SystemWorkflow.astro";
+import ManagedApplicationsWorkflow from "../components/system/ManagedApplicationsWorkflow.astro";
 import ResponsiveImage from "../components/media/ResponsiveImage.astro";
 import { getProjectMedia } from "../data/approvedMedia";
 import { getLocalizedData } from "../data/locales";
@@ -44,17 +45,19 @@ const projectMedia = getProjectMedia(project.id);
       ...(repositoryUrl ? { codeRepository: repositoryUrl, programmingLanguage: project.codeLanguages } : {})
     }} />
     <header class="page-header"><a href={getLocalePath(locale, "/projects/")}>{translate(locale, "common.back")}</a><p class="eyebrow">{translate(locale, "nav.projects")}</p><h1>{project.title}</h1><p class="lede">{project.summary}</p><p class="metadata">{project.statusLabel} · {translate(locale, "common.updated")} {formatLocalizedDate(project.updatedAt, locale)}</p></header>
-    <figure class="project-case__evidence"><ResponsiveImage asset={projectMedia} locale={locale} sizes="(min-width: 1200px) 1040px, 100vw" /></figure>
+    {projectMedia && <figure class="project-case__evidence"><ResponsiveImage asset={projectMedia} locale={locale} sizes="(min-width: 1200px) 1040px, 100vw" /></figure>}
     <section><h2>{translate(locale, "projects.problem")}</h2><p>{project.problem}</p></section>
     {project.slug === "gnaroshi-dev" && <SystemWorkflow locale={locale} variant="full" showBuildDetails />}
+    {project.slug === "gnaroshi-dev" && <ManagedApplicationsWorkflow locale={locale} />}
     <section><h2>{translate(locale, "projects.designGoals")}</h2><ul>{project.designGoals.map((item) => <li>{item}</li>)}</ul></section>
     <section><h2>{translate(locale, "projects.architecture")}</h2><ul>{project.architecture.map((item) => <li>{item}</li>)}</ul></section>
     {project.supportedAdapters.length > 0 && <section><h2>{translate(locale, "projects.supportedAdapters")}</h2><ul>{project.supportedAdapters.map((item) => <li>{item}</li>)}</ul></section>}
     <section><h2>{translate(locale, "projects.reproducibility")}</h2><ul>{project.reproducibility.map((item) => <li>{item}</li>)}</ul></section>
+    {project.studioRelationship && <section><h2>{translate(locale, "projects.studioRelationship")}</h2><p>{project.studioRelationship}</p></section>}
     <section><h2>{translate(locale, "projects.currentState")}</h2><p>{project.currentState}</p></section>
     <section><h2>{translate(locale, "projects.openProblems")}</h2><ul>{project.openProblems.map((item) => <li>{item}</li>)}</ul></section>
     {related.length > 0 && <section><h2>{translate(locale, "projects.relatedWriting")}</h2><ul>{related.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a></li>)}</ul></section>}
-    <footer class="link-row">{project.links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}</footer>
+    {project.links.length > 0 && <footer class="link-row">{project.links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}</footer>}
   </article>
 </BaseLayout>
 
