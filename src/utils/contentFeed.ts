@@ -12,6 +12,9 @@ export type ContentFeedManifest = {
   state: "bootstrap-empty" | "generated" | "invalid";
   sourceCommits: { paperLab: string; writing: string };
   counts: Record<string, number>;
+  metricEligible?: boolean;
+  graphEligible?: boolean;
+  weeklyReviewEligible?: boolean;
 };
 
 export type ContentFeedBuildInfo = {

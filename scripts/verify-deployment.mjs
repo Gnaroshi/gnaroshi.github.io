@@ -21,7 +21,7 @@ const attempts = Number(option("attempts", "8"));
 const initialDelayMs = Number(option("initial-delay-ms", "5000"));
 const maxDelayMs = Number(option("max-delay-ms", "30000"));
 const skipNavigationSignature = args.includes("--skip-navigation-signature") || process.env.SKIP_NAVIGATION_SIGNATURE === "true";
-const navigationSignature = "research|projects|writing|papers|about";
+const requiredNavigation = ["research", "projects", "papers", "about"];
 const routes = ["/", "/ko/", "/research/", "/papers/"];
 const scaffoldPhrases = [
   "editable in src",
@@ -70,10 +70,20 @@ async function verify() {
   if (expected.workflowRunId) assertEqual(buildInfo.workflowRunId, expected.workflowRunId, "workflow run id");
   if (expected.workflowRunAttempt) assertEqual(buildInfo.workflowRunAttempt, expected.workflowRunAttempt, "workflow run attempt");
 
+  let observedNavigationSignature;
   for (const route of routes) {
     const html = await fetchText(route);
-    if (!skipNavigationSignature && !html.includes(`data-navigation-signature="${navigationSignature}"`)) {
-      throw new Error(`${route} is missing navigation signature ${navigationSignature}`);
+    if (!skipNavigationSignature) {
+      const signature = html.match(/data-navigation-signature="([^"]+)"/)?.[1];
+      if (!signature) throw new Error(`${route} is missing its navigation signature`);
+      const entries = signature.split("|").filter(Boolean);
+      if (new Set(entries).size !== entries.length) throw new Error(`${route} has duplicate navigation entries: ${signature}`);
+      const missing = requiredNavigation.filter((entry) => !entries.includes(entry));
+      if (missing.length > 0) throw new Error(`${route} is missing required navigation entries: ${missing.join(", ")}`);
+      if (observedNavigationSignature && signature !== observedNavigationSignature) {
+        throw new Error(`${route} navigation differs from ${observedNavigationSignature}: ${signature}`);
+      }
+      observedNavigationSignature = signature;
     }
     const normalized = html.toLowerCase();
     const phrase = scaffoldPhrases.find((candidate) => normalized.includes(candidate));

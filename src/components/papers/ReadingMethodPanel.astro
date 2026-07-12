@@ -31,14 +31,15 @@ const principles = [
     <p class="eyebrow">{translate(locale, "papers.method")}</p>
     <h2 id="reading-method-heading">{translate(locale, "papers.threePass")}</h2>
   </div>
-  <div class="paper-method-panel__passes">
-    {passes.map((pass) => (
-      <article>
+  <ol class="paper-method-panel__passes">
+    {passes.map((pass, index) => (
+      <li>
+        <span aria-hidden="true">{index + 1}</span>
         <h3>{pass.title}</h3>
         <p>{pass.description}</p>
-      </article>
+      </li>
     ))}
-  </div>
+  </ol>
   <ul class="paper-method-panel__principles">
     {principles.map((principle) => <li>{principle}</li>)}
   </ul>

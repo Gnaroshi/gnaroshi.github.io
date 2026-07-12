@@ -17,6 +17,7 @@ const selectedProjectEntries = selectedProjects.map((project) => {
   if (!media) throw new Error(`Selected project is missing approved media: ${project.id}`);
   return { project, media };
 });
+const applicationCount = data.projects.filter((project) => project.portfolio === "managed-applications").length;
 const applicationGroups = [
   { id: "research-workflow", label: translate(locale, "projects.group.researchWorkflow") },
   { id: "system-utilities", label: translate(locale, "projects.group.systemUtilities") },
@@ -26,7 +27,12 @@ const applicationGroups = [
 
 <BaseLayout locale={locale} title={translate(locale, "nav.projects")} description={translate(locale, "projects.intro")} width="wide">
   <PageShell class="projects-page">
-    <PageHeader title={translate(locale, "projects.title")} description={translate(locale, "projects.intro")} />
+    <PageHeader title={translate(locale, "projects.title")} description={translate(locale, "projects.intro")}>
+      <a class="project-index-link text-link" href="#applications-heading">
+        {translate(locale, "projects.applicationIndex").replace("{count}", String(applicationCount))}
+        <span aria-hidden="true">↓</span>
+      </a>
+    </PageHeader>
     <section class="project-showcase" aria-labelledby="projects-heading">
       <h2 id="projects-heading" class="sr-only">{translate(locale, "projects.selected")}</h2>
       {selectedProjectEntries.map(({ project, media }) => <article id={project.slug} class="project-feature">
@@ -61,6 +67,7 @@ const applicationGroups = [
 </BaseLayout>
 
 <style>
+  .project-index-link { display:inline-flex; gap:var(--space-2); width:fit-content; }
   .project-showcase { border-top: 1px solid var(--color-border); }
   .project-feature { display: grid; gap: var(--space-6); padding: var(--space-8) 0; }
   .project-feature + .project-feature { border-top:1px solid var(--color-border); }
@@ -82,6 +89,7 @@ const applicationGroups = [
   @media (min-width: 768px) { .project-feature { gap:var(--space-8); } }
   @media (min-width: 768px) {
     .application-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    .application-card:not(.application-card--featured):last-child { grid-column:1 / -1; }
     .application-card--featured { grid-column:span 2; grid-template-columns:minmax(0, 1fr) auto; }
     .application-card--featured > :not(.text-link) { grid-column:1; }
     .application-card--featured .text-link { grid-column:2; grid-row:1 / span 4; align-self:center; }

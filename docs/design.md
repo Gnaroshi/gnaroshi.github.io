@@ -84,6 +84,8 @@ Primary navigation is limited to five destinations; the brand links to Home:
 
 Activity is a utility destination. Now and public links belong in the homepage, About, and footer. Paper workflow tools stay grouped under a local Papers navigation instead of competing in the global header.
 
+Public navigation follows feed-backed capability evidence. Empty Writing and Activity destinations are omitted, while the Papers onboarding route may remain available through its explicit feature flag. Papers local navigation uses scan-friendly direct links rather than independently expandable menus: the empty state exposes only Overview and Reading method, and review, practice, build, or insight links appear only after their corresponding public records are available.
+
 ### System Workflow
 
 Home uses one compact semantic workflow in place of a separate Research Loop section. It explains stable repository roles in four ordered stages and links once to the complete `gnaroshi.dev` project architecture. The full variant uses repository cards, restrained visibility badges, collapsed exclusions, and an optional API sidecar.
