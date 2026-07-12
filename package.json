@@ -25,6 +25,7 @@
     "media:build": "node scripts/build-media-candidates.mjs",
     "media:publish": "node scripts/publish-approved-media.mjs",
     "media:check": "node scripts/check-media.mjs",
+    "showcases:import": "node scripts/import-project-showcases.mjs",
     "check:public-tone": "npm run build && node scripts/check-public-tone.mjs",
     "check:launch-content": "node scripts/check-launch-content.mjs",
     "og:render": "node scripts/render-og-images.mjs",
