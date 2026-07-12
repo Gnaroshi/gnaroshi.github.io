@@ -8,6 +8,7 @@ The previous abstract artwork system is retired. See:
 - `docs/technical-diagrams.md` for editable diagram sources and exports.
 - `docs/project-screenshot-guide.md` for real-evidence capture rules.
 - `docs/image-semantic-review.md` for scores and approval state.
+- `docs/site-identity.md` for the raster favicon and restrained identity-color usage.
 
 Stage 1 candidates live outside `public/` in `media-sources/`. They are available only through `/dev/media-review/` during development. They must not be imported by public pages until explicit approval.
 

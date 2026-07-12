@@ -181,7 +181,16 @@ video {
 }
 
 .site-footer__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   font-weight: 700;
+}
+
+.site-footer__title img {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
 }
 
 .site-footer__text {

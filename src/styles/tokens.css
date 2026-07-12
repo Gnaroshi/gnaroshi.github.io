@@ -27,6 +27,8 @@
   --color-implementation: #247048;
   --color-review-due: #806317;
   --color-warning: #984236;
+  --color-identity-teal: #3fa6a0;
+  --color-identity-orange: #e88945;
 
   --color-status-skim: #75661c;
   --color-status-structured: #315f7e;
@@ -135,6 +137,8 @@
   --color-implementation: #81d8a7;
   --color-review-due: #dec56e;
   --color-warning: #f1a193;
+  --color-identity-teal: #3fa6a0;
+  --color-identity-orange: #e88945;
   --color-score-seed: #f1a193;
   --color-score-developing: #dec56e;
   --color-score-solid: #8db8d4;

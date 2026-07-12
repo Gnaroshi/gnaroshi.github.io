@@ -1,0 +1,17 @@
+{
+  "id": "gnaroshi-site-mark-v1",
+  "createdAt": "2026-07-12",
+  "category": "functional-site-identity",
+  "format": "raster-png",
+  "sourceIdentity": "gnaroshi_mds/identity/approved/gnaroshi-base-v1.png",
+  "sourceRole": "owner-approved identity reference",
+  "generator": "OpenAI image generation",
+  "intent": "Simplify the approved mascot into a browser-scale site mark while preserving the ears, teal eyes, broad face, teeth, and orange-teal contrast.",
+  "constraints": [
+    "No letter or word",
+    "No body or chest armor",
+    "No vector master",
+    "Legible at 16, 32, and 64 pixels",
+    "Preserve the approved identity master unchanged"
+  ]
+}

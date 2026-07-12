@@ -23,6 +23,7 @@ Before structural changes, read:
 - `docs/public-system-workflow.md`
 - `docs/public-page-visual-checklist.md`
 - `docs/ui-ux-audit-2026-07-12.md`
+- `docs/site-identity.md`
 
 ## Stack
 
