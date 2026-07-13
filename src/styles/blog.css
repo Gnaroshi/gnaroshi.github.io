@@ -99,7 +99,7 @@
   min-height: 2rem;
   padding: 0.2rem 0.65rem;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: var(--color-surface-muted);
   color: var(--color-text-secondary);
   cursor: pointer;

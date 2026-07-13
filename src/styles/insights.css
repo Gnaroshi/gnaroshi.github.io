@@ -186,7 +186,7 @@
 .graph-edge-row span {
   padding: 0.1rem 0.45rem;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
   font-size: var(--text-xs);
   white-space: nowrap;
@@ -326,7 +326,7 @@
 .momentum-meter {
   overflow: hidden;
   height: 0.45rem;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: var(--color-bg-muted);
 }
 

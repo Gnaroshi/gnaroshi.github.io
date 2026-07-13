@@ -11,10 +11,10 @@ interface Props { project: ProjectFact; story: ProjectStory; locale: Locale }
 const { project, story, locale } = Astro.props;
 const labels = getProjectUi(locale);
 ---
-<header class="project-hero">
+<header class="project-hero" data-project-id={project.id}>
   <a class="back-link" href={getLocalePath(locale,"/projects/")}>← {labels.back}</a>
   <div class="project-hero__identity">
-    {project.kind === "application" && <ApplicationRoleIcon role={project.applicationGroup} label={`${story.title} ${locale === "ko" ? "애플리케이션 역할" : "application role"}`} size="large"/>}
+    {project.kind === "application" && <ApplicationRoleIcon role={project.applicationGroup} projectId={project.id} label={`${story.title} ${locale === "ko" ? "애플리케이션 역할" : "application role"}`} size="large"/>}
     <div><p class="eyebrow">{project.kind === "application" ? (locale === "ko" ? "애플리케이션" : "Application") : translate(locale,"nav.projects")}</p><h1>{story.title}</h1></div>
   </div>
   <p class="lede">{story.heroSummary}</p>

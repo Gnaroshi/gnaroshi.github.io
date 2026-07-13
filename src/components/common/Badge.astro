@@ -17,7 +17,8 @@ const { tone = "default" } = Astro.props;
     width: fit-content;
     padding: 0.12rem 0.5rem;
     border: 1px solid var(--color-border);
-    border-radius: 999px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
     color: var(--color-text-secondary);
     font-size: var(--text-sm);
     line-height: 1.4;
@@ -34,4 +35,3 @@ const { tone = "default" } = Astro.props;
     color: var(--color-text-muted);
   }
 </style>
-
