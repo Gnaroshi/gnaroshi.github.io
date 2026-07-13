@@ -39,7 +39,10 @@ test("custom 404 renders useful navigation", async ({ page }) => {
   const response = await page.goto("/404.html");
   expect([200, 404]).toContain(response?.status());
   await expect(page.getByRole("heading", { level: 1, name: "Page not found" })).toBeVisible();
-  await expect(page.getByRole("region", { name: "Useful links" }).getByRole("link", { name: "Research" })).toBeVisible();
+  const recovery = page.getByRole("region", { name: "Useful links" });
+  await expect(recovery.getByRole("link", { name: "Home" })).toBeVisible();
+  await expect(recovery.getByRole("link", { name: "Projects" })).toBeVisible();
+  await expect(recovery.getByRole("link", { name: "Reading" })).toBeVisible();
 });
 
 test("main routes do not overflow at 390px", async ({ page }) => {
