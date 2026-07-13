@@ -11,7 +11,7 @@ import PaperStats from "./PaperStats.astro";
 import ReadingMethodPanel from "./ReadingMethodPanel.astro";
 import PaperIcon from "../icons/PaperIcon.astro";
 import type { Locale } from "../../i18n/types";
-import { translate } from "../../i18n/utils";
+import { getLocalePath, translate } from "../../i18n/utils";
 import { getIslandMessages } from "../../i18n/islands";
 
 interface Props {
@@ -34,6 +34,12 @@ const years = [...new Set(records.map((paper) => paper.year))].sort((a, b) => b 
 const countsRecord = Object.fromEntries(countsByDate.entries());
 const hasAdvancedNotebook = papers.length >= evidenceGates.paperLab.filtersAt;
 const hasReviewSummary = reviewStats.reviewedCount >= evidenceGates.paperLab.aiReviewSummaryAt;
+const recallPractice = papers.flatMap((paper) => (paper.data.oralExams ?? []).map((practice) => ({
+  ...practice,
+  paperTitle: paper.data.title,
+  href: getLocalePath(locale, `/papers/${paper.data.canonicalSlug}/exam/live/`)
+}))).sort((a, b) => a.date.localeCompare(b.date));
+const hasRecallTrend = recallPractice.length >= evidenceGates.paperLab.retrievalTrendAt;
 const islandMessages = getIslandMessages(locale);
 const messages = islandMessages.paper;
 ---
@@ -94,6 +100,25 @@ const messages = islandMessages.paper;
               <div><h3>{messages.weakDimension}</h3><p class="metadata">{messages.dimensionAverage.replace("{label}", reviewStats.weakestDimension.label).replace("{score}", String(reviewStats.weakestDimension.averageScore))}</p></div>
             )}
           </div>
+        </section>
+      )}
+
+      {hasRecallTrend && (
+        <section class="paper-recall-trend" aria-labelledby="paper-recall-trend-heading">
+          <div>
+            <p class="eyebrow">{locale === "ko" ? "말로 설명해 보기" : "Recall practice"}</p>
+            <h2 id="paper-recall-trend-heading">{locale === "ko" ? "회상 연습의 변화" : "Recall practice over time"}</h2>
+            <p>{locale === "ko" ? "각 결과는 당시 연습에서 기억으로 설명한 범위만 보여 줍니다." : "Each result describes only what was explained from memory in that practice session."}</p>
+          </div>
+          <ol>
+            {recallPractice.map((practice) => (
+              <li>
+                <div><time datetime={practice.date}>{practice.date}</time><a href={practice.href}>{practice.paperTitle}</a></div>
+                <p>{practice.summary}</p>
+                <span>{locale === "ko" ? "연습 결과" : "Practice result"}: {practice.overallScore}/100 · {locale === "ko" ? "확신도" : "Confidence"} {practice.confidence}</span>
+              </li>
+            ))}
+          </ol>
         </section>
       )}
 
@@ -201,6 +226,23 @@ const messages = islandMessages.paper;
   .paper-note-list small {
     color: var(--color-text-muted);
   }
+
+  .paper-recall-trend {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-6);
+    border-block: 1px solid var(--color-border);
+  }
+
+  .paper-recall-trend > div { display:grid; gap:var(--space-2); max-width:68ch; }
+  .paper-recall-trend > div p:last-child,
+  .paper-recall-trend li p,
+  .paper-recall-trend li span { color:var(--color-text-secondary); }
+  .paper-recall-trend ol { display:grid; gap:var(--space-4); padding:0; margin:0; list-style:none; }
+  .paper-recall-trend li { display:grid; gap:var(--space-2); padding-top:var(--space-4); border-top:1px solid var(--color-border); }
+  .paper-recall-trend li > div { display:flex; flex-wrap:wrap; gap:var(--space-3); align-items:baseline; }
+  .paper-recall-trend time,
+  .paper-recall-trend li span { font-size:var(--text-sm); }
 
   @media (max-width: 767px) {
     .paper-onboarding { grid-template-columns: 1fr; padding: var(--space-5); }

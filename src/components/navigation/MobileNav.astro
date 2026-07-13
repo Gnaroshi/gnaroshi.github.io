@@ -22,10 +22,10 @@ const mobileNavigation = [...getPrimaryNavigation(locale), ...getUtilityNavigati
   </button>
   <div class="mobile-nav__panel" id="mobile-navigation-panel" hidden data-mobile-nav-panel>
     <nav aria-label={translate(locale, "a11y.mobileNavigation")}>
-      {mobileNavigation.map((item) => (
-        <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
-          {item.label}
-        </a>
+      {mobileNavigation.map((item) => isNavigationActive(currentPath, item.href) ? (
+        <span aria-current="page" data-current-nav-item data-nav-href={item.href}>{item.label}</span>
+      ) : (
+        <a href={item.href} data-nav-href={item.href}>{item.label}</a>
       ))}
     </nav>
   </div>
@@ -42,7 +42,7 @@ const mobileNavigation = [...getPrimaryNavigation(locale), ...getUtilityNavigati
       panel.hidden = true;
       trigger.setAttribute("aria-expanded", "false");
       document.body.classList.remove("mobile-nav-open");
-      trigger.focus();
+      requestAnimationFrame(() => trigger.focus());
     };
     const open = () => {
       panel.hidden = false;
@@ -54,6 +54,9 @@ const mobileNavigation = [...getPrimaryNavigation(locale), ...getUtilityNavigati
     trigger.addEventListener("click", () => (panel.hidden ? open() : close()));
     panel.addEventListener("click", (event) => {
       if ((event.target as HTMLElement).closest("a")) close();
+    });
+    document.addEventListener("pointerdown", (event) => {
+      if (!panel.hidden && !root.contains(event.target as Node)) close();
     });
     root.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && !panel.hidden) {

@@ -63,6 +63,8 @@ export const qaRoutes = [...englishQaRoutes, ...koreanQaRoutes] as const;
 export const qaViewports = [
   { name: "desktop", width: 1440, height: 1000 },
   { name: "tablet", width: 1024, height: 768 },
+  { name: "tablet-768", width: 768, height: 1024 },
+  { name: "mobile-430", width: 430, height: 932 },
   { name: "mobile-390", width: 390, height: 844 },
   { name: "mobile-360", width: 360, height: 800 }
 ] as const;

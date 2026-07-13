@@ -5,6 +5,7 @@ import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import FeatureStyles from "../../../components/FeatureStyles.astro";
 import RedirectPage from "../../../components/RedirectPage.astro";
 import StructuredData from "../../../components/StructuredData.astro";
+import PaperDetailHeader from "../../../components/papers/PaperDetailHeader.astro";
 import { getBuildablePapers, type PaperEntry } from "../../../utils/papers";
 import { getTranslationEntry } from "../../../utils/localizedContent";
 import { profile } from "../../../data/profile";
@@ -65,20 +66,14 @@ const techArticle = {
   <article class="paper-detail">
     <Breadcrumbs label="현재 위치" items={[
       { name: "홈", href: "/ko/" },
-      { name: "논문 기록", href: "/ko/papers/" },
+      { name: "논문 읽기", href: "/ko/papers/" },
       { name: paper.data.title, href: canonicalPath }
     ]} />
     <StructuredData data={techArticle} />
     {!english && <p class="content-language-badge"><span class="paper-badge paper-badge--muted">한국어 콘텐츠</span> 영어 번역 없음</p>}
-    <header class="paper-detail-header">
-      <a class="paper-detail-header__back" href="/ko/papers/">논문 기록으로 돌아가기</a>
-      <div class="paper-detail-header__title"><p class="eyebrow">논문 노트</p><h1>{paper.data.title}</h1>{paper.data.oneLineSummary && <p class="lede">{paper.data.oneLineSummary}</p>}</div>
-      <div class="paper-detail-header__meta"><p>{paper.data.authors.join(", ")}</p><p>{paper.data.venue} · {paper.data.year}</p></div>
-      <div class="paper-detail-header__badges"><span class="paper-badge">{paper.data.status}</span><span class="paper-badge">{paper.data.depth}</span><span class="paper-badge paper-badge--muted">난이도 {paper.data.difficulty}/5</span></div>
-      <div class="paper-detail-header__links">{paper.data.paperUrl && <a href={paper.data.paperUrl} target="_blank" rel="noopener noreferrer external">논문</a>}{paper.data.codeUrl && <a href={paper.data.codeUrl} target="_blank" rel="noopener noreferrer external">코드</a>}{paper.data.projectUrl && <a href={paper.data.projectUrl} target="_blank" rel="noopener noreferrer external">프로젝트</a>}</div>
-    </header>
+    <PaperDetailHeader paper={paper} locale="ko" />
 
-    {paper.data.lastReviewed && <section class="section" aria-labelledby="ko-review-heading"><h2 id="ko-review-heading">공개 리뷰</h2><p>{paper.data.reviewHistory?.[0]?.note}</p><p class="metadata">{paper.data.lastReviewed.toISOString().slice(0, 10)}</p></section>}
+    {paper.data.lastReviewed && <section class="section" aria-labelledby="ko-review-heading"><h2 id="ko-review-heading">노트 검토</h2><p>이 결과는 읽기 기록에 남긴 내용만 바탕으로 다시 볼 부분을 정리합니다.</p><p>{paper.data.reviewHistory?.[0]?.note}</p><p class="metadata">{paper.data.lastReviewed.toISOString().slice(0, 10)}</p></section>}
 
     {futureMe && Object.values(futureMe).some(Boolean) && <section class="learning-panel learning-panel--accent" aria-labelledby="ko-future-me"><div><p class="eyebrow">미래의 나에게</p><h2 id="ko-future-me">나중에도 기억할 것</h2></div><div class="paper-detail-grid">{futureMe.oneThingToRemember && <div><h3>기억할 한 가지</h3><p>{futureMe.oneThingToRemember}</p></div>}{futureMe.whyItMatters && <div><h3>중요한 이유</h3><p>{futureMe.whyItMatters}</p></div>}{futureMe.whenToUseThis && <div><h3>활용할 때</h3><p>{futureMe.whenToUseThis}</p></div>}{futureMe.whatToRevisit && <div><h3>다시 볼 것</h3><p>{futureMe.whatToRevisit}</p></div>}{futureMe.warning && <div><h3>주의할 점</h3><p>{futureMe.warning}</p></div>}</div></section>}
 

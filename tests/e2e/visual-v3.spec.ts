@@ -157,7 +157,10 @@ test("approved Hero and evidence media stay measurable", async ({ page }) => {
       expect(copy).not.toBeNull();
       await expect(page.locator(".identity-hero__media picture img")).toBeVisible();
       expect(copy!.x + copy!.width).toBeLessThanOrEqual(viewport.width);
-      await expect(page.locator(".identity-hero__actions .button")).toHaveCount(2);
+      const writingAvailable = await page.locator('.desktop-nav [data-nav-href$="/blog"]').count();
+      await expect(page.locator(".identity-hero__actions .button")).toHaveCount(1 + writingAvailable);
+      await expect(page.locator('.identity-hero__actions a[href$="/research/"]')).toHaveCount(1);
+      await expect(page.locator('.identity-hero__actions a[href$="/blog/"]')).toHaveCount(writingAvailable);
       const images = page.locator("main img");
       for (let index = 0; index < await images.count(); index += 1) {
         const image = images.nth(index);

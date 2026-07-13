@@ -6,6 +6,7 @@ import SEO from "../components/SEO.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import PaperLabNav from "../components/navigation/PaperLabNav.astro";
+import InPageAnchorBehavior from "../components/InPageAnchorBehavior.astro";
 import { ogLocales } from "../i18n/config";
 import type { AlternateUrls, Locale } from "../i18n/types";
 import { getLocaleFromUrl, getLocalePath, translate } from "../i18n/utils";
@@ -142,5 +143,6 @@ const websiteBuildInfo = getWebsiteBuildInfo();
       <slot />
     </main>
     {!minimalChrome && <SiteFooter locale={locale} />}
+    <InPageAnchorBehavior />
   </body>
 </html>
