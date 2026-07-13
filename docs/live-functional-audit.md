@@ -20,6 +20,21 @@ The live site was current before UI changes began. No stale artifact or custom-d
 
 Local and live baseline inventory covered 54 routes at 1440×1000 and 390×844. It recorded 216 page loads with no HTTP failure, console error, failed request, or horizontal overflow. Local and live control signatures matched.
 
+## Final Deployment
+
+| Item | Verified value |
+| --- | --- |
+| Merged website commit | `6a2d3580ac8ad049bdb7f452788cb0b968eab304` |
+| Deployed website commit | `6a2d3580ac8ad049bdb7f452788cb0b968eab304` |
+| Deployed content-feed commit | `0a2b5c5cdaf283e344d896142aedb565659d26f9` |
+| Deployed content hash | `9ea450911265f1364623fc4c023952e2c6fc70f19560fad9710fe44a0307d261` |
+| Pages workflow run | `29238183103` |
+| Pages deployment | `5421944378` (`success`) |
+| Built at | `2026-07-13T09:12:22Z` |
+| Custom domain | `https://gnaroshi.dev/` returned HTTP 200 |
+
+The deployed site then passed 137 functional E2E tests and 55 accessibility tests directly against the custom domain. The 54-route visual matrix passed at all six viewports in both themes, producing 648 live screenshots. One final 360px dark capture attempt was interrupted by a local `ERR_NETWORK_CHANGED` / `ERR_INTERNET_DISCONNECTED` event; the same 54-route matrix passed after connectivity returned.
+
 ## Verified Issues
 
 | Issue | Evidence | Resolution |

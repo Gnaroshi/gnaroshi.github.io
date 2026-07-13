@@ -49,14 +49,24 @@ Automated axe checks cover every QA route. Keyboard checks cover the skip link, 
 
 ## Deployment Verification
 
-Before this branch, live `build-info.json` matched `origin/main` and the local public feed. Final live verification must compare the merged website commit and expected feed commit, rerun the live interaction matrix, and inspect Home, Projects, all project details, Reading, Korean Reading, Writing, and About.
+The merged site was deployed by GitHub Pages workflow run `29238183103` and deployment `5421944378`. The deployment workflow built and validated the exact artifact, deployed it, and passed its post-deploy provenance and route verification job.
+
+Live `build-info.json` reported:
+
+- website commit: `6a2d3580ac8ad049bdb7f452788cb0b968eab304`
+- content-feed commit: `0a2b5c5cdaf283e344d896142aedb565659d26f9`
+- content hash: `9ea450911265f1364623fc4c023952e2c6fc70f19560fad9710fe44a0307d261`
+- workflow run: `29238183103`, attempt 1
+- environment: `production`
+- feed schema: 1
+
+The custom domain returned HTTP 200. Direct live testing passed 137 functional E2E tests and 55 accessibility tests. The 648-screen live visual matrix passed after one network-interrupted 360px dark attempt was rerun. All 12 live contact sheets and full-resolution Reading and Project captures were reviewed.
 
 ## Known Limitations
 
 - The public feed is intentionally `bootstrap-empty`; writing, reading analytics, note reviews, recall practice, and Activity remain hidden until public evidence exists.
 - The shared GitHub Pages `404.html` uses minimal chrome to avoid a mismatched English header on unknown Korean paths.
 - Optional public email, Scholar, CV, and portrait fields are absent and therefore hidden.
-- Live post-merge results cannot be recorded until the PR is merged and Pages publishes the exact commit.
 - `test:feed-contract` intentionally builds multiple fixture feeds and can leave `dist/` containing the last fixture. Run `npm run build` with the normal `.content-feed/` before preview, E2E, or deployment verification.
 
 ## Commands
@@ -87,3 +97,14 @@ npm run test:visual
 ```
 
 The normal feed build was rerun after `test:feed-contract` and before browser tests. The only environment note was the local Node version: the repository requests Node 24 while this machine used Node 26.4.0. Installation and every required check still completed successfully.
+
+Live-only verification used an untracked Playwright configuration pointed at `https://gnaroshi.dev` and ran:
+
+```text
+npx playwright test --grep-invert '@a11y|@visual|@performance'
+npx playwright test --grep '@a11y'
+npx playwright test tests/e2e/all-pages.visual.spec.ts
+curl https://gnaroshi.dev/build-info.json
+```
+
+The temporary live configuration and contact-sheet script were removed after verification. No browser, preview server, or application process opened for this audit was left running.
