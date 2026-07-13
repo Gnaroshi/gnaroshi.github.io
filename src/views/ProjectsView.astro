@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/layout/PageHeader.astro";
 import PageShell from "../components/layout/PageShell.astro";
 import ResponsiveImage from "../components/media/ResponsiveImage.astro";
-import ApplicationRoleIcon from "../components/projects/ApplicationRoleIcon.astro";
+import ProjectKindLabel from "../components/projects/ProjectKindLabel.astro";
 import TechStackStrip from "../components/projects/TechStackStrip.astro";
 import { getProjectMedia } from "../data/approvedMedia";
 import { getApprovedProjectShowcase } from "../data/approvedProjectShowcases";
@@ -23,10 +23,10 @@ const supporting = applications.filter((project) => !project.applicationFeatured
 type ApplicationGroup = ApplicationProject["applicationGroup"];
 const applicationGroups: readonly ApplicationGroup[] = ["research-workflow", "system-utilities", "learning-tools"];
 const labels = locale === "ko" ? {
-  selected:"선정 작업", featured:"대표 애플리케이션", featuredIntro:"연구 자료를 찾고 정리하고 발행하는 과정에서 직접 사용하는 도구입니다.", supporting:"보조 애플리케이션", supportingIntro:"실험 확인, 컴퓨팅 상태, 반복 학습을 각각 맡는 독립 도구입니다.", details:"자세히 보기", stack:"기술 구성", platforms:"지원 환경", role:"애플리케이션 역할",
+  selected:"선정 작업", featured:"대표 애플리케이션", featuredIntro:"연구 자료를 찾고 정리하고 발행하는 과정에서 직접 사용하는 도구입니다.", supporting:"보조 애플리케이션", supportingIntro:"실험 확인, 컴퓨팅 상태, 반복 학습을 각각 맡는 독립 도구입니다.", details:"자세히 보기", stack:"기술 구성", platforms:"지원 환경",
   groups:{"research-workflow":"연구 작업 흐름","system-utilities":"시스템 도구","learning-tools":"학습 도구"}
 } : {
-  selected:"Selected projects", featured:"Featured applications", featuredIntro:"Tools I use to find, organize, and publish research material.", supporting:"Supporting applications", supportingIntro:"Focused tools for inspecting experiments, compute state, and repeated practice.", details:"View details", stack:"Tech stack", platforms:"Platforms", role:"Application role",
+  selected:"Selected projects", featured:"Featured applications", featuredIntro:"Tools I use to find, organize, and publish research material.", supporting:"Supporting applications", supportingIntro:"Focused tools for inspecting experiments, compute state, and repeated practice.", details:"View details", stack:"Tech stack", platforms:"Platforms",
   groups:{"research-workflow":"Research workflow","system-utilities":"System utilities","learning-tools":"Learning tools"}
 };
 ---
@@ -38,9 +38,9 @@ const labels = locale === "ko" ? {
     <section class="project-section" aria-labelledby="selected-projects-heading">
       <header class="section-heading"><p class="eyebrow">{labels.selected}</p><h2 id="selected-projects-heading">{locale === "ko" ? "연구와 공개 시스템" : "Research and public systems"}</h2></header>
       <div class="selected-list">
-        {selected.map((project) => { const story = getProjectStory(locale, project.id); const media = getProjectMedia(project.id)!; return <article class="selected-project" data-project-id={project.id}>
+        {selected.map((project) => { const story = getProjectStory(locale, project.id); const media = getProjectMedia(project.id)!; return <article class="selected-project" data-project-id={project.id} data-project-kind={project.kind}>
           <a class="selected-project__media" href={getLocalePath(locale, `/projects/${project.slug}/`)} tabindex="-1" aria-hidden="true" style={`aspect-ratio:${media.width}/${media.height}`}><ResponsiveImage asset={media} locale={locale} sizes="(min-width: 1024px) 58vw, 100vw"/></a>
-          <div class="selected-project__copy"><p class="project-meta">{productStatusLabels[locale][project.productStatus]}</p><h3><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{story.title}</a></h3><p data-card-summary>{story.cardSummary}</p><TechStackStrip ids={project.techStack} max={4} label={labels.stack}/><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{labels.details}</a></div>
+          <div class="selected-project__copy"><ProjectKindLabel project={project} locale={locale}/><p class="project-meta">{productStatusLabels[locale][project.productStatus]} · {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p><h3><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{story.title}</a></h3><p data-card-summary>{story.cardSummary}</p><TechStackStrip ids={project.techStack} max={4} label={labels.stack}/><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{labels.details}</a></div>
         </article>})}
       </div>
     </section>
@@ -48,9 +48,9 @@ const labels = locale === "ko" ? {
     <section class="project-section" aria-labelledby="featured-applications-heading">
       <header class="section-heading"><p class="eyebrow">{labels.featured}</p><h2 id="featured-applications-heading">{locale === "ko" ? "연구 작업 공간" : "Research workspaces"}</h2><p>{labels.featuredIntro}</p></header>
       <div class="featured-apps" data-application-group="research-workflow">
-        {featured.map((project) => { const story = getProjectStory(locale, project.id); const media = getApprovedProjectShowcase(project.primaryShowcaseId)!; return <article class="featured-app" data-project-id={project.id}>
+        {featured.map((project) => { const story = getProjectStory(locale, project.id); const media = getApprovedProjectShowcase(project.primaryShowcaseId)!; return <article class="featured-app" data-project-id={project.id} data-project-kind={project.kind}>
           <a class="featured-app__media" href={getLocalePath(locale, `/projects/${project.slug}/`)} tabindex="-1" aria-hidden="true" style={`aspect-ratio:${media.width}/${media.height}`}><ResponsiveImage asset={media} locale={locale} sizes="(min-width: 1100px) 42vw, 100vw"/></a>
-          <div class="featured-app__copy"><div class="app-title"><ApplicationRoleIcon role={project.applicationGroup} label={`${story.title} ${labels.role}`}/><div><p class="project-meta">{productStatusLabels[locale][project.productStatus]} · {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p><h3><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{story.title}</a></h3></div></div><p data-card-summary>{story.cardSummary}</p><TechStackStrip ids={project.techStack} max={4} label={labels.stack}/><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{labels.details}</a></div>
+          <div class="featured-app__copy"><div class="app-title"><div><ProjectKindLabel project={project} locale={locale}/><p class="project-meta">{productStatusLabels[locale][project.productStatus]} · {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p><h3><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{story.title}</a></h3></div></div><p data-card-summary>{story.cardSummary}</p><TechStackStrip ids={project.techStack} max={4} label={labels.stack}/><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{labels.details}</a></div>
         </article>})}
       </div>
     </section>
@@ -63,7 +63,7 @@ const labels = locale === "ko" ? {
           if (groupedProjects.length === 0) return null;
           return <section class="supporting-app-group" data-application-group={group} aria-labelledby={`supporting-${group}-heading`}>
             <h3 id={`supporting-${group}-heading`} class="purpose-label">{labels.groups[group]}</h3>
-            {groupedProjects.map((project) => { const story = getProjectStory(locale, project.id); return <article class="supporting-app" data-project-id={project.id}><div class="app-title"><ApplicationRoleIcon role={project.applicationGroup} label={`${story.title} ${labels.role}`}/><div><p class="project-meta">{productStatusLabels[locale][project.productStatus]}</p><h4><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{story.title}</a></h4></div></div><p data-card-summary>{story.cardSummary}</p><p class="platform-list"><span>{labels.platforms}</span> {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p><TechStackStrip ids={project.techStack} max={3} label={labels.stack}/><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{labels.details}</a></article>})}
+            {groupedProjects.map((project) => { const story = getProjectStory(locale, project.id); return <article class="supporting-app" data-project-id={project.id} data-project-kind={project.kind}><div class="app-title"><div><ProjectKindLabel project={project} locale={locale}/><p class="project-meta">{productStatusLabels[locale][project.productStatus]}</p><h4><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{story.title}</a></h4></div></div><p data-card-summary>{story.cardSummary}</p><p class="platform-list"><span>{labels.platforms}</span> {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p><TechStackStrip ids={project.techStack} max={3} label={labels.stack}/><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{labels.details}</a></article>})}
           </section>;
         })}
       </div>

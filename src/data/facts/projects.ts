@@ -1,5 +1,5 @@
 export type ProjectKind = "research" | "application" | "infrastructure";
-export type ProductStatus = "prototype" | "active-development" | "working" | "released" | "archived";
+export type ProductStatus = "prototype" | "in-development" | "usable-locally" | "released" | "archived";
 export type PlatformId = "web" | "macos" | "cli" | "static-site";
 export type TechId =
   | "python" | "shell" | "yaml" | "astro" | "typescript" | "github-actions" | "playwright"
@@ -60,14 +60,14 @@ export type ProjectFact = ResearchProjectFacts | InfrastructureProjectFacts | Ap
 
 export const projectFacts = [
   {
-    id: "gnaroshi-vla", slug: "gnaroshi-vla", kind: "research", productStatus: "active-development", contentStage: "working",
+    id: "gnaroshi-vla", slug: "gnaroshi-vla", kind: "research", productStatus: "in-development", contentStage: "working",
     platforms: ["cli"], techStack: ["python", "shell", "yaml"], links: [{ id: "repository", href: "https://github.com/Gnaroshi/gnaroshi_vla" }],
     updatedAt: "2026-07-11", tags: ["VLA", "experiments", "reproducibility"], portfolio: "selected-projects", applicationGroup: null,
     applicationFeatured: false, primaryMediaId: "project-gnaroshi-vla",
     scenario: { id: "configure-and-check-run", stepIds: ["configure", "sanity-check", "inspect-manifest", "open-results"], mediaIds: ["project-gnaroshi-vla"], usesDemoData: true }
   },
   {
-    id: "gnaroshi-dev", slug: "gnaroshi-dev", kind: "infrastructure", productStatus: "working", contentStage: "substantive",
+    id: "gnaroshi-dev", slug: "gnaroshi-dev", kind: "infrastructure", productStatus: "usable-locally", contentStage: "substantive",
     platforms: ["static-site", "web"], techStack: ["astro", "typescript", "github-actions", "playwright"],
     links: [{ id: "repository", href: "https://github.com/Gnaroshi/gnaroshi.github.io" }, { id: "live-site", href: "https://gnaroshi.dev" }],
     updatedAt: "2026-07-12", tags: ["Astro", "publishing", "i18n"], portfolio: "selected-projects", applicationGroup: null,
@@ -75,7 +75,7 @@ export const projectFacts = [
     scenario: { id: "private-to-public-release", stepIds: ["write-private", "preview-fields", "publish-feed", "verify-deploy"], mediaIds: ["project-gnaroshi-dev"], usesDemoData: true }
   },
   {
-    id: "gnaroshi-studio", slug: "gnaroshi-studio", kind: "application", productStatus: "active-development", contentStage: "working",
+    id: "gnaroshi-studio", slug: "gnaroshi-studio", kind: "application", productStatus: "in-development", contentStage: "working",
     platforms: ["macos", "cli"], techStack: ["typescript", "react", "rust", "tauri"], links: [], updatedAt: "2026-07-12",
     tags: ["authoring", "publishing", "local-first"], portfolio: "managed-applications", applicationGroup: "research-workflow", applicationFeatured: true,
     studioIntegrationStatus: "available", distribution: "local-development", dataOwner: "Gnaroshi Studio and canonical Markdown repositories",
@@ -83,7 +83,7 @@ export const projectFacts = [
     scenario: { id: "managed-paper-handoff", stepIds: ["review-apps", "review-candidates", "preview-handoff", "checkpoint-preview"], mediaIds: ["gnaroshi-studio-managed-apps", "gnaroshi-studio-candidate-review", "gnaroshi-studio-handoff-preview"], usesDemoData: true }
   },
   {
-    id: "paperflow", slug: "paperflow", kind: "application", productStatus: "working", contentStage: "working",
+    id: "paperflow", slug: "paperflow", kind: "application", productStatus: "usable-locally", contentStage: "working",
     platforms: ["macos", "cli"], techStack: ["python", "swift", "swiftui", "zotero-local-api"], links: [{ id: "repository", href: "https://github.com/Gnaroshi/paperflow" }], updatedAt: "2026-07-12",
     tags: ["Zotero", "planning", "local-first"], portfolio: "managed-applications", applicationGroup: "research-workflow", applicationFeatured: true,
     studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "PaperFlow and Zotero",
@@ -99,7 +99,7 @@ export const projectFacts = [
     scenario: { id: "no-download-discovery", stepIds: ["discover", "filter", "inspect-candidate", "preview-handoff"], mediaIds: ["arxiv-discovery-discovery-list", "arxiv-discovery-candidate-detail", "arxiv-discovery-handoff-preview"], usesDemoData: true }
   },
   {
-    id: "runshelf", slug: "runshelf", kind: "application", productStatus: "active-development", contentStage: "working",
+    id: "runshelf", slug: "runshelf", kind: "application", productStatus: "in-development", contentStage: "working",
     platforms: ["macos", "cli"], techStack: ["python", "swift", "swiftui"], links: [], updatedAt: "2026-07-12",
     tags: ["experiments", "runs", "local-first"], portfolio: "managed-applications", applicationGroup: "research-workflow", applicationFeatured: false,
     studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "RunShelf workspace files",
@@ -107,7 +107,7 @@ export const projectFacts = [
     scenario: { id: "inspect-failed-run", stepIds: ["open-runs", "filter-failed", "inspect-context", "review-references"], mediaIds: ["runshelf-run-list", "runshelf-failed-run", "runshelf-artifact-references"], usesDemoData: true }
   },
   {
-    id: "tr-gpu-monitor", slug: "tr-gpu-monitor", kind: "application", productStatus: "working", contentStage: "working",
+    id: "tr-gpu-monitor", slug: "tr-gpu-monitor", kind: "application", productStatus: "usable-locally", contentStage: "working",
     platforms: ["macos"], techStack: ["swift", "swiftui", "sqlite"], links: [], updatedAt: "2026-07-12",
     tags: ["GPU", "monitoring", "SSH"], portfolio: "managed-applications", applicationGroup: "system-utilities", applicationFeatured: false,
     studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "TR GPU Monitor",
@@ -115,7 +115,7 @@ export const projectFacts = [
     scenario: { id: "compare-gpu-hosts", stepIds: ["check-hosts", "spot-pressure", "compare-hosts", "review-warning"], mediaIds: ["tr-gpu-monitor-host-overview", "tr-gpu-monitor-gpu-detail", "tr-gpu-monitor-warning-state"], usesDemoData: true }
   },
   {
-    id: "contentdeck", slug: "contentdeck", kind: "application", productStatus: "working", contentStage: "working",
+    id: "contentdeck", slug: "contentdeck", kind: "application", productStatus: "usable-locally", contentStage: "working",
     platforms: ["web", "macos"], techStack: ["typescript", "react", "electron", "vite", "fastify"], links: [{ id: "repository", href: "https://github.com/Gnaroshi/content-looper" }], updatedAt: "2026-07-12",
     tags: ["media", "subtitles", "looping"], portfolio: "managed-applications", applicationGroup: "learning-tools", applicationFeatured: false,
     studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "ContentDeck local session state",

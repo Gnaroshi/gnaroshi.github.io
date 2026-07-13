@@ -125,7 +125,7 @@ export const enCopy = {
       motivation: "Generated summaries and scores can save time, but they can also hide uncertainty. The original question and the researcher’s own check still need to remain visible.",
       hypothesis: "I’m exploring tools that help organize notes, suggest questions, and make revisiting easier without deciding what is true on the researcher’s behalf.",
       uncertainty: "The right amount of structure will only become clear through repeated use.",
-      relatedLabels: ["Writing", "Papers"]
+      relatedLabels: ["Writing", "Reading"]
     }
   },
   projects: {
@@ -201,7 +201,7 @@ export const enCopy = {
     "gnaroshi-studio": {
       title: "Gnaroshi Studio",
       summary: "A local authoring and coordination app for reviewing research material, publishing selected work, and checking independently run companion apps.",
-      statusLabel: "Integration in review",
+      statusLabel: "In development",
       problem: "Research notes, writing, publishing, and supporting tools need clear boundaries so one control screen does not become a second owner of every app’s data.",
       designGoals: [
         "Keep paper and writing authoring local and explicit.",
@@ -232,7 +232,7 @@ export const enCopy = {
     paperflow: {
       title: "PaperFlow",
       summary: "A macOS app and CLI for inspecting a Zotero library, planning organization changes, and previewing paper imports before anything is applied.",
-      statusLabel: "Integration in review",
+      statusLabel: "Usable locally",
       problem: "A paper library can be difficult to reorganize safely when the proposed changes are mixed with database writes, renames, or deletion.",
       designGoals: [
         "Read Zotero through its local API without editing zotero.sqlite.",
@@ -263,7 +263,7 @@ export const enCopy = {
     "arxiv-discovery": {
       title: "Arxiv Discovery",
       summary: "A command-line and local web tool for finding recent papers, optionally translating them, and reviewing candidates before download or handoff.",
-      statusLabel: "Integration in review",
+      statusLabel: "Prototype",
       problem: "Daily paper discovery can create unwanted downloads or hide scheduling assumptions when fetching, translation, and review are tied together.",
       designGoals: [
         "Keep the existing process, serve, and all commands available.",
@@ -294,7 +294,7 @@ export const enCopy = {
     runshelf: {
       title: "RunShelf",
       summary: "A local run ledger for finding experiment records, inspecting selected metadata and metrics, and keeping large artifacts in their original locations.",
-      statusLabel: "Integration in review",
+      statusLabel: "In development",
       problem: "Experiment records become hard to revisit when run metadata, results, and large artifact locations are not indexed together.",
       designGoals: [
         "Treat run metadata as a transparent local record rather than copying checkpoints into another app.",
@@ -325,7 +325,7 @@ export const enCopy = {
     "tr-gpu-monitor": {
       title: "TR GPU Monitor",
       summary: "A macOS monitor for checking NVIDIA GPU hosts over SSH while keeping host credentials and detailed process information inside the monitor.",
-      statusLabel: "Integration in review",
+      statusLabel: "Usable locally",
       problem: "Remote compute status needs to be visible without giving a coordinating app SSH keys, passwords, raw shell access, or sensitive command lines.",
       designGoals: [
         "Keep host authentication and saved configuration in the monitor.",
@@ -356,7 +356,7 @@ export const enCopy = {
     contentdeck: {
       title: "ContentDeck",
       summary: "A web and Electron player for opening supported media, repeating full or selected segments, and using subtitles during listening practice.",
-      statusLabel: "Integration in review",
+      statusLabel: "Usable locally",
       problem: "Repeated listening is awkward when provider detection, subtitle availability, and loop boundaries are spread across separate tools.",
       designGoals: [
         "Keep the existing web and Electron workflows.",

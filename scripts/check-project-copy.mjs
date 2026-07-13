@@ -21,7 +21,7 @@ for (const project of projectFacts) {
     if (sentenceCount(story.heroSummary) > 2) failures.push(`${prefix}: heroSummary must be at most two sentences`);
     if (story.scenario.steps.length < 3 || story.scenario.steps.length > 5) failures.push(`${prefix}: scenario must contain 3-5 steps`);
     if (story.keyFeatures.length < 3 || story.keyFeatures.length > 6) failures.push(`${prefix}: keyFeatures must contain 3-6 items`);
-    if (["prototype","working","active-development"].includes(project.productStatus) && story.currentLimitations.length === 0) failures.push(`${prefix}: current limitations are required for unfinished work`);
+    if (["prototype","in-development","usable-locally"].includes(project.productStatus) && story.currentLimitations.length === 0) failures.push(`${prefix}: current limitations are required for unfinished work`);
     if (project.scenario.usesDemoData && !present(story.scenario.demoDisclosure)) failures.push(`${prefix}: demo scenario disclosure is required`);
     if (story.scenario.steps.map((step) => step.id).join("|") !== project.scenario.stepIds.join("|")) failures.push(`${prefix}: localized scenario step IDs drifted from shared facts`);
     if (!present(story.overview) || !present(story.primaryUse) || story.keyFeatures.length === 0) failures.push(`${prefix}: public copy cannot contain only architecture or integration detail`);
