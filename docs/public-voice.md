@@ -48,7 +48,7 @@ Precise technical terms such as VLA, adapter, run manifest, inference, and check
 - Research: current questions and what remains uncertain
 - Projects: project summaries; architecture belongs on each detail page
 - Writing: why and what Gnaroshi writes
-- Papers: paper-reading notes and the three-pass method
+- Reading: paper-reading notes and the three-pass method
 - Activity: a simple longitudinal view when enough published activity exists
 - `gnaroshi.dev` project detail: publishing architecture and repository boundaries
 

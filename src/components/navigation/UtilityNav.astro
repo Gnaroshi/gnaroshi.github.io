@@ -11,10 +11,10 @@ const utilityNavigation = getUtilityNavigation(locale);
 ---
 
 <div class="utility-nav" aria-label={translate(locale, "a11y.siteUtilities")}>
-  {utilityNavigation.map((item) => (
-    <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
-      {item.label}
-    </a>
+  {utilityNavigation.map((item) => isNavigationActive(currentPath, item.href) ? (
+    <span aria-current="page" data-current-nav-item data-nav-href={item.href}>{item.label}</span>
+  ) : (
+    <a href={item.href} data-nav-href={item.href}>{item.label}</a>
   ))}
   <LanguageSwitcher locale={locale} currentPath={currentPath} alternateUrls={alternateUrls} />
   <ThemeToggle locale={locale} />

@@ -17,8 +17,8 @@ const exams = paper.data.oralExams ?? [];
 const alternateUrls = { en: `/papers/${slug}/exam/live/`, ko: "/ko/papers/", xDefault: `/papers/${slug}/exam/live/`, translationAvailable: false } as const;
 ---
 
-<BaseLayout title={`Oral exam record · ${paper.data.title}`} description={`Published oral exam summaries for ${paper.data.title}.`} canonical={`/papers/${slug}/exam/live/`} alternateUrls={alternateUrls} width="dashboard" mode="application" robots="noindex, follow">
-  <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Papers", href: "/papers/" }, { name: paper.data.title, href: `/papers/${slug}/` }, { name: "Oral exam", href: `/papers/${slug}/exam/live/` }]} />
+<BaseLayout title={`Recall practice · ${paper.data.title}`} description={`Published recall-practice summaries for ${paper.data.title}.`} canonical={`/papers/${slug}/exam/live/`} alternateUrls={alternateUrls} width="dashboard" mode="application" robots="noindex, follow">
+  <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Reading", href: "/papers/" }, { name: paper.data.title, href: `/papers/${slug}/` }, { name: "Recall practice", href: `/papers/${slug}/exam/live/` }]} />
   <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
   <header class="page-header">
     <a class="paper-detail-header__back" href={`/papers/${slug}/`}>Back to paper note</a>

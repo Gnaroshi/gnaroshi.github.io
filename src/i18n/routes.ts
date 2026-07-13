@@ -29,8 +29,7 @@ export function getFooterNavigation(locale: Locale, capabilities: PublicCapabili
     { href: getLocalePath(locale, "/"), label: translate(locale, "nav.home") },
     ...getPrimaryNavigation(locale, capabilities),
     ...getUtilityNavigation(locale, capabilities),
-    { href: getLocalePath(locale, "/now"), label: translate(locale, "nav.now") },
-    { href: getLocalePath(locale, "/contact"), label: translate(locale, "nav.links") }
+    { href: getLocalePath(locale, "/now"), label: translate(locale, "nav.now") }
   ];
 }
 

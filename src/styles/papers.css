@@ -152,6 +152,16 @@
   border-block: 1px solid var(--color-border);
 }
 
+#reading-method,
+#paper-notes {
+  scroll-margin-top: calc(var(--paper-sticky-offset) + var(--space-4));
+}
+
+#reading-method:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: var(--space-2);
+}
+
 .paper-method-panel__header {
   display: grid;
   gap: var(--space-2);

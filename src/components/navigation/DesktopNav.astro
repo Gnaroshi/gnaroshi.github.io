@@ -9,9 +9,9 @@ const primaryNavigation = getPrimaryNavigation(locale);
 ---
 
 <nav class="desktop-nav" aria-label={translate(locale, "a11y.primaryNavigation")}>
-  {primaryNavigation.map((item) => (
-    <a href={item.href} aria-current={isNavigationActive(currentPath, item.href) ? "page" : undefined}>
-      {item.label}
-    </a>
+  {primaryNavigation.map((item) => isNavigationActive(currentPath, item.href) ? (
+    <span aria-current="page" data-current-nav-item data-nav-href={item.href}>{item.label}</span>
+  ) : (
+    <a href={item.href} data-nav-href={item.href}>{item.label}</a>
   ))}
 </nav>

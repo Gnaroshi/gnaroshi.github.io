@@ -96,21 +96,21 @@ const techArticle = {
   <article class="paper-detail">
     <Breadcrumbs items={[
       { name: "Home", href: "/" },
-      { name: "Papers", href: "/papers/" },
+      { name: "Reading", href: "/papers/" },
       { name: paper.data.title, href: canonicalPath }
     ]} />
     <StructuredData data={techArticle} />
     {!korean && <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Korean translation unavailable</p>}
-    <PaperDetailHeader paper={paper} />
+    <PaperDetailHeader paper={paper} locale="en" />
 
     {(paper.data.oralExams?.length ?? 0) > 0 && <section class="learning-panel learning-panel--accent" aria-labelledby="oral-exam-heading">
       <div>
-        <p class="eyebrow">Retrieval practice</p>
+        <p class="eyebrow">Recall practice</p>
         <h2 id="oral-exam-heading">Explain this paper aloud</h2>
         <p>Use live voice when the optional API is available, or continue with text and manual practice.</p>
       </div>
       <div class="paper-card__links">
-        <a href={`/papers/${slug}/exam/live/`}>View oral exam record</a>
+        <a href={`/papers/${slug}/exam/live/`}>View recall-practice record</a>
       </div>
     </section>}
 
@@ -213,25 +213,25 @@ const techArticle = {
       </div>
     </section>}
 
-    <nav class="paper-nav" aria-label="Paper note navigation">
+    <nav class="paper-nav" aria-label="Reading note navigation">
       <div>
         {olderPaper ? (
           <a href={`/papers/${olderPaper.data.canonicalSlug}/`}>
-            <span>Older paper</span>
+            <span>Older note</span>
             {olderPaper.data.title}
           </a>
         ) : (
-          <span class="paper-nav__empty">No older paper</span>
+          <span class="paper-nav__empty">No older note</span>
         )}
       </div>
       <div>
         {newerPaper ? (
           <a href={`/papers/${newerPaper.data.canonicalSlug}/`}>
-            <span>Newer paper</span>
+            <span>Newer note</span>
             {newerPaper.data.title}
           </a>
         ) : (
-          <span class="paper-nav__empty">No newer paper</span>
+          <span class="paper-nav__empty">No newer note</span>
         )}
       </div>
     </nav>

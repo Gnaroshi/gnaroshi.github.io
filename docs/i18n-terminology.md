@@ -4,13 +4,17 @@ Use these terms consistently in Korean public copy. Choose the contextual altern
 
 | English | Korean | Notes |
 | --- | --- | --- |
-| Paper Log | 논문 기록 | Use for the reading record, not the whole application. |
-| Papers | 논문 | Public navigation label. Do not use `Paper Lab` or `논문 연구실` publicly. |
-| Paper Notes | 논문 기록 | Public page title. |
-| Research Activity | 연구 활동 | Page title for `/growth/`. |
-| Activity | 활동 기록 | Public navigation label for `/growth/`. |
+| Reading | 논문 읽기 | Public navigation label for `/papers/`. Do not use `Papers`, `Paper Lab`, `논문`, or `논문 연구실` as the standalone public label. |
+| Paper Reading Notes | 논문 읽기 기록 | Public page title. |
+| Reading Note | 읽기 기록 | Singular public record label. |
+| Note Review | 노트 검토 | Review of evidence written in a note; never a claim of true understanding. |
+| Recall Practice | 말로 설명해 보기 | Public term for retrieval practice; do not present it as a formal oral exam. |
+| Review Result | 검토 결과 | A bounded result from one note or practice attempt. |
+| Area to Revisit | 다시 볼 부분 | Prefer over `weak dimension`. |
+| Activity Over Time | 기록의 변화 | Prefer over `score trend` or productivity language. |
+| Activity | 활동 | Use for `/growth/` only when the public metric is eligible. |
 | evidence of understanding | 이해를 뒷받침하는 기록 | May shorten to `이해의 근거` in compact labels. |
-| retrieval | 회상 / 기억에서 꺼내기 | `회상` for controls; the longer phrase in explanatory copy. |
+| retrieval | 기억에서 꺼내기 / 회상 | Prefer ordinary explanatory wording; keep `회상` where compact technical terminology is useful. |
 | Review due | 복습 예정 | Use `기한 지남` only when overdue. |
 | Formula recall | 수식 회상 | |
 | Implementation attempt | 구현 시도 | |

@@ -6,9 +6,11 @@ import { profile } from "../../data/profile";
 import { getLocalizedData } from "../../data/locales";
 import type { Locale } from "../../i18n/types";
 import { getLocalePath, translate } from "../../i18n/utils";
+import { getPublicCapabilities } from "../../utils/publicCapabilities";
 interface Props { locale: Locale; currentFocus?: string }
 const { locale, currentFocus } = Astro.props;
 const data = getLocalizedData(locale);
+const capabilities = getPublicCapabilities();
 ---
 
 <HeroShell class="identity-hero" labelledby="home-title">
@@ -21,7 +23,7 @@ const data = getLocalizedData(locale);
     <p class="identity-hero__bio">{data.profile.shortBio}</p>
     <div class="identity-hero__actions">
       <a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewResearch")}</a>
-      <a class="button" href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.readWriting")}</a>
+      {capabilities.hasWriting && <a class="button" href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.readWriting")}</a>}
     </div>
     {currentFocus && <p class="identity-hero__focus"><span>{translate(locale, "home.currentFocus")}</span>{currentFocus}</p>}
   </div>

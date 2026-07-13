@@ -30,7 +30,7 @@ This checklist covers every public route family in English and Korean. A route d
 | `gnaroshi_vla` detail | `/projects/gnaroshi-vla/`, KO equivalent | Required: actual repository/run evidence | Detail was prose-only | Add verified tree/config/manifest/terminal composite | Complete |
 | `gnaroshi.dev` detail | `/projects/gnaroshi-dev/`, KO equivalent | Required: real site evidence plus architecture diagram | Evidence was absent and repository workflow read as stacked cards | Add current evidence and a clear directed flow diagram | Complete |
 | Writing | `/blog`, `/blog/archive`, KO equivalents | Feed-owned media only | Bootstrap-empty state has no public posts | Keep focused empty state; do not invent covers | Complete |
-| Papers | `/papers`, `/ko/papers` | No large image while empty | Honest onboarding state | Keep one action and verify method readability | Complete |
+| Reading | `/papers`, `/ko/papers` | No large image while empty | Honest onboarding state | Keep one action and verify method readability | Complete |
 | Activity | `/growth`, `/ko/growth` | No graph before eligibility | Evidence-gated empty state | Keep non-numeric and verify contrast/hierarchy | Complete |
 | Now | `/now`, `/ko/now` | Optional, not needed | Current structured text is sufficient | Verify date, hierarchy, and mobile wrapping | Complete |
 | Contact | `/contact`, `/ko/contact` | Not needed | Link-led page | Verify no empty links and one clear contact path | Complete |
@@ -77,4 +77,4 @@ Completed on 2026-07-12:
 - Paper navigation now exposes direct, evidence-backed destinations instead of independently open disclosure menus.
 - The three-pass method is an unframed ordered sequence rather than nested cards, with centered numbered markers at every viewport.
 - All eight current project records render in English and Korean; private repository URLs remain omitted.
-- Empty About, Writing, Papers, Activity, paper-tool, insight, Contact, and 404 states intentionally remain image-free when no truthful subject or public evidence exists.
+- Empty About, Writing, Reading, Activity, paper-tool, insight, Contact, and 404 states intentionally remain image-free when no truthful subject or public evidence exists.

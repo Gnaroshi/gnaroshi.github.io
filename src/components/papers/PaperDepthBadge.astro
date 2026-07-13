@@ -1,20 +1,14 @@
 ---
 import type { PaperRecord } from "../../utils/papers";
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
 
 interface Props {
   depth: PaperRecord["depth"];
+  locale?: Locale;
 }
 
-const { depth } = Astro.props;
-
-const labels: Record<PaperRecord["depth"], string> = {
-  skim: "Skim",
-  understand: "Understand",
-  deep: "Deep",
-  reproduce: "Reproduce",
-  implement: "Implement"
-};
+const { depth, locale = "en" } = Astro.props;
 ---
 
-<span class:list={["paper-badge", "paper-depth-badge", `paper-depth-badge--${depth}`]}>{labels[depth]}</span>
-
+<span class:list={["paper-badge", "paper-depth-badge", `paper-depth-badge--${depth}`]}>{translate(locale, `depth.${depth}`)}</span>
