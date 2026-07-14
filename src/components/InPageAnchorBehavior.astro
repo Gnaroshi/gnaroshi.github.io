@@ -1,0 +1,60 @@
+<script>
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function normalizedPath(pathname: string): string {
+    return pathname.replace(/\/+$/, "") || "/";
+  }
+
+  function targetForHash(hash: string): HTMLElement | null {
+    if (!hash || hash === "#") return null;
+    try {
+      return document.getElementById(decodeURIComponent(hash.slice(1)));
+    } catch {
+      return null;
+    }
+  }
+
+  function updateCurrentAnchor(): void {
+    for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-in-page-link]")) {
+      const url = new URL(link.href, window.location.href);
+      const isCurrent = normalizedPath(url.pathname) === normalizedPath(window.location.pathname)
+        && url.hash === window.location.hash;
+      if (isCurrent && url.hash) link.setAttribute("aria-current", "location");
+      else if (link.getAttribute("aria-current") === "location") link.removeAttribute("aria-current");
+    }
+  }
+
+  function exposeTarget(hash: string, moveFocus = true): boolean {
+    const target = targetForHash(hash);
+    if (!target) return false;
+    target.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "start" });
+    if (moveFocus) {
+      if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+      target.focus({ preventScroll: true });
+    }
+    updateCurrentAnchor();
+    return true;
+  }
+
+  document.addEventListener("click", (event) => {
+    const link = (event.target as Element | null)?.closest<HTMLAnchorElement>("a[href*='#']");
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const url = new URL(link.href, window.location.href);
+    if (url.origin !== window.location.origin || normalizedPath(url.pathname) !== normalizedPath(window.location.pathname) || !url.hash) return;
+    if (!targetForHash(url.hash)) return;
+    event.preventDefault();
+    if (window.location.hash !== url.hash) history.pushState(null, "", `${url.pathname}${url.search}${url.hash}`);
+    exposeTarget(url.hash);
+  });
+
+  window.addEventListener("hashchange", () => exposeTarget(window.location.hash));
+  window.addEventListener("popstate", () => {
+    if (window.location.hash) exposeTarget(window.location.hash);
+    else updateCurrentAnchor();
+  });
+
+  requestAnimationFrame(() => {
+    if (window.location.hash) exposeTarget(window.location.hash);
+    else updateCurrentAnchor();
+  });
+</script>

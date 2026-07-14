@@ -80,7 +80,7 @@ The first viewport of `/` should immediately identify:
 - Name/site identity.
 - Research/software focus.
 - Current interests.
-- Links to blog, papers, research, projects, GitHub, and contact.
+- Links to writing, reading notes, research, projects, and GitHub when those destinations have public content.
 
 Avoid generic hero copy. The homepage should read like a concise personal academic page.
 
@@ -91,12 +91,12 @@ Primary navigation is limited to five destinations; the brand links to Home:
 - Research
 - Projects
 - Writing
-- Papers
+- Reading
 - About
 
-Activity is a utility destination. Now and public links belong in the homepage, About, and footer. Paper workflow tools stay grouped under a local Papers navigation instead of competing in the global header.
+Activity is a utility destination. Now and public links belong in the homepage, About, and footer. Reading workflows stay grouped under a local Reading navigation instead of competing in the global header.
 
-Public navigation follows feed-backed capability evidence. Empty Writing and Activity destinations are omitted, while the Papers onboarding route may remain available through its explicit feature flag. Papers local navigation uses scan-friendly direct links rather than independently expandable menus: the empty state exposes only Overview and Reading method, and review, practice, build, or insight links appear only after their corresponding public records are available.
+Public navigation follows feed-backed capability evidence. Empty Writing and Activity destinations are omitted, while the Reading onboarding route may remain available through its explicit feature flag. Reading local navigation uses scan-friendly direct links rather than independently expandable menus: the empty state exposes only Overview and Reading method, and review, practice, build, or insight links appear only after their corresponding public records are available.
 
 ### System Workflow
 
@@ -108,7 +108,7 @@ The workflow is a static directed graph laid out by Dagre during the build, not 
 
 Editorial mode covers Home, About, Research, Projects, Writing, and long-form detail pages. It uses narrative hierarchy, generous whitespace, narrow prose, and dividers before cards.
 
-Application mode covers paper workflows and Activity. It uses compact controls, explicit state, one primary action, semantic surfaces, and progressive disclosure. It must not turn empty routes into zero-filled dashboards.
+Application mode covers reading workflows and Activity. It uses compact controls, explicit state, one primary action, semantic surfaces, and progressive disclosure. It must not turn empty routes into zero-filled dashboards.
 
 ## Typography
 

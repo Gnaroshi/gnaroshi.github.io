@@ -1,22 +1,14 @@
 ---
 import type { PaperRecord } from "../../utils/papers";
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
 
 interface Props {
   status: PaperRecord["status"];
+  locale?: Locale;
 }
 
-const { status } = Astro.props;
-
-const labels: Record<PaperRecord["status"], string> = {
-  planned: "Planned",
-  pass1: "Pass 1",
-  pass2: "Pass 2",
-  pass3: "Pass 3",
-  read: "Read",
-  implemented: "Implemented",
-  abandoned: "Abandoned"
-};
+const { status, locale = "en" } = Astro.props;
 ---
 
-<span class:list={["paper-badge", "paper-status-badge", `paper-status-badge--${status}`]}>{labels[status]}</span>
-
+<span class:list={["paper-badge", "paper-status-badge", `paper-status-badge--${status}`]}>{translate(locale, `status.${status}`)}</span>

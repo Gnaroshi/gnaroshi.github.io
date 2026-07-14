@@ -38,7 +38,7 @@ if (project.kind !== "application" && !selectedMedia) throw new Error(`${project
 ---
 
 <BaseLayout locale={locale} title={story.title} description={story.heroSummary} canonical={canonicalPath} type="article" width="wide" modifiedTime={project.updatedAt} articleTags={[...project.tags]}>
-  <article class:list={["project-detail", `project-detail--${project.kind}`]}>
+  <article class:list={["project-detail", `project-detail--${project.kind}`]} data-project-kind={project.kind}>
     <Breadcrumbs label={locale === "ko" ? "현재 위치" : "Breadcrumb"} items={[{name:locale === "ko" ? "홈" : "Home",href:getLocalePath(locale,"/")},{name:locale === "ko" ? "프로젝트" : "Projects",href:getLocalePath(locale,"/projects/")},{name:story.title,href:canonicalPath}]}/>
     <StructuredData data={{
       "@context":"https://schema.org","@type":repositoryUrl ? "SoftwareSourceCode" : "CreativeWork",name:story.title,description:story.heroSummary,

@@ -75,7 +75,13 @@ test.describe("verified Gnaroshi applications", () => {
     for (const slug of applicationSlugs) {
       const icon = page.locator(`[data-project-id="${slug}"] [data-app-id="${slug}"]`);
       await expect(icon).toHaveCount(1);
-      await expect(icon.locator("svg")).toHaveAttribute("shape-rendering", "crispEdges");
+      const image = icon.locator("img");
+      await expect(image).toHaveAttribute("src", `/media/identity/apps/${slug}-64.png`);
+      expect(await image.evaluate((element: HTMLImageElement) => ({
+        complete: element.complete,
+        width: element.naturalWidth,
+        rendering: getComputedStyle(element).imageRendering,
+      }))).toEqual({ complete: true, width: 64, rendering: "pixelated" });
       const keyColor = await icon.evaluate((element) => getComputedStyle(element).getPropertyValue("--app-key").trim());
       expect(keyColor, slug).not.toBe("");
       keyColors.add(keyColor);

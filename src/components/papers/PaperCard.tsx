@@ -27,9 +27,7 @@ export default function PaperCard({ paper, locale, messages }: Props) {
               <span>{messages.aiReview}</span>
               <strong>{paper.review.overallScore}</strong>
             </span>
-          ) : (
-            <span className="paper-badge paper-badge--needs-review">{messages.needsReview}</span>
-          )}
+          ) : null}
           {paper.reviewDue ? <span className="paper-badge paper-badge--review-due">{messages.reviewDue}</span> : null}
           {paper.draft ? <span className="paper-badge paper-badge--draft">{messages.draft}</span> : null}
           {paper.featured ? <span className="paper-badge paper-badge--featured">{messages.featured}</span> : null}

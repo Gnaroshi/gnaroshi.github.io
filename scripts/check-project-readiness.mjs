@@ -6,6 +6,8 @@ import { projectStories } from "../src/data/projectStories.ts";
 
 const failures = [];
 const privateRepositories = new Set(["Gnaroshi/gnaroshi-studio", "Gnaroshi/runshelf", "Gnaroshi/tr-gpu-monitor"]);
+const productStatuses = new Set(["prototype", "in-development", "usable-locally", "released", "archived"]);
+const integrationStatuses = new Set(["not-planned", "planned", "in-review", "available"]);
 const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
 
 for (const project of projectFacts) {
@@ -19,13 +21,14 @@ for (const project of projectFacts) {
     if (project.scenario.usesDemoData && !nonEmpty(story?.scenario?.demoDisclosure)) failures.push(`${project.id}/${locale}: demo disclosure missing`);
   }
 
-  if (!project.productStatus || project.platforms.length === 0 || project.techStack.length < 3) failures.push(`${project.id}: incomplete product facts`);
+  if (!productStatuses.has(project.productStatus) || project.platforms.length === 0 || project.techStack.length < 3) failures.push(`${project.id}: incomplete product facts`);
   for (const techId of project.techStack) if (!techCatalog[techId]?.source) failures.push(`${project.id}: unverified technology ${techId}`);
   for (const link of project.links) {
     for (const repository of privateRepositories) if (link.href.toLowerCase().includes(repository.toLowerCase())) failures.push(`${project.id}: private repository URL is public`);
   }
 
   if (project.kind === "application") {
+    if (!integrationStatuses.has(project.studioIntegrationStatus)) failures.push(`${project.id}: invalid Studio integration status`);
     if (!/^[0-9a-f]{40}$/.test(project.sourceCommit)) failures.push(`${project.id}: missing full source commit`);
     if (!project.sourceRepository) failures.push(`${project.id}: source provenance missing`);
     const primary = getApprovedProjectShowcase(project.primaryShowcaseId);

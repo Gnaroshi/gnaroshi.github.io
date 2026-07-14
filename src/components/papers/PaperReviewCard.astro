@@ -11,12 +11,12 @@ const messages = getIslandMessages("en").paper;
 <section class="paper-review-card section" aria-labelledby="paper-review-heading">
   <div class="paper-review-card__header">
     <div>
-      <p class="eyebrow">Published review</p>
+      <p class="eyebrow">Note review</p>
       <h2 id="paper-review-heading">What the note shows</h2>
       <p>{review.summary}</p>
       <p class="metadata">{review.reviewedAt.slice(0, 10)} · {review.confidence} confidence</p>
     </div>
-    {review.overallScore !== null && review.scoreLevel && <PaperScoreBadge score={review.overallScore} level={review.scoreLevel} label="Reading process score" messages={messages} />}
+    {review.overallScore !== null && review.scoreLevel && <PaperScoreBadge score={review.overallScore} level={review.scoreLevel} label="Review result" messages={messages} />}
   </div>
 
   {review.nextReviewDate && <div class="paper-review-calibration-grid" aria-label="Review schedule"><article><h3>Next review date</h3><p>{review.nextReviewDate}</p></article></div>}

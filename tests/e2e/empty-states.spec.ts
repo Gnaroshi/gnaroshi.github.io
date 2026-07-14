@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-test("empty Papers page uses onboarding without dashboard machinery", async ({ page }) => {
+test("empty Reading page uses onboarding without dashboard machinery", async ({ page }) => {
   await page.goto("/papers");
-  await expect(page.getByRole("heading", { name: "The first note can be short." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "No reading notes have been published yet." })).toBeVisible();
   await expect(page.locator(".paper-stats")).toHaveCount(0);
   await expect(page.locator(".paper-heatmap")).toHaveCount(0);
   await expect(page.locator(".paper-filter-panel")).toHaveCount(0);

@@ -19,7 +19,8 @@ export const evidenceGates = {
     longitudinalWeeksAt: 4
   },
   blog: {
-    discoveryToolsAt: 6
+    discoveryToolsAt: 6,
+    archiveAt: 12
   }
 } as const;
 
