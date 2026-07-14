@@ -29,6 +29,12 @@
   --color-warning: #984236;
   --color-identity-teal: #3fa6a0;
   --color-identity-orange: #e88945;
+  --color-app-studio: #b8a7f3;
+  --color-app-paperflow: #8fd9c0;
+  --color-app-arxiv: #82c7ee;
+  --color-app-gpu: #e9948e;
+  --color-app-runshelf: #e9d27a;
+  --color-app-contentdeck: #f2b58d;
 
   --color-status-skim: #75661c;
   --color-status-structured: #315f7e;
@@ -85,10 +91,12 @@
   --space-9: 5rem;
   --space-10: 6rem;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --shadow-sm: 0 1px 2px rgb(24 32 28 / 7%);
-  --shadow-md: 0 16px 40px rgb(24 32 28 / 11%);
+  --radius-sm: 0;
+  --radius-md: 0;
+  --pixel-step: 2px;
+  --pixel-border: 2px;
+  --shadow-sm: 2px 2px 0 rgb(24 32 28 / 12%);
+  --shadow-md: 4px 4px 0 rgb(24 32 28 / 18%);
   --duration-fast: 140ms;
   --duration-state: 180ms;
   --project-research-accent: #486f96;
@@ -167,6 +175,6 @@
   --paper-level-2: var(--color-heatmap-2);
   --paper-level-3: var(--color-heatmap-3);
   --paper-level-4: var(--color-heatmap-4);
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 24%);
-  --shadow-md: 0 18px 48px rgb(0 0 0 / 34%);
+  --shadow-sm: 2px 2px 0 rgb(0 0 0 / 42%);
+  --shadow-md: 4px 4px 0 rgb(0 0 0 / 54%);
 }

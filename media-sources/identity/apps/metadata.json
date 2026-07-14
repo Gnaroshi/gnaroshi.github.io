@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "family": "gnaroshi-p5-hero-instrument",
+  "selectedAt": "2026-07-14",
+  "ownerApproved": true,
+  "rendering": "64px deterministic pixel source expanded to 2048px with nearest-neighbor resampling",
+  "baseReference": "../gnaroshi-base-v1.png",
+  "restrictions": [
+    "Use only these owner-approved P5 candidates for production identity exports.",
+    "Do not redraw, prompt-regenerate, smooth, blur, or interpolate the pixel masters.",
+    "Do not use the full-color mascot as a menu-bar or functional toolbar icon.",
+    "Keep application builds independent from network access to gnaroshi_mds."
+  ],
+  "apps": [
+    {
+      "id": "gnaroshi-main-v1",
+      "product": "gnaroshi.dev",
+      "sourceCandidate": "gnaroshi-main-p5",
+      "sourceSize": [
+        64,
+        64
+      ],
+      "sourceSha256": "81853cd37db6fc592d0d966da1f949c0a246ed2bc197e5f94dd624c69fda164c",
+      "masterFile": "gnaroshi-main-v1.png",
+      "masterSize": [
+        2048,
+        2048
+      ],
+      "masterSha256": "80f889e2dca1e33ac99ced976584db6ea99647700899f5539f8f73785f05a494",
+      "exportedAt": "2026-07-14",
+      "targetPlatforms": [
+        "web identity",
+        "favicon",
+        "social preview identity element"
+      ]
+    },
+    {
+      "id": "gnaroshi-studio-v1",
+      "product": "Gnaroshi Studio",
+      "sourceCandidate": "studio-p5",
+      "sourceSize": [
+        64,
+        64
+      ],
+      "sourceSha256": "693a04561d423c59c7f01352b7599b38ea6506506bb2a3507b344fa7fbfc7ed7",
+      "masterFile": "gnaroshi-studio-v1.png",
+      "masterSize": [
+        2048,
+        2048
+      ],
+      "masterSha256": "519e64964540e1c6793e7fc3b0cb014dcfb342c5f7cb787c2255d4f059128583",
+      "exportedAt": "2026-07-14",
+      "targetPlatforms": [
+        "macOS Tauri application",
+        "Studio managed-app card"
+      ]
+    },
+    {
+      "id": "paperflow-v1",
+      "product": "PaperFlow",
+      "sourceCandidate": "paperflow-p5",
+      "sourceSize": [
+        64,
+        64
+      ],
+      "sourceSha256": "dbfe1e609aeeeae5788dcb4ce227b65446d469bf3ececcc51d9cc8bfd8627aa2",
+      "masterFile": "paperflow-v1.png",
+      "masterSize": [
+        2048,
+        2048
+      ],
+      "masterSha256": "53bc355d4f4c359156d35d697636fc93a43acdbfbe0b0156836cbefcab13c449",
+      "exportedAt": "2026-07-14",
+      "targetPlatforms": [
+        "macOS Swift application",
+        "Studio managed-app card"
+      ]
+    },
+    {
+      "id": "arxiv-discovery-v1",
+      "product": "Arxiv Discovery",
+      "sourceCandidate": "arxiv-discovery-p5",
+      "sourceSize": [
+        64,
+        64
+      ],
+      "sourceSha256": "5f03aef0733536fe2fd411450c4f3e49393df98b53412b325e76803c04e9de0a",
+      "masterFile": "arxiv-discovery-v1.png",
+      "masterSize": [
+        2048,
+        2048
+      ],
+      "masterSha256": "17a1678d5b6ffbbd6592c598664c5889777533d378354b4ff5672efacaa81ad7",
+      "exportedAt": "2026-07-14",
+      "targetPlatforms": [
+        "web favicon",
+        "Studio managed-app card"
+      ]
+    },
+    {
+      "id": "tr-gpu-monitor-v1",
+      "product": "TR GPU Monitor",
+      "sourceCandidate": "tr-gpu-monitor-p5",
+      "sourceSize": [
+        64,
+        64
+      ],
+      "sourceSha256": "b87db0f137cf08ed6778520a09daf57902d371867d0664689cc2f8758ca7f8ec",
+      "masterFile": "tr-gpu-monitor-v1.png",
+      "masterSize": [
+        2048,
+        2048
+      ],
+      "masterSha256": "b349dda21622ef474cdac2ba9611800e4c7e3839f82463a2cb5680dc30906415",
+      "exportedAt": "2026-07-14",
+      "targetPlatforms": [
+        "macOS Swift application",
+        "Studio managed-app card"
+      ]
+    },
+    {
+      "id": "runshelf-v1",
+      "product": "RunShelf",
+      "sourceCandidate": "runshelf-p5",
+      "sourceSize": [
+        64,
+        64
+      ],
+      "sourceSha256": "80d78ebfee755ccecb9927c176f0dc7d4c7e2521ce89eb9979aea343d954a390",
+      "masterFile": "runshelf-v1.png",
+      "masterSize": [
+        2048,
+        2048
+      ],
+      "masterSha256": "f00187fbc9284e83f59d20808fd1a9f018009ad86c230449a9f6f424f53ed7ef",
+      "exportedAt": "2026-07-14",
+      "targetPlatforms": [
+        "macOS Swift application",
+        "Studio managed-app card"
+      ]
+    },
+    {
+      "id": "contentdeck-v1",
+      "product": "ContentDeck",
+      "sourceCandidate": "contentdeck-p5",
+      "sourceSize": [
+        64,
+        64
+      ],
+      "sourceSha256": "6db90777b602fdee3ce86d833db8d9f39d515e8d33b7b1ff87eea2f904711703",
+      "masterFile": "contentdeck-v1.png",
+      "masterSize": [
+        2048,
+        2048
+      ],
+      "masterSha256": "03220143e9c60204c7c30c6b88ef882297e5d61432ce2be3765ccd3b59778ace",
+      "exportedAt": "2026-07-14",
+      "targetPlatforms": [
+        "macOS Electron application",
+        "web favicon",
+        "Studio managed-app card"
+      ]
+    }
+  ]
+}

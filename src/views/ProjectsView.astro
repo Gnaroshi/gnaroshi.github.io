@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/layout/PageHeader.astro";
 import PageShell from "../components/layout/PageShell.astro";
 import ResponsiveImage from "../components/media/ResponsiveImage.astro";
+import ApplicationRoleIcon from "../components/projects/ApplicationRoleIcon.astro";
 import ProjectKindLabel from "../components/projects/ProjectKindLabel.astro";
 import TechStackStrip from "../components/projects/TechStackStrip.astro";
 import { getProjectMedia } from "../data/approvedMedia";
@@ -50,7 +51,7 @@ const labels = locale === "ko" ? {
       <div class="featured-apps" data-application-group="research-workflow">
         {featured.map((project) => { const story = getProjectStory(locale, project.id); const media = getApprovedProjectShowcase(project.primaryShowcaseId)!; return <article class="featured-app" data-project-id={project.id} data-project-kind={project.kind}>
           <a class="featured-app__media" href={getLocalePath(locale, `/projects/${project.slug}/`)} tabindex="-1" aria-hidden="true" style={`aspect-ratio:${media.width}/${media.height}`}><ResponsiveImage asset={media} locale={locale} sizes="(min-width: 1100px) 42vw, 100vw"/></a>
-          <div class="featured-app__copy"><div class="app-title"><div><ProjectKindLabel project={project} locale={locale}/><p class="project-meta">{productStatusLabels[locale][project.productStatus]} · {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p><h3><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{story.title}</a></h3></div></div><p data-card-summary>{story.cardSummary}</p><TechStackStrip ids={project.techStack} max={4} label={labels.stack}/><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{labels.details}</a></div>
+          <div class="featured-app__copy"><div class="app-title"><ApplicationRoleIcon role={project.applicationGroup} projectId={project.id} label={`${story.title} ${locale === "ko" ? "애플리케이션 역할" : "application role"}`}/><div><ProjectKindLabel project={project} locale={locale}/><p class="project-meta">{productStatusLabels[locale][project.productStatus]} · {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p><h3><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{story.title}</a></h3></div></div><p data-card-summary>{story.cardSummary}</p><TechStackStrip ids={project.techStack} max={4} label={labels.stack}/><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{labels.details}</a></div>
         </article>})}
       </div>
     </section>
@@ -63,7 +64,7 @@ const labels = locale === "ko" ? {
           if (groupedProjects.length === 0) return null;
           return <section class="supporting-app-group" data-application-group={group} aria-labelledby={`supporting-${group}-heading`}>
             <h3 id={`supporting-${group}-heading`} class="purpose-label">{labels.groups[group]}</h3>
-            {groupedProjects.map((project) => { const story = getProjectStory(locale, project.id); return <article class="supporting-app" data-project-id={project.id} data-project-kind={project.kind}><div class="app-title"><div><ProjectKindLabel project={project} locale={locale}/><p class="project-meta">{productStatusLabels[locale][project.productStatus]}</p><h4><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{story.title}</a></h4></div></div><p data-card-summary>{story.cardSummary}</p><p class="platform-list"><span>{labels.platforms}</span> {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p><TechStackStrip ids={project.techStack} max={3} label={labels.stack}/><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{labels.details}</a></article>})}
+            {groupedProjects.map((project) => { const story = getProjectStory(locale, project.id); return <article class="supporting-app" data-project-id={project.id} data-project-kind={project.kind}><div class="app-title"><ApplicationRoleIcon role={project.applicationGroup} projectId={project.id} label={`${story.title} ${locale === "ko" ? "애플리케이션 역할" : "application role"}`}/><div><ProjectKindLabel project={project} locale={locale}/><p class="project-meta">{productStatusLabels[locale][project.productStatus]}</p><h4><a href={getLocalePath(locale, `/projects/${project.slug}/`)}>{story.title}</a></h4></div></div><p data-card-summary>{story.cardSummary}</p><p class="platform-list"><span>{labels.platforms}</span> {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p><TechStackStrip ids={project.techStack} max={3} label={labels.stack}/><a class="text-link" href={getLocalePath(locale, `/projects/${project.slug}/`)}>{labels.details}</a></article>})}
           </section>;
         })}
       </div>
@@ -75,9 +76,9 @@ const labels = locale === "ko" ? {
   .projects-page{display:grid;gap:var(--space-10)} .project-section{display:grid;gap:var(--space-6);padding-top:var(--space-8);border-top:1px solid var(--color-border)}
   .section-heading{display:grid;gap:var(--space-3);max-width:72ch}.section-heading>p:not(.eyebrow){color:var(--color-text-secondary);line-height:1.7}
   .selected-list,.featured-apps{display:grid;gap:var(--space-8)} .selected-project,.featured-app{display:grid;gap:var(--space-6);align-items:center}
-  .selected-project__media,.featured-app__media{display:block;min-width:0;overflow:hidden;border:1px solid var(--color-border);background:var(--color-surface)}
+  .selected-project__media,.featured-app__media{display:block;min-width:0;overflow:hidden;border:var(--pixel-border) solid var(--color-border);background:var(--color-surface);box-shadow:var(--shadow-sm)}
   .selected-project__media :global(.responsive-media),.featured-app__media :global(.responsive-media){width:100%;height:100%}.selected-project__media :global(img),.featured-app__media :global(img){object-fit:contain}
-  .selected-project__copy,.featured-app__copy,.supporting-app{display:grid;gap:var(--space-4);align-content:start;min-width:0}.selected-project__copy>p:not(.project-meta),.featured-app__copy>p,.supporting-app>p{color:var(--color-text-secondary);line-height:1.68}
+  .selected-project__copy,.featured-app__copy,.supporting-app{display:grid;gap:var(--space-4);align-content:start;min-width:0}.featured-app__copy,.supporting-app{border-top:var(--pixel-border) solid var(--app-key,var(--color-border));padding-top:var(--space-4)}.selected-project__copy>p:not(.project-meta),.featured-app__copy>p,.supporting-app>p{color:var(--color-text-secondary);line-height:1.68}
   h3 a,h4 a{color:var(--color-text);text-decoration:none}.project-meta{color:var(--color-text-secondary);font-size:var(--step--1);font-weight:650;text-transform:uppercase;letter-spacing:.05em}
   .app-title{display:flex;gap:var(--space-3);align-items:center;min-width:0}.app-title>div{min-width:0}.app-title h3,.app-title h4{margin-top:.2rem}
   .supporting-apps{display:grid;gap:var(--space-6)}.supporting-app-group{display:grid;gap:var(--space-3);min-width:0}.purpose-label{color:var(--color-accent);font-size:var(--step--1);font-weight:700}.supporting-app{display:grid;gap:var(--space-4);align-content:start;min-width:0;padding-block:var(--space-5);border-top:1px solid var(--color-border)}.platform-list{font-size:var(--step--1)}.platform-list span{color:var(--color-text);font-weight:650}

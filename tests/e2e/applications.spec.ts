@@ -69,6 +69,26 @@ test.describe("verified Gnaroshi applications", () => {
     }
   }
 
+  test("application cards expose distinct pixel role identities", async ({ page }) => {
+    await page.goto("/projects/");
+    const keyColors = new Set<string>();
+    for (const slug of applicationSlugs) {
+      const icon = page.locator(`[data-project-id="${slug}"] [data-app-id="${slug}"]`);
+      await expect(icon).toHaveCount(1);
+      const image = icon.locator("img");
+      await expect(image).toHaveAttribute("src", `/media/identity/apps/${slug}-64.png`);
+      expect(await image.evaluate((element: HTMLImageElement) => ({
+        complete: element.complete,
+        width: element.naturalWidth,
+        rendering: getComputedStyle(element).imageRendering,
+      }))).toEqual({ complete: true, width: 64, rendering: "pixelated" });
+      const keyColor = await icon.evaluate((element) => getComputedStyle(element).getPropertyValue("--app-key").trim());
+      expect(keyColor, slug).not.toBe("");
+      keyColors.add(keyColor);
+    }
+    expect(keyColors.size).toBe(applicationSlugs.length);
+  });
+
   test("only public application repositories receive public links", async ({ page }) => {
     for (const slug of applicationSlugs) {
       await page.goto(`/projects/${slug}/`);

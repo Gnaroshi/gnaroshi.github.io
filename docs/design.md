@@ -39,6 +39,18 @@ Use a restrained academic interface:
 
 The homepage may have personality, but it should remain text-forward and direct.
 
+### Pixel identity layer
+
+The current owner-selected direction adds a restrained pixel grammar to the existing academic interface. It is not a retro-game theme and does not replace the reading hierarchy.
+
+- Use square two-pixel boundaries, short two-pixel hard shadows, stepped focus/current markers, and crisp small role glyphs in site chrome and compact interactive surfaces.
+- Keep body text, Korean copy, equations, code, photographs, diagrams, and actual application screenshots normally rendered. Never apply a global pixelation filter.
+- Keep system sans/serif typography for reading. System monospace may identify short eyebrow, technical, or status labels when contrast and EN/KO legibility remain intact.
+- Use the approved pixel site mark with nearest-neighbor exports and `image-rendering: pixelated` only where the compact raster mark is displayed.
+- Give each managed application one canonical functional role glyph and one key color: Studio lavender, PaperFlow mint, Arxiv sky, TR GPU Monitor coral, RunShelf butter yellow, and ContentDeck peach.
+- Application key color communicates identity, never success, warning, failure, or availability by itself.
+- Do not surround every section with decorative frames or turn cards into game inventory slots. Dividers and whitespace remain the primary content structure.
+
 ### Media
 
 Simple media means one recognizable subject and one message, not abstract emptiness. A visitor should identify the broad subject of every large image within two seconds.

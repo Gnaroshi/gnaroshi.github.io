@@ -1,0 +1,24 @@
+{
+  "id": "gnaroshi-site-mark-pixel-v1",
+  "createdAt": "2026-07-14",
+  "category": "functional-site-identity",
+  "format": "raster-png",
+  "sourceIdentity": "gnaroshi_mds/identity/approved/apps/gnaroshi-main-v1.png",
+  "sourceCandidate": "gnaroshi-main-p5",
+  "sourceIdentitySha256": "80f889e2dca1e33ac99ced976584db6ea99647700899f5539f8f73785f05a494",
+  "sourceSha256": "80f889e2dca1e33ac99ced976584db6ea99647700899f5539f8f73785f05a494",
+  "sourceRole": "owner-approved P5 site identity master",
+  "generator": "Deterministic 64px pixel source expanded with nearest-neighbor resampling",
+  "intent": "Use the centered P5 mascot canopy as the compact browser and site identity mark.",
+  "sourceDimensions": "2048x2048",
+  "designTargetLogicalGrid": "64x64",
+  "exportKernel": "nearest-neighbor",
+  "constraints": [
+    "No letter or word",
+    "No body or chest ornament",
+    "No role glyph",
+    "No vector master",
+    "Legible at 16, 32, and 64 pixels",
+    "Preserve the approved identity master unchanged"
+  ]
+}
