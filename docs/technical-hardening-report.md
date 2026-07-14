@@ -87,7 +87,7 @@ No CSP meta tag was added. Astro's inline theme initialization, generated module
 
 Findings:
 
-- Public README and generated research documentation include `/home/mingyujung/...` workspace, checkpoint, dataset, and generated-image paths.
+- Historical public research documentation included machine-specific workspace, checkpoint, dataset, and generated-image paths.
 - Executable YAML includes machine-specific roots. Those values must not be changed as a documentation cleanup because they may be active runtime configuration.
 - The copied Seer tree retains its Apache-2.0 `LICENSE`; nested MuJoCo assets retain their BSD license.
 - The repository root has no declared license, so the repository's own code has no clear reuse grant. This must be decided by the owner rather than inferred.
