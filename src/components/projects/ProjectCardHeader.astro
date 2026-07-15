@@ -1,0 +1,60 @@
+---
+import type { ProjectFact } from "../../data/facts/projects";
+import type { Locale } from "../../i18n/types";
+import ApplicationRoleIcon from "./ApplicationRoleIcon.astro";
+import ProjectKindLabel from "./ProjectKindLabel.astro";
+
+interface Props {
+  project: ProjectFact;
+  locale: Locale;
+  title: string;
+  href: string;
+  level?: 3 | 4;
+}
+
+const { project, locale, title, href, level = 3 } = Astro.props;
+const roleLabel = `${title} ${locale === "ko" ? "애플리케이션 역할" : "application role"}`;
+---
+
+<div class:list={["project-card-header", project.kind === "application" && "project-card-header--application"]} data-card-part="header">
+  {project.kind === "application" && (
+    <ApplicationRoleIcon role={project.applicationGroup} projectId={project.id} label={roleLabel} />
+  )}
+  <div class="project-card-header__copy">
+    <ProjectKindLabel project={project} locale={locale} />
+    {level === 3 ? <h3><a href={href}>{title}</a></h3> : <h4><a href={href}>{title}</a></h4>}
+  </div>
+</div>
+
+<style>
+  .project-card-header {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+    align-content: start;
+  }
+
+  .project-card-header--application {
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .project-card-header__copy {
+    display: grid;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+
+  h3,
+  h4 {
+    min-width: 0;
+  }
+
+  h3 a,
+  h4 a {
+    color: var(--color-text);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+</style>
