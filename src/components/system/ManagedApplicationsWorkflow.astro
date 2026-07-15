@@ -36,16 +36,17 @@ const rightIds = managedApplications.slice(3);
   .managed-applications { display:grid; gap:var(--space-6); padding-top:var(--space-5); border-top:1px solid var(--color-border); }
   .managed-applications > header { display:grid; gap:var(--space-3); }
   .managed-applications > header > p:last-child { max-width:72ch; color:var(--color-text-secondary); line-height:1.75; }
-  .managed-map { display:grid; grid-template-columns:minmax(0,1fr); gap:var(--space-4); margin:0; padding:var(--space-5); border:1px solid var(--color-border); background:var(--color-surface); }
+  .managed-map { display:grid; grid-template-columns:minmax(0,1fr); gap:var(--space-4); margin:0; }
   .managed-map__side { display:grid; gap:var(--space-3); }
-  .managed-map__side a, .managed-map__center { display:grid; gap:var(--space-1); padding:var(--space-4); border:1px solid var(--color-border); background:var(--color-background); color:var(--color-text); text-decoration:none; }
+  .managed-map__side a { display:grid; gap:var(--space-1); padding:var(--space-3) 0; border-top:1px solid var(--color-border); color:var(--color-text); text-decoration:none; }
+  .managed-map__side a:last-child { border-bottom:1px solid var(--color-border); }
   .managed-map__side a:hover strong { text-decoration:underline; text-underline-offset:.2em; }
   .managed-map__side span, .managed-map__center span { color:var(--color-text-secondary); font-size:var(--step--1); line-height:1.5; }
-  .managed-map__center { order:-1; border:2px solid var(--color-accent); text-align:center; }
+  .managed-map__center { display:grid; order:-1; gap:var(--space-1); padding:var(--space-4); border-inline-start:var(--pixel-border) solid var(--color-accent); background:var(--color-accent-soft); }
   .managed-map figcaption { color:var(--color-text-secondary); font-size:var(--step--1); line-height:1.6; }
   @media (min-width:768px) {
     .managed-map { grid-template-columns:minmax(0,1fr) minmax(180px,.8fr) minmax(0,1fr); align-items:center; gap:var(--space-6); }
-    .managed-map__center { order:0; position:relative; }
+    .managed-map__center { order:0; position:relative; border-inline-start:0; border-block:var(--pixel-border) solid var(--color-accent); text-align:center; }
     .managed-map__center::before, .managed-map__center::after { content:""; position:absolute; top:50%; width:var(--space-6); border-top:1px solid var(--color-accent); }
     .managed-map__center::before { right:100%; }
     .managed-map__center::after { left:100%; }

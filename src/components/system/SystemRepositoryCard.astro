@@ -36,7 +36,7 @@ const Icon = icons[repository.icon];
   <header class="system-repository__header">
     <span class="system-repository__icon"><Icon size={24} /></span>
     <div class="system-repository__identity">
-      <h4>{copy.title}</h4>
+      <h3>{copy.title}</h3>
       <code>{repository.repositoryName}</code>
     </div>
     <div class="system-repository__badges" aria-label={repository.visibility === "private" ? labels.badges.private : labels.badges.public}>
@@ -51,7 +51,7 @@ const Icon = icons[repository.icon];
   {variant === "full" && (
     <div class="system-repository__scope">
       <div>
-        <h5>{labels.responsibilityLabel}</h5>
+        <h4>{labels.responsibilityLabel}</h4>
         <ul>{copy.responsibilities.map((item) => <li>{item}</li>)}</ul>
       </div>
       <details>
