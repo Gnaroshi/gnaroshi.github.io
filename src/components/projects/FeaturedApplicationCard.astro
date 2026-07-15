@@ -12,7 +12,7 @@ import TechStackStrip from "./TechStackStrip.astro";
 interface Props {
   project: ApplicationProjectFacts;
   story: ProjectStory;
-  media: ApprovedProjectShowcase;
+  media?: ApprovedProjectShowcase;
   locale: Locale;
   href: string;
   detailsLabel: string;
@@ -24,14 +24,14 @@ const { project, story, media, locale, href, detailsLabel, stackLabel, lead = fa
 ---
 
 <article
-  class:list={["featured-app", lead && "featured-app--lead", !lead && "featured-app--paired"]}
+  class:list={["featured-app", lead && "featured-app--lead", !lead && "featured-app--paired", !media && "featured-app--text-only"]}
   data-project-id={project.id}
   data-project-kind={project.kind}
-  style={`--source-media-ratio:${media.width}/${media.height}`}
+  style={media ? `--source-media-ratio:${media.width}/${media.height}` : undefined}
 >
-  <a class="featured-app__media" data-card-part="media" href={href} tabindex="-1" aria-hidden="true">
+  {media && <a class="featured-app__media" data-card-part="media" href={href} tabindex="-1" aria-hidden="true">
     <ResponsiveImage asset={media} locale={locale} sizes={lead ? "(min-width: 1100px) 42vw, 100vw" : "(min-width: 1100px) 38vw, 100vw"} />
-  </a>
+  </a>}
   <div class="featured-app__copy">
     <ProjectCardHeader project={project} locale={locale} title={story.title} href={href} />
     <p class="project-meta" data-card-part="meta">

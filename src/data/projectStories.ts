@@ -77,14 +77,14 @@ const en = {
     scenario:{title:"Example workflow",context:"Plan a deterministic synthetic library reorganization without writing to Zotero.",demoDisclosure:"The library counts and proposed changes are example data; no real Zotero library is opened.",steps:[{id:"scan-library",title:"Scan read-only",description:"Inspect a synthetic library through the same read-only workflow."},{id:"generate-plan",title:"Generate a plan",description:"Prepare collection moves and duplicate groups without applying them."},{id:"review-changes",title:"Review each proposal",description:"Check scope and records before any write-capable action."},{id:"stop-before-apply",title:"Stop at apply",description:"Keep the apply control disabled in showcase mode and preserve the explicit boundary."}]}, detail:{}, linkLabels:{repository:"Repository"}
   },
   "arxiv-discovery": {
-    title:"Arxiv Discovery", cardSummary:"A local Flask and CLI tool for reviewing recent paper candidates without downloading PDFs by default.",
-    heroSummary:"Arxiv Discovery separates finding papers from downloading or handing them to another tool, making the candidate review step visible.",
-    overview:"The current public baseline provides a local Flask review surface and command workflow. A broader package refactor is still being prepared separately.", audience:"People reviewing recent arXiv candidates", primaryUse:"Find a small set of papers, inspect one candidate, and preview a PaperFlow handoff without downloading a PDF.",
-    keyFeatures:["Recent candidate list","No-download showcase path","Candidate detail review","Public-metadata-only handoff preview"],
-    privacySummary:"The approved scenario uses synthetic titles and authors, performs no network request, and includes no PDF or local path.", currentState:"The current public repository can serve the local review UI. The explicit showcase path provides deterministic list, detail, and handoff states.",
-    currentLimitations:["The newer package restructuring is not yet committed to the public main branch.","The local interface still needs broader workflow and theme review."], nextMilestones:["Land the package restructuring separately.","Verify no-download behavior across the final CLI and local UI."],
-    technicalNotes:["Python and Flask serve the local review interface.","Jinja renders the list, detail, and handoff pages.","The repository link is public; no private source is exposed."], studioRelationship:"Studio may request discovery or preview a candidate handoff after provider compatibility is reviewed.",
-    scenario:{title:"Example workflow",context:"Review deterministic VLA candidates and stop before any PDF download or write.",demoDisclosure:"Titles, authors, dates, and summaries are synthetic example metadata.",steps:[{id:"discover",title:"Discover candidates",description:"Open a deterministic recent-paper list in no-download mode."},{id:"filter",title:"Narrow the list",description:"Review only the candidates relevant to the current question."},{id:"inspect-candidate",title:"Inspect one paper",description:"Read the selected metadata while PDF download remains disabled."},{id:"preview-handoff",title:"Preview the handoff",description:"Confirm that only public metadata would be sent to PaperFlow."}]}, detail:{}, linkLabels:{repository:"Repository"}
+    title:"Arxiv Discovery", cardSummary:"A native macOS app for finding recent arXiv papers, narrowing candidates, and choosing when to save, translate, or download.",
+    heroSummary:"Arxiv Discovery keeps recent-paper discovery, candidate review, and explicit follow-up actions in one local macOS window.",
+    overview:"The SwiftUI app fetches public arXiv metadata directly and keeps review state on the Mac. The Python CLI remains as a compatibility path without running a local web server.", audience:"People reviewing recent arXiv candidates", primaryUse:"Find papers from the last one, three, or seven days, inspect one candidate, and choose the next action explicitly.",
+    keyFeatures:["One-, three-, and seven-day discovery windows","Subject filters and local search","Saved-paper metadata","Explicit PDF download","Optional per-paper Korean translation with a Keychain-stored API key","Legacy JSON import"],
+    privacySummary:"Public arXiv metadata and saved state remain local. Gemini receives only a selected public title and abstract after an explicit translation action; its API key stays in Keychain, and PDFs are never downloaded automatically.", currentState:"The native app is built, Developer ID signed, installed in Applications, discoverable through Spotlight, and verified against live public arXiv metadata. Its owner-approved showcase uses deterministic records with network actions disabled, and its read-only integration helper reports only safe counts and freshness.",
+    currentLimitations:["The candidate handoff contract and a notarized public release are not complete."], nextMilestones:["Define the candidate handoff schema.","Prepare a notarized tagged release."],
+    technicalNotes:["SwiftUI provides the native macOS interface and talks to arXiv directly.","Application Support JSON stores local paper metadata and preferences.","Python remains a CLI compatibility layer, while a fixed status helper exposes safe read-only integration state."], studioRelationship:"Studio may discover, open, and read safe counts or freshness from Arxiv Discovery. Abstracts, credentials, PDF downloads, translation, and saved-paper ownership remain inside the app.",
+    scenario:{title:"Review recent candidates",context:"Move from a time window to one paper while keeping save, translation, and download choices explicit.",demoDisclosure:"The approved screenshot uses deterministic paper metadata and disables network, translation, and download actions; it does not represent personal reading activity.",steps:[{id:"choose-window",title:"Choose a time window",description:"Select the last one, three, or seven days and the relevant arXiv subjects."},{id:"discover",title:"Discover candidates",description:"Fetch public metadata and narrow the results with filters or search."},{id:"inspect-candidate",title:"Inspect one paper",description:"Read the title, authors, abstract, subjects, and source link in the detail pane."},{id:"save-or-act",title:"Choose the next action",description:"Save the metadata or explicitly request translation, the source page, or a PDF."}]}, detail:{}, linkLabels:{repository:"Repository"}
   },
   runshelf: {
     title:"RunShelf", cardSummary:"A local experiment ledger for finding runs, inspecting failures, and keeping large artifacts at their source.",
@@ -214,23 +214,23 @@ const ko: Record<keyof typeof en, ProjectStory> = {
   },
   "arxiv-discovery": {
     ...en["arxiv-discovery"],
-    cardSummary: "기본적으로 PDF를 받지 않고 최근 논문 후보를 검토하는 로컬 Flask·CLI 도구입니다.",
-    heroSummary: "논문을 찾는 일과 다운로드·전달을 분리해 후보를 확인하는 단계를 눈에 보이게 합니다.",
-    overview: "현재 공개 기준은 로컬 Flask 검토 화면과 명령 흐름을 제공합니다. 더 큰 패키지 개편은 별도 작업으로 준비 중입니다.",
+    cardSummary: "최근 arXiv 논문을 찾고 후보를 좁힌 뒤 저장·번역·다운로드 시점을 직접 고르는 네이티브 macOS 앱입니다.",
+    heroSummary: "최근 논문 탐색과 후보 검토, 명시적인 후속 동작을 하나의 로컬 macOS 창에 모았습니다.",
+    overview: "SwiftUI 앱이 공개 arXiv 메타데이터를 직접 가져오고 검토 상태를 Mac에 보관합니다. Python CLI는 로컬 웹 서버 없이 호환 경로로 남아 있습니다.",
     audience: "최근 arXiv 후보를 검토하는 사람",
-    primaryUse: "소수의 논문을 찾고 후보 하나를 확인한 뒤 PDF 없이 PaperFlow 전달을 미리 봅니다.",
-    keyFeatures: ["최근 후보 목록", "다운로드 없는 시연 흐름", "후보 상세 확인", "공개 메타데이터만 쓰는 전달 미리보기"],
-    privacySummary: "승인된 흐름은 합성 제목과 저자를 사용하고 네트워크 요청을 하지 않으며 PDF와 로컬 경로를 포함하지 않습니다.",
-    currentState: "현재 공개 저장소는 로컬 검토 UI를 실행할 수 있습니다. 명시적 시연 모드는 같은 목록, 상세, 전달 상태를 재현합니다.",
-    currentLimitations: ["새 패키지 구조는 아직 공개 기본 브랜치에 커밋되지 않았습니다.", "로컬 인터페이스의 전체 작업 흐름과 테마 검토가 더 필요합니다."],
-    nextMilestones: ["패키지 개편을 별도 변경으로 반영합니다.", "최종 CLI와 로컬 UI에서 다운로드 없음 동작을 확인합니다."],
-    technicalNotes: ["Python과 Flask가 로컬 검토 화면을 제공합니다.", "Jinja가 목록, 상세, 전달 페이지를 표시합니다.", "공개 저장소만 연결하며 비공개 원본은 노출하지 않습니다."],
-    studioRelationship: "호환성을 확인한 뒤 Studio에서 탐색 요청과 후보 전달 미리보기를 사용할 수 있습니다.",
-    scenario: { title: "다운로드 전 후보 검토", context: "합성 VLA 후보를 확인하고 PDF 다운로드나 쓰기 전에 멈춥니다.", demoDisclosure: "제목과 저자, 날짜, 요약은 모두 합성한 설명용 메타데이터입니다.", steps: [
-      { id: "discover", title: "후보 찾기", description: "다운로드를 끈 최근 논문 목록을 엽니다." },
-      { id: "filter", title: "목록 좁히기", description: "현재 질문과 관련된 후보만 살펴봅니다." },
-      { id: "inspect-candidate", title: "후보 하나 확인", description: "PDF 다운로드가 꺼진 상태로 선택한 메타데이터를 읽습니다." },
-      { id: "preview-handoff", title: "전달 미리보기", description: "PaperFlow에는 공개 메타데이터만 넘어가는지 확인합니다." }
+    primaryUse: "최근 1일·3일·7일 범위에서 논문을 찾고 후보 하나를 살핀 뒤 다음 동작을 직접 선택합니다.",
+    keyFeatures: ["1일·3일·7일 탐색 범위", "주제 필터와 로컬 검색", "논문 메타데이터 저장", "명시적 PDF 다운로드", "키체인 API 키를 쓰는 논문별 한국어 번역", "기존 JSON 가져오기"],
+    privacySummary: "공개 arXiv 메타데이터와 저장 상태는 로컬에 남습니다. Gemini에는 번역을 직접 요청한 공개 제목과 초록만 전달하며 API 키는 키체인에 보관하고 PDF는 자동으로 받지 않습니다.",
+    currentState: "네이티브 앱을 빌드하고 Developer ID로 서명해 응용 프로그램에 설치했으며 Spotlight와 실제 공개 arXiv 메타데이터로 확인했습니다. 소유자가 승인한 쇼케이스는 네트워크 동작을 끈 결정적 데모 기록만 사용하고, 읽기 전용 연동 도우미는 안전한 개수와 최신 시각만 반환합니다.",
+    currentLimitations: ["후보 전달 계약과 공증된 공개 릴리스는 아직 완성되지 않았습니다."],
+    nextMilestones: ["후보 전달 스키마를 정합니다.", "공증된 태그 릴리스를 준비합니다."],
+    technicalNotes: ["SwiftUI가 네이티브 macOS 화면을 제공하고 arXiv와 직접 통신합니다.", "Application Support의 JSON에 로컬 논문 메타데이터와 환경설정을 보관합니다.", "Python은 CLI 호환 계층으로 남고 고정된 상태 도우미는 안전한 읽기 전용 연동 상태만 제공합니다."],
+    studioRelationship: "Studio는 Arxiv Discovery를 찾고 열며 안전한 개수와 최신 시각만 읽을 수 있습니다. 초록, 자격 증명, PDF 다운로드, 번역, 저장 논문의 소유권은 앱 안에 남습니다.",
+    scenario: { title: "최근 후보 검토", context: "탐색 기간에서 논문 하나까지 이동하며 저장·번역·다운로드를 각각 직접 선택합니다.", demoDisclosure: "승인된 화면은 결정적으로 만든 논문 메타데이터만 사용하고 네트워크, 번역, 다운로드 동작을 끄며 개인 읽기 활동을 나타내지 않습니다.", steps: [
+      { id: "choose-window", title: "탐색 기간 선택", description: "최근 1일·3일·7일과 필요한 arXiv 주제를 고릅니다." },
+      { id: "discover", title: "후보 찾기", description: "공개 메타데이터를 가져와 필터나 검색으로 목록을 좁힙니다." },
+      { id: "inspect-candidate", title: "논문 하나 확인", description: "상세 영역에서 제목, 저자, 초록, 주제, 원문 링크를 읽습니다." },
+      { id: "save-or-act", title: "다음 동작 선택", description: "메타데이터를 저장하거나 번역, 원문 페이지, PDF를 명시적으로 요청합니다." }
     ] },
     detail: {},
     linkLabels: { repository: "저장소" }

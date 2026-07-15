@@ -31,7 +31,7 @@ for (const project of projectFacts) {
     if (!integrationStatuses.has(project.studioIntegrationStatus)) failures.push(`${project.id}: invalid Studio integration status`);
     if (!/^[0-9a-f]{40}$/.test(project.sourceCommit)) failures.push(`${project.id}: missing full source commit`);
     if (!project.sourceRepository) failures.push(`${project.id}: source provenance missing`);
-    const primary = getApprovedProjectShowcase(project.primaryShowcaseId);
+    const primary = project.primaryShowcaseId ? getApprovedProjectShowcase(project.primaryShowcaseId) : undefined;
     if (!primary && !project.textOnlyExemption) failures.push(`${project.id}: primary approved screenshot missing`);
     if (primary && (primary.applicationId !== project.id || primary.sourceApplicationCommit !== project.sourceCommit)) failures.push(`${project.id}: primary screenshot provenance mismatch`);
     if (project.studioIntegrationStatus === project.productStatus) failures.push(`${project.id}: product and Studio integration status are conflated`);

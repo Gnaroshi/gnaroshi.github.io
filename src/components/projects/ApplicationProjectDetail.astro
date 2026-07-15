@@ -10,16 +10,16 @@ import ProjectDetailHeader from "./ProjectDetailHeader.astro";
 import ProjectPrimaryMedia from "./ProjectPrimaryMedia.astro";
 import ProjectScenario from "./ProjectScenario.astro";
 import ProjectStoryFacts from "./ProjectStoryFacts.astro";
-interface Props { project: ApplicationProjectFacts; story: ProjectStory; locale: Locale; media: ApprovedProjectShowcase; hasPublicRepository: boolean }
+interface Props { project: ApplicationProjectFacts; story: ProjectStory; locale: Locale; media?: ApprovedProjectShowcase; hasPublicRepository: boolean }
 const { project, story, locale, media, hasPublicRepository } = Astro.props;
 const labels = getProjectUi(locale);
 ---
 <div data-project-template="application">
   <ProjectDetailHeader project={project} story={story} locale={locale}/>
-  <ProjectPrimaryMedia asset={media} locale={locale} caption={media.caption[locale]} disclosure={media.demoDisclosure[locale]}/>
+  {media && <ProjectPrimaryMedia asset={media} locale={locale} caption={media.caption[locale]} disclosure={media.demoDisclosure[locale]}/>}
   <ProjectAtAGlance project={project} story={story} locale={locale}/>
   <section class="prose-section"><h2>{labels.overview}</h2><p>{story.overview}</p></section>
-  <ProjectScenario projectId={project.id} scenario={story.scenario} locale={locale} withMedia excludeMediaId={project.primaryShowcaseId}/>
+  <ProjectScenario projectId={project.id} scenario={story.scenario} locale={locale} withMedia={Boolean(media)} excludeMediaId={media?.id}/>
   <ProjectStoryFacts project={project} story={story} locale={locale}/>
   <section class="technical-facts"><h2>{locale === "ko" ? "기술 사실" : "Technical facts"}</h2><dl>
     <div><dt>{labels.source}</dt><dd>{hasPublicRepository ? project.sourceRepository : labels.privateSource}</dd></div><div><dt>{labels.sourceCommit}</dt><dd><code>{project.sourceCommit.slice(0,12)}</code></dd></div>

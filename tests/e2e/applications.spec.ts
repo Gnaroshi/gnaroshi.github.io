@@ -23,6 +23,7 @@ test.describe("verified Gnaroshi applications", () => {
         await expect(page.locator(`.supporting-app[data-application-group="${group}"]`)).toHaveCount(1);
       }
       await expect(page.locator(".featured-app picture img")).toHaveCount(3);
+      await expect(page.locator('[data-project-id="arxiv-discovery"] picture img')).toHaveCount(1);
       await expect(page.locator(".supporting-app picture")).toHaveCount(0);
       for (const slug of applicationSlugs) expect(await page.locator(`main a[href$="/projects/${slug}/"]`).count()).toBeGreaterThanOrEqual(2);
       const cards = page.locator("[data-project-id]");
@@ -82,10 +83,12 @@ test.describe("verified Gnaroshi applications", () => {
     for (const slug of applicationSlugs) {
       test(`${localePrefix || "/en"} ${slug} shows approved evidence and complete facts`, async ({ page }) => {
         await page.goto(`${localePrefix}/projects/${slug}/`);
-        await expect(page.locator(".primary-evidence picture img")).toHaveCount(1);
-        await expect(page.locator(".primary-evidence figcaption")).toHaveCount(1);
-        await expect(page.locator(".scenario picture img")).toHaveCount(2);
-        await expect(page.locator(".scenario figcaption")).toHaveCount(2);
+        const expectedEvidenceCount = 1;
+        const expectedScenarioMediaCount = slug === "arxiv-discovery" ? 0 : 2;
+        await expect(page.locator(".primary-evidence picture img")).toHaveCount(expectedEvidenceCount);
+        await expect(page.locator(".primary-evidence figcaption")).toHaveCount(expectedEvidenceCount);
+        await expect(page.locator(".scenario picture img")).toHaveCount(expectedScenarioMediaCount);
+        await expect(page.locator(".scenario figcaption")).toHaveCount(expectedScenarioMediaCount);
         const imageSources = await page.locator(".primary-evidence img,.scenario img").evaluateAll((images) => images.map((image) => (image as HTMLImageElement).currentSrc));
         expect(new Set(imageSources).size).toBe(imageSources.length);
         for (const figure of await page.locator(".primary-evidence,.scenario figure").all()) {
@@ -100,8 +103,8 @@ test.describe("verified Gnaroshi applications", () => {
 
         await page.setViewportSize({ width: 360, height: 800 });
         await page.reload();
-        await expect(page.locator(".primary-evidence figcaption")).toHaveCount(1);
-        await expect(page.locator(".scenario figcaption")).toHaveCount(2);
+        await expect(page.locator(".primary-evidence figcaption")).toHaveCount(expectedEvidenceCount);
+        await expect(page.locator(".scenario figcaption")).toHaveCount(expectedScenarioMediaCount);
         for (const figure of await page.locator(".primary-evidence,.scenario figure").all()) {
           const geometry = await figure.evaluate((element) => {
             const media = element.querySelector(".primary-evidence__frame,.scenario__media")!.getBoundingClientRect();
@@ -175,7 +178,9 @@ test.describe("verified Gnaroshi applications", () => {
       for (const width of [1024, 1100, 1440]) {
         await page.setViewportSize({ width, height: 1000 });
         await page.goto(`${localePrefix}/projects/`);
-        if (width >= 1100) await assertAligned(".featured-app--paired", ["media", "header", "meta", "summary", "stack", "cta"], 2);
+        if (width >= 1100) {
+          await assertAligned(".featured-app--paired", ["media", "header", "meta", "summary", "stack", "cta"], 2);
+        }
         await assertAligned(width < 1100 ? ".supporting-app:nth-child(-n+2)" : ".supporting-app", ["group", "header", "meta", "summary", "platforms", "stack", "cta"], width < 1100 ? 2 : 3);
       }
 

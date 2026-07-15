@@ -31,9 +31,9 @@ const relatedKeys = new Set(localizedProject.relatedWriting);
 const related = posts.filter((post) => relatedKeys.has(post.data.translationKey));
 const canonicalPath = getLocalePath(locale, `/projects/${project.slug}/`);
 const repositoryUrl = project.links.find((link) => link.id === "repository")?.href;
-const applicationMedia = project.kind === "application" ? getApprovedProjectShowcase(project.primaryShowcaseId) : undefined;
+const applicationMedia = project.kind === "application" && project.primaryShowcaseId ? getApprovedProjectShowcase(project.primaryShowcaseId) : undefined;
 const selectedMedia = project.kind !== "application" ? getProjectMedia(project.id) : undefined;
-if (project.kind === "application" && !applicationMedia) throw new Error(`${project.id}: approved application media is missing`);
+if (project.kind === "application" && !applicationMedia && !project.textOnlyExemption) throw new Error(`${project.id}: approved application media or text-only exemption is missing`);
 if (project.kind !== "application" && !selectedMedia) throw new Error(`${project.id}: selected-project evidence is missing`);
 ---
 
@@ -46,7 +46,7 @@ if (project.kind !== "application" && !selectedMedia) throw new Error(`${project
       ...(repositoryUrl ? {codeRepository:repositoryUrl,programmingLanguage:project.techStack.map((id) => techCatalog[id].label)} : {})
     }}/>
 
-    {project.kind === "application" && applicationMedia && <ApplicationProjectDetail project={project} story={story} locale={locale} media={applicationMedia} hasPublicRepository={Boolean(repositoryUrl)}/>}
+    {project.kind === "application" && <ApplicationProjectDetail project={project} story={story} locale={locale} media={applicationMedia} hasPublicRepository={Boolean(repositoryUrl)}/>}
     {project.kind === "research" && selectedMedia && <ResearchProjectDetail project={project} story={story} locale={locale} media={selectedMedia}/>}
     {project.kind === "infrastructure" && selectedMedia && <InfrastructureProjectDetail project={project} story={story} locale={locale} media={selectedMedia}/>}
 
