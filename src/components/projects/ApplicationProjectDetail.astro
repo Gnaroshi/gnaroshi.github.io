@@ -10,16 +10,16 @@ import ProjectDetailHeader from "./ProjectDetailHeader.astro";
 import ProjectPrimaryMedia from "./ProjectPrimaryMedia.astro";
 import ProjectScenario from "./ProjectScenario.astro";
 import ProjectTechStack from "./ProjectTechStack.astro";
-interface Props { project: ApplicationProjectFacts; story: ProjectStory; locale: Locale; media: ApprovedProjectShowcase; hasPublicRepository: boolean }
+interface Props { project: ApplicationProjectFacts; story: ProjectStory; locale: Locale; media?: ApprovedProjectShowcase; hasPublicRepository: boolean }
 const { project, story, locale, media, hasPublicRepository } = Astro.props;
 const labels = getProjectUi(locale);
 ---
 <div data-project-template="application">
   <ProjectDetailHeader project={project} story={story} locale={locale}/>
-  <ProjectPrimaryMedia asset={media} locale={locale} caption={media.caption[locale]} disclosure={media.demoDisclosure[locale]}/>
+  {media && <ProjectPrimaryMedia asset={media} locale={locale} caption={media.caption[locale]} disclosure={media.demoDisclosure[locale]}/>}
   <ProjectAtAGlance project={project} story={story} locale={locale}/>
   <section class="prose-section"><h2>{labels.overview}</h2><p>{story.overview}</p></section>
-  <ProjectScenario projectId={project.id} scenario={story.scenario} locale={locale} withMedia/>
+  <ProjectScenario projectId={project.id} scenario={story.scenario} locale={locale} withMedia={Boolean(media)}/>
   <section class="split-section"><div><h2>{labels.features}</h2><ul>{story.keyFeatures.map((item) => <li>{item}</li>)}</ul></div><div><h2>{labels.privacy}</h2><p>{story.privacySummary}</p></div></section>
   <ProjectTechStack ids={project.techStack} locale={locale}/>
   {story.studioRelationship && <section class="prose-section"><h2>{labels.relationship}</h2><p>{story.studioRelationship}</p></section>}

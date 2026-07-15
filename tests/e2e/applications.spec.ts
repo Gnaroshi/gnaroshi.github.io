@@ -22,7 +22,8 @@ test.describe("verified Gnaroshi applications", () => {
       for (const group of ["research-workflow", "system-utilities", "learning-tools"]) {
         await expect(page.locator(`.supporting-app-group[data-application-group="${group}"]`)).toHaveCount(1);
       }
-      await expect(page.locator(".featured-app picture img")).toHaveCount(3);
+      await expect(page.locator(".featured-app picture img")).toHaveCount(2);
+      await expect(page.locator('[data-project-id="arxiv-discovery"].featured-app--text-only')).toHaveCount(1);
       await expect(page.locator(".supporting-app picture")).toHaveCount(0);
       for (const slug of applicationSlugs) expect(await page.locator(`main a[href$="/projects/${slug}/"]`).count()).toBeGreaterThanOrEqual(2);
       const cards = page.locator("[data-project-id]");
@@ -54,9 +55,11 @@ test.describe("verified Gnaroshi applications", () => {
     for (const slug of applicationSlugs) {
       test(`${localePrefix || "/en"} ${slug} shows approved evidence and complete facts`, async ({ page }) => {
         await page.goto(`${localePrefix}/projects/${slug}/`);
-        await expect(page.locator(".primary-evidence picture img")).toHaveCount(1);
-        await expect(page.locator(".scenario picture img")).toHaveCount(3);
-        await expect(page.locator(".scenario figcaption")).toHaveCount(3);
+        const expectedEvidenceCount = slug === "arxiv-discovery" ? 0 : 1;
+        const expectedScenarioMediaCount = slug === "arxiv-discovery" ? 0 : 3;
+        await expect(page.locator(".primary-evidence picture img")).toHaveCount(expectedEvidenceCount);
+        await expect(page.locator(".scenario picture img")).toHaveCount(expectedScenarioMediaCount);
+        await expect(page.locator(".scenario figcaption")).toHaveCount(expectedScenarioMediaCount);
         expect(await page.locator(".tech-groups li").count()).toBeGreaterThanOrEqual(3);
         await expect(page.locator(".technical-facts code")).toHaveText(/[0-9a-f]{12}/);
         await expect(page.locator("[data-product-status]")).toHaveCount(1);

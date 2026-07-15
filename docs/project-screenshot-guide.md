@@ -40,9 +40,11 @@ The application pages remain evidence-gated. Captures are stored outside `public
 | --- | --- | --- |
 | `project-gnaroshi-studio-review` | Actual Managed Apps overview with external apps unavailable or needing setup | Reviewable; no private workspace records are visible |
 | `project-paperflow-review` | Actual PaperFlow organization screen | Reviewable; shows the dry-run and explicit apply boundary without library records |
-| `project-arxiv-discovery-review` | Actual Flask UI populated by a no-download query of public arXiv metadata | Reviewable; current public paper metadata only |
+| `project-arxiv-discovery-review` | Previous Flask UI populated by a no-download query of public arXiv metadata | Historical only; do not reuse as evidence for the native macOS app |
 | `project-tr-gpu-monitor-review` | Actual SSH prerequisite screen | Rejected for production because it is not a sanitized monitoring summary |
 | `project-runshelf-review` | Actual app rendering checked-in sample records | Rejected for production because sample metrics are not research evidence |
 | `project-contentdeck-review` | Actual Electron player in its empty prerequisite state | Rejected for production because it does not show supported playback, subtitles, or a loop |
 
 No capture contains a private repository URL, branch, commit, token, credential, personal paper record, or private host alias. Production exports must be regenerated only from owner-approved candidates, and the three rejected states require replacement evidence rather than cosmetic editing.
+
+Arxiv Discovery moved from the Flask interface to a native SwiftUI app on 2026-07-15. Keep its project record text-only until an actual native capture has been reviewed and explicitly approved; importing a showcase manifest does not grant production approval.

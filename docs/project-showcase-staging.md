@@ -20,9 +20,11 @@ The owner approved all 24 captures prepared on 2026-07-13: four appearance/workf
 | --- | --- | --- |
 | Gnaroshi Studio | `e6115c90ab86` | `gnaroshi-studio-managed-apps` |
 | PaperFlow | `7c7bd013d171` | `paperflow-plan-review` |
-| Arxiv Discovery | `e48da6e1434a` | `arxiv-discovery-discovery-list` |
+| Arxiv Discovery | `e48da6e1434a` | `arxiv-discovery-discovery-list` (historical; not rendered for the native baseline) |
 | RunShelf | `7657067cfeae` | `runshelf-run-list` |
 | TR GPU Monitor | `3a2fa8173f3b` | `tr-gpu-monitor-host-overview` |
 | ContentDeck | `5c6e2f94d1e` | `contentdeck-active-loop` |
 
 Every approved capture uses deterministic demo data and includes a visible localized disclosure wherever it appears. Private repository URLs, local filesystem paths, host credentials, real library records, raw experiment paths, and unpublished research data are excluded.
+
+The current Arxiv Discovery product fact points to native commit `1d4fb00853df`. Its files from `e48da6e1434a` remain historical owner-approved records, but they are no longer associated with the current product fact because the Flask interface was replaced. They must not be relabeled with the native commit or returned to the current project page without a fresh native capture and owner review; the public project remains temporarily text-only.

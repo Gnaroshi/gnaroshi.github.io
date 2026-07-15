@@ -17,6 +17,8 @@ The three project kinds are `research`, `application`, and `infrastructure`. App
 
 The index keeps selected work separate from applications. Application cards use the shared `applicationGroup` fact to distinguish research workflow, system utility, and learning tool roles without duplicating that classification in localized prose.
 
+Application evidence is a discriminated pair. A current owner-approved capture uses a non-null `primaryShowcaseId` and a null `textOnlyExemption`. When an interface changes before a new capture is approved, the record instead uses a null `primaryShowcaseId` and an internal non-empty `textOnlyExemption`; the page omits stale media and renders the verified text workflow. The exemption is validation context and is never public copy.
+
 ## Localized stories
 
 `src/data/projectStories.ts` owns prose only. English and Korean each provide `cardSummary`, `heroSummary`, `overview`, audience, primary use, key features, privacy, current state, limitations, milestones, scenario copy, and kind-specific detail copy.

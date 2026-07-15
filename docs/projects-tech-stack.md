@@ -10,7 +10,7 @@
 | gnaroshi.dev | Astro, TypeScript, GitHub Actions, Playwright | `package.json` and workflow files |
 | Gnaroshi Studio | TypeScript, React, Rust, Tauri | workspace package manifests and Cargo manifest |
 | PaperFlow | Python, Swift, SwiftUI, Zotero Local API | `pyproject.toml`, Swift package/source, repository code |
-| Arxiv Discovery | Python, Flask, Jinja | `pyproject.toml`, Flask application, templates |
+| Arxiv Discovery | Swift, SwiftUI, Python | `Package.swift`, Swift package/source, `pyproject.toml` |
 | RunShelf | Python, Swift, SwiftUI | `pyproject.toml`, Swift package/source |
 | TR GPU Monitor | Swift, SwiftUI, SQLite | Xcode source and SQLite persistence implementation |
 | ContentDeck | TypeScript, React, Electron, Vite, Fastify | `package.json` |
