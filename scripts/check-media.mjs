@@ -56,6 +56,17 @@ const approvedOutputs = [
 
 approvedOutputs.push(...approvedProjectShowcases.flatMap((asset) => asset.widths.flatMap((width) => ["avif", "webp"].map((format) => ({ id: asset.id, ratio: asset.width / asset.height, width, format })))));
 
+const identityOutputs = [
+  ["public/favicon-16.png", 16],
+  ["public/favicon-32.png", 32],
+  ["public/favicon-48.png", 48],
+  ["public/apple-touch-icon.png", 180],
+  ["public/icon-192.png", 192],
+  ["public/icon-512.png", 512],
+  ["public/media/identity/gnaroshi-site-mark-64.png", 64],
+  ["public/media/identity/gnaroshi-site-mark-128.png", 128]
+];
+
 for (const item of expected) {
   if (!existsSync(item.path)) {
     failures.push(`missing candidate output: ${item.path}`);
@@ -74,6 +85,34 @@ for (const item of approvedOutputs) {
   const metadata = await sharp(path).metadata();
   const expectedHeight = Math.round(item.width / item.ratio);
   if (metadata.width !== item.width || metadata.height !== expectedHeight) failures.push(`${path}: expected ${item.width}x${expectedHeight}, found ${metadata.width}x${metadata.height}`);
+}
+
+for (const [path, size] of identityOutputs) {
+  if (!existsSync(path)) {
+    failures.push(`missing site identity asset: ${path}`);
+    continue;
+  }
+  const metadata = await sharp(path).metadata();
+  if (metadata.width !== size || metadata.height !== size) failures.push(`${path}: expected ${size}x${size}, found ${metadata.width}x${metadata.height}`);
+}
+
+if (existsSync("public/media/identity/gnaroshi-site-mark-64.png")) {
+  const { data, info } = await sharp("public/media/identity/gnaroshi-site-mark-64.png")
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const background = [data[0], data[1], data[2]];
+  let activePixels = 0;
+  let sampledPixels = 0;
+  for (let y = 32; y < 58; y += 1) {
+    for (let x = 12; x < 52; x += 1) {
+      const offset = (y * info.width + x) * 3;
+      const distance = Math.abs(data[offset] - background[0]) + Math.abs(data[offset + 1] - background[1]) + Math.abs(data[offset + 2] - background[2]);
+      sampledPixels += 1;
+      if (distance > 45) activePixels += 1;
+    }
+  }
+  if (activePixels / sampledPixels < 0.5) failures.push("site identity mark is missing the lower face mass; an ears-only canopy is not valid for the primary website mark");
 }
 
 for (const sheet of ["home-hero", "research-vla", "technical-diagrams", "project-evidence"]) {
