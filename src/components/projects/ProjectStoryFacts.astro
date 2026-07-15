@@ -1,0 +1,58 @@
+---
+import { getProjectUi } from "../../data/projectUi";
+import type { ProjectFact } from "../../data/facts/projects";
+import type { ProjectStory } from "../../data/projectStories";
+import type { Locale } from "../../i18n/types";
+import ProjectTechStack from "./ProjectTechStack.astro";
+
+interface Props {
+  project: ProjectFact;
+  story: ProjectStory;
+  locale: Locale;
+}
+
+const { project, story, locale } = Astro.props;
+const labels = getProjectUi(locale);
+---
+
+<section class="split-section">
+  <div>
+    <h2>{labels.features}</h2>
+    <ul>{story.keyFeatures.map((item) => <li>{item}</li>)}</ul>
+  </div>
+  <div>
+    <h2>{labels.privacy}</h2>
+    <p>{story.privacySummary}</p>
+  </div>
+</section>
+
+<ProjectTechStack ids={project.techStack} locale={locale}/>
+
+{story.studioRelationship && (
+  <section class="prose-section">
+    <h2>{labels.relationship}</h2>
+    <p>{story.studioRelationship}</p>
+  </section>
+)}
+
+<section class="split-section">
+  <div>
+    <h2>{labels.state}</h2>
+    <p>{story.currentState}</p>
+  </div>
+  <div>
+    <h2>{labels.limitations}</h2>
+    <ul>{story.currentLimitations.map((item) => <li>{item}</li>)}</ul>
+  </div>
+</section>
+
+<section class="split-section">
+  <div>
+    <h2>{labels.notes}</h2>
+    <ul>{story.technicalNotes.map((item) => <li>{item}</li>)}</ul>
+  </div>
+  <div>
+    <h2>{labels.milestones}</h2>
+    <ul>{story.nextMilestones.map((item) => <li>{item}</li>)}</ul>
+  </div>
+</section>

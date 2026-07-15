@@ -3,9 +3,9 @@ import ResponsiveImage from "../media/ResponsiveImage.astro";
 import { getProjectShowcases } from "../../data/approvedProjectShowcases";
 import type { LocalizedScenario } from "../../data/projectStories";
 import type { Locale } from "../../i18n/types";
-interface Props { projectId: string; scenario: LocalizedScenario; locale: Locale; withMedia?: boolean }
-const { projectId, scenario, locale, withMedia = false } = Astro.props;
-const media = withMedia ? getProjectShowcases(projectId) : [];
+interface Props { projectId: string; scenario: LocalizedScenario; locale: Locale; withMedia?: boolean; excludeMediaId?: string }
+const { projectId, scenario, locale, withMedia = false, excludeMediaId } = Astro.props;
+const media = withMedia ? getProjectShowcases(projectId).filter((asset) => asset.id !== excludeMediaId) : [];
 const mediaByStep = new Map(media.map((asset) => [asset.stepId, asset]));
 ---
 <section class="scenario" aria-labelledby="scenario-heading">
@@ -13,7 +13,7 @@ const mediaByStep = new Map(media.map((asset) => [asset.stepId, asset]));
   <ol>
     {scenario.steps.map((step, index) => { const asset = mediaByStep.get(step.id); return <li>
       <div class="scenario__step"><span aria-hidden="true">{index + 1}</span><div><h3>{step.title}</h3><p>{step.description}</p></div></div>
-      {asset && <figure style={`aspect-ratio:${asset.width}/${asset.height}`}><ResponsiveImage asset={asset} locale={locale} sizes="(min-width: 1024px) 820px, 100vw"/><figcaption>{asset.caption[locale]} <span>{asset.demoDisclosure[locale]}</span></figcaption></figure>}
+      {asset && <figure><div class="scenario__media" style={`aspect-ratio:${asset.width}/${asset.height}`}><ResponsiveImage asset={asset} locale={locale} sizes="(min-width: 1024px) 820px, 100vw"/></div><figcaption>{asset.caption[locale]} <span>{asset.demoDisclosure[locale]}</span></figcaption></figure>}
     </li>})}
   </ol>
   {!withMedia && <p class="scenario__disclosure">{scenario.demoDisclosure}</p>}
@@ -25,6 +25,6 @@ const mediaByStep = new Map(media.map((asset) => [asset.stepId, asset]));
   .scenario__step{display:grid;grid-template-columns:2.25rem minmax(0,1fr);gap:var(--space-3);align-items:start;max-width:72ch}
   .scenario__step>span{display:grid;place-items:center;width:2.25rem;height:2.25rem;border-radius:50%;color:var(--color-surface);background:var(--color-text);font-variant-numeric:tabular-nums}
   h3{padding-top:.25rem;font-size:var(--step-1)} .scenario__step p,.scenario__disclosure{margin-top:var(--space-2);color:var(--color-text-secondary);line-height:1.7}
-  figure{margin:0;overflow:hidden;border:1px solid var(--color-border);background:var(--color-surface)} figure :global(.responsive-media){width:100%;height:100%} figure :global(img){object-fit:contain}
+  figure{display:grid;grid-template-rows:auto auto;margin:0;overflow:hidden;border:1px solid var(--color-border);background:var(--color-surface)} .scenario__media{min-width:0;overflow:hidden}.scenario__media :global(.responsive-media){width:100%;height:100%}.scenario__media :global(img){object-fit:contain}
   figcaption{padding:var(--space-3);color:var(--color-text-secondary);font-size:var(--step--1);line-height:1.55;border-top:1px solid var(--color-border)} figcaption span{display:block;margin-top:.2rem}
 </style>
