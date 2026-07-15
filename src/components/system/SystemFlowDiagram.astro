@@ -16,7 +16,7 @@ const { copy } = Astro.props;
 function buildLayout(direction: Direction) {
   const mobile = direction === "TB";
   const nodeWidth = mobile ? 140 : 190;
-  const nodeHeight = mobile ? 82 : 92;
+  const nodeHeight = mobile ? 82 : 72;
   const graph = new Graph()
     .setGraph({ rankdir: direction, nodesep: mobile ? 20 : 40, ranksep: mobile ? 58 : 70, marginx: 20, marginy: 20 })
     .setDefaultEdgeLabel(() => ({}));
@@ -44,6 +44,12 @@ const stepByRepository: Partial<Record<SystemRepository["id"], string>> = {
   website: "4"
 };
 const pathFor = (points: PositionedEdge["points"]) => points.map((point, index) => `${index === 0 ? "M" : "L"}${point.x},${point.y}`).join(" ");
+const fallbackStages = [
+  { step: "1", label: copy.stages.sources, detail: `${copy.repositories["paper-lab"].title} · ${copy.repositories.writing.title}` },
+  { step: "2", label: copy.stages.control, detail: `${copy.repositories.studio.title} · ${copy.repositories.api.title} (${copy.badges.optional})` },
+  { step: "3", label: copy.stages.projection, detail: copy.repositories["content-feed"].title },
+  { step: "4", label: copy.stages.presentation, detail: copy.repositories.website.title }
+] as const;
 ---
 
 <figure class="system-diagram">
@@ -94,7 +100,6 @@ const pathFor = (points: PositionedEdge["points"]) => points.map((point, index) 
               )}
               <text class="system-diagram__title" x={left + (step ? 39 : 14)} y={top + 22}>{repositoryCopy.title}</text>
               <text class="system-diagram__repo" x={left + 14} y={top + 50}>{node.repositoryName}</text>
-              <text class="system-diagram__role" x={left + 14} y={top + 72}>{repositoryCopy.role}</text>
               {optional && <text class="system-diagram__optional" x={left + node.width - 12} y={top + 20} text-anchor="end">{copy.badges.optional}</text>}
             </g>
           );
@@ -103,10 +108,10 @@ const pathFor = (points: PositionedEdge["points"]) => points.map((point, index) 
     </svg>
   ))}
 
-  <ol class="sr-only">
-    <li>{copy.stages.sources}: {copy.repositories["paper-lab"].title}, {copy.repositories.writing.title}</li>
-    <li>{copy.stages.control}: {copy.repositories.studio.title}; {copy.repositories.api.title} ({copy.badges.optional})</li>
-    <li>{copy.stages.projection}: {copy.repositories["content-feed"].title}</li>
-    <li>{copy.stages.presentation}: {copy.repositories.website.title}</li>
+  <ol class="system-diagram__fallback" aria-label={copy.title}>
+    {fallbackStages.map((stage) => <li data-flow-stage={stage.step}>
+      <span class="system-diagram__fallback-step" aria-hidden="true"><span>{stage.step}</span></span>
+      <div><strong>{stage.label}</strong><span>{stage.detail}</span></div>
+    </li>)}
   </ol>
 </figure>

@@ -1,0 +1,32 @@
+---
+import type { ApplicationProjectFacts } from "../../data/facts/projects";
+import { platformLabels } from "../../data/facts/techCatalog";
+import type { ProjectStory } from "../../data/projectStories";
+import { productStatusLabels } from "../../data/projectStories";
+import type { Locale } from "../../i18n/types";
+import ProjectCardHeader from "./ProjectCardHeader.astro";
+import TechStackStrip from "./TechStackStrip.astro";
+
+interface Props {
+  project: ApplicationProjectFacts;
+  story: ProjectStory;
+  locale: Locale;
+  href: string;
+  groupLabel: string;
+  detailsLabel: string;
+  stackLabel: string;
+  platformsLabel: string;
+}
+
+const { project, story, locale, href, groupLabel, detailsLabel, stackLabel, platformsLabel } = Astro.props;
+---
+
+<article class="supporting-app" data-project-id={project.id} data-project-kind={project.kind} data-application-group={project.applicationGroup}>
+  <p class="purpose-label" data-card-part="group">{groupLabel}</p>
+  <ProjectCardHeader project={project} locale={locale} title={story.title} href={href} />
+  <p class="project-meta" data-card-part="meta">{productStatusLabels[locale][project.productStatus]}</p>
+  <p data-card-part="summary" data-card-summary>{story.cardSummary}</p>
+  <p class="platform-list" data-card-part="platforms"><span>{platformsLabel}</span> {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p>
+  <TechStackStrip ids={project.techStack} max={3} label={stackLabel} />
+  <a class="text-link" data-card-part="cta" href={href}>{detailsLabel}</a>
+</article>

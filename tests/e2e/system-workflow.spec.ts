@@ -74,43 +74,76 @@ test.describe("public system workflow", () => {
     expect(models[0]).toEqual(models[1]);
   });
 
-  test("step numbers are mathematically centered in desktop and mobile diagrams", async ({ page }) => {
-    for (const viewport of [{ width: 1440, height: 1000 }, { width: 360, height: 800 }]) {
-      await page.setViewportSize(viewport);
-      await page.goto("/projects/gnaroshi-dev/");
-      const visibleDiagram = page.locator(viewport.width < 768 ? ".system-diagram__svg--mobile" : ".system-diagram__svg--desktop");
-      const offsets = await visibleDiagram.locator(".system-diagram__step").evaluateAll((steps) => steps.map((step) => {
+  test("step numbers are mathematically centered in desktop and compact diagrams", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto("/projects/gnaroshi-dev/");
+    const offsets = await page.locator(".system-diagram__svg--desktop .system-diagram__step").evaluateAll((steps) => steps.map((step) => {
         const circle = step.querySelector("circle")!.getBBox();
         const text = step.querySelector("text")!.getBBox();
         return {
           x: Math.abs((circle.x + circle.width / 2) - (text.x + text.width / 2)),
           y: Math.abs((circle.y + circle.height / 2) - (text.y + text.height / 2))
         };
-      }));
-      for (const offset of offsets) {
-        expect(offset.x).toBeLessThanOrEqual(0.75);
-        expect(offset.y).toBeLessThanOrEqual(1.25);
-      }
+    }));
+    for (const offset of offsets) {
+      expect(offset.x).toBeLessThanOrEqual(0.75);
+      expect(offset.y).toBeLessThanOrEqual(1.25);
+    }
+
+    await page.setViewportSize({ width: 360, height: 800 });
+    await page.goto("/projects/gnaroshi-dev/");
+    for (const marker of await page.locator(".system-diagram__fallback-step").all()) {
+      const offset = await marker.evaluate((element) => {
+        const outer = element.getBoundingClientRect();
+        const inner = element.firstElementChild!.getBoundingClientRect();
+        return {
+          x: Math.abs((outer.left + outer.width / 2) - (inner.left + inner.width / 2)),
+          y: Math.abs((outer.top + outer.height / 2) - (inner.top + inner.height / 2))
+        };
+      });
+      expect(offset.x).toBeLessThanOrEqual(0.75);
+      expect(offset.y).toBeLessThanOrEqual(0.75);
     }
   });
 
   test("mobile diagram preserves source-to-site order without page overflow", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 });
     await page.goto("/ko/");
-    const diagram = page.locator(".system-diagram__svg--mobile");
-    const positions = await diagram.locator("[data-diagram-node]").evaluateAll((nodes) =>
-      Object.fromEntries(
-        nodes.map((node) => {
-          const group = node as SVGGElement;
-          return [group.getAttribute("data-diagram-node"), group.getBBox().y];
-        }),
-      ),
-    );
-    expect(positions["paper-lab"]).toBeLessThan(positions.studio);
-    expect(positions.writing).toBeLessThan(positions.studio);
-    expect(positions.studio).toBeLessThan(positions["content-feed"]);
-    expect(positions["content-feed"]).toBeLessThan(positions.website);
+    const stages = page.locator(".system-diagram__fallback [data-flow-stage]");
+    await expect(stages).toHaveCount(4);
+    expect(await stages.evaluateAll((items) => items.map((item) => item.getAttribute("data-flow-stage")))).toEqual(["1", "2", "3", "4"]);
+    for (const stage of await stages.all()) {
+      await expect(stage.locator("strong")).not.toHaveText("");
+      await expect(stage.locator("div > span")).not.toHaveText("");
+    }
+    const positions = await stages.evaluateAll((items) => items.map((item) => item.getBoundingClientRect().top));
+    expect(positions).toEqual([...positions].sort((a, b) => a - b));
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+  });
+
+  test("workflow labels remain legible at tablet and desktop widths", async ({ page }) => {
+    await page.setViewportSize({ width: 768, height: 900 });
+    await page.goto("/projects/gnaroshi-dev/");
+    await expect(page.locator(".system-diagram__fallback")).toBeVisible();
+    const fallbackSizes = await page.locator(".system-diagram__fallback strong,.system-diagram__fallback li > div > span").evaluateAll((items) => items.map((item) => Number.parseFloat(getComputedStyle(item).fontSize)));
+    expect(Math.min(...fallbackSizes)).toBeGreaterThanOrEqual(14);
+
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await page.goto("/projects/gnaroshi-dev/");
+    const labels = page.locator(".system-diagram__svg--desktop .system-diagram__repo");
+    await expect(labels.first()).toBeVisible();
+    const renderedHeights = await labels.evaluateAll((items) => items.map((item) => item.getBoundingClientRect().height));
+    expect(Math.min(...renderedHeights)).toBeGreaterThanOrEqual(12);
+    const fills = await labels.evaluateAll((items) => items.map((item) => getComputedStyle(item).fill));
+    const secondary = await page.locator("html").evaluate(() => {
+      const probe = document.createElement("span");
+      probe.style.color = "var(--color-text-secondary)";
+      document.body.append(probe);
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return value;
+    });
+    expect(new Set(fills)).toEqual(new Set([secondary]));
   });
 
   test("bootstrap-empty rendering makes no browser-side GitHub API request", async ({ page }) => {

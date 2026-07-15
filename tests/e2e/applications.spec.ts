@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const applicationSlugs = ["gnaroshi-studio", "paperflow", "arxiv-discovery", "runshelf", "tr-gpu-monitor", "contentdeck"] as const;
+const selectedProjectSlugs = ["gnaroshi-vla", "gnaroshi-dev"] as const;
 const projectTemplates = new Map([
   ["gnaroshi-vla","research"],["gnaroshi-dev","infrastructure"],
   ...applicationSlugs.map((slug) => [slug,"application"] as const)
@@ -18,9 +19,8 @@ test.describe("verified Gnaroshi applications", () => {
       await expect(page.locator(".selected-project")).toHaveCount(2);
       await expect(page.locator(".featured-app")).toHaveCount(3);
       await expect(page.locator(".supporting-app")).toHaveCount(3);
-      await expect(page.locator(".supporting-app-group")).toHaveCount(3);
       for (const group of ["research-workflow", "system-utilities", "learning-tools"]) {
-        await expect(page.locator(`.supporting-app-group[data-application-group="${group}"]`)).toHaveCount(1);
+        await expect(page.locator(`.supporting-app[data-application-group="${group}"]`)).toHaveCount(1);
       }
       await expect(page.locator(".featured-app picture img")).toHaveCount(2);
       await expect(page.locator('[data-project-id="arxiv-discovery"].featured-app--text-only')).toHaveCount(1);
@@ -52,14 +52,69 @@ test.describe("verified Gnaroshi applications", () => {
   }
 
   for (const localePrefix of ["", "/ko"] as const) {
+    for (const slug of selectedProjectSlugs) {
+      test(`${localePrefix || "/en"} ${slug} shows complete evidence and project facts`, async ({ page }) => {
+        await page.goto(`${localePrefix}/projects/${slug}/`);
+        await expect(page.locator(".primary-evidence picture img")).toHaveCount(1);
+        await expect(page.locator(".primary-evidence figcaption")).toHaveCount(1);
+        await expect(page.locator(".at-a-glance")).toHaveCount(1);
+        await expect(page.locator("[data-project-template] .split-section")).toHaveCount(3);
+
+        for (const width of [1440, 360]) {
+          await page.setViewportSize({ width, height: 900 });
+          await page.reload();
+          const geometry = await page.locator(".primary-evidence").evaluate((element) => {
+            const media = element.querySelector(".primary-evidence__frame")!.getBoundingClientRect();
+            const caption = element.querySelector("figcaption")!.getBoundingClientRect();
+            const figure = element.getBoundingClientRect();
+            return {
+              order: caption.top - media.bottom,
+              containment: figure.bottom - caption.bottom,
+              overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+            };
+          });
+          expect(geometry.order).toBeGreaterThanOrEqual(-1);
+          expect(geometry.containment).toBeGreaterThanOrEqual(-1);
+          expect(geometry.overflow).toBeLessThanOrEqual(1);
+        }
+      });
+    }
+
     for (const slug of applicationSlugs) {
       test(`${localePrefix || "/en"} ${slug} shows approved evidence and complete facts`, async ({ page }) => {
         await page.goto(`${localePrefix}/projects/${slug}/`);
         const expectedEvidenceCount = slug === "arxiv-discovery" ? 0 : 1;
-        const expectedScenarioMediaCount = slug === "arxiv-discovery" ? 0 : 3;
+        const expectedScenarioMediaCount = slug === "arxiv-discovery" ? 0 : 2;
         await expect(page.locator(".primary-evidence picture img")).toHaveCount(expectedEvidenceCount);
+        await expect(page.locator(".primary-evidence figcaption")).toHaveCount(expectedEvidenceCount);
         await expect(page.locator(".scenario picture img")).toHaveCount(expectedScenarioMediaCount);
         await expect(page.locator(".scenario figcaption")).toHaveCount(expectedScenarioMediaCount);
+        const imageSources = await page.locator(".primary-evidence img,.scenario img").evaluateAll((images) => images.map((image) => (image as HTMLImageElement).currentSrc));
+        expect(new Set(imageSources).size).toBe(imageSources.length);
+        for (const figure of await page.locator(".primary-evidence,.scenario figure").all()) {
+          const containment = await figure.evaluate((element) => {
+            const figureBox = element.getBoundingClientRect();
+            const captionBox = element.querySelector("figcaption")?.getBoundingClientRect();
+            if (!captionBox) throw new Error("Expected every evidence figure to contain a caption");
+            return figureBox.bottom - captionBox.bottom;
+          });
+          expect(containment).toBeGreaterThanOrEqual(-1);
+        }
+
+        await page.setViewportSize({ width: 360, height: 800 });
+        await page.reload();
+        await expect(page.locator(".primary-evidence figcaption")).toHaveCount(expectedEvidenceCount);
+        await expect(page.locator(".scenario figcaption")).toHaveCount(expectedScenarioMediaCount);
+        for (const figure of await page.locator(".primary-evidence,.scenario figure").all()) {
+          const geometry = await figure.evaluate((element) => {
+            const media = element.querySelector(".primary-evidence__frame,.scenario__media")!.getBoundingClientRect();
+            const caption = element.querySelector("figcaption")!.getBoundingClientRect();
+            const figureBox = element.getBoundingClientRect();
+            return { order: caption.top - media.bottom, containment: figureBox.bottom - caption.bottom };
+          });
+          expect(geometry.order).toBeGreaterThanOrEqual(-1);
+          expect(geometry.containment).toBeGreaterThanOrEqual(-1);
+        }
         expect(await page.locator(".tech-groups li").count()).toBeGreaterThanOrEqual(3);
         await expect(page.locator(".technical-facts code")).toHaveText(/[0-9a-f]{12}/);
         await expect(page.locator("[data-product-status]")).toHaveCount(1);
@@ -108,10 +163,105 @@ test.describe("verified Gnaroshi applications", () => {
     await expect(page.locator(".managed-applications")).toHaveCount(1);
   });
 
+  for (const localePrefix of ["", "/ko"] as const) for (const theme of ["light", "dark"] as const) {
+    test(`${localePrefix || "/en"} ${theme} project card rows stay aligned`, async ({ page }) => {
+      await page.addInitScript((selectedTheme) => localStorage.setItem("theme", selectedTheme), theme);
+
+      const assertAligned = async (root: string, parts: readonly string[], expectedCount: number, tolerance = 1) => {
+        for (const part of parts) {
+          const tops = await page.locator(`${root} [data-card-part="${part}"]`).evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().top));
+          expect(tops, `${root} ${part} hook count`).toHaveLength(expectedCount);
+          expect(Math.max(...tops) - Math.min(...tops), `${root} ${part}`).toBeLessThanOrEqual(tolerance);
+        }
+      };
+
+      for (const width of [1024, 1100, 1440]) {
+        await page.setViewportSize({ width, height: 1000 });
+        await page.goto(`${localePrefix}/projects/`);
+        if (width >= 1100) {
+          const [paperflow, arxiv] = await Promise.all([
+            page.locator('[data-project-id="paperflow"]'),
+            page.locator('[data-project-id="arxiv-discovery"]'),
+          ]);
+          const [paperflowBox, arxivBox] = await Promise.all([paperflow.boundingBox(), arxiv.boundingBox()]);
+          expect(paperflowBox).not.toBeNull();
+          expect(arxivBox).not.toBeNull();
+          expect(arxivBox!.y).toBeGreaterThanOrEqual(paperflowBox!.y + paperflowBox!.height - 1);
+          await expect(arxiv.locator('[data-card-part="media"]')).toHaveCount(0);
+        }
+        await assertAligned(width < 1100 ? ".supporting-app:nth-child(-n+2)" : ".supporting-app", ["group", "header", "meta", "summary", "platforms", "stack", "cta"], width < 1100 ? 2 : 3);
+      }
+
+      for (const card of await page.locator(".selected-project,.featured-app,.supporting-app").all()) {
+        const cta = card.locator('[data-card-part="cta"]');
+        const [cardBox, ctaBox] = await Promise.all([card.boundingBox(), cta.boundingBox()]);
+        expect(cardBox).not.toBeNull();
+        expect(ctaBox).not.toBeNull();
+        expect(ctaBox!.width).toBeLessThan(cardBox!.width / 2);
+      }
+    });
+  }
+
+  test("tablet project cards reflow without narrow three-column cards", async ({ page }) => {
+    for (const width of [768, 1024]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.goto("/projects/");
+      const widths = await page.locator(".supporting-app").evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().width)));
+      expect(widths[0], `${width}px first card`).toBeGreaterThanOrEqual(300);
+      expect(widths[0]).toBe(widths[1]);
+      expect(widths[2]).toBeGreaterThan(widths[0] * 1.9);
+    }
+
+    await page.setViewportSize({ width: 1100, height: 1000 });
+    await page.goto("/projects/");
+    const desktopWidths = await page.locator(".supporting-app").evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().width));
+    expect(Math.min(...desktopWidths)).toBeGreaterThanOrEqual(320);
+  });
+
+  test("project layout changes at the declared breakpoints", async ({ page }) => {
+    for (const [width, expectedColumns] of [[899, "1fr"], [900, "1.15fr 0.85fr"], [1099, "1.15fr 0.85fr"], [1100, "1.15fr 0.85fr"]] as const) {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.goto("/projects/");
+      const columns = await page.locator('.featured-app[data-project-id="paperflow"]').evaluate((element) => getComputedStyle(element).gridTemplateColumns);
+      const columnCount = columns.split(" ").length;
+      expect(columnCount, `${width}px columns: ${columns}`).toBe(expectedColumns === "1fr" ? 1 : 2);
+    }
+
+    for (const { width, mode } of [{ width:699, mode:"one" }, { width:700, mode:"two" }, { width:1099, mode:"two" }, { width:1100, mode:"three" }] as const) {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.goto("/projects/");
+      const cards = page.locator(".supporting-app");
+      const containerWidth = (await page.locator(".supporting-apps").boundingBox())!.width;
+      const ratios = await cards.evaluateAll((elements, parentWidth) => elements.map((element) => element.getBoundingClientRect().width / parentWidth), containerWidth);
+      if (mode === "one") expect(Math.min(...ratios), `${width}px one column`).toBeGreaterThan(.95);
+      if (mode === "two") {
+        expect(Math.max(...ratios.slice(0, 2)), `${width}px first row`).toBeLessThan(.55);
+        expect(ratios[2], `${width}px trailing card`).toBeGreaterThan(.95);
+      }
+      if (mode === "three") expect(Math.max(...ratios), `${width}px three columns`).toBeLessThan(.35);
+    }
+  });
+
+  for (const width of [430, 390, 360]) {
+    test(`project card content remains ordered at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("/ko/projects/");
+      for (const card of await page.locator(".featured-app,.supporting-app").all()) {
+        const parts = await card.locator("[data-card-part]").evaluateAll((elements) => elements.map((element) => {
+          const box = element.getBoundingClientRect();
+          return { part: element.getAttribute("data-card-part"), top: box.top, bottom: box.bottom };
+        }));
+        for (let index = 1; index < parts.length; index += 1) {
+          expect(parts[index].top, `${parts[index - 1].part} before ${parts[index].part}`).toBeGreaterThanOrEqual(parts[index - 1].bottom - 1);
+        }
+      }
+    });
+  }
+
   for (const width of [768, 430, 390, 360]) {
     test(`project routes do not overflow at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
-      for (const route of ["/projects/", ...applicationSlugs.map((slug) => `/projects/${slug}/`)]) {
+      for (const route of ["/projects/", ...projectTemplates.keys()].map((slug) => slug === "/projects/" ? slug : `/projects/${slug}/`)) {
         await page.goto(route);
         expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), route).toBeLessThanOrEqual(1);
       }
