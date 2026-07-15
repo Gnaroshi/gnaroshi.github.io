@@ -4,10 +4,11 @@ import type { ResearchProjectFacts } from "../../data/facts/projects";
 import { getProjectUi } from "../../data/projectUi";
 import type { ProjectStory } from "../../data/projectStories";
 import type { Locale } from "../../i18n/types";
+import ProjectAtAGlance from "./ProjectAtAGlance.astro";
 import ProjectDetailHeader from "./ProjectDetailHeader.astro";
 import ProjectPrimaryMedia from "./ProjectPrimaryMedia.astro";
 import ProjectScenario from "./ProjectScenario.astro";
-import ProjectTechStack from "./ProjectTechStack.astro";
+import ProjectStoryFacts from "./ProjectStoryFacts.astro";
 interface Props { project: ResearchProjectFacts; story: ProjectStory; locale: Locale; media: ApprovedMediaAsset }
 const { project, story, locale, media } = Astro.props;
 const labels = getProjectUi(locale);
@@ -20,13 +21,13 @@ const unknowns = story.detail.unknowns as readonly string[];
 ---
 <div data-project-template="research">
   <ProjectDetailHeader project={project} story={story} locale={locale}/>
+  <ProjectPrimaryMedia asset={media} locale={locale} label={labels.verifiedArtifact} caption={verifiedArtifact} disclosure={story.scenario.demoDisclosure}/>
+  <ProjectAtAGlance project={project} story={story} locale={locale}/>
   <section class="prose-section"><h2>{labels.researchQuestion}</h2><p>{question}</p><p>{story.overview}</p></section>
   <section class="prose-section"><h2>{labels.approach}</h2><ul>{approach.map((item) => <li>{item}</li>)}</ul></section>
-  <section class="prose-section"><h2>{labels.verifiedArtifact}</h2><p>{verifiedArtifact}</p></section>
-  <ProjectPrimaryMedia asset={media} locale={locale}/>
   <ProjectScenario projectId={project.id} scenario={story.scenario} locale={locale}/>
   <section class="prose-section"><h2>{labels.reproducibility}</h2><ul>{reproducibility.map((item) => <li>{item}</li>)}</ul></section>
   <section class="prose-section"><h2>{labels.currentEvidence}</h2><p>{currentEvidence}</p></section>
   <section class="prose-section"><h2>{labels.unknowns}</h2><ul>{unknowns.map((item) => <li>{item}</li>)}</ul></section>
-  <ProjectTechStack ids={project.techStack} locale={locale}/>
+  <ProjectStoryFacts project={project} story={story} locale={locale}/>
 </div>

@@ -1,0 +1,44 @@
+---
+import type { ApprovedProjectShowcase } from "../../data/approvedProjectShowcases";
+import type { ApplicationProjectFacts } from "../../data/facts/projects";
+import { platformLabels } from "../../data/facts/techCatalog";
+import type { ProjectStory } from "../../data/projectStories";
+import { productStatusLabels } from "../../data/projectStories";
+import type { Locale } from "../../i18n/types";
+import ResponsiveImage from "../media/ResponsiveImage.astro";
+import ProjectCardHeader from "./ProjectCardHeader.astro";
+import TechStackStrip from "./TechStackStrip.astro";
+
+interface Props {
+  project: ApplicationProjectFacts;
+  story: ProjectStory;
+  media: ApprovedProjectShowcase;
+  locale: Locale;
+  href: string;
+  detailsLabel: string;
+  stackLabel: string;
+  lead?: boolean;
+}
+
+const { project, story, media, locale, href, detailsLabel, stackLabel, lead = false } = Astro.props;
+---
+
+<article
+  class:list={["featured-app", lead && "featured-app--lead", !lead && "featured-app--paired"]}
+  data-project-id={project.id}
+  data-project-kind={project.kind}
+  style={`--source-media-ratio:${media.width}/${media.height}`}
+>
+  <a class="featured-app__media" data-card-part="media" href={href} tabindex="-1" aria-hidden="true">
+    <ResponsiveImage asset={media} locale={locale} sizes={lead ? "(min-width: 1100px) 42vw, 100vw" : "(min-width: 1100px) 38vw, 100vw"} />
+  </a>
+  <div class="featured-app__copy">
+    <ProjectCardHeader project={project} locale={locale} title={story.title} href={href} />
+    <p class="project-meta" data-card-part="meta">
+      {productStatusLabels[locale][project.productStatus]} · {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}
+    </p>
+    <p data-card-part="summary" data-card-summary>{story.cardSummary}</p>
+    <TechStackStrip ids={project.techStack} max={4} label={stackLabel} />
+    <a class="text-link" data-card-part="cta" href={href}>{detailsLabel}</a>
+  </div>
+</article>
