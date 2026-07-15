@@ -17,9 +17,16 @@ if (!existsSync(configPath)) {
 
 const config = JSON.parse(await readFile(configPath, "utf8"));
 const sourcePaths = new Map(config.applications?.map((item) => [item.id, item.sourcePath]) ?? []);
+const requestedApplicationId = process.env.SHOWCASE_APPLICATION_ID;
+const selectedShowcases = requestedApplicationId
+  ? approvedProjectShowcases.filter((asset) => asset.applicationId === requestedApplicationId)
+  : approvedProjectShowcases;
+if (requestedApplicationId && selectedShowcases.length === 0) {
+  fail(`No owner-approved screenshots registered for ${requestedApplicationId}`);
+}
 await mkdir(outputRoot, { recursive: true });
 
-for (const asset of approvedProjectShowcases) {
+for (const asset of selectedShowcases) {
   const configuredPath = sourcePaths.get(asset.applicationId);
   if (!configuredPath || !isAbsolute(configuredPath)) fail(`${asset.applicationId}: sourcePath must be absolute`);
   const sourceRoot = resolve(configuredPath);
@@ -46,4 +53,4 @@ for (const asset of approvedProjectShowcases) {
   }
 }
 
-console.log(`[showcases:publish] published ${approvedProjectShowcases.length} owner-approved screenshots`);
+console.log(`[showcases:publish] published ${selectedShowcases.length} owner-approved screenshots`);

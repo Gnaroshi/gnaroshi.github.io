@@ -16,7 +16,7 @@ const mediaByStep = new Map(media.map((asset) => [asset.stepId, asset]));
       {asset && <figure><div class="scenario__media" style={`aspect-ratio:${asset.width}/${asset.height}`}><ResponsiveImage asset={asset} locale={locale} sizes="(min-width: 1024px) 820px, 100vw"/></div><figcaption>{asset.caption[locale]} <span>{asset.demoDisclosure[locale]}</span></figcaption></figure>}
     </li>})}
   </ol>
-  {!withMedia && <p class="scenario__disclosure">{scenario.demoDisclosure}</p>}
+  {media.length === 0 && <p class="scenario__disclosure">{scenario.demoDisclosure}</p>}
 </section>
 <style>
   .scenario{display:grid;gap:var(--space-6);padding-block:var(--space-8);border-block:1px solid var(--color-border)}

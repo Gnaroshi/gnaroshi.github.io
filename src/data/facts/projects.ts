@@ -97,8 +97,8 @@ export const projectFacts = [
     platforms: ["macos", "cli"], techStack: ["swift", "swiftui", "python"], links: [{ id: "repository", href: "https://github.com/Gnaroshi/Arxiv-newest-paper-crawler" }], updatedAt: "2026-07-15",
     tags: ["arXiv", "discovery", "papers"], portfolio: "managed-applications", applicationGroup: "research-workflow", applicationFeatured: true,
     studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "Arxiv Discovery",
-    sourceRepository: "Gnaroshi/Arxiv-newest-paper-crawler", sourceCommit: "88c033dd9b25eec80fabce6a2a591725654d6b9f", primaryShowcaseId: null, textOnlyExemption: "The native macOS capture is pending explicit owner approval.",
-    scenario: { id: "native-recent-paper-review", stepIds: ["choose-window", "discover", "inspect-candidate", "save-or-act"], mediaIds: [], usesDemoData: false }
+    sourceRepository: "Gnaroshi/Arxiv-newest-paper-crawler", sourceCommit: "1f87f235e2bef334980c19e019c016bb2a60ef0c", primaryShowcaseId: "arxiv-discovery-discovery-list", textOnlyExemption: null,
+    scenario: { id: "native-recent-paper-review", stepIds: ["choose-window", "discover", "inspect-candidate", "save-or-act"], mediaIds: ["arxiv-discovery-discovery-list"], usesDemoData: true }
   },
   {
     id: "runshelf", slug: "runshelf", kind: "application", productStatus: "in-development", contentStage: "working",

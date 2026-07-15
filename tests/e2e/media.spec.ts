@@ -31,7 +31,7 @@ test.describe("approved public media", () => {
     test(`${route} renders selected evidence and only current approved featured-app screenshots`, async ({ page }) => {
       await page.goto(route);
       await expect(page.locator(".selected-project picture img")).toHaveCount(2);
-      await expect(page.locator(".featured-app picture img")).toHaveCount(2);
+      await expect(page.locator(".featured-app picture img")).toHaveCount(3);
     });
   }
 

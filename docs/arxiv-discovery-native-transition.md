@@ -1,6 +1,6 @@
 # Arxiv Discovery native transition
 
-Arxiv Discovery moved from a Python CLI and local Flask interface to a standalone macOS application on 2026-07-15. The source repository is `Gnaroshi/Arxiv-newest-paper-crawler`, and the verified native baseline is commit `88c033dd9b25eec80fabce6a2a591725654d6b9f`.
+Arxiv Discovery moved from a Python CLI and local Flask interface to a standalone macOS application on 2026-07-15. The source repository is `Gnaroshi/Arxiv-newest-paper-crawler`. The approved native capture baseline is commit `1f87f235e2bef334980c19e019c016bb2a60ef0c`, and the installed delivery head is `48de418`.
 
 ## Product boundary
 
@@ -12,11 +12,11 @@ Arxiv Discovery moved from a Python CLI and local Flask interface to a standalon
 
 ## Distribution and verification
 
-The native baseline uses bundle identifier `dev.gnaroshi.ArxivDiscovery`, version `0.3.0`, and build `24`. A Developer ID signed build was installed at `/Applications/Arxiv Discovery.app`, verified with `codesign`, indexed by Spotlight, launched from the installed bundle, and checked against live public arXiv metadata. The repository also verifies Python compatibility and provider tests, lint, Swift debug and release builds, core parsing and repository checks, manifest identity, entitlements, provenance, and the approved app-icon hash.
+The native delivery uses bundle identifier `dev.gnaroshi.ArxivDiscovery`, version `0.3.0`, and build `26`. A Developer ID signed build was installed at `/Applications/Arxiv Discovery.app`, verified with `codesign`, indexed by Spotlight and LaunchServices, launched from the installed bundle, and checked against live public arXiv metadata. The repository also verifies Python compatibility and provider tests, lint, Swift debug and release builds, core parsing and repository checks, manifest identity, entitlements, provenance, and the approved app-icon hash.
 
 ## Website evidence
 
-The previous owner-approved screenshots describe the retired Flask interface. They remain historical records but are not evidence for the native product baseline. The public project page therefore omits Arxiv Discovery screenshots until a native capture receives explicit owner approval; verified facts, localized product copy, and the text workflow remain visible.
+The public project page uses the owner-approved 1946 × 1480 native window capture from commit `1f87f235e2be`. Showcase mode renders three deterministic paper candidates, includes a visible disclosure, and disables network requests, translation, and downloads. The previous Flask screenshots are retired historical records and are not published as evidence for the native product.
 
 ## Compatibility and rollback
 

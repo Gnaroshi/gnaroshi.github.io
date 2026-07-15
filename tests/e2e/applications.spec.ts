@@ -22,8 +22,8 @@ test.describe("verified Gnaroshi applications", () => {
       for (const group of ["research-workflow", "system-utilities", "learning-tools"]) {
         await expect(page.locator(`.supporting-app[data-application-group="${group}"]`)).toHaveCount(1);
       }
-      await expect(page.locator(".featured-app picture img")).toHaveCount(2);
-      await expect(page.locator('[data-project-id="arxiv-discovery"].featured-app--text-only')).toHaveCount(1);
+      await expect(page.locator(".featured-app picture img")).toHaveCount(3);
+      await expect(page.locator('[data-project-id="arxiv-discovery"] picture img')).toHaveCount(1);
       await expect(page.locator(".supporting-app picture")).toHaveCount(0);
       for (const slug of applicationSlugs) expect(await page.locator(`main a[href$="/projects/${slug}/"]`).count()).toBeGreaterThanOrEqual(2);
       const cards = page.locator("[data-project-id]");
@@ -83,7 +83,7 @@ test.describe("verified Gnaroshi applications", () => {
     for (const slug of applicationSlugs) {
       test(`${localePrefix || "/en"} ${slug} shows approved evidence and complete facts`, async ({ page }) => {
         await page.goto(`${localePrefix}/projects/${slug}/`);
-        const expectedEvidenceCount = slug === "arxiv-discovery" ? 0 : 1;
+        const expectedEvidenceCount = 1;
         const expectedScenarioMediaCount = slug === "arxiv-discovery" ? 0 : 2;
         await expect(page.locator(".primary-evidence picture img")).toHaveCount(expectedEvidenceCount);
         await expect(page.locator(".primary-evidence figcaption")).toHaveCount(expectedEvidenceCount);
@@ -179,15 +179,7 @@ test.describe("verified Gnaroshi applications", () => {
         await page.setViewportSize({ width, height: 1000 });
         await page.goto(`${localePrefix}/projects/`);
         if (width >= 1100) {
-          const [paperflow, arxiv] = await Promise.all([
-            page.locator('[data-project-id="paperflow"]'),
-            page.locator('[data-project-id="arxiv-discovery"]'),
-          ]);
-          const [paperflowBox, arxivBox] = await Promise.all([paperflow.boundingBox(), arxiv.boundingBox()]);
-          expect(paperflowBox).not.toBeNull();
-          expect(arxivBox).not.toBeNull();
-          expect(arxivBox!.y).toBeGreaterThanOrEqual(paperflowBox!.y + paperflowBox!.height - 1);
-          await expect(arxiv.locator('[data-card-part="media"]')).toHaveCount(0);
+          await assertAligned(".featured-app--paired", ["media", "header", "meta", "summary", "stack", "cta"], 2);
         }
         await assertAligned(width < 1100 ? ".supporting-app:nth-child(-n+2)" : ".supporting-app", ["group", "header", "meta", "summary", "platforms", "stack", "cta"], width < 1100 ? 2 : 3);
       }
@@ -219,7 +211,7 @@ test.describe("verified Gnaroshi applications", () => {
   });
 
   test("project layout changes at the declared breakpoints", async ({ page }) => {
-    for (const [width, expectedColumns] of [[899, "1fr"], [900, "1.15fr 0.85fr"], [1099, "1.15fr 0.85fr"], [1100, "1.15fr 0.85fr"]] as const) {
+    for (const [width, expectedColumns] of [[899, "1fr"], [900, "1.15fr 0.85fr"], [1099, "1.15fr 0.85fr"], [1100, "1fr"]] as const) {
       await page.setViewportSize({ width, height: 1000 });
       await page.goto("/projects/");
       const columns = await page.locator('.featured-app[data-project-id="paperflow"]').evaluate((element) => getComputedStyle(element).gridTemplateColumns);
