@@ -34,7 +34,6 @@
   border-radius: var(--radius-sm);
   border: var(--pixel-border) solid var(--color-border-strong);
   box-shadow: var(--shadow-sm);
-  image-rendering: pixelated;
 }
 
 .site-header__name {
