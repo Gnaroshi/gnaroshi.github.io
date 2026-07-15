@@ -97,7 +97,7 @@ export const projectFacts = [
     platforms: ["macos", "cli"], techStack: ["swift", "swiftui", "python"], links: [{ id: "repository", href: "https://github.com/Gnaroshi/Arxiv-newest-paper-crawler" }], updatedAt: "2026-07-15",
     tags: ["arXiv", "discovery", "papers"], portfolio: "managed-applications", applicationGroup: "research-workflow", applicationFeatured: true,
     studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "Arxiv Discovery",
-    sourceRepository: "Gnaroshi/Arxiv-newest-paper-crawler", sourceCommit: "1d4fb00853df1a57705037e8bdd8eacea804891f", primaryShowcaseId: null, textOnlyExemption: "The native macOS capture is pending explicit owner approval.",
+    sourceRepository: "Gnaroshi/Arxiv-newest-paper-crawler", sourceCommit: "88c033dd9b25eec80fabce6a2a591725654d6b9f", primaryShowcaseId: null, textOnlyExemption: "The native macOS capture is pending explicit owner approval.",
     scenario: { id: "native-recent-paper-review", stepIds: ["choose-window", "discover", "inspect-candidate", "save-or-act"], mediaIds: [], usesDemoData: false }
   },
   {
