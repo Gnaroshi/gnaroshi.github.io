@@ -48,7 +48,7 @@ At 1440px, Research, Projects, Writing, and About titles all begin at Y=174px. P
 - Research uses concise question-led text while replacement media is under review.
 - Projects use one evidence-backed featured case rather than treating internal tools as separate projects.
 - Empty Paper Lab and Growth states use no large decorative media.
-- About uses an abstract monogram and does not invent a portrait.
+- About remains text-first and does not invent a portrait or substitute identity mark.
 - Korean headings, controls, and tags fit at 360px without forced English line-length rules.
 
 ## Accessibility
@@ -68,7 +68,7 @@ The V3 abstract media system is retired. Legacy records remain only for rollback
 ## Remaining Owner Content
 
 - The public feed currently contains no published writing or paper notes, so those pages intentionally show minimal evidence-gated states.
-- A real owner-supplied portrait can replace the About monogram later; no synthetic likeness was created.
+- A real owner-supplied portrait can be added later; no placeholder portrait or synthetic likeness was created.
 - Formal education, publications, and contact details remain absent until the owner supplies verified information.
 
 ## Before And After
