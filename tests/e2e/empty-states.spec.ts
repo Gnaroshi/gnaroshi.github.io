@@ -8,12 +8,14 @@ test("empty Reading page uses onboarding without dashboard machinery", async ({ 
   await expect(page.locator(".paper-filter-panel")).toHaveCount(0);
   await expect(page.locator("astro-island")).toHaveCount(0);
   await expect(page.locator("#new-paper-template")).toHaveCount(0);
+  await expect(page.locator(".paper-onboarding .button--primary")).toHaveAttribute("href", "#reading-method");
 });
 
 test("Activity stays non-numeric before enough records exist", async ({ page }) => {
   await page.goto("/growth");
   await expect(page.getByRole("heading", { name: "There is not enough activity to show a meaningful overview yet." })).toBeVisible();
   await expect(page.locator(".momentum-score__value")).toHaveCount(0);
+  await expect(page.locator(".momentum-methodology")).toHaveCount(0);
   await expect(page.getByText(/public feed|eligibility|evidence gate/i)).toHaveCount(0);
 });
 

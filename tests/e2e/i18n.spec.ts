@@ -3,12 +3,25 @@ import { expect, test } from "@playwright/test";
 test("English remains the unprefixed default and Korean uses /ko", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page.locator(".utility-nav .language-switcher__current")).toHaveText("EN");
+  await expect(page.locator('.utility-nav .language-switcher a[lang="en"]')).toHaveCount(0);
   await expect(page.getByRole("link", { name: "한국어" }).first()).toHaveAttribute("href", "/ko/");
 
   await page.goto("/ko/");
   await expect(page.locator("html")).toHaveAttribute("lang", "ko");
+  await expect(page.locator(".utility-nav .language-switcher__current")).toHaveText("한국어");
+  await expect(page.locator('.utility-nav .language-switcher a[lang="ko"]')).toHaveCount(0);
   await expect(page.getByRole("link", { name: "EN" }).first()).toHaveAttribute("href", "/");
   await expect(page.getByRole("navigation", { name: "주요 메뉴" })).toBeVisible();
+});
+
+test("unavailable translations have a visible collection fallback explanation", async ({ page }) => {
+  await page.goto("/projects/gnaroshi-studio/");
+  const desktopSwitcher = page.locator(".utility-nav .language-switcher");
+  if (await desktopSwitcher.getAttribute("data-translation-available") === "false") {
+    await expect(desktopSwitcher.locator(".language-switcher__notice")).toBeVisible();
+    await expect(desktopSwitcher.locator(".language-switcher__notice")).toContainText("opens the collection");
+  }
 });
 
 test("language switch preserves an equivalent static route", async ({ page }) => {

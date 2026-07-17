@@ -10,18 +10,32 @@ import { translate } from "../i18n/utils";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const data = getLocalizedData(locale);
+const mediaLabels = locale === "ko"
+  ? {
+      concept: { title: "생성한 개념 장면", detail: "연구 질문을 설명하기 위한 장면이며 실험 결과가 아닙니다." },
+      diagram: { title: "기술 도식", detail: "이 연구 질문을 설명하기 위해 만든 도식입니다." }
+    }
+  : {
+      concept: { title: "Generated concept scene", detail: "An illustration of the research question, not experiment evidence." },
+      diagram: { title: "Technical diagram", detail: "An original explanatory diagram for this research question." }
+    };
 ---
 
 <BaseLayout locale={locale} title={translate(locale, "nav.research")} description={translate(locale, "research.intro")} width="wide">
   <PageShell class="research-page">
     <PageHeader eyebrow={translate(locale, "research.eyebrow")} title={translate(locale, "research.title")} description={translate(locale, "research.intro")} />
     <div class="research-themes">
-      {data.researchAreas.map((area, index) => <article id={area.slug} class="research-theme">
-        <div class="research-theme__copy"><p class="eyebrow">{String(index + 1).padStart(2, "0")}</p><h2>{area.question}</h2><p>{area.motivation}</p><dl><div><dt>{translate(locale, "research.hypothesis")}</dt><dd>{area.hypothesis}</dd></div><div><dt>{translate(locale, "research.uncertainty")}</dt><dd>{area.uncertainty}</dd></div></dl><div class="link-row">{area.related.map((link) => <a href={link.href}>{link.label}</a>)}</div></div>
-        <figure class:list={["research-theme__media", index > 0 && "research-theme__media--diagram"]}>
-          <ResponsiveImage asset={getResearchMedia(area.id, locale)} locale={locale} sizes="(min-width: 1024px) 48vw, 100vw" />
-        </figure>
-      </article>)}
+      {data.researchAreas.map((area, index) => {
+        const media = getResearchMedia(area.id, locale);
+        const caption = index === 0 ? mediaLabels.concept : mediaLabels.diagram;
+        return <article id={area.slug} class="research-theme">
+          <div class="research-theme__copy"><p class="eyebrow">{String(index + 1).padStart(2, "0")}</p><h2>{area.question}</h2><p>{area.motivation}</p><dl><div><dt>{translate(locale, "research.hypothesis")}</dt><dd>{area.hypothesis}</dd></div><div><dt>{translate(locale, "research.uncertainty")}</dt><dd>{area.uncertainty}</dd></div></dl><div class="link-row">{area.related.map((link) => <a href={link.href}>{link.label}</a>)}</div></div>
+          <figure class:list={["research-theme__media", index > 0 && "research-theme__media--diagram"]}>
+            <ResponsiveImage asset={media} locale={locale} sizes="(min-width: 1024px) 48vw, 100vw" />
+            <figcaption><strong>{caption.title}</strong><span>{caption.detail}</span></figcaption>
+          </figure>
+        </article>;
+      })}
     </div>
   </PageShell>
 </BaseLayout>
@@ -30,9 +44,11 @@ const data = getLocalizedData(locale);
   .research-themes { display: grid; }
   .research-theme { display: grid; gap: var(--space-6); padding: var(--space-8) 0; border-top: 1px solid var(--color-border); }
   .research-theme__copy { display: grid; gap: var(--space-4); align-content: center; }
-  .research-theme__media { aspect-ratio:4/3; margin:0; overflow:hidden; border:1px solid var(--color-border); background:var(--color-surface); }
-  .research-theme__media :global(.responsive-media) { width:100%; height:100%; }
+  .research-theme__media { display:grid; margin:0; overflow:hidden; border:1px solid var(--color-border); background:var(--color-surface); }
+  .research-theme__media :global(.responsive-media) { width:100%; aspect-ratio:4/3; }
   .research-theme__media--diagram :global(img) { object-fit:contain; }
+  .research-theme__media figcaption { display:grid; gap:var(--space-1); padding:var(--space-3) var(--space-4); border-top:1px solid var(--color-border); color:var(--color-text-muted); font-size:var(--text-xs); line-height:1.5; }
+  .research-theme__media figcaption strong { color:var(--color-text-secondary); }
   .research-theme__copy > p:not(.eyebrow) { color: var(--color-text-secondary); font-size: var(--editorial-body); line-height: 1.7; }
   .research-theme dl { display: grid; gap: var(--space-4); margin: 0; }
   .research-theme dl div { display: grid; gap: var(--space-1); padding-top: var(--space-3); border-top: 1px solid var(--color-border); }

@@ -7,18 +7,29 @@ interface Props { currentPath: string; locale: Locale }
 const { currentPath, locale } = Astro.props;
 const paperLabNavigation = getPaperLabNavigation(locale);
 const cleanCurrentPath = currentPath.replace(/\/$/, "") || "/";
-const isCurrentItem = (href: string) => {
+const routeCandidates = paperLabNavigation.filter(({ href }) => {
   if (href.includes("#")) return false;
   const cleanHref = new URL(href, "https://gnaroshi.dev").pathname.replace(/\/$/, "") || "/";
   return cleanCurrentPath === cleanHref || (cleanHref !== "/papers" && cleanHref !== "/ko/papers" && isNavigationActive(currentPath, href));
-};
+});
+const currentRouteHref = routeCandidates.reduce<string | null>((current, item) => {
+  if (!current) return item.href;
+  const currentLength = new URL(current, "https://gnaroshi.dev").pathname.length;
+  const candidateLength = new URL(item.href, "https://gnaroshi.dev").pathname.length;
+  return candidateLength > currentLength ? item.href : current;
+}, null);
 ---
 
-<nav class="paper-lab-nav" aria-label={translate(locale, "a11y.paperLabNavigation")}>
+<nav class="paper-lab-nav" aria-label={translate(locale, "a11y.paperLabNavigation")} data-paper-lab-nav>
   <span class="paper-lab-nav__brand">{translate(locale, "nav.paperLab")}</span>
   <div class="paper-lab-nav__groups">
-    {paperLabNavigation.map((item) => isCurrentItem(item.href) ? (
-      <span class="paper-lab-nav__current" aria-current="page" data-nav-href={item.href}>{item.label}</span>
+    {paperLabNavigation.map((item) => currentRouteHref === item.href ? (
+      <span
+        class="paper-lab-nav__current"
+        aria-current="page"
+        data-paper-nav-route-current
+        data-nav-href={item.href}
+      >{item.label}</span>
     ) : (
       <a href={item.href} data-nav-href={item.href} data-in-page-link={item.href.includes("#") ? "" : undefined}>{item.label}</a>
     ))}

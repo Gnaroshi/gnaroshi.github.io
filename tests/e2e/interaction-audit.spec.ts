@@ -2,8 +2,8 @@ import { expect, test, type Page } from "@playwright/test";
 import { qaRoutes } from "./qa-routes";
 
 const readingCases = [
-  { locale: "en", route: "/papers/", nav: "Reading navigation", method: "Reading method" },
-  { locale: "ko", route: "/ko/papers/", nav: "논문 읽기 메뉴", method: "읽는 방법" }
+  { locale: "en", route: "/papers/", nav: "Reading navigation", overview: "Overview", method: "Reading method" },
+  { locale: "ko", route: "/ko/papers/", nav: "논문 읽기 메뉴", overview: "개요", method: "읽는 방법" }
 ] as const;
 
 const readingViewports = [
@@ -25,10 +25,23 @@ for (const readingCase of readingCases) {
       await expect(page).toHaveURL(new RegExp(`${readingCase.route.replaceAll("/", "\\/")}#reading-method$`));
       await expect(target).toBeFocused();
       await expect(link).toHaveAttribute("aria-current", "location");
+      await expectExactlyOnePaperCurrent(localNav, readingCase.method);
+      await expectTargetBelowStickyNavigation(page, target);
+
+      await page.goBack();
+      await expect(page).toHaveURL(new RegExp(`${readingCase.route.replaceAll("/", "\\/")}$`));
+      await expectExactlyOnePaperCurrent(localNav, readingCase.overview);
+      await expect(link).not.toHaveAttribute("aria-current", "location");
+
+      await page.goForward();
+      await expect(page).toHaveURL(new RegExp("#reading-method$"));
+      await expect(target).toBeFocused();
+      await expectExactlyOnePaperCurrent(localNav, readingCase.method);
       await expectTargetBelowStickyNavigation(page, target);
 
       await page.goto(`${readingCase.route}#reading-method`);
       await expect(target).toBeFocused();
+      await expectExactlyOnePaperCurrent(localNav, readingCase.method);
       await expectTargetBelowStickyNavigation(page, target);
 
       await page.goto(readingCase.route);
@@ -36,6 +49,7 @@ for (const readingCase of readingCases) {
       await page.keyboard.press("Enter");
       await expect(page).toHaveURL(new RegExp("#reading-method$"));
       await expect(target).toBeFocused();
+      await expectExactlyOnePaperCurrent(localNav, readingCase.method);
     });
   }
 }
@@ -49,6 +63,7 @@ test("active Reading overview is a current label instead of a self-link", async 
     const nav = page.getByRole("navigation", { name: navName });
     await expect(nav.getByRole("link", { name: overview, exact: true })).toHaveCount(0);
     await expect(nav.locator('[aria-current="page"]', { hasText: overview })).toHaveCount(1);
+    await expectExactlyOnePaperCurrent(nav, overview);
   }
 });
 
@@ -151,6 +166,20 @@ test("bootstrap Reading view does not expose controls without public evidence", 
   }
 });
 
+test("Projects section overview moves focus to each ordered section", async ({ page }) => {
+  for (const route of ["/projects/", "/ko/projects/"]) {
+    await page.goto(route);
+    const overview = page.locator(".projects-overview");
+    await expect(overview.getByRole("link")).toHaveCount(3);
+    for (const id of ["selected-projects", "featured-applications", "supporting-applications"]) {
+      await page.goto(route);
+      await overview.locator(`a[href="#${id}"]`).click();
+      await expect(page).toHaveURL(new RegExp(`#${id}$`));
+      await expect(page.locator(`#${id}`)).toBeFocused();
+    }
+  }
+});
+
 async function expectTargetBelowStickyNavigation(page: Page, target: ReturnType<Page["locator"]>) {
   await expect(target).toBeInViewport();
   const geometry = await page.evaluate(() => {
@@ -159,6 +188,15 @@ async function expectTargetBelowStickyNavigation(page: Page, target: ReturnType<
     return { targetTop: target?.top ?? -1, localNavBottom: localNav?.bottom ?? 0 };
   });
   expect(geometry.targetTop).toBeGreaterThanOrEqual(geometry.localNavBottom - 1);
+}
+
+async function expectExactlyOnePaperCurrent(navigation: ReturnType<Page["locator"]>, label: string) {
+  const current = navigation.locator('[aria-current="page"], [aria-current="location"]');
+  await expect(current).toHaveCount(1);
+  await expect(current).toHaveText(label);
+  if (label !== "Overview" && label !== "개요") {
+    await expect(navigation.locator('[data-paper-nav-route-current]')).not.toHaveAttribute("aria-current", "page");
+  }
 }
 
 async function controlState(page: Page, button: ReturnType<Page["locator"]>) {
