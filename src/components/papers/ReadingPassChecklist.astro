@@ -1,0 +1,91 @@
+---
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
+
+interface Props {
+  locale: Locale;
+  passes: readonly { title: string }[];
+}
+
+const { locale, passes } = Astro.props;
+const storageKey = "gnaroshi-reading-pass-checklist-v1";
+---
+
+<div
+  class="reading-checklist"
+  data-reading-checklist
+  data-storage-key={storageKey}
+  data-tab-only={locale === "ko" ? "저장소를 사용할 수 없어 이 탭에서만 유지됩니다." : "Storage is unavailable, so progress will last only in this tab."}
+>
+  <div>
+    <h3>{locale === "ko" ? "이번 논문 읽기" : "This paper session"}</h3>
+    <p data-reading-checklist-scope>{locale === "ko"
+      ? "선택 상태는 이 브라우저에만 저장되며 공개 기록이나 읽기 완료 상태를 바꾸지 않습니다."
+      : "Selections stay only in this browser and do not change public records or mark a paper as completed."}</p>
+  </div>
+  <div class="reading-checklist__controls">
+    {passes.map((pass, index) => (
+      <label>
+        <input type="checkbox" value={`pass-${index + 1}`} />
+        <span>{pass.title}</span>
+      </label>
+    ))}
+  </div>
+  <button type="button" class="button" data-reading-checklist-reset disabled>{translate(locale, "common.reset")}</button>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-reading-checklist]")) {
+    const inputs = [...root.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')];
+    const reset = root.querySelector<HTMLButtonElement>("[data-reading-checklist-reset]");
+    const scope = root.querySelector<HTMLElement>("[data-reading-checklist-scope]");
+    const key = root.dataset.storageKey;
+    if (!reset || !scope || !key) continue;
+
+    let storageAvailable = true;
+    const syncReset = () => { reset.disabled = !inputs.some((input) => input.checked); };
+    const save = () => {
+      syncReset();
+      if (!storageAvailable) return;
+      try {
+        localStorage.setItem(key, JSON.stringify(inputs.filter((input) => input.checked).map((input) => input.value)));
+      } catch {
+        storageAvailable = false;
+        scope.textContent = root.dataset.tabOnly ?? scope.textContent;
+      }
+    };
+
+    try {
+      const saved = new Set<string>(JSON.parse(localStorage.getItem(key) ?? "[]"));
+      for (const input of inputs) input.checked = saved.has(input.value);
+    } catch {
+      storageAvailable = false;
+      scope.textContent = root.dataset.tabOnly ?? scope.textContent;
+    }
+    syncReset();
+    for (const input of inputs) input.addEventListener("change", save);
+    reset.addEventListener("click", () => {
+      for (const input of inputs) input.checked = false;
+      if (storageAvailable) {
+        try { localStorage.removeItem(key); } catch { storageAvailable = false; }
+      }
+      syncReset();
+      inputs[0]?.focus();
+    });
+  }
+</script>
+
+<style>
+  .reading-checklist { display:grid; gap:var(--space-4); padding:var(--space-4); border:1px solid var(--color-border); background:var(--color-surface-muted); }
+  .reading-checklist > div:first-child { display:grid; gap:var(--space-1); }
+  .reading-checklist h3 { font-size:var(--text-base); }
+  .reading-checklist p { max-width:66ch; color:var(--color-text-secondary); font-size:var(--text-sm); line-height:1.6; }
+  .reading-checklist__controls { display:grid; gap:var(--space-2); }
+  .reading-checklist label { display:grid; grid-template-columns:auto minmax(0,1fr); gap:var(--space-3); align-items:start; min-height:44px; padding:var(--space-2) 0; cursor:pointer; }
+  .reading-checklist input { width:1.15rem; height:1.15rem; margin-top:.16rem; accent-color:var(--color-accent); }
+  .reading-checklist label span { line-height:1.5; }
+  .reading-checklist .button { width:fit-content; }
+  @media (min-width:768px) {
+    .reading-checklist__controls { grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--space-4); }
+  }
+</style>

@@ -13,12 +13,11 @@ interface Props {
   locale: Locale;
   href: string;
   groupLabel: string;
-  detailsLabel: string;
   stackLabel: string;
   platformsLabel: string;
 }
 
-const { project, story, locale, href, groupLabel, detailsLabel, stackLabel, platformsLabel } = Astro.props;
+const { project, story, locale, href, groupLabel, stackLabel, platformsLabel } = Astro.props;
 ---
 
 <article class="supporting-app" data-project-id={project.id} data-project-kind={project.kind} data-application-group={project.applicationGroup}>
@@ -28,5 +27,4 @@ const { project, story, locale, href, groupLabel, detailsLabel, stackLabel, plat
   <p data-card-part="summary" data-card-summary>{story.cardSummary}</p>
   <p class="platform-list" data-card-part="platforms"><span>{platformsLabel}</span> {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p>
   <TechStackStrip ids={project.techStack} max={3} label={stackLabel} />
-  <a class="text-link" data-card-part="cta" href={href}>{detailsLabel}</a>
 </article>

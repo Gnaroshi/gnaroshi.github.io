@@ -7,9 +7,11 @@ const readingCases = [
 ] as const;
 
 const readingViewports = [
-  { name: "desktop", width: 1440, height: 1000 },
+  { name: "desktop-900", width: 1440, height: 900 },
+  { name: "desktop-1000", width: 1440, height: 1000 },
   { name: "tablet", width: 768, height: 1024 },
-  { name: "mobile", width: 390, height: 844 }
+  { name: "mobile", width: 390, height: 844 },
+  { name: "mobile-320", width: 320, height: 568 }
 ] as const;
 
 for (const readingCase of readingCases) {
@@ -19,6 +21,7 @@ for (const readingCase of readingCases) {
       await page.goto(readingCase.route);
       const localNav = page.getByRole("navigation", { name: readingCase.nav });
       const link = localNav.getByRole("link", { name: readingCase.method });
+      const overview = localNav.getByRole("link", { name: readingCase.overview, exact: true });
       const target = page.locator("#reading-method");
 
       await link.click();
@@ -26,8 +29,15 @@ for (const readingCase of readingCases) {
       await expect(target).toBeFocused();
       await expect(link).toHaveAttribute("aria-current", "location");
       await expectExactlyOnePaperCurrent(localNav, readingCase.method);
+      await expect(overview).not.toHaveAttribute("aria-current");
+      await expectNotVisuallyCurrent(overview);
       await expectTargetBelowStickyNavigation(page, target);
 
+      await overview.click();
+      await expect(page).toHaveURL(new RegExp(`${readingCase.route.replaceAll("/", "\\/")}$`));
+      await expectExactlyOnePaperCurrent(localNav, readingCase.overview);
+
+      await link.click();
       await page.goBack();
       await expect(page).toHaveURL(new RegExp(`${readingCase.route.replaceAll("/", "\\/")}$`));
       await expectExactlyOnePaperCurrent(localNav, readingCase.overview);
@@ -54,26 +64,24 @@ for (const readingCase of readingCases) {
   }
 }
 
-test("active Reading overview is a current label instead of a self-link", async ({ page }) => {
+test("Reading overview remains an operable link while its current state changes", async ({ page }) => {
   for (const [route, navName, overview] of [
     ["/papers/", "Reading navigation", "Overview"],
     ["/ko/papers/", "논문 읽기 메뉴", "개요"]
   ] as const) {
     await page.goto(route);
     const nav = page.getByRole("navigation", { name: navName });
-    await expect(nav.getByRole("link", { name: overview, exact: true })).toHaveCount(0);
-    const current = nav.locator('[aria-current="page"]', { hasText: overview });
-    await expect(current).toHaveCount(1);
-    expect(await current.evaluate((element) => element.tagName)).toBe("SPAN");
-    const beforeHover = await current.evaluate((element) => {
-      const style = getComputedStyle(element);
-      return { color: style.color, borderBottomColor: style.borderBottomColor, cursor: style.cursor };
-    });
-    await current.hover();
-    expect(await current.evaluate((element) => {
-      const style = getComputedStyle(element);
-      return { color: style.color, borderBottomColor: style.borderBottomColor, cursor: style.cursor };
-    })).toEqual(beforeHover);
+    const current = nav.getByRole("link", { name: overview, exact: true });
+    await expect(current).toHaveAttribute("aria-current", "page");
+    expect(await current.evaluate((element) => element.tagName)).toBe("A");
+    await expectExactlyOnePaperCurrent(nav, overview);
+
+    await nav.getByRole("link", { name: /Reading method|읽는 방법/ }).click();
+    await expect(current).not.toHaveAttribute("aria-current");
+    await expectNotVisuallyCurrent(current);
+    await current.focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(new RegExp(`${route.replaceAll("/", "\\/")}$`));
     await expectExactlyOnePaperCurrent(nav, overview);
   }
 });
@@ -109,11 +117,11 @@ test("every visible button has an observable action", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   for (const route of qaRoutes) {
     await page.goto(route);
-    const buttons = page.locator("button:visible:not([disabled])");
+    const buttons = page.locator("button:visible:not([disabled]):not([data-heading-link])");
     const count = await buttons.count();
     for (let index = 0; index < count; index += 1) {
       await page.goto(route);
-      const button = page.locator("button:visible:not([disabled])").nth(index);
+      const button = page.locator("button:visible:not([disabled]):not([data-heading-link])").nth(index);
       const before = await controlState(page, button);
       await button.click();
       const after = await controlState(page, button);
@@ -177,6 +185,24 @@ test("bootstrap Reading view does not expose controls without public evidence", 
   }
 });
 
+test("three-pass checklist is local-only, persistent, and resettable", async ({ page }) => {
+  await page.goto("/papers/");
+  const checklist = page.locator("[data-reading-checklist]");
+  const inputs = checklist.getByRole("checkbox");
+  const reset = checklist.getByRole("button", { name: "Reset" });
+  await expect(inputs).toHaveCount(3);
+  await expect(reset).toBeDisabled();
+  await inputs.first().check();
+  await expect(reset).toBeEnabled();
+  await page.reload();
+  await expect(inputs.first()).toBeChecked();
+  await reset.click();
+  await expect(inputs.first()).not.toBeChecked();
+  await expect(reset).toBeDisabled();
+  await expect(inputs.first()).toBeFocused();
+  await expect(page.locator(".paper-stats, .paper-heatmap")).toHaveCount(0);
+});
+
 test("Projects section overview moves focus to each ordered section", async ({ page }) => {
   for (const route of ["/projects/", "/ko/projects/"]) {
     await page.goto(route);
@@ -184,11 +210,102 @@ test("Projects section overview moves focus to each ordered section", async ({ p
     await expect(overview.getByRole("link")).toHaveCount(3);
     for (const id of ["selected-projects", "featured-applications", "supporting-applications"]) {
       await page.goto(route);
-      await overview.locator(`a[href="#${id}"]`).click();
+      const link = overview.locator(`a[href$="#${id}"]`);
+      await link.click();
       await expect(page).toHaveURL(new RegExp(`#${id}$`));
       await expect(page.locator(`#${id}`)).toBeFocused();
+      await expect(link).toHaveAttribute("aria-current", "location");
+      await expect(overview.locator('[aria-current="location"]')).toHaveCount(1);
+    }
+
+    await page.goto(`${route}#featured-applications`);
+    await expect(page.locator("#featured-applications")).toBeFocused();
+    await expect(overview.locator('[aria-current="location"]')).toHaveAttribute("href", /#featured-applications$/);
+    await overview.locator('a[href$="#supporting-applications"]').click();
+    await page.goBack();
+    await expect(page.locator("#featured-applications")).toBeFocused();
+    await expect(overview.locator('[aria-current="location"]')).toHaveAttribute("href", /#featured-applications$/);
+    await page.goForward();
+    await expect(page.locator("#supporting-applications")).toBeFocused();
+    await expect(overview.locator('[aria-current="location"]')).toHaveAttribute("href", /#supporting-applications$/);
+  }
+});
+
+test("Research navigation and diagram zoom preserve focus and scroll state", async ({ page }) => {
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 768, height: 1024 },
+    { width: 390, height: 844 },
+    { width: 320, height: 568 }
+  ]) {
+    await page.setViewportSize(viewport);
+    for (const route of ["/research/", "/ko/research/"]) {
+      await page.goto(route);
+      const navigation = page.locator(".research-overview");
+      const link = navigation.getByRole("link").nth(1);
+      const hash = new URL((await link.getAttribute("href"))!, "https://gnaroshi.dev").hash;
+      await link.click();
+      await expect(page).toHaveURL(new RegExp(`${escapeRegExp(hash)}$`));
+      await expect(navigation.locator('[aria-current="location"]')).toHaveCount(1);
+      await expect(page.locator(hash)).toBeFocused();
+
+      const trigger = page.getByRole("button", { name: /larger diagram|도식 크게 보기/ }).first();
+      await trigger.click();
+      const dialog = page.getByRole("dialog");
+      await expect(dialog).toBeVisible();
+      await expect(page.locator("body")).toHaveClass(/media-dialog-open/);
+      await page.keyboard.press("Tab");
+      await expect(dialog.locator(":focus")).toHaveCount(1);
+      await page.keyboard.press("Escape");
+      await expect(dialog).toBeHidden();
+      await expect(page.locator("body")).not.toHaveClass(/media-dialog-open/);
+      await expect(trigger).toBeFocused();
     }
   }
+});
+
+test("Research navigation restores direct and history-managed locations", async ({ page }) => {
+  for (const route of ["/research/", "/ko/research/"]) {
+    await page.goto(route);
+    const navigation = page.locator(".research-overview");
+    const links = navigation.getByRole("link");
+    const secondHash = new URL((await links.nth(1).getAttribute("href"))!, "https://gnaroshi.dev").hash;
+    const thirdHash = new URL((await links.nth(2).getAttribute("href"))!, "https://gnaroshi.dev").hash;
+
+    await page.goto(`${route}${secondHash}`);
+    await expect(page.locator(secondHash)).toBeFocused();
+    await expect(navigation.locator('[aria-current="location"]')).toHaveAttribute("href", new RegExp(`${escapeRegExp(secondHash)}$`));
+    await links.nth(2).click();
+    await page.goBack();
+    await expect(page.locator(secondHash)).toBeFocused();
+    await page.goForward();
+    await expect(page.locator(thirdHash)).toBeFocused();
+    await expect(navigation.locator('[aria-current="location"]')).toHaveAttribute("href", new RegExp(`${escapeRegExp(thirdHash)}$`));
+  }
+});
+
+test("long project headings expose stable copy links with accessible feedback", async ({ page }) => {
+  for (const route of ["/projects/gnaroshi-dev/", "/ko/projects/gnaroshi-dev/"]) {
+    await page.goto(route);
+    const headings = page.locator(".project-detail h2[id]");
+    expect(await headings.count()).toBeGreaterThan(8);
+    await expect(page.locator("[data-heading-link]")).toHaveCount(await headings.count());
+    const button = page.locator("[data-heading-link]").first();
+    const firstHeadingId = await headings.first().getAttribute("id");
+    await button.click();
+    await expect(page).toHaveURL(new RegExp(`#${escapeRegExp(firstHeadingId!)}$`));
+    await expect(page.locator("[data-heading-link-status]")).not.toHaveText("");
+  }
+});
+
+test("project detail table of contents supports direct hash and history", async ({ page }) => {
+  await page.goto("/projects/gnaroshi-dev/#repository-boundaries");
+  await expect(page.locator("#repository-boundaries")).toBeFocused();
+  await page.locator(".project-section-nav a[href$='#current-state']").click();
+  await expect(page.locator("#current-state")).toBeFocused();
+  await expect(page.locator(".project-section-nav [aria-current='location']")).toHaveText("Current state");
+  await page.goBack();
+  await expect(page.locator("#repository-boundaries")).toBeFocused();
 });
 
 async function expectTargetBelowStickyNavigation(page: Page, target: ReturnType<Page["locator"]>) {
@@ -205,7 +322,7 @@ async function expectExactlyOnePaperCurrent(navigation: ReturnType<Page["locator
   const current = navigation.locator('[aria-current="page"], [aria-current="location"]');
   await expect(current).toHaveCount(1);
   await expect(current).toHaveText(label);
-  const visualMarkers = await navigation.locator(".paper-lab-nav__groups > a, .paper-lab-nav__current").evaluateAll((items) => items.filter((item) => {
+  const visualMarkers = await navigation.locator(".paper-lab-nav__groups > a").evaluateAll((items) => items.filter((item) => {
     const borderColor = getComputedStyle(item).borderBottomColor;
     return borderColor !== "transparent" && borderColor !== "rgba(0, 0, 0, 0)";
   }).length);
@@ -213,6 +330,16 @@ async function expectExactlyOnePaperCurrent(navigation: ReturnType<Page["locator
   if (label !== "Overview" && label !== "개요") {
     await expect(navigation.locator('[data-paper-nav-route-current]')).not.toHaveAttribute("aria-current", "page");
   }
+}
+
+async function expectNotVisuallyCurrent(item: ReturnType<Page["locator"]>) {
+  const style = await item.evaluate((element) => {
+    const computed = getComputedStyle(element);
+    return { border: computed.borderBottomColor, color: computed.color };
+  });
+  const selected = await item.locator("xpath=..").locator('[aria-current="page"], [aria-current="location"]').evaluateAll((items) => items.map((element) => getComputedStyle(element).color));
+  expect(selected).not.toContain(style.color);
+  expect(style.border).toMatch(/transparent|rgba\(0, 0, 0, 0\)/);
 }
 
 async function controlState(page: Page, button: ReturnType<Page["locator"]>) {

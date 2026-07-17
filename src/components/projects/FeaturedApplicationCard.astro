@@ -15,12 +15,11 @@ interface Props {
   media: ApprovedProjectShowcase;
   locale: Locale;
   href: string;
-  detailsLabel: string;
   stackLabel: string;
   lead?: boolean;
 }
 
-const { project, story, media, locale, href, detailsLabel, stackLabel, lead = false } = Astro.props;
+const { project, story, media, locale, href, stackLabel, lead = false } = Astro.props;
 ---
 
 <article
@@ -42,6 +41,5 @@ const { project, story, media, locale, href, detailsLabel, stackLabel, lead = fa
     </p>
     <p data-card-part="summary" data-card-summary>{story.cardSummary}</p>
     <TechStackStrip ids={project.techStack} max={4} label={stackLabel} />
-    <a class="text-link" data-card-part="cta" href={href}>{detailsLabel}</a>
   </div>
 </article>

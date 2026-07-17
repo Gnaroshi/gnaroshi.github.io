@@ -20,13 +20,14 @@ const routes = [
 ] as const;
 
 const viewports = [
-  { name: "desktop-1440", width: 1440, height: 1000 },
+  { name: "desktop-1440", width: 1440, height: 900 },
   { name: "desktop-1280", width: 1280, height: 900 },
   { name: "tablet-1024", width: 1024, height: 768 },
   { name: "tablet-768", width: 768, height: 1024 },
   { name: "mobile-430", width: 430, height: 932 },
   { name: "mobile-390", width: 390, height: 844 },
-  { name: "mobile-360", width: 360, height: 800 }
+  { name: "mobile-360", width: 360, height: 800 },
+  { name: "mobile-320", width: 320, height: 568 }
 ] as const;
 
 const visualSet = process.env.VISUAL_SET ?? "final";
@@ -62,7 +63,8 @@ for (const viewport of viewports) {
             window.scrollTo(0, top);
             await new Promise((resolve) => setTimeout(resolve, 30));
           }
-          await Promise.all([...document.images].map((image) => image.complete ? image.decode().catch(() => undefined) : new Promise<void>((resolve) => {
+          const visibleImages = [...document.images].filter((image) => !image.closest("dialog:not([open])"));
+          await Promise.all(visibleImages.map((image) => image.complete ? image.decode().catch(() => undefined) : new Promise<void>((resolve) => {
             image.addEventListener("load", () => resolve(), { once: true });
             image.addEventListener("error", () => resolve(), { once: true });
           })));

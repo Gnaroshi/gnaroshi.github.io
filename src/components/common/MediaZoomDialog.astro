@@ -1,0 +1,104 @@
+---
+import type { ApprovedMediaAsset } from "../../data/approvedMedia";
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
+import ResponsiveImage from "../media/ResponsiveImage.astro";
+
+interface Props {
+  asset: ApprovedMediaAsset;
+  locale: Locale;
+  title: string;
+  caption: string;
+}
+
+const { asset, locale, title, caption } = Astro.props;
+const dialogId = `media-dialog-${asset.id}`;
+const original = `/media/approved/${asset.id}-${asset.widths.at(-1)}.webp`;
+---
+
+<div class="media-zoom" data-media-zoom>
+  <div class="media-zoom__actions">
+    <button type="button" class="button" data-media-zoom-open aria-haspopup="dialog" aria-controls={dialogId}>
+      {locale === "ko" ? "도식 크게 보기" : "View larger diagram"}
+    </button>
+    <a href={original} target="_blank" rel="noopener noreferrer">
+      {locale === "ko" ? "원본 파일 열기" : "Open original file"}
+    </a>
+  </div>
+  <dialog id={dialogId} class="media-zoom__dialog" aria-labelledby={`${dialogId}-title`} data-media-zoom-dialog>
+    <div class="media-zoom__panel">
+      <header>
+        <div>
+          <p class="eyebrow">{locale === "ko" ? "기술 도식" : "Technical diagram"}</p>
+          <h2 id={`${dialogId}-title`}>{title}</h2>
+        </div>
+        <button type="button" class="media-zoom__close" data-media-zoom-close aria-label={translate(locale, "common.close")}>×</button>
+      </header>
+      <div class="media-zoom__canvas">
+        <ResponsiveImage asset={asset} locale={locale} sizes="min(92vw, 1440px)" />
+      </div>
+      <p>{caption}</p>
+    </div>
+  </dialog>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-media-zoom]")) {
+    const trigger = root.querySelector<HTMLButtonElement>("[data-media-zoom-open]");
+    const dialog = root.querySelector<HTMLDialogElement>("[data-media-zoom-dialog]");
+    const closeButton = root.querySelector<HTMLButtonElement>("[data-media-zoom-close]");
+    if (!trigger || !dialog || !closeButton) continue;
+
+    const close = () => dialog.close();
+    trigger.addEventListener("click", () => {
+      dialog.showModal();
+      document.body.classList.add("media-dialog-open");
+      requestAnimationFrame(() => closeButton.focus());
+    });
+    closeButton.addEventListener("click", close);
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab") return;
+      const focusable = [...dialog.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )].filter((element) => !element.hidden && element.getClientRects().length > 0);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable.at(-1)!;
+      if (focusable.length === 1 || (event.shiftKey && document.activeElement === first) || (!event.shiftKey && document.activeElement === last)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      }
+    });
+    dialog.addEventListener("close", () => {
+      document.body.classList.remove("media-dialog-open");
+      requestAnimationFrame(() => trigger.focus());
+    });
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) close();
+    });
+  }
+</script>
+
+<style>
+  .media-zoom__actions { display:flex; flex-wrap:wrap; gap:var(--space-3); align-items:center; padding:var(--space-3) var(--space-4) var(--space-4); border-top:1px solid var(--color-border); }
+  .media-zoom__actions .button { min-height:40px; }
+  .media-zoom__actions a { font-size:var(--text-sm); }
+  .media-zoom__dialog { width:min(94vw, 1440px); max-width:none; max-height:92dvh; padding:0; border:1px solid var(--color-border-strong); background:var(--color-bg); color:var(--color-text); box-shadow:var(--shadow-lg); }
+  .media-zoom__dialog::backdrop { background:rgb(0 0 0 / 72%); }
+  .media-zoom__panel { display:grid; max-height:92dvh; grid-template-rows:auto minmax(0,1fr) auto; }
+  .media-zoom__panel > header { display:flex; gap:var(--space-4); align-items:start; justify-content:space-between; padding:var(--space-4); border-bottom:1px solid var(--color-border); }
+  .media-zoom__panel > header > div { display:grid; gap:var(--space-1); }
+  .media-zoom__panel h2 { font-size:var(--text-lg); }
+  .media-zoom__close { display:grid; width:44px; height:44px; flex:0 0 44px; place-items:center; padding:0; border:1px solid var(--color-border); background:var(--color-surface); color:var(--color-text); font-size:var(--text-xl); cursor:pointer; }
+  .media-zoom__canvas { min-height:0; overflow:auto; background:var(--color-surface); }
+  .media-zoom__canvas :global(.responsive-media) { width:100%; min-width:min(900px, 100%); }
+  .media-zoom__canvas :global(img) { height:auto; object-fit:contain; }
+  .media-zoom__panel > p { padding:var(--space-3) var(--space-4); border-top:1px solid var(--color-border); color:var(--color-text-secondary); font-size:var(--text-sm); line-height:1.6; }
+  :global(body.media-dialog-open) { overflow:hidden; }
+  @media (max-width:479px) {
+    .media-zoom__actions { align-items:stretch; }
+    .media-zoom__actions .button { width:100%; }
+    .media-zoom__dialog { width:100vw; max-height:100dvh; border-inline:0; }
+    .media-zoom__panel { max-height:100dvh; }
+  }
+</style>

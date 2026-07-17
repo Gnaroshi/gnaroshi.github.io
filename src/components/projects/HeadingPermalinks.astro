@@ -1,0 +1,53 @@
+---
+import type { Locale } from "../../i18n/types";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<div
+  class="heading-link-status sr-only"
+  aria-live="polite"
+  data-heading-link-status
+  data-copy-label={locale === "ko" ? "이 구역 링크 복사" : "Copy link to this section"}
+  data-copied={locale === "ko" ? "구역 링크를 복사했습니다." : "Section link copied."}
+  data-failed={locale === "ko" ? "자동 복사를 사용할 수 없습니다. 주소 표시줄의 링크를 사용하세요." : "Automatic copy is unavailable. Use the link in the address bar."}
+></div>
+
+<script>
+  const status = document.querySelector<HTMLElement>("[data-heading-link-status]");
+  const article = status?.closest<HTMLElement>(".project-detail");
+  if (status && article) {
+    for (const heading of article.querySelectorAll<HTMLHeadingElement>("h2[id]")) {
+      if (heading.querySelector("[data-heading-link]")) continue;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "heading-link";
+      button.dataset.headingLink = "";
+      button.setAttribute("aria-label", `${status.dataset.copyLabel}: ${heading.textContent?.trim() ?? ""}`);
+      button.textContent = "#";
+      button.addEventListener("click", async () => {
+        const target = new URL(window.location.href);
+        target.hash = heading.id;
+        window.history.replaceState(null, "", target);
+        window.dispatchEvent(new Event("gnaroshi:locationchange"));
+        try {
+          await navigator.clipboard.writeText(target.toString());
+          status.textContent = status.dataset.copied ?? "";
+        } catch {
+          status.textContent = status.dataset.failed ?? "";
+        }
+      });
+      heading.append(button);
+    }
+  }
+</script>
+
+<style is:global>
+  .project-detail h2[id] { display:flex; gap:var(--space-2); align-items:baseline; }
+  .heading-link { display:inline-grid; width:1.75rem; height:1.75rem; flex:0 0 1.75rem; place-items:center; padding:0; border:0; background:transparent; color:var(--color-text-muted); cursor:pointer; font-family:var(--font-mono); font-size:var(--text-sm); }
+  .heading-link:hover { color:var(--color-accent); }
+</style>

@@ -25,6 +25,8 @@ test.describe("all public page visual checklist", { tag: "@visual-v3" }, () => {
         for (const route of qaRoutes) {
           await page.goto(route);
           await page.waitForLoadState("networkidle");
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await page.waitForTimeout(30);
           const metrics = await page.evaluate(() => ({
             overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
             images: document.querySelectorAll("main img").length,

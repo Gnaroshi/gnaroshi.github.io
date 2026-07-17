@@ -18,10 +18,10 @@ const labels = getProjectUi(locale);
   <ProjectDetailHeader project={project} story={story} locale={locale}/>
   <ProjectPrimaryMedia asset={media} locale={locale} caption={media.caption[locale]} disclosure={media.demoDisclosure[locale]}/>
   <ProjectAtAGlance project={project} story={story} locale={locale}/>
-  <section class="prose-section"><h2>{labels.overview}</h2><p>{story.overview}</p></section>
+  <section class="prose-section"><h2 id="project-overview">{labels.overview}</h2><p>{story.overview}</p></section>
   <ProjectScenario projectId={project.id} scenario={story.scenario} locale={locale} withMedia excludeMediaId={project.primaryShowcaseId}/>
   <ProjectStoryFacts project={project} story={story} locale={locale}/>
-  <section class="technical-facts"><h2>{locale === "ko" ? "기술 사실" : "Technical facts"}</h2><dl>
+  <section class="technical-facts"><h2 id="technical-facts">{locale === "ko" ? "기술 사실" : "Technical facts"}</h2><dl>
     <div><dt>{labels.source}</dt><dd>{hasPublicRepository ? project.sourceRepository : labels.privateSource}</dd></div><div><dt>{labels.sourceCommit}</dt><dd><code>{project.sourceCommit.slice(0,12)}</code></dd></div>
     <div><dt>{labels.integration}</dt><dd data-studio-integration-status={project.studioIntegrationStatus}>{integrationLabels[locale][project.studioIntegrationStatus]}</dd></div><div><dt>{labels.updated}</dt><dd>{formatLocalizedDate(project.updatedAt,locale)}</dd></div>
   </dl></section>
