@@ -62,7 +62,18 @@ test("active Reading overview is a current label instead of a self-link", async 
     await page.goto(route);
     const nav = page.getByRole("navigation", { name: navName });
     await expect(nav.getByRole("link", { name: overview, exact: true })).toHaveCount(0);
-    await expect(nav.locator('[aria-current="page"]', { hasText: overview })).toHaveCount(1);
+    const current = nav.locator('[aria-current="page"]', { hasText: overview });
+    await expect(current).toHaveCount(1);
+    expect(await current.evaluate((element) => element.tagName)).toBe("SPAN");
+    const beforeHover = await current.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return { color: style.color, borderBottomColor: style.borderBottomColor, cursor: style.cursor };
+    });
+    await current.hover();
+    expect(await current.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return { color: style.color, borderBottomColor: style.borderBottomColor, cursor: style.cursor };
+    })).toEqual(beforeHover);
     await expectExactlyOnePaperCurrent(nav, overview);
   }
 });
@@ -194,6 +205,11 @@ async function expectExactlyOnePaperCurrent(navigation: ReturnType<Page["locator
   const current = navigation.locator('[aria-current="page"], [aria-current="location"]');
   await expect(current).toHaveCount(1);
   await expect(current).toHaveText(label);
+  const visualMarkers = await navigation.locator(".paper-lab-nav__groups > a, .paper-lab-nav__current").evaluateAll((items) => items.filter((item) => {
+    const borderColor = getComputedStyle(item).borderBottomColor;
+    return borderColor !== "transparent" && borderColor !== "rgba(0, 0, 0, 0)";
+  }).length);
+  expect(visualMarkers).toBe(1);
   if (label !== "Overview" && label !== "개요") {
     await expect(navigation.locator('[data-paper-nav-route-current]')).not.toHaveAttribute("aria-current", "page");
   }
