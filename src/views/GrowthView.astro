@@ -25,13 +25,14 @@ const components = Object.entries(snapshot?.components ?? {}).filter((entry): en
     <PageHeader eyebrow={translate(locale, "growth.eyebrow")} title={translate(locale, "growth.title")} description={translate(locale, "growth.intro")} />
 
     {eligible && snapshot ? (
-      <section class="momentum-score" aria-labelledby="growth-score-heading"><div><p class="eyebrow">{locale === "ko" ? "활동 요약" : "Activity overview"}</p><h2 id="growth-score-heading">{snapshot.score}</h2><p>{locale === "ko" ? `신뢰도 ${snapshot.confidence}` : `${snapshot.confidence} confidence`}</p></div><dl><div><dt>{locale === "ko" ? "기록" : "Records"}</dt><dd>{snapshot.evidenceCount}</dd></div><div><dt>{locale === "ko" ? "활동일" : "Active days"}</dt><dd>{snapshot.activeDays}</dd></div></dl></section>
+      <>
+        <section class="momentum-score" aria-labelledby="growth-score-heading"><div><p class="eyebrow">{locale === "ko" ? "활동 요약" : "Activity overview"}</p><h2 id="growth-score-heading">{snapshot.score}</h2><p>{locale === "ko" ? `신뢰도 ${snapshot.confidence}` : `${snapshot.confidence} confidence`}</p></div><dl><div><dt>{locale === "ko" ? "기록" : "Records"}</dt><dd>{snapshot.evidenceCount}</dd></div><div><dt>{locale === "ko" ? "활동일" : "Active days"}</dt><dd>{snapshot.activeDays}</dd></div></dl></section>
+        {components.length > 0 && <section class="section" aria-labelledby="growth-components-heading"><SectionHeader id="growth-components-heading" title={locale === "ko" ? "구성 요소" : "Components"} /><div class="growth-feed-components">{components.map(([key, value]) => <article><h3>{componentLabels[key]?.[locale] ?? key}</h3><strong>{Math.round(value)}</strong></article>)}</div></section>}
+        <details class="momentum-methodology"><summary>{locale === "ko" ? "기술 정보" : "Technical details"}</summary><p>{locale === "ko" ? "이 페이지는 공개하기로 한 활동 기록의 합계와 구성 요소를 그대로 표시합니다." : "This page displays the published activity totals and score components without recalculating them in the browser."}</p></details>
+      </>
     ) : (
       <section class="growth-onboarding" aria-labelledby="growth-collecting-heading"><div class="app-empty-state"><ActivityIcon class="empty-state-icon" /><p class="eyebrow">{translate(locale, "growth.eyebrow")}</p><h2 id="growth-collecting-heading">{locale === "ko" ? "아직 보여 줄 활동 기록이 충분하지 않습니다." : "There is not enough activity to show a meaningful overview yet."}</h2><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div></section>
     )}
-
-    {components.length > 0 && <section class="section" aria-labelledby="growth-components-heading"><SectionHeader id="growth-components-heading" title={locale === "ko" ? "구성 요소" : "Components"} /><div class="growth-feed-components">{components.map(([key, value]) => <article><h3>{componentLabels[key]?.[locale] ?? key}</h3><strong>{Math.round(value)}</strong></article>)}</div></section>}
-    <details class="momentum-methodology"><summary>{locale === "ko" ? "기술 정보" : "Technical details"}</summary><p>{locale === "ko" ? "이 페이지는 공개하기로 한 활동 기록의 합계와 구성 요소를 그대로 표시합니다." : "This page displays the published activity totals and score components without recalculating them in the browser."}</p></details>
   </AppShell>
 </BaseLayout>
 

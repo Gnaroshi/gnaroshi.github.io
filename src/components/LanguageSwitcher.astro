@@ -16,19 +16,20 @@ const translated = alternateUrls?.translationAvailable !== false;
 const directTarget = alternateUrls?.[otherLocale] ?? getCounterpartUrl(locale, currentPath);
 const target = translated ? directTarget : getLocalizedCollectionIndex(otherLocale, currentPath);
 const englishTarget = alternateUrls?.en ?? (locale === "en" ? currentPath : getCounterpartUrl(locale, currentPath));
+const koreanTarget = locale === "ko" ? (alternateUrls?.ko ?? currentPath) : target;
+const noticeId = `translation-status-${mobile ? "mobile" : "desktop"}`;
 ---
 
-<div class:list={["language-switcher", mobile && "language-switcher--mobile"]} aria-label={translate(locale, "nav.language")} data-translation-available={String(translated)}>
+<div class:list={["language-switcher", mobile && "language-switcher--mobile"]} role="group" aria-label={translate(locale, "nav.language")} data-translation-available={String(translated)}>
   {mobile && <span>{translate(locale, "nav.language")}</span>}
-  <a href={englishTarget} lang="en" aria-current={locale === "en" ? "page" : undefined}>EN</a>
+  {locale === "en"
+    ? <span class="language-switcher__current" lang="en" aria-current="page">EN</span>
+    : <a href={englishTarget} lang="en" aria-describedby={!translated ? noticeId : undefined}>EN</a>}
   <span aria-hidden="true">|</span>
-  <a
-    href={locale === "ko" ? (alternateUrls?.ko ?? currentPath) : target}
-    lang="ko"
-    aria-current={locale === "ko" ? "page" : undefined}
-    title={!translated ? translate(locale, "language.translationUnavailable") : undefined}
-  >{localeLabels.ko}</a>
-  {!translated && mobile && <small>{translate(locale, "language.translationUnavailable")}</small>}
+  {locale === "ko"
+    ? <span class="language-switcher__current" lang="ko" aria-current="page">{localeLabels.ko}</span>
+    : <a href={koreanTarget} lang="ko" aria-describedby={!translated ? noticeId : undefined}>{localeLabels.ko}</a>}
+  {!translated && <small class="language-switcher__notice" id={noticeId}>{translate(locale, "language.translationUnavailableTarget")}</small>}
 </div>
 
 <script>

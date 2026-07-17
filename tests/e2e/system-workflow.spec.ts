@@ -124,9 +124,13 @@ test.describe("public system workflow", () => {
   test("workflow labels remain legible at tablet and desktop widths", async ({ page }) => {
     await page.setViewportSize({ width: 768, height: 900 });
     await page.goto("/projects/gnaroshi-dev/");
-    await expect(page.locator(".system-diagram__fallback")).toBeVisible();
-    const fallbackSizes = await page.locator(".system-diagram__fallback strong,.system-diagram__fallback li > div > span").evaluateAll((items) => items.map((item) => Number.parseFloat(getComputedStyle(item).fontSize)));
+    const fallback = page.locator(".system-diagram__fallback");
+    await expect(fallback).toBeVisible();
+    const fallbackSizes = await fallback.locator("strong, li > div > span").evaluateAll((items) => items.map((item) => Number.parseFloat(getComputedStyle(item).fontSize)));
     expect(Math.min(...fallbackSizes)).toBeGreaterThanOrEqual(14);
+    const stagePositions = await fallback.locator("[data-flow-stage]").evaluateAll((items) => items.map((item) => item.getBoundingClientRect().top));
+    expect(stagePositions).toEqual([...stagePositions].sort((a, b) => a - b));
+    expect(new Set(stagePositions).size).toBe(stagePositions.length);
 
     await page.setViewportSize({ width: 1024, height: 900 });
     await page.goto("/projects/gnaroshi-dev/");

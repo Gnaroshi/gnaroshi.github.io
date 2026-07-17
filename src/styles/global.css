@@ -136,7 +136,8 @@ video {
   align-items: center;
 }
 
-.site-footer__links a {
+.site-footer__links a,
+.site-footer__links > span {
   color: var(--color-text-secondary);
   font-size: var(--text-sm);
   text-decoration: none;
@@ -144,6 +145,11 @@ video {
 
 .site-footer__links a:hover {
   color: var(--color-accent);
+}
+
+.site-footer__links > span[aria-current="page"] {
+  color: var(--color-accent);
+  font-weight: 700;
 }
 
 .site-main {

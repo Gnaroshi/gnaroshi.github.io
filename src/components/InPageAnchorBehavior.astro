@@ -15,12 +15,37 @@
   }
 
   function updateCurrentAnchor(): void {
-    for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-in-page-link]")) {
-      const url = new URL(link.href, window.location.href);
-      const isCurrent = normalizedPath(url.pathname) === normalizedPath(window.location.pathname)
-        && url.hash === window.location.hash;
-      if (isCurrent && url.hash) link.setAttribute("aria-current", "location");
-      else if (link.getAttribute("aria-current") === "location") link.removeAttribute("aria-current");
+    for (const navigation of document.querySelectorAll<HTMLElement>("[data-paper-lab-nav]")) {
+      let locationCurrent: HTMLElement | null = null;
+      for (const link of navigation.querySelectorAll<HTMLAnchorElement>("[data-in-page-link]")) {
+        const url = new URL(link.href, window.location.href);
+        const isCurrent = normalizedPath(url.pathname) === normalizedPath(window.location.pathname)
+          && url.hash === window.location.hash;
+        if (isCurrent && url.hash) {
+          link.setAttribute("aria-current", "location");
+          locationCurrent = link;
+        } else if (link.getAttribute("aria-current") === "location") {
+          link.removeAttribute("aria-current");
+        }
+      }
+
+      const routeCurrent = navigation.querySelector<HTMLElement>("[data-paper-nav-route-current]");
+      if (routeCurrent) {
+        if (locationCurrent) routeCurrent.removeAttribute("aria-current");
+        else routeCurrent.setAttribute("aria-current", "page");
+      }
+
+      const current = locationCurrent ?? routeCurrent;
+      const scroller = current?.closest<HTMLElement>(".paper-lab-nav__groups");
+      const overflows = Boolean(scroller && scroller.scrollWidth > scroller.clientWidth + 1);
+      scroller?.toggleAttribute("data-overflow", overflows);
+      if (current && scroller && overflows) {
+        const left = current.offsetLeft - (scroller.clientWidth - current.offsetWidth) / 2;
+        requestAnimationFrame(() => scroller.scrollTo({
+          left: Math.max(0, left),
+          behavior: reducedMotion.matches ? "auto" : "smooth"
+        }));
+      }
     }
   }
 
@@ -52,6 +77,7 @@
     if (window.location.hash) exposeTarget(window.location.hash);
     else updateCurrentAnchor();
   });
+  window.addEventListener("resize", updateCurrentAnchor);
 
   requestAnimationFrame(() => {
     if (window.location.hash) exposeTarget(window.location.hash);

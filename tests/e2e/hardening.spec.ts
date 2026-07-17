@@ -80,3 +80,31 @@ test("editorial and empty application routes keep feature boundaries", async ({ 
   expect(paperStyles.some((href) => href.includes("/papers."))).toBe(true);
   expect(paperStyles.some((href) => href.includes("/katex."))).toBe(false);
 });
+
+test("About and current-focus surfaces keep truthful semantics", async ({ page }) => {
+  await page.goto("/about/");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("About");
+  await expect(page.locator(".about-monogram")).toHaveCount(0);
+  const skillGroups = page.locator(".about-skill-list");
+  expect(await skillGroups.count()).toBeGreaterThan(0);
+  for (const group of await skillGroups.all()) {
+    expect(await group.evaluate((element) => ["UL", "OL"].includes(element.tagName))).toBe(true);
+    expect(await group.getByRole("listitem").count()).toBeGreaterThan(0);
+  }
+
+  await page.goto("/now/");
+  const state = await page.locator("[data-current-focus-state]").getAttribute("data-current-focus-state");
+  expect(["fresh", "stale", "future", "invalid"]).toContain(state);
+  if (state === "fresh") {
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("What I’m doing now");
+    await expect(page.locator(".now-freshness-notice")).toHaveCount(0);
+  } else {
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Last recorded focus");
+    await expect(page.locator(".now-freshness-notice")).toBeVisible();
+    await expect(page.locator(".now-freshness-notice a")).toHaveAttribute("href", "/research/");
+  }
+
+  await page.goto("/");
+  await expect(page.locator(".home-editorial")).toHaveAttribute("data-current-focus-state", state!);
+  await expect(page.locator(".identity-hero__focus")).toHaveCount(state === "fresh" ? 1 : 0);
+});

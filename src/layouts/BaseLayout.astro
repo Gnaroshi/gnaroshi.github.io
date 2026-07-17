@@ -142,7 +142,7 @@ const websiteBuildInfo = getWebsiteBuildInfo();
     <main id="content" class:list={["site-main", `site-main--${width}`, flush && "site-main--flush"]}>
       <slot />
     </main>
-    {!minimalChrome && <SiteFooter locale={locale} />}
+    {!minimalChrome && <SiteFooter locale={locale} currentPath={Astro.url.pathname} />}
     <InPageAnchorBehavior />
   </body>
 </html>

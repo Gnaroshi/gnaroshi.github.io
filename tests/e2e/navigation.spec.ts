@@ -41,3 +41,12 @@ test("Reading local navigation exposes only available destinations without expan
   await expect(localNav.getByRole("link", { name: "Read", exact: true })).toHaveCount(0);
   await expect(localNav).not.toContainText("+");
 });
+
+test("current locale and footer location are inert current labels", async ({ page }) => {
+  await page.goto("/about/");
+  await expect(page.locator(".utility-nav .language-switcher__current")).toHaveText("EN");
+  await expect(page.locator('.utility-nav .language-switcher a[lang="en"]')).toHaveCount(0);
+  const footer = page.getByRole("navigation", { name: "Footer navigation" });
+  await expect(footer.getByRole("link", { name: "About", exact: true })).toHaveCount(0);
+  await expect(footer.locator('[aria-current="page"]')).toHaveText("About");
+});
