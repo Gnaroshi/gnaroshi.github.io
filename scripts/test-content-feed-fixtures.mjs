@@ -24,11 +24,19 @@ for (const fixture of valid) {
     if (html.includes('hreflang="ko"') || existsSync("dist/ko/blog/english-only/index.html")) throw new Error("English-only post received a fabricated Korean alternate");
     if (!html.includes("Translation unavailable; opens the collection.")) throw new Error("English-only post is missing a visible translation fallback explanation");
     if (html.includes('title="Translation unavailable"')) throw new Error("English-only post relies on a hover-only translation explanation");
+    run("npx", ["playwright", "test", "tests/e2e/translation-fallback.spec.ts"], fixture, true, {
+      TRANSLATION_FIXTURE_LOCALE: "en",
+      PLAYWRIGHT_USE_EXISTING_BUILD: "1"
+    });
   }
   if (fixture === "one-korean-blog") {
     if (!existsSync("dist/ko/blog/korean-only/index.html")) throw new Error("Korean-only post route was not built");
     const html = readFileSync("dist/ko/blog/korean-only/index.html", "utf8");
     if (!html.includes("번역 준비 중 · 목록으로 이동")) throw new Error("Korean-only post is missing a visible translation fallback explanation");
+    run("npx", ["playwright", "test", "tests/e2e/translation-fallback.spec.ts"], fixture, true, {
+      TRANSLATION_FIXTURE_LOCALE: "ko",
+      PLAYWRIGHT_USE_EXISTING_BUILD: "1"
+    });
   }
   if (fixture === "translated-blog-pair") {
     const html = readFileSync("dist/blog/renamed-english/index.html", "utf8");

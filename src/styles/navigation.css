@@ -310,6 +310,10 @@ body.mobile-nav-open { overflow: hidden; }
   .utility-nav > a { display: none; }
 }
 
+@media (max-width: 767px) {
+  .utility-nav .language-switcher { display: none; }
+}
+
 @media (max-width: 479px) {
   .site-header__inner { gap: var(--space-1); }
   .language-switcher { gap: 0.2rem; }

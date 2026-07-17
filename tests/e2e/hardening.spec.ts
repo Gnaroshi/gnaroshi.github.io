@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { getCurrentFocusFreshness } from "../../src/utils/currentFocus";
 
 test("home emits raster social metadata and factual structured data", async ({ page }) => {
   await page.goto("/");
@@ -107,4 +108,12 @@ test("About and current-focus surfaces keep truthful semantics", async ({ page }
   await page.goto("/");
   await expect(page.locator(".home-editorial")).toHaveAttribute("data-current-focus-state", state!);
   await expect(page.locator(".identity-hero__focus")).toHaveCount(state === "fresh" ? 1 : 0);
+});
+
+test("current-focus freshness policy has explicit fresh, stale, future, and invalid boundaries", () => {
+  const now = new Date("2026-07-17T12:00:00.000Z");
+  expect(getCurrentFocusFreshness("2026-06-02", now)).toEqual({ ageDays: 45, status: "fresh", isFresh: true });
+  expect(getCurrentFocusFreshness("2026-06-01", now)).toEqual({ ageDays: 46, status: "stale", isFresh: false });
+  expect(getCurrentFocusFreshness("2026-07-18", now)).toEqual({ ageDays: -1, status: "future", isFresh: false });
+  expect(getCurrentFocusFreshness("not-a-date", now)).toEqual({ ageDays: null, status: "invalid", isFresh: false });
 });

@@ -15,15 +15,6 @@ test("English remains the unprefixed default and Korean uses /ko", async ({ page
   await expect(page.getByRole("navigation", { name: "주요 메뉴" })).toBeVisible();
 });
 
-test("unavailable translations have a visible collection fallback explanation", async ({ page }) => {
-  await page.goto("/projects/gnaroshi-studio/");
-  const desktopSwitcher = page.locator(".utility-nav .language-switcher");
-  if (await desktopSwitcher.getAttribute("data-translation-available") === "false") {
-    await expect(desktopSwitcher.locator(".language-switcher__notice")).toBeVisible();
-    await expect(desktopSwitcher.locator(".language-switcher__notice")).toContainText("opens the collection");
-  }
-});
-
 test("language switch preserves an equivalent static route", async ({ page }) => {
   await page.goto("/research/?view=current");
   await expect(page.getByRole("link", { name: "한국어" }).first()).toHaveAttribute("href", "/ko/research/?view=current");
