@@ -15,7 +15,7 @@
   }
 
   function updateCurrentAnchor(): void {
-    for (const navigation of document.querySelectorAll<HTMLElement>("[data-paper-lab-nav]")) {
+    for (const navigation of document.querySelectorAll<HTMLElement>("[data-in-page-navigation]")) {
       let locationCurrent: HTMLElement | null = null;
       for (const link of navigation.querySelectorAll<HTMLAnchorElement>("[data-in-page-link]")) {
         const url = new URL(link.href, window.location.href);
@@ -36,7 +36,7 @@
       }
 
       const current = locationCurrent ?? routeCurrent;
-      const scroller = current?.closest<HTMLElement>(".paper-lab-nav__groups");
+      const scroller = current?.closest<HTMLElement>("[data-in-page-scroller]");
       const overflows = Boolean(scroller && scroller.scrollWidth > scroller.clientWidth + 1);
       scroller?.toggleAttribute("data-overflow", overflows);
       if (current && scroller && overflows) {
@@ -68,7 +68,10 @@
     if (url.origin !== window.location.origin || normalizedPath(url.pathname) !== normalizedPath(window.location.pathname) || !url.hash) return;
     if (!targetForHash(url.hash)) return;
     event.preventDefault();
-    if (window.location.hash !== url.hash) history.pushState(null, "", `${url.pathname}${url.search}${url.hash}`);
+    if (window.location.hash !== url.hash) {
+      history.pushState(null, "", `${url.pathname}${url.search || window.location.search}${url.hash}`);
+      window.dispatchEvent(new Event("gnaroshi:locationchange"));
+    }
     exposeTarget(url.hash);
   });
 

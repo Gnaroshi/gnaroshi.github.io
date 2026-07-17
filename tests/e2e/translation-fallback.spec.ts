@@ -29,7 +29,7 @@ test.describe("unpaired translation navigation", () => {
   ] as const) {
     test(`${fixtureLocale} ${viewport.name} exposes a visible collection fallback without reload-only current locale`, async ({ page }) => {
       await page.setViewportSize(viewport);
-      await page.goto(fixture.route);
+      await page.goto(`${fixture.route}?from=detail#missing-section`);
 
       const utilitySwitcher = page.locator(".utility-nav .language-switcher");
       let switcher = utilitySwitcher;

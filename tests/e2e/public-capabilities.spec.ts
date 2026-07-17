@@ -51,8 +51,8 @@ for (const fixture of fixtures) {
     const enLocal = getPaperLabNavigation("en", capabilities);
     const koLocal = getPaperLabNavigation("ko", capabilities);
 
-    expect(enPrimary.some((item) => item.href === "/blog")).toBe(fixture.writing);
-    expect(koPrimary.some((item) => item.href === "/ko/blog")).toBe(fixture.writing);
+    expect(enPrimary.some((item) => item.href === "/blog/")).toBe(fixture.writing);
+    expect(koPrimary.some((item) => item.href === "/ko/blog/")).toBe(fixture.writing);
     expect(getUtilityNavigation("en", capabilities).length > 0).toBe(fixture.growth);
     expect(getUtilityNavigation("ko", capabilities).length > 0).toBe(fixture.growth);
     expect(enLocal).toHaveLength(fixture.localCount);

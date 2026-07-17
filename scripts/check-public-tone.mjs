@@ -22,7 +22,9 @@ const forbiddenEverywhere = [
   "비전-언어-행동 시스템을 다루는 AI 연구자",
   "AI 연구자",
   "South Korea",
-  "대한민국"
+  "대한민국",
+  "in a university research lab",
+  "대학 연구실에서"
 ];
 
 const forbiddenOutsideTechnicalProject = [

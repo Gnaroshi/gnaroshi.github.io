@@ -19,6 +19,24 @@ test("Activity stays non-numeric before enough records exist", async ({ page }) 
   await expect(page.getByText(/public feed|eligibility|evidence gate/i)).toHaveCount(0);
 });
 
+test("empty Writing, archive, and Contact routes are noindex with one next action", async ({ page, request }) => {
+  for (const route of ["/blog/", "/ko/blog/", "/blog/archive/", "/ko/blog/archive/", "/contact/", "/ko/contact/"]) {
+    await page.goto(route);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, follow");
+  }
+  for (const route of ["/blog/", "/ko/blog/", "/blog/archive/", "/ko/blog/archive/"]) {
+    await page.goto(route);
+    await expect(page.locator(".app-empty-state .button")).toHaveCount(1);
+  }
+  await page.goto("/week/");
+  await expect(page.locator(".app-empty-state .button")).toHaveAttribute("href", "/papers/#reading-method");
+
+  const sitemap = await (await request.get("/sitemap-0.xml")).text();
+  for (const path of ["/blog/", "/ko/blog/", "/blog/archive/", "/ko/blog/archive/", "/contact/", "/ko/contact/"]) {
+    expect(sitemap).not.toContain(`https://gnaroshi.dev${path}`);
+  }
+});
+
 const emptyTools = [
   ["/queue", "No papers are waiting."],
   ["/reviews", "Nothing needs another look yet."],

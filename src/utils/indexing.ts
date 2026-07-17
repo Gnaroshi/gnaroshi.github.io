@@ -12,7 +12,9 @@ export function getDefaultRobots(pathname: string): RobotsDirective {
   const root = `/${route.split("/").filter(Boolean)[0] ?? ""}`;
   const manifest = getContentFeedManifest();
 
+  if (root === "/blog") return manifest.counts.blogPosts > 0 ? "index, follow" : "noindex, follow";
   if (root === "/papers") return manifest.counts.papers > 0 ? "index, follow" : "noindex, follow";
+  if (root === "/contact") return "noindex, follow";
   if (root === "/growth") {
     const growth = readContentFeedJson<{ metricEligible?: boolean; score?: number | null } | null>("data/growth-snapshot.json", null);
     return growth?.metricEligible && typeof growth.score === "number" ? "index, follow" : "noindex, follow";

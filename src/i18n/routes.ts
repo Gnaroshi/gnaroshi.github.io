@@ -5,22 +5,22 @@ import { getPublicCapabilities, type PublicCapabilities } from "../utils/publicC
 
 export function getPrimaryNavigation(locale: Locale, capabilities: PublicCapabilities = getPublicCapabilities()) {
   const navigation = [
-    { href: getLocalePath(locale, "/research"), label: translate(locale, "nav.research") },
-    { href: getLocalePath(locale, "/projects"), label: translate(locale, "nav.projects") },
+    { href: getLocalePath(locale, "/research/"), label: translate(locale, "nav.research") },
+    { href: getLocalePath(locale, "/projects/"), label: translate(locale, "nav.projects") },
     ...(capabilities.hasWriting || publicFeatureFlags.writingOnboarding
-      ? [{ href: getLocalePath(locale, "/blog"), label: translate(locale, "nav.writing") }]
+      ? [{ href: getLocalePath(locale, "/blog/"), label: translate(locale, "nav.writing") }]
       : []),
     ...(capabilities.hasPapers || publicFeatureFlags.paperLabOnboarding
-      ? [{ href: getLocalePath(locale, "/papers"), label: translate(locale, "nav.paperLab") }]
+      ? [{ href: getLocalePath(locale, "/papers/"), label: translate(locale, "nav.paperLab") }]
       : []),
-    { href: getLocalePath(locale, "/about"), label: translate(locale, "nav.about") }
+    { href: getLocalePath(locale, "/about/"), label: translate(locale, "nav.about") }
   ];
   return navigation;
 }
 
 export function getUtilityNavigation(locale: Locale, capabilities: PublicCapabilities = getPublicCapabilities()) {
   return capabilities.hasEligibleGrowth
-    ? [{ href: getLocalePath(locale, "/growth"), label: translate(locale, "nav.growth") }]
+    ? [{ href: getLocalePath(locale, "/growth/"), label: translate(locale, "nav.growth") }]
     : [];
 }
 
@@ -29,7 +29,7 @@ export function getFooterNavigation(locale: Locale, capabilities: PublicCapabili
     { href: getLocalePath(locale, "/"), label: translate(locale, "nav.home") },
     ...getPrimaryNavigation(locale, capabilities),
     ...getUtilityNavigation(locale, capabilities),
-    { href: getLocalePath(locale, "/now"), label: translate(locale, "nav.now") }
+    { href: getLocalePath(locale, "/now/"), label: translate(locale, "nav.now") }
   ];
 }
 

@@ -14,7 +14,7 @@ const papers = (await getPublishedPapers()).slice(0, 3);
     title="Recent paper reading"
     description="Reading notes use the three-pass method and leave room for partial progress, questions, and revisits."
   >
-    <a slot="action" href="/papers">Browse reading notes</a>
+    <a slot="action" href="/papers/">Browse reading notes</a>
   </SectionHeader>
 
   {papers.length > 0 ? (
