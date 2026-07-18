@@ -82,6 +82,17 @@ export const enCopy = {
     repositoryLinkLabel: "Open public repository",
     boundariesTitle: "Repository boundaries",
     cta: "See the full architecture",
+    explorer: {
+      instruction: "Select a repository to trace what feeds it, what it feeds, and what stays outside its boundary.",
+      selectLabel: "Inspect repository",
+      selectedLabel: "Selected repository",
+      upstreamLabel: "Upstream",
+      downstreamLabel: "Downstream",
+      boundaryLabel: "What stays elsewhere",
+      noneLabel: "None",
+      clearLabel: "Clear selection",
+      clearedStatus: "Repository selection cleared."
+    },
     buildDetails: {
       title: "Current public build",
       websiteCommit: "Website commit",

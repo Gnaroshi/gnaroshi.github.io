@@ -47,7 +47,7 @@ const buildInfo = variant === "full" && showBuildDetails ? getWebsiteBuildInfo()
     <p>{copy.description}</p>
   </header>
 
-  <SystemFlowDiagram copy={presentationCopy} />
+  <SystemFlowDiagram copy={presentationCopy} interactive={variant === "full"} />
 
   {variant === "full" && (
     <details class="system-workflow__boundaries">

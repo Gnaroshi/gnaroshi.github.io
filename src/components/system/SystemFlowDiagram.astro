@@ -2,16 +2,18 @@
 import { Graph, layout } from "@dagrejs/dagre";
 import { systemConnections, systemRepositories, type SystemConnection, type SystemRepository } from "../../data/facts/systemArchitecture";
 import type { LocalizedSystemArchitectureCopy } from "../../data/locales/types";
+import SystemFlowExplorer from "./SystemFlowExplorer.astro";
 
 interface Props {
   copy: LocalizedSystemArchitectureCopy;
+  interactive?: boolean;
 }
 
 type Direction = "LR" | "TB";
 type PositionedNode = SystemRepository & { x: number; y: number; width: number; height: number };
 type PositionedEdge = SystemConnection & { points: Array<{ x: number; y: number }> };
 
-const { copy } = Astro.props;
+const { copy, interactive = false } = Astro.props;
 
 function buildLayout(direction: Direction) {
   const mobile = direction === "TB";
@@ -45,19 +47,19 @@ const stepByRepository: Partial<Record<SystemRepository["id"], string>> = {
 };
 const pathFor = (points: PositionedEdge["points"]) => points.map((point, index) => `${index === 0 ? "M" : "L"}${point.x},${point.y}`).join(" ");
 const fallbackStages = [
-  { step: "1", label: copy.stages.sources, detail: `${copy.repositories["paper-lab"].title} · ${copy.repositories.writing.title}` },
-  { step: "2", label: copy.stages.control, detail: `${copy.repositories.studio.title} · ${copy.repositories.api.title} (${copy.badges.optional})` },
-  { step: "3", label: copy.stages.projection, detail: copy.repositories["content-feed"].title },
-  { step: "4", label: copy.stages.presentation, detail: copy.repositories.website.title }
+  { step: "1", label: copy.stages.sources, detail: `${copy.repositories["paper-lab"].title} · ${copy.repositories.writing.title}`, repositoryIds: ["paper-lab", "writing"] },
+  { step: "2", label: copy.stages.control, detail: `${copy.repositories.studio.title} · ${copy.repositories.api.title} (${copy.badges.optional})`, repositoryIds: ["studio", "api"] },
+  { step: "3", label: copy.stages.projection, detail: copy.repositories["content-feed"].title, repositoryIds: ["content-feed"] },
+  { step: "4", label: copy.stages.presentation, detail: copy.repositories.website.title, repositoryIds: ["website"] }
 ] as const;
 ---
 
-<figure class="system-diagram">
+<figure class="system-diagram" data-system-explorer={interactive ? "" : undefined}>
   {[{ name: "desktop", layout: desktop }, { name: "mobile", layout: mobile }].map(({ name, layout: diagram }) => (
     <svg
       class:list={["system-diagram__svg", `system-diagram__svg--${name}`]}
       viewBox={`0 0 ${diagram.width} ${diagram.height}`}
-      role="img"
+      role={interactive ? "group" : "img"}
       aria-labelledby={`system-diagram-title-${name} system-diagram-description-${name}`}
       preserveAspectRatio="xMidYMid meet"
     >
@@ -90,7 +92,11 @@ const fallbackStages = [
           const step = stepByRepository[node.id];
           const optional = node.id === "api";
           return (
-            <g class:list={["system-diagram__node", `system-diagram__node--${node.visibility}`, optional && "system-diagram__node--optional"]} data-diagram-node={node.id}>
+            <g
+              class:list={["system-diagram__node", `system-diagram__node--${node.visibility}`, optional && "system-diagram__node--optional"]}
+              data-diagram-node={node.id}
+              data-explorer-control={interactive ? node.id : undefined}
+            >
               <rect x={left} y={top} width={node.width} height={node.height} rx="8" />
               {step && (
                 <g class="system-diagram__step" data-diagram-step={step}>
@@ -111,7 +117,22 @@ const fallbackStages = [
   <ol class="system-diagram__fallback" aria-label={copy.title}>
     {fallbackStages.map((stage) => <li data-flow-stage={stage.step}>
       <span class="system-diagram__fallback-step" aria-hidden="true"><span>{stage.step}</span></span>
-      <div><strong>{stage.label}</strong><span>{stage.detail}</span></div>
+      <div>
+        <strong>{stage.label}</strong>
+        {interactive
+          ? <ul class="system-diagram__fallback-repositories">
+              {stage.repositoryIds.map((repositoryId) => (
+                <li>
+                  <span data-system-explorer-static-control data-repository-id={repositoryId}>
+                    <strong>{copy.repositories[repositoryId].title}</strong>
+                    <small>{copy.repositories[repositoryId].role}</small>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          : <span>{stage.detail}</span>}
+      </div>
     </li>)}
   </ol>
+  {interactive && <SystemFlowExplorer copy={copy} />}
 </figure>

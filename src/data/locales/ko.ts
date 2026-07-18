@@ -83,6 +83,17 @@ export const koCopy = {
     repositoryLinkLabel: "공개 저장소 열기",
     boundariesTitle: "저장소별 역할과 경계",
     cta: "전체 구조 보기",
+    explorer: {
+      instruction: "저장소를 선택하면 어디에서 입력을 받고, 어디로 보내며, 경계 밖에 무엇을 두는지 확인할 수 있습니다.",
+      selectLabel: "저장소 살펴보기",
+      selectedLabel: "선택한 저장소",
+      upstreamLabel: "앞 단계",
+      downstreamLabel: "다음 단계",
+      boundaryLabel: "다른 곳에 두는 것",
+      noneLabel: "없음",
+      clearLabel: "선택 해제",
+      clearedStatus: "저장소 선택을 해제했습니다."
+    },
     buildDetails: {
       title: "현재 공개 빌드",
       websiteCommit: "웹사이트 커밋",

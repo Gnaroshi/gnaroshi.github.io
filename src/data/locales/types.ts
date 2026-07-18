@@ -76,6 +76,17 @@ export type LocalizedSystemArchitectureCopy = {
   repositoryLinkLabel: string;
   boundariesTitle: string;
   cta: string;
+  explorer: {
+    instruction: string;
+    selectLabel: string;
+    selectedLabel: string;
+    upstreamLabel: string;
+    downstreamLabel: string;
+    boundaryLabel: string;
+    noneLabel: string;
+    clearLabel: string;
+    clearedStatus: string;
+  };
   buildDetails: {
     title: string;
     websiteCommit: string;

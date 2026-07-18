@@ -23,6 +23,7 @@ test.describe("public system workflow", () => {
       await expect(workflow.locator(".system-diagram")).toBeVisible();
       await expect(workflow.locator("astro-island")).toHaveCount(0);
       await expect(workflow.locator(".system-repository")).toHaveCount(0);
+      await expect(workflow.locator("[data-system-explorer]")).toHaveCount(0);
       await expect(page.locator(".home-loop, #research-loop-heading")).toHaveCount(0);
 
       for (const repositoryName of repositoryNames) {
@@ -72,6 +73,85 @@ test.describe("public system workflow", () => {
       });
     }
     expect(models[0]).toEqual(models[1]);
+  });
+
+  test("full workflow explorer traces repository relationships with keyboard controls", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    for (const [route, selectedTitle, upstreamTitle, downstreamTitle] of [
+      ["/projects/gnaroshi-dev/", "Gnaroshi Studio", "Paper notes", "Website"],
+      ["/ko/projects/gnaroshi-dev/", "Gnaroshi Studio", "논문 기록", "웹사이트"]
+    ] as const) {
+      await page.goto(route);
+      const explorer = page.locator("[data-system-explorer]");
+      const studio = explorer.locator('.system-diagram__svg--desktop [data-explorer-control="studio"]');
+      await expect(studio).toHaveAttribute("role", "button");
+      await expect(studio).toHaveAttribute("tabindex", "0");
+      await expect(studio).toHaveAttribute("aria-pressed", "false");
+
+      await studio.focus();
+      await page.keyboard.press("Enter");
+      await expect(explorer).toHaveAttribute("data-explorer-active", "studio");
+      await expect(studio).toHaveAttribute("aria-pressed", "true");
+      await expect(explorer.locator("[data-system-explorer-title]")).toHaveText(selectedTitle);
+      await expect(explorer.locator("[data-system-explorer-upstream]")).toContainText(upstreamTitle);
+      await expect(explorer.locator("[data-system-explorer-downstream]")).toContainText(downstreamTitle);
+      await expect(explorer.locator("[data-system-explorer-boundary] li")).not.toHaveCount(0);
+      await expect(explorer.locator('[data-explorer-control="paper-lab"]').first()).toHaveAttribute("data-relation", "upstream");
+      await expect(explorer.locator('[data-explorer-control="website"]').first()).toHaveAttribute("data-relation", "downstream");
+
+      await page.keyboard.press("Escape");
+      await expect(explorer).not.toHaveAttribute("data-explorer-active");
+      await expect(studio).toHaveAttribute("aria-pressed", "false");
+      await expect(explorer.locator("[data-system-explorer-selection]")).toBeHidden();
+      await expect(explorer.locator("[data-system-explorer-status]")).not.toHaveText("");
+    }
+  });
+
+  test("mobile workflow explorer preserves causal order and clears explicitly", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await page.goto("/projects/gnaroshi-dev/");
+    const explorer = page.locator("[data-system-explorer]");
+    const controls = explorer.locator(".system-diagram__fallback [data-explorer-control]");
+    await expect(controls).toHaveCount(6);
+    expect(await controls.evaluateAll((items) => items.map((item) => item.getAttribute("data-explorer-control")))).toEqual([
+      "paper-lab",
+      "writing",
+      "studio",
+      "api",
+      "content-feed",
+      "website"
+    ]);
+
+    const studio = explorer.locator('.system-diagram__fallback [data-explorer-control="studio"]');
+    await studio.focus();
+    await page.keyboard.press(" ");
+    await expect(explorer).toHaveAttribute("data-explorer-active", "studio");
+    await expect(explorer.locator("[data-system-explorer-selection]")).toBeVisible();
+    const clear = explorer.getByRole("button", { name: "Clear selection" });
+    await expect(clear).toBeVisible();
+    await clear.click();
+    await expect(explorer).not.toHaveAttribute("data-explorer-active");
+    await expect(explorer.locator("[data-system-explorer-instruction]")).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+  });
+
+  test("workflow keeps a readable causal list when JavaScript is unavailable", async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 360, height: 800 } });
+    const page = await context.newPage();
+    await page.goto("/projects/gnaroshi-dev/");
+    const fallback = page.locator(".system-diagram__fallback");
+    await expect(fallback.locator("[data-system-explorer-static-control]")).toHaveCount(6);
+    await expect(fallback.locator("button")).toHaveCount(0);
+    expect(await fallback.locator("[data-system-explorer-static-control]").evaluateAll((items) => items.map((item) => item.getAttribute("data-repository-id")))).toEqual([
+      "paper-lab",
+      "writing",
+      "studio",
+      "api",
+      "content-feed",
+      "website"
+    ]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+    await context.close();
   });
 
   test("step numbers are mathematically centered in desktop and compact diagrams", async ({ page }) => {
