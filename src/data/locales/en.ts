@@ -5,7 +5,7 @@ export const enCopy = {
   profile: {
     headline: "I study AI systems\nand build software for research.",
     shortBio: "Right now, I’m interested in experiment infrastructure for vision-language-action models and better ways to read, revisit, and connect papers.",
-    aboutIntroduction: "My background is in software, and I’m currently learning about AI through experiments and tools in a university research lab.",
+    aboutIntroduction: "I have a software background, and I’m learning about AI by building experiments and research tools.",
     bio: [
       "I’m interested not only in models, but also in the process around them: setting up experiments, checking results, and preserving enough context to revisit the work later.",
       "I use this site to organize projects, notes, and papers that are ready to be shared publicly."
@@ -82,6 +82,17 @@ export const enCopy = {
     repositoryLinkLabel: "Open public repository",
     boundariesTitle: "Repository boundaries",
     cta: "See the full architecture",
+    explorer: {
+      instruction: "Select a repository to trace what feeds it, what it feeds, and what stays outside its boundary.",
+      selectLabel: "Inspect repository",
+      selectedLabel: "Selected repository",
+      upstreamLabel: "Upstream",
+      downstreamLabel: "Downstream",
+      boundaryLabel: "What stays elsewhere",
+      noneLabel: "None",
+      clearLabel: "Clear selection",
+      clearedStatus: "Repository selection cleared."
+    },
     buildDetails: {
       title: "Current public build",
       websiteCommit: "Website commit",

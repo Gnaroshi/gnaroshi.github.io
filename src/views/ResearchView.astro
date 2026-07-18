@@ -3,10 +3,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/layout/PageHeader.astro";
 import PageShell from "../components/layout/PageShell.astro";
 import ResponsiveImage from "../components/media/ResponsiveImage.astro";
+import MediaZoomDialog from "../components/common/MediaZoomDialog.astro";
 import { getResearchMedia } from "../data/approvedMedia";
 import { getLocalizedData } from "../data/locales";
 import type { Locale } from "../i18n/types";
-import { translate } from "../i18n/utils";
+import { getLocalePath, translate } from "../i18n/utils";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const data = getLocalizedData(locale);
@@ -24,6 +25,14 @@ const mediaLabels = locale === "ko"
 <BaseLayout locale={locale} title={translate(locale, "nav.research")} description={translate(locale, "research.intro")} width="wide">
   <PageShell class="research-page">
     <PageHeader eyebrow={translate(locale, "research.eyebrow")} title={translate(locale, "research.title")} description={translate(locale, "research.intro")} />
+    <nav class="research-overview" aria-label={locale === "ko" ? "연구 질문" : "Research questions"} data-in-page-navigation>
+      {data.researchAreas.map((area, index) => (
+        <a href={getLocalePath(locale, `/research/#${area.slug}`)} data-in-page-link>
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          {locale === "ko" ? `질문 ${index + 1}` : `Question ${index + 1}`}
+        </a>
+      ))}
+    </nav>
     <div class="research-themes">
       {data.researchAreas.map((area, index) => {
         const media = getResearchMedia(area.id, locale);
@@ -33,6 +42,7 @@ const mediaLabels = locale === "ko"
           <figure class:list={["research-theme__media", index > 0 && "research-theme__media--diagram"]}>
             <ResponsiveImage asset={media} locale={locale} sizes="(min-width: 1024px) 48vw, 100vw" />
             <figcaption><strong>{caption.title}</strong><span>{caption.detail}</span></figcaption>
+            {index > 0 && <MediaZoomDialog asset={media} locale={locale} title={area.question} caption={`${caption.title}. ${caption.detail}`} />}
           </figure>
         </article>;
       })}
@@ -42,7 +52,14 @@ const mediaLabels = locale === "ko"
 
 <style>
   .research-themes { display: grid; }
+  .research-overview { display:flex; min-width:0; gap:var(--space-2); overflow-x:auto; padding-block:var(--space-3); border-block:1px solid var(--color-border); scrollbar-width:thin; }
+  .research-overview a { display:inline-flex; min-height:44px; flex:0 0 auto; align-items:center; gap:var(--space-2); padding-inline:var(--space-2); border-bottom:2px solid transparent; color:var(--color-text-secondary); font-size:var(--text-sm); font-weight:700; text-decoration:none; }
+  .research-overview a span { color:var(--color-text-muted); font-family:var(--font-mono); font-size:var(--text-xs); }
+  .research-overview a:hover { color:var(--color-text); }
+  .research-overview a[aria-current="location"] { border-bottom-color:var(--color-accent); color:var(--color-accent); }
   .research-theme { display: grid; gap: var(--space-6); padding: var(--space-8) 0; border-top: 1px solid var(--color-border); }
+  .research-theme { scroll-margin-top:calc(var(--header-height) + var(--space-5)); }
+  .research-theme:focus { outline:2px solid var(--color-focus); outline-offset:var(--space-2); }
   .research-theme__copy { display: grid; gap: var(--space-4); align-content: center; }
   .research-theme__media { display:grid; margin:0; overflow:hidden; border:1px solid var(--color-border); background:var(--color-surface); }
   .research-theme__media :global(.responsive-media) { width:100%; aspect-ratio:4/3; }

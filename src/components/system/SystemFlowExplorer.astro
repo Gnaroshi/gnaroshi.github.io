@@ -1,0 +1,232 @@
+---
+import { systemConnections, systemRepositories } from "../../data/facts/systemArchitecture";
+import type { LocalizedSystemArchitectureCopy } from "../../data/locales/types";
+
+interface Props {
+  copy: LocalizedSystemArchitectureCopy;
+}
+
+const { copy } = Astro.props;
+const payload = JSON.stringify({
+  repositories: systemRepositories.map((repository) => ({
+    id: repository.id,
+    title: copy.repositories[repository.id].title,
+    role: copy.repositories[repository.id].role,
+    description: copy.repositories[repository.id].description,
+    exclusions: copy.repositories[repository.id].exclusions
+  })),
+  connections: systemConnections,
+  labels: copy.explorer
+}).replaceAll("<", "\\u003c");
+---
+
+<figcaption class="system-explorer" data-system-explorer-panel>
+  <p class="system-explorer__instruction" data-system-explorer-instruction>{copy.explorer.instruction}</p>
+  <div class="system-explorer__selection" data-system-explorer-selection hidden>
+    <header>
+      <div>
+        <p class="eyebrow">{copy.explorer.selectedLabel}</p>
+        <h3 data-system-explorer-title></h3>
+      </div>
+      <button type="button" class="button" data-system-explorer-clear hidden>{copy.explorer.clearLabel}</button>
+    </header>
+    <p class="system-explorer__role" data-system-explorer-role></p>
+    <p class="system-explorer__description" data-system-explorer-description></p>
+    <div class="system-explorer__relations">
+      <section>
+        <h4>{copy.explorer.upstreamLabel}</h4>
+        <ul data-system-explorer-upstream></ul>
+      </section>
+      <section>
+        <h4>{copy.explorer.downstreamLabel}</h4>
+        <ul data-system-explorer-downstream></ul>
+      </section>
+      <section>
+        <h4>{copy.explorer.boundaryLabel}</h4>
+        <ul data-system-explorer-boundary></ul>
+      </section>
+    </div>
+  </div>
+  <p class="sr-only" aria-live="polite" data-system-explorer-status></p>
+  <script is:inline type="application/json" data-system-explorer-data set:html={payload}></script>
+</figcaption>
+
+<script>
+  type ExplorerRepository = {
+    id: string;
+    title: string;
+    role: string;
+    description: string;
+    exclusions: string[];
+  };
+
+  type ExplorerConnection = {
+    from: string;
+    to: string;
+    type: string;
+  };
+
+  type ExplorerPayload = {
+    repositories: ExplorerRepository[];
+    connections: ExplorerConnection[];
+    labels: {
+      selectLabel: string;
+      selectedLabel: string;
+      noneLabel: string;
+      clearedStatus: string;
+    };
+  };
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-system-explorer]")) {
+    const payloadElement = root.querySelector<HTMLScriptElement>("[data-system-explorer-data]");
+    const selection = root.querySelector<HTMLElement>("[data-system-explorer-selection]");
+    const instruction = root.querySelector<HTMLElement>("[data-system-explorer-instruction]");
+    const clearButton = root.querySelector<HTMLButtonElement>("[data-system-explorer-clear]");
+    const status = root.querySelector<HTMLElement>("[data-system-explorer-status]");
+    const title = root.querySelector<HTMLElement>("[data-system-explorer-title]");
+    const role = root.querySelector<HTMLElement>("[data-system-explorer-role]");
+    const description = root.querySelector<HTMLElement>("[data-system-explorer-description]");
+    const upstreamList = root.querySelector<HTMLElement>("[data-system-explorer-upstream]");
+    const downstreamList = root.querySelector<HTMLElement>("[data-system-explorer-downstream]");
+    const boundaryList = root.querySelector<HTMLElement>("[data-system-explorer-boundary]");
+    if (!payloadElement || !selection || !instruction || !clearButton || !status || !title || !role || !description || !upstreamList || !downstreamList || !boundaryList) continue;
+    const ui = { selection, instruction, clearButton, status, title, role, description, upstreamList, downstreamList, boundaryList };
+
+    const payload = JSON.parse(payloadElement.textContent ?? "") as ExplorerPayload;
+    const repositoryById = new Map(payload.repositories.map((repository) => [repository.id, repository]));
+    let selectedId: string | null = null;
+
+    for (const label of root.querySelectorAll<HTMLElement>("[data-system-explorer-static-control]")) {
+      const repositoryId = label.dataset.repositoryId;
+      if (!repositoryId) continue;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "system-diagram__fallback-control";
+      button.dataset.explorerControl = repositoryId;
+      button.setAttribute("aria-pressed", "false");
+      button.setAttribute("aria-label", `${payload.labels.selectLabel}: ${repositoryById.get(repositoryId)?.title ?? repositoryId}`);
+      button.append(...label.childNodes);
+      label.replaceWith(button);
+    }
+
+    const controls = [...root.querySelectorAll<HTMLElement>("[data-explorer-control]")];
+    for (const control of controls) {
+      const repositoryId = control.dataset.explorerControl;
+      if (!repositoryId) continue;
+      if (control instanceof SVGGElement) {
+        control.setAttribute("role", "button");
+        control.setAttribute("tabindex", "0");
+        control.setAttribute("aria-pressed", "false");
+        control.setAttribute("aria-label", `${payload.labels.selectLabel}: ${repositoryById.get(repositoryId)?.title ?? repositoryId}`);
+      }
+      control.addEventListener("click", () => select(repositoryId));
+      control.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        select(repositoryId);
+      });
+    }
+
+    function connected(start: string, direction: "upstream" | "downstream"): Set<string> {
+      const found = new Set<string>();
+      const pending = [start];
+      while (pending.length > 0) {
+        const current = pending.shift()!;
+        for (const connection of payload.connections) {
+          const next = direction === "upstream"
+            ? connection.to === current ? connection.from : null
+            : connection.from === current ? connection.to : null;
+          if (!next || found.has(next)) continue;
+          found.add(next);
+          pending.push(next);
+        }
+      }
+      return found;
+    }
+
+    function renderRepositoryList(list: HTMLElement, ids: Set<string>): void {
+      const items = payload.repositories.filter((repository) => ids.has(repository.id));
+      list.replaceChildren();
+      for (const repository of items) {
+        const item = document.createElement("li");
+        item.textContent = repository.title;
+        list.append(item);
+      }
+      if (items.length === 0) {
+        const item = document.createElement("li");
+        item.textContent = payload.labels.noneLabel;
+        list.append(item);
+      }
+    }
+
+    function renderBoundaryList(items: string[]): void {
+      ui.boundaryList.replaceChildren();
+      for (const value of items) {
+        const item = document.createElement("li");
+        item.textContent = value;
+        ui.boundaryList.append(item);
+      }
+    }
+
+    function select(repositoryId: string): void {
+      const repository = repositoryById.get(repositoryId);
+      if (!repository) return;
+      selectedId = repositoryId;
+      const upstream = connected(repositoryId, "upstream");
+      const downstream = connected(repositoryId, "downstream");
+      root.dataset.explorerActive = repositoryId;
+
+      for (const control of controls) {
+        const id = control.dataset.explorerControl;
+        const relation = id === repositoryId ? "selected" : upstream.has(id ?? "") ? "upstream" : downstream.has(id ?? "") ? "downstream" : "unrelated";
+        control.dataset.relation = relation;
+        control.setAttribute("aria-pressed", String(id === repositoryId));
+      }
+
+      for (const edge of root.querySelectorAll<SVGElement>("[data-connection-from]")) {
+        const from = edge.dataset.connectionFrom ?? "";
+        const to = edge.dataset.connectionTo ?? "";
+        const relation = upstream.has(from) && (to === repositoryId || upstream.has(to))
+          ? "upstream"
+          : downstream.has(to) && (from === repositoryId || downstream.has(from))
+            ? "downstream"
+            : "unrelated";
+        edge.dataset.relation = relation;
+      }
+
+      ui.title.textContent = repository.title;
+      ui.role.textContent = repository.role;
+      ui.description.textContent = repository.description;
+      renderRepositoryList(ui.upstreamList, upstream);
+      renderRepositoryList(ui.downstreamList, downstream);
+      renderBoundaryList(repository.exclusions);
+      ui.instruction.hidden = true;
+      ui.selection.hidden = false;
+      ui.clearButton.hidden = false;
+      ui.status.textContent = `${payload.labels.selectedLabel}: ${repository.title}.`;
+    }
+
+    function clear(): void {
+      if (!selectedId) return;
+      selectedId = null;
+      delete root.dataset.explorerActive;
+      for (const control of controls) {
+        delete control.dataset.relation;
+        control.setAttribute("aria-pressed", "false");
+      }
+      for (const edge of root.querySelectorAll<SVGElement>("[data-connection-from]")) delete edge.dataset.relation;
+      ui.instruction.hidden = false;
+      ui.selection.hidden = true;
+      ui.clearButton.hidden = true;
+      ui.status.textContent = payload.labels.clearedStatus;
+    }
+
+    ui.clearButton.addEventListener("click", clear);
+    root.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !selectedId) return;
+      event.preventDefault();
+      clear();
+    });
+    root.dataset.explorerReady = "";
+  }
+</script>

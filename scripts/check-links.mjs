@@ -47,6 +47,7 @@ for (const [file, document] of documents) {
       if (!rel.has("noopener") || !rel.has("noreferrer")) failures.push(`${label}: target=_blank requires noopener noreferrer (${href})`);
     }
     validateHref(file, route, href, relation);
+    if (element.localName === "a") validateCanonicalAnchor(file, route, href);
   }
 
   for (const element of document.querySelectorAll("script[src], img[src], source[src], video[src], link[href]")) {
@@ -104,6 +105,17 @@ function validateHref(file, route, href, relation) {
   if (/^data:/i.test(href)) return failures.push(`${relative(root, file)}: data URL is not allowed in href`);
   if (/^(mailto|tel):/i.test(href)) return;
   validateInternalTarget(file, route, href, relation, { allowFragment: true });
+}
+
+function validateCanonicalAnchor(file, route, value) {
+  if (!value || /^(?:mailto|tel|javascript|file|data):/i.test(value)) return;
+  let url;
+  try { url = new URL(value, `${siteOrigin}${route}`); } catch { return; }
+  if (url.origin !== siteOrigin || url.pathname === "/" || url.pathname.endsWith("/")) return;
+  const target = resolveBuiltTarget(decodeURIComponent(url.pathname));
+  if (target?.endsWith("/index.html")) {
+    failures.push(`${relative(root, file)}: internal page link must use canonical trailing slash (${value})`);
+  }
 }
 
 function validateInternalTarget(file, route, value, relation, options = {}) {

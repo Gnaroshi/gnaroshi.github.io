@@ -14,7 +14,7 @@ const posts = (await getPublishedBlogPosts()).slice(0, 3);
     title="Recent technical notes"
     description="Recent writing on research workflows, paper reading, and implementation notes."
   >
-    <a slot="action" href="/blog">Blog index</a>
+    <a slot="action" href="/blog/">Blog index</a>
   </SectionHeader>
 
   {posts.length > 0 ? (

@@ -5,8 +5,8 @@ import ResponsiveImage from "../media/ResponsiveImage.astro";
 interface Props { asset: ApprovedMediaAsset; locale: Locale; caption?: string; disclosure?: string; label?: string }
 const { asset, locale, caption, disclosure, label } = Astro.props;
 ---
-<section class="evidence-section" aria-label={label}>
-  {label && <h2>{label}</h2>}
+<section id="project-evidence" class="evidence-section" aria-label={label}>
+  {label && <h2 id="project-evidence-heading">{label}</h2>}
   <figure class="primary-evidence">
     <div class="primary-evidence__frame" style={`aspect-ratio:${asset.width}/${asset.height}`}>
       <ResponsiveImage asset={asset} locale={locale} sizes="(min-width:1200px) 1040px, 100vw" loading="eager" fetchpriority="high"/>

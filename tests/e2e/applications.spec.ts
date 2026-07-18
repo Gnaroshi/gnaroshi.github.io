@@ -24,7 +24,10 @@ test.describe("verified Gnaroshi applications", () => {
       }
       await expect(page.locator(".featured-app picture img")).toHaveCount(3);
       await expect(page.locator(".supporting-app picture")).toHaveCount(0);
-      for (const slug of applicationSlugs) expect(await page.locator(`main a[href$="/projects/${slug}/"]`).count()).toBeGreaterThanOrEqual(2);
+      for (const slug of applicationSlugs) {
+        const expectedLinks = ["gnaroshi-studio", "paperflow", "arxiv-discovery"].includes(slug) ? 2 : 1;
+        await expect(page.locator(`main a[href$="/projects/${slug}/"]`)).toHaveCount(expectedLinks);
+      }
       const cards = page.locator("[data-project-id]");
       for (let index=0;index<await cards.count();index+=1) {
         const card=cards.nth(index);
@@ -175,16 +178,15 @@ test.describe("verified Gnaroshi applications", () => {
       for (const width of [1024, 1100, 1440]) {
         await page.setViewportSize({ width, height: 1000 });
         await page.goto(`${localePrefix}/projects/`);
-        if (width >= 1100) await assertAligned(".featured-app--paired", ["media", "header", "meta", "summary", "stack", "cta"], 2);
-        await assertAligned(width < 1100 ? ".supporting-app:nth-child(-n+2)" : ".supporting-app", ["group", "header", "meta", "summary", "platforms", "stack", "cta"], width < 1100 ? 2 : 3);
+        if (width >= 1100) await assertAligned(".featured-app--paired", ["media", "header", "meta", "summary", "stack"], 2);
+        await assertAligned(width < 1100 ? ".supporting-app:nth-child(-n+2)" : ".supporting-app", ["group", "header", "meta", "summary", "platforms", "stack"], width < 1100 ? 2 : 3);
       }
 
       for (const card of await page.locator(".selected-project,.featured-app,.supporting-app").all()) {
-        const cta = card.locator('[data-card-part="cta"]');
-        const [cardBox, ctaBox] = await Promise.all([card.boundingBox(), cta.boundingBox()]);
-        expect(cardBox).not.toBeNull();
-        expect(ctaBox).not.toBeNull();
-        expect(ctaBox!.width).toBeLessThan(cardBox!.width / 2);
+        const hrefs = await card.locator("a[href]").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+        const counts = new Map<string | null, number>();
+        for (const href of hrefs) counts.set(href, (counts.get(href) ?? 0) + 1);
+        expect(Math.max(...counts.values())).toBeLessThanOrEqual(2);
       }
     });
   }

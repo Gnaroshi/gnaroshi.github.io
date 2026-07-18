@@ -1,6 +1,7 @@
 ---
 import type { Locale } from "../../i18n/types";
 import { translate } from "../../i18n/utils";
+import ReadingPassChecklist from "./ReadingPassChecklist.astro";
 interface Props { locale?: Locale }
 const { locale = "en" } = Astro.props;
 const passes = [
@@ -40,6 +41,7 @@ const principles = [
       </li>
     ))}
   </ol>
+  <ReadingPassChecklist locale={locale} passes={passes} />
   <ul class="paper-method-panel__principles">
     {principles.map((principle) => <li>{principle}</li>)}
   </ul>

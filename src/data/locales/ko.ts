@@ -5,7 +5,7 @@ export const koCopy = {
   profile: {
     headline: "AI 시스템을 공부하고,\n연구에 필요한 소프트웨어를 만듭니다.",
     shortBio: "요즘은 비전-언어-행동 모델을 비교하기 위한 실험 환경과, 논문을 읽고 다시 꺼내보는 작업 흐름에 관심을 두고 있습니다.",
-    aboutIntroduction: "소프트웨어를 전공했고, 현재 대학 연구실에서 AI 기술을 배우며 실험과 도구를 만들고 있습니다.",
+    aboutIntroduction: "소프트웨어 작업을 해왔고, 현재 AI 실험과 연구 도구를 만들며 배우고 있습니다.",
     bio: [
       "모델 자체뿐 아니라 실험을 반복하고 결과를 확인하는 과정에도 관심이 있습니다.",
       "논문을 읽거나 코드를 구현하면서 배운 내용을, 나중에 다시 사용할 수 있는 형태로 남기려고 합니다.",
@@ -83,6 +83,17 @@ export const koCopy = {
     repositoryLinkLabel: "공개 저장소 열기",
     boundariesTitle: "저장소별 역할과 경계",
     cta: "전체 구조 보기",
+    explorer: {
+      instruction: "저장소를 선택하면 어디에서 입력을 받고, 어디로 보내며, 경계 밖에 무엇을 두는지 확인할 수 있습니다.",
+      selectLabel: "저장소 살펴보기",
+      selectedLabel: "선택한 저장소",
+      upstreamLabel: "앞 단계",
+      downstreamLabel: "다음 단계",
+      boundaryLabel: "다른 곳에 두는 것",
+      noneLabel: "없음",
+      clearLabel: "선택 해제",
+      clearedStatus: "저장소 선택을 해제했습니다."
+    },
     buildDetails: {
       title: "현재 공개 빌드",
       websiteCommit: "웹사이트 커밋",

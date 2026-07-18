@@ -35,12 +35,20 @@ const noticeId = `translation-status-${mobile ? "mobile" : "desktop"}`;
 <script>
   for (const switcher of document.querySelectorAll<HTMLElement>(".language-switcher")) {
     for (const link of switcher.querySelectorAll<HTMLAnchorElement>("a[lang]")) {
-      if (switcher.dataset.translationAvailable === "true" && window.location.search) {
-        const target = new URL(link.href, window.location.origin);
+      const baseTarget = link.href;
+      const updateTarget = () => {
+        if (switcher.dataset.translationAvailable !== "true") return;
+        const target = new URL(baseTarget, window.location.origin);
         target.search = window.location.search;
+        target.hash = window.location.hash;
         link.href = `${target.pathname}${target.search}${target.hash}`;
-      }
+      };
+      updateTarget();
+      window.addEventListener("gnaroshi:locationchange", updateTarget);
+      window.addEventListener("hashchange", updateTarget);
+      window.addEventListener("popstate", updateTarget);
       link.addEventListener("click", () => {
+        updateTarget();
         try { window.localStorage.setItem("locale", link.lang.startsWith("ko") ? "ko" : "en"); } catch {}
       });
     }

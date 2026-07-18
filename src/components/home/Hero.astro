@@ -6,15 +6,16 @@ import { profile } from "../../data/profile";
 import { getLocalizedData } from "../../data/locales";
 import type { Locale } from "../../i18n/types";
 import { getLocalePath, translate } from "../../i18n/utils";
+import { formatLocalizedDate } from "../../i18n/date";
 import { getPublicCapabilities } from "../../utils/publicCapabilities";
-interface Props { locale: Locale; currentFocus?: string }
-const { locale, currentFocus } = Astro.props;
+interface Props { locale: Locale; currentFocus?: string; currentFocusUpdated?: string }
+const { locale, currentFocus, currentFocusUpdated } = Astro.props;
 const data = getLocalizedData(locale);
 const capabilities = getPublicCapabilities();
 ---
 
 <HeroShell class="identity-hero" labelledby="home-title">
-  <div class="identity-hero__media" aria-hidden="true">
+  <div class="identity-hero__media">
     <ResponsiveImage asset={approvedMedia.homeHero} locale={locale} sizes="(min-width: 1200px) 1040px, 100vw" loading="eager" fetchpriority="high" />
   </div>
   <div class="identity-hero__copy">
@@ -25,6 +26,11 @@ const capabilities = getPublicCapabilities();
       <a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewResearch")}</a>
       {capabilities.hasWriting && <a class="button" href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.readWriting")}</a>}
     </div>
-    {currentFocus && <p class="identity-hero__focus"><span>{translate(locale, "home.currentFocus")}</span>{currentFocus}</p>}
+    {currentFocus && currentFocusUpdated && (
+      <a class="identity-hero__focus" href={getLocalePath(locale, "/now/")}>
+        <span>{translate(locale, "home.currentFocus")} · <time datetime={currentFocusUpdated}>{formatLocalizedDate(currentFocusUpdated, locale)}</time></span>
+        {currentFocus}
+      </a>
+    )}
   </div>
 </HeroShell>

@@ -1,0 +1,40 @@
+---
+import type { Locale } from "../../i18n/types";
+import { getLocalePath } from "../../i18n/utils";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const entries = locale === "ko"
+  ? [
+      ["at-a-glance-heading", "한눈에 보기"],
+      ["public-workflow", "공개 흐름"],
+      ["scenario-heading", "사용 흐름"],
+      ["system-workflow-title-full", "저장소 구조"],
+      ["current-state", "현재 상태"],
+      ["current-limitations", "현재 한계"]
+    ]
+  : [
+      ["at-a-glance-heading", "At a glance"],
+      ["public-workflow", "Public workflow"],
+      ["scenario-heading", "Example workflow"],
+      ["system-workflow-title-full", "Repository structure"],
+      ["current-state", "Current state"],
+      ["current-limitations", "Current limitations"]
+    ];
+---
+
+<nav class="project-section-nav" aria-label={locale === "ko" ? "이 프로젝트의 목차" : "On this project page"} data-in-page-navigation>
+  {entries.map(([id, label]) => (
+    <a href={getLocalePath(locale, `/projects/gnaroshi-dev/#${id}`)} data-in-page-link>{label}</a>
+  ))}
+</nav>
+
+<style>
+  .project-section-nav { display:flex; min-width:0; gap:var(--space-2); overflow-x:auto; padding-block:var(--space-3); border-block:1px solid var(--color-border); scrollbar-width:thin; }
+  .project-section-nav a { display:inline-flex; min-height:44px; flex:0 0 auto; align-items:center; padding-inline:var(--space-2); border-bottom:2px solid transparent; color:var(--color-text-secondary); font-size:var(--text-sm); font-weight:700; text-decoration:none; white-space:nowrap; }
+  .project-section-nav a:hover { color:var(--color-text); }
+  .project-section-nav a[aria-current="location"] { border-bottom-color:var(--color-accent); color:var(--color-accent); }
+</style>

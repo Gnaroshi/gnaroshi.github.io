@@ -108,6 +108,10 @@ test("About and current-focus surfaces keep truthful semantics", async ({ page }
   await page.goto("/");
   await expect(page.locator(".home-editorial")).toHaveAttribute("data-current-focus-state", state!);
   await expect(page.locator(".identity-hero__focus")).toHaveCount(state === "fresh" ? 1 : 0);
+  if (state === "fresh") {
+    await expect(page.locator(".identity-hero__focus")).toHaveAttribute("href", "/now/");
+    await expect(page.locator(".identity-hero__focus time")).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}$/);
+  }
 });
 
 test("current-focus freshness policy has explicit fresh, stale, future, and invalid boundaries", () => {

@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import StructuredData from "../components/StructuredData.astro";
 import ExternalLink from "../components/common/ExternalLink.astro";
+import HeadingPermalinks from "../components/projects/HeadingPermalinks.astro";
 import ApplicationProjectDetail from "../components/projects/ApplicationProjectDetail.astro";
 import InfrastructureProjectDetail from "../components/projects/InfrastructureProjectDetail.astro";
 import ResearchProjectDetail from "../components/projects/ResearchProjectDetail.astro";
@@ -50,7 +51,8 @@ if (project.kind !== "application" && !selectedMedia) throw new Error(`${project
     {project.kind === "research" && selectedMedia && <ResearchProjectDetail project={project} story={story} locale={locale} media={selectedMedia}/>}
     {project.kind === "infrastructure" && selectedMedia && <InfrastructureProjectDetail project={project} story={story} locale={locale} media={selectedMedia}/>}
 
-    {related.length > 0 && <section class="prose-section"><h2>{translate(locale,"projects.relatedWriting")}</h2><ul>{related.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a></li>)}</ul></section>}
+    {related.length > 0 && <section class="prose-section"><h2 id="related-writing">{translate(locale,"projects.relatedWriting")}</h2><ul>{related.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a></li>)}</ul></section>}
     {project.links.length > 0 && <footer class="project-links" aria-label={labels.links}>{project.links.map((link) => <ExternalLink href={link.href}>{story.linkLabels[link.id] ?? link.id}</ExternalLink>)}</footer>}
+    <HeadingPermalinks locale={locale}/>
   </article>
 </BaseLayout>

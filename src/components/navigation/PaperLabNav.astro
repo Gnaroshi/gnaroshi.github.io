@@ -1,7 +1,7 @@
 ---
 import { getPaperLabNavigation, isNavigationActive } from "../../i18n/routes";
 import type { Locale } from "../../i18n/types";
-import { translate } from "../../i18n/utils";
+import { getLocalePath, translate } from "../../i18n/utils";
 
 interface Props { currentPath: string; locale: Locale }
 const { currentPath, locale } = Astro.props;
@@ -18,20 +18,32 @@ const currentRouteHref = routeCandidates.reduce<string | null>((current, item) =
   const candidateLength = new URL(item.href, "https://gnaroshi.dev").pathname.length;
   return candidateLength > currentLength ? item.href : current;
 }, null);
+const papersRoot = new URL(getLocalePath(locale, "/papers/"), "https://gnaroshi.dev").pathname.replace(/\/$/, "") || "/";
+const showParentOnly = cleanCurrentPath !== papersRoot && currentRouteHref === null;
 ---
 
-<nav class="paper-lab-nav" aria-label={translate(locale, "a11y.paperLabNavigation")} data-paper-lab-nav>
-  <span class="paper-lab-nav__brand">{translate(locale, "nav.paperLab")}</span>
-  <div class="paper-lab-nav__groups">
-    {paperLabNavigation.map((item) => currentRouteHref === item.href ? (
-      <span
-        class="paper-lab-nav__current"
-        aria-current="page"
-        data-paper-nav-route-current
-        data-nav-href={item.href}
-      >{item.label}</span>
-    ) : (
-      <a href={item.href} data-nav-href={item.href} data-in-page-link={item.href.includes("#") ? "" : undefined}>{item.label}</a>
-    ))}
-  </div>
+<nav
+  class:list={["paper-lab-nav", showParentOnly && "paper-lab-nav--parent-only"]}
+  aria-label={translate(locale, "a11y.paperLabNavigation")}
+  data-paper-lab-nav
+  data-in-page-navigation
+>
+  {showParentOnly ? (
+    <a class="paper-lab-nav__parent" href={getLocalePath(locale, "/papers/")}>← {translate(locale, "paperLab.backToReading")}</a>
+  ) : (
+    <>
+      <span class="paper-lab-nav__brand">{translate(locale, "nav.paperLab")}</span>
+      <div class="paper-lab-nav__groups" data-in-page-scroller>
+        {paperLabNavigation.map((item) => (
+          <a
+            href={item.href}
+            aria-current={currentRouteHref === item.href ? "page" : undefined}
+            data-paper-nav-route-current={currentRouteHref === item.href ? "" : undefined}
+            data-nav-href={item.href}
+            data-in-page-link={item.href.includes("#") ? "" : undefined}
+          >{item.label}</a>
+        ))}
+      </div>
+    </>
+  )}
 </nav>

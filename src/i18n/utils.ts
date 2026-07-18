@@ -48,7 +48,10 @@ export function getLocalizedCollectionIndex(locale: Locale, pathname: string): s
 
 function normalizePath(pathname: string): string {
   if (!pathname || pathname === "/") return "/";
-  return pathname.startsWith("/") ? pathname : `/${pathname}`;
+  const normalized = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  const lastSegment = normalized.split("/").filter(Boolean).at(-1) ?? "";
+  if (normalized.endsWith("/") || lastSegment.includes(".")) return normalized;
+  return `${normalized}/`;
 }
 
 function splitPathSuffix(value: string): { path: string; suffix: string } {

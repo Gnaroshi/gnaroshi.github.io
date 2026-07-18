@@ -64,7 +64,11 @@ if (!focusFreshness.isFresh && import.meta.env.DEV) {
     ]
   }} />
   <div class="home-editorial" data-current-focus-state={focusFreshness.status}>
-    <Hero locale={locale} currentFocus={focusFreshness.isFresh ? data.now.currentlyBuilding[0] : undefined} />
+    <Hero
+      locale={locale}
+      currentFocus={focusFreshness.isFresh ? data.now.currentlyBuilding[0] : undefined}
+      currentFocusUpdated={focusFreshness.isFresh ? data.now.lastUpdated : undefined}
+    />
 
     <Section class="home-research" labelledby="research-questions-heading">
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.researchQuestions")}</p><h2 id="research-questions-heading">{translate(locale, "home.researchQuestionsTitle")}</h2></div>

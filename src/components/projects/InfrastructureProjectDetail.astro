@@ -10,6 +10,7 @@ import ProjectAtAGlance from "./ProjectAtAGlance.astro";
 import ProjectDetailHeader from "./ProjectDetailHeader.astro";
 import ProjectPrimaryMedia from "./ProjectPrimaryMedia.astro";
 import ProjectScenario from "./ProjectScenario.astro";
+import ProjectSectionNavigation from "./ProjectSectionNavigation.astro";
 import ProjectStoryFacts from "./ProjectStoryFacts.astro";
 interface Props { project: InfrastructureProjectFacts; story: ProjectStory; locale: Locale; media: ApprovedMediaAsset }
 const { project, story, locale, media } = Astro.props;
@@ -21,14 +22,14 @@ const verification = story.detail.deploymentVerification as readonly string[];
 ---
 <div data-project-template="infrastructure">
   <ProjectDetailHeader project={project} story={story} locale={locale}/>
+  <ProjectSectionNavigation locale={locale}/>
   <ProjectPrimaryMedia asset={media} locale={locale} label={labels.systemEvidence} caption={story.overview} disclosure={story.scenario.demoDisclosure}/>
   <ProjectAtAGlance project={project} story={story} locale={locale}/>
-  <section class="prose-section"><h2>{labels.problem}</h2><p>{problem}</p><p>{story.overview}</p></section>
-  <section class="prose-section"><h2>{labels.workflow}</h2><ul>{publicWorkflow.map((item) => <li>{item}</li>)}</ul></section>
-  <section class="prose-section"><h2>{labels.boundaries}</h2><ul>{boundaries.map((item) => <li>{item}</li>)}</ul><p>{story.privacySummary}</p></section>
+  <section class="prose-section"><h2 id="public-workflow">{labels.workflow}</h2><p>{problem}</p><p>{story.overview}</p><ul>{publicWorkflow.map((item) => <li>{item}</li>)}</ul></section>
+  <section class="prose-section"><h2 id="repository-boundaries">{labels.boundaries}</h2><ul>{boundaries.map((item) => <li>{item}</li>)}</ul></section>
   <ProjectScenario projectId={project.id} scenario={story.scenario} locale={locale}/>
   <SystemWorkflow locale={locale} variant="full" showBuildDetails/>
   <ManagedApplicationsWorkflow locale={locale}/>
-  <section class="prose-section"><h2>{labels.verification}</h2><ul>{verification.map((item) => <li>{item}</li>)}</ul></section>
+  <section class="prose-section"><h2 id="deployment-verification">{labels.verification}</h2><ul>{verification.map((item) => <li>{item}</li>)}</ul></section>
   <ProjectStoryFacts project={project} story={story} locale={locale}/>
 </div>

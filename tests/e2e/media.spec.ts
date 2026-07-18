@@ -39,6 +39,8 @@ test.describe("approved public media", () => {
     test(`${route} renders a loaded Hero and project evidence image`, async ({ page }) => {
       await page.goto(route);
       await expect(page.locator(".identity-hero picture img")).toHaveCount(1);
+      await expect(page.locator(".identity-hero__media[aria-hidden]")).toHaveCount(0);
+      await expect(page.locator(".identity-hero picture img")).not.toHaveAttribute("alt", "");
       await expect(page.locator(".home-featured-project picture img")).toHaveCount(1);
       await expect(page.locator(".home-featured-project__media")).not.toHaveAttribute("aria-hidden", "true");
       await expect(page.locator(".home-featured-project__media")).not.toHaveAttribute("tabindex", "-1");
@@ -57,10 +59,10 @@ test.describe("approved public media", () => {
   for (const [route, localeSuffix] of [["/research/", "-en"], ["/ko/research/", "-ko"]] as const) {
     test(`${route} renders one concrete scene and two locale-matched diagrams`, async ({ page }) => {
       await page.goto(route);
-      await expect(page.locator(".research-theme picture img")).toHaveCount(3);
-      await expect(page.locator('source[srcset*="research-vla-task"]')).toHaveCount(2);
-      await expect(page.locator(`source[srcset*="efficient-execution${localeSuffix}"]`)).toHaveCount(2);
-      await expect(page.locator(`source[srcset*="research-workflow${localeSuffix}"]`)).toHaveCount(2);
+      await expect(page.locator(".research-theme__media > picture > img")).toHaveCount(3);
+      await expect(page.locator('.research-theme__media > picture source[srcset*="research-vla-task"]')).toHaveCount(2);
+      await expect(page.locator(`.research-theme__media > picture source[srcset*="efficient-execution${localeSuffix}"]`)).toHaveCount(2);
+      await expect(page.locator(`.research-theme__media > picture source[srcset*="research-workflow${localeSuffix}"]`)).toHaveCount(2);
       await expect(page.locator(".research-theme figcaption")).toHaveCount(3);
       await expect(page.locator(".research-theme figcaption").first()).toContainText(route.startsWith("/ko/") ? "생성한 개념 장면" : "Generated concept scene");
       await expect(page.locator(".research-theme figcaption").nth(1)).toContainText(route.startsWith("/ko/") ? "기술 도식" : "Technical diagram");
@@ -89,6 +91,14 @@ test.describe("approved public media", () => {
     for (const route of ["/blog/", "/papers/", "/growth/", "/queue/", "/reviews/", "/formula/", "/questions/", "/implementations/", "/graph/", "/week/"]) {
       await page.goto(route);
       await expect(page.locator("main picture, main img"), route).toHaveCount(0);
+    }
+  });
+
+  test("aria-hidden containers never retain meaningful image alternatives", async ({ page }) => {
+    for (const route of ["/", "/research/", "/projects/", "/ko/", "/ko/research/", "/ko/projects/"]) {
+      await page.goto(route);
+      const contradictions = await page.locator('[aria-hidden="true"] img').evaluateAll((images) => images.filter((image) => Boolean(image.getAttribute("alt")?.trim())).length);
+      expect(contradictions, route).toBe(0);
     }
   });
 });

@@ -44,7 +44,7 @@ for (const project of projectFacts) {
 }
 
 if (!profileFacts.links.email) warnings.push("No public email is configured; the field remains hidden.");
-if (!profileFacts.profileImage) warnings.push("No profile image is configured; the monogram remains in use.");
+if (!profileFacts.profileImage) warnings.push("No profile image is configured; portrait-dependent surfaces remain hidden.");
 if (!profileFacts.links.scholar) warnings.push("No Scholar link is configured; the field remains hidden.");
 
 checkDate(currentFocusFact.lastUpdated, "current focus lastUpdated");

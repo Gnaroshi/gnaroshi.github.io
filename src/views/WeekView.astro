@@ -5,10 +5,43 @@ import { getLocalePath, translate } from "../i18n/utils";
 import { getAllWeeklyReviews } from "../utils/weeklyReviews";
 import "../styles/application.css";
 import "../styles/insights.css";
+
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const reviews = getAllWeeklyReviews();
 const current = reviews[0];
 const complete = reviews.filter((review) => review.state === "complete" && review.meaningfulEventCount >= 2);
 ---
-<BaseLayout locale={locale} title={translate(locale, "paperLab.weeklyReviews")} description={translate(locale, "week.subtitle")} width="wide" mode="application"><header class="page-header"><p class="eyebrow">{translate(locale, "paperLab.weeklyReviews")}</p><h1>{translate(locale, "week.title")}</h1><p class="lede">{translate(locale, "week.subtitle")}</p></header>{current?.state === "in-progress" && <section class="weekly-progress-state" aria-labelledby="current-week"><p class="eyebrow">{current.weekId}</p><h2 id="current-week">{translate(locale, "common.inProgress")}</h2><p>{locale === "ko" ? "이번 주 기록은 아직 작성 중입니다." : "This week’s note is still open."}</p><a href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></section>}<section class="section" aria-labelledby="week-archive"><h2 id="week-archive">{translate(locale, "week.archive")}</h2><p>{translate(locale, "week.archiveDescription")}</p>{complete.length ? <div class="weekly-review-list">{complete.map((review) => <article class="weekly-review-card"><h3><a href={getLocalePath(locale, `/week/${review.weekId}/`)}>{review.weekId}</a></h3></article>)}</div> : <div class="app-empty-state"><h2>{translate(locale, "week.empty")}</h2><p>{translate(locale, "week.emptyBody")}</p></div>}</section></BaseLayout>
+
+<BaseLayout locale={locale} title={translate(locale, "paperLab.weeklyReviews")} description={translate(locale, "week.subtitle")} width="wide" mode="application">
+  <header class="page-header">
+    <p class="eyebrow">{translate(locale, "paperLab.weeklyReviews")}</p>
+    <h1>{translate(locale, "week.title")}</h1>
+    <p class="lede">{translate(locale, "week.subtitle")}</p>
+  </header>
+
+  {current?.state === "in-progress" && (
+    <section class="weekly-progress-state" aria-labelledby="current-week">
+      <p class="eyebrow">{current.weekId}</p>
+      <h2 id="current-week">{translate(locale, "common.inProgress")}</h2>
+      <p>{locale === "ko" ? "이번 주 기록은 아직 작성 중입니다." : "This week’s note is still open."}</p>
+      <a href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a>
+    </section>
+  )}
+
+  <section class="section" aria-labelledby="week-archive">
+    <h2 id="week-archive">{translate(locale, "week.archive")}</h2>
+    <p>{translate(locale, "week.archiveDescription")}</p>
+    {complete.length ? (
+      <div class="weekly-review-list">
+        {complete.map((review) => <article class="weekly-review-card"><h3><a href={getLocalePath(locale, `/week/${review.weekId}/`)}>{review.weekId}</a></h3></article>)}
+      </div>
+    ) : (
+      <div class="app-empty-state">
+        <h2>{translate(locale, "week.empty")}</h2>
+        <p>{translate(locale, "week.emptyBody")}</p>
+        <a class="button button--primary" href={getLocalePath(locale, "/papers/#reading-method")}>{translate(locale, "week.action")}</a>
+      </div>
+    )}
+  </section>
+</BaseLayout>

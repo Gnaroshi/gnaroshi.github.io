@@ -7,4 +7,4 @@ interface Props { ids: readonly TechId[]; locale: Locale }
 const { ids, locale } = Astro.props;
 const labels = getProjectUi(locale);
 ---
-<section class="tech-section"><h2>{labels.stack}</h2><TechStackGrid ids={ids} locale={locale}/><p class="attribution">{locale === "ko" ? "기술 아이콘은 저장소에 포함된 범주 심볼이며, 실제 기술 이름을 함께 표시합니다." : "Technology icons are repository-owned category symbols; the verified technology name remains visible."}</p></section>
+<section class="tech-section"><h2 id="tech-stack">{labels.stack}</h2><TechStackGrid ids={ids} locale={locale}/><p class="attribution">{locale === "ko" ? "기술 아이콘은 저장소에 포함된 범주 심볼이며, 실제 기술 이름을 함께 표시합니다." : "Technology icons are repository-owned category symbols; the verified technology name remains visible."}</p></section>

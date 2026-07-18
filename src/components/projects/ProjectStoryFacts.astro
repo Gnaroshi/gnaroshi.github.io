@@ -17,11 +17,11 @@ const labels = getProjectUi(locale);
 
 <section class="split-section">
   <div>
-    <h2>{labels.features}</h2>
+    <h2 id="key-features">{labels.features}</h2>
     <ul>{story.keyFeatures.map((item) => <li>{item}</li>)}</ul>
   </div>
   <div>
-    <h2>{labels.privacy}</h2>
+    <h2 id="data-privacy">{labels.privacy}</h2>
     <p>{story.privacySummary}</p>
   </div>
 </section>
@@ -30,29 +30,29 @@ const labels = getProjectUi(locale);
 
 {story.studioRelationship && (
   <section class="prose-section">
-    <h2>{labels.relationship}</h2>
+    <h2 id="studio-relationship">{labels.relationship}</h2>
     <p>{story.studioRelationship}</p>
   </section>
 )}
 
 <section class="split-section">
   <div>
-    <h2>{labels.state}</h2>
+    <h2 id="current-state">{labels.state}</h2>
     <p>{story.currentState}</p>
   </div>
   <div>
-    <h2>{labels.limitations}</h2>
+    <h2 id="current-limitations">{labels.limitations}</h2>
     <ul>{story.currentLimitations.map((item) => <li>{item}</li>)}</ul>
   </div>
 </section>
 
 <section class="split-section">
   <div>
-    <h2>{labels.notes}</h2>
+    <h2 id="technical-notes">{labels.notes}</h2>
     <ul>{story.technicalNotes.map((item) => <li>{item}</li>)}</ul>
   </div>
   <div>
-    <h2>{labels.milestones}</h2>
+    <h2 id="next-milestones">{labels.milestones}</h2>
     <ul>{story.nextMilestones.map((item) => <li>{item}</li>)}</ul>
   </div>
 </section>
