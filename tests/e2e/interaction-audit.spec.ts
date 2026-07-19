@@ -316,6 +316,60 @@ test("long editorial pages expose native scroll progress and stop motion on requ
   await expect(page.locator("body")).not.toHaveAttribute("data-page-progress", "true");
 });
 
+test("signature motion is perceptible and remains optional", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+
+  const heroTitle = page.locator(".identity-hero h1");
+  await expect(heroTitle).toHaveCSS("animation-name", "site-hero-copy-enter");
+  const heroDuration = await heroTitle.evaluate((element) => {
+    const value = getComputedStyle(element).animationDuration.split(",")[0]!.trim();
+    return value.endsWith("ms") ? Number.parseFloat(value) : Number.parseFloat(value) * 1000;
+  });
+  expect(heroDuration).toBeGreaterThanOrEqual(600);
+
+  await page.goto("/about/");
+  const pageHeader = page.locator(".page-header");
+  await expect(pageHeader).toHaveCSS("animation-name", "site-page-rail-enter");
+  const railSizes = await pageHeader.evaluate((element) => {
+    const [animation] = element.getAnimations();
+    if (!animation) return null;
+    animation.pause();
+    animation.currentTime = 0;
+    const start = getComputedStyle(element).backgroundSize;
+    animation.currentTime = animation.effect?.getTiming().duration as number;
+    const end = getComputedStyle(element).backgroundSize;
+    return { start, end };
+  });
+  expect(railSizes).not.toBeNull();
+  expect(railSizes!.start).not.toBe(railSizes!.end);
+
+  await page.goto("/");
+  const evidence = page.locator("[data-motion-media]").first();
+  await evidence.scrollIntoViewIfNeeded();
+  await evidence.hover();
+  await expect.poll(() => evidence.locator("img").evaluate((image) => new DOMMatrix(getComputedStyle(image).transform).a)).toBeGreaterThan(1.04);
+  await expect.poll(() => evidence.evaluate((element) => Number.parseFloat(getComputedStyle(element, "::after").opacity))).toBeGreaterThan(.8);
+
+  await page.goto("/research/");
+  await expect(page.locator(".site-header__progress")).toHaveCSS("height", "4px");
+  const sectionAnimation = await page.locator(".research-theme").first().evaluate((element) => ({
+    name: getComputedStyle(element).animationName,
+    timeline: getComputedStyle(element).animationTimeline
+  }));
+  if (sectionAnimation.timeline !== "auto") expect(sectionAnimation.name).toContain("site-section-reveal");
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(page.locator(".identity-hero h1")).toHaveCSS("animation-name", "none");
+  const reducedEvidence = page.locator("[data-motion-media]").first();
+  await reducedEvidence.scrollIntoViewIfNeeded();
+  await reducedEvidence.hover();
+  await expect(reducedEvidence.locator("img")).toHaveCSS("transform", "none");
+  await expect.poll(() => reducedEvidence.evaluate((element) => Number.parseFloat(getComputedStyle(element, "::after").opacity))).toBe(0);
+});
+
 test("Research navigation restores direct and history-managed locations", async ({ page }) => {
   for (const route of ["/research/", "/ko/research/"]) {
     await page.goto(route);
