@@ -118,6 +118,7 @@ export const enCopy = {
   },
   researchAreas: {
     "practical-vla-systems": {
+      shortTitle: "Comparable VLA experiments",
       question: "What kind of experiment structure makes different VLA models comparable on common ground?",
       motivation: "Different VLA repositories organize models, environments, and results in different ways. That makes the same experiment difficult to run and inspect across models.",
       hypothesis: "I’m testing whether a shared run structure can make comparisons clearer while small adapters keep model-specific behavior visible.",
@@ -125,6 +126,7 @@ export const enCopy = {
       relatedLabels: ["gnaroshi_vla"]
     },
     "efficient-model-execution": {
+      shortTitle: "Efficient model execution",
       question: "How can computation be reduced without hiding changes in model behavior?",
       motivation: "Saving computation matters only when the resulting behavior can still be checked. Reused state and approximations need clear boundaries.",
       hypothesis: "I’m looking at explicit reuse and update paths that can be measured across experiments.",
@@ -132,6 +134,7 @@ export const enCopy = {
       relatedLabels: ["Experiment setup"]
     },
     "human-ai-research-tools": {
+      shortTitle: "Research judgment with AI",
       question: "How can AI tools support research without replacing the researcher’s judgment?",
       motivation: "Generated summaries and scores can save time, but they can also hide uncertainty. The original question and the researcher’s own check still need to remain visible.",
       hypothesis: "I’m exploring tools that help organize notes, suggest questions, and make revisiting easier without deciding what is true on the researcher’s behalf.",

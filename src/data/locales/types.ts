@@ -12,6 +12,7 @@ export type LocalizedProfileCopy = {
 };
 
 export type LocalizedResearchCopy = {
+  shortTitle: string;
   question: string;
   motivation: string;
   hypothesis: string;

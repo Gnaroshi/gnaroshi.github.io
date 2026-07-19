@@ -20,7 +20,7 @@ interface Props {
 const { project, story, locale, href, groupLabel, stackLabel, platformsLabel } = Astro.props;
 ---
 
-<article class="supporting-app" data-project-id={project.id} data-project-kind={project.kind} data-application-group={project.applicationGroup}>
+<article class="supporting-app" data-project-id={project.id} data-project-kind={project.kind} data-application-group={project.applicationGroup} data-motion-surface>
   <p class="purpose-label" data-card-part="group">{groupLabel}</p>
   <ProjectCardHeader project={project} locale={locale} title={story.title} href={href} />
   <p class="project-meta" data-card-part="meta">{productStatusLabels[locale][project.productStatus]}</p>
