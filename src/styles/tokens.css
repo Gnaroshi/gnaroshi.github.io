@@ -97,9 +97,9 @@
   --pixel-border: 2px;
   --shadow-sm: 2px 2px 0 rgb(24 32 28 / 12%);
   --shadow-md: 4px 4px 0 rgb(24 32 28 / 18%);
-  --duration-fast: 140ms;
-  --duration-state: 180ms;
-  --duration-page: 240ms;
+  --duration-fast: 160ms;
+  --duration-state: 240ms;
+  --duration-page: 480ms;
   --ease-standard: cubic-bezier(.2, .75, .25, 1);
   --ease-emphasized: cubic-bezier(.2, .9, .2, 1);
   --project-research-accent: #486f96;
