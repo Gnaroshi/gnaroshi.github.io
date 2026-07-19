@@ -198,13 +198,16 @@ Minimum requirements:
 
 ## Animation
 
-Use little to no animation. Acceptable uses:
+Motion must explain destination, progress, or state. The site uses progressive native CSS rather than a general animation framework:
 
-- Small focus or hover transitions.
-- Theme transition if subtle.
-- Heatmap hover states.
+- short same-origin page transitions;
+- a scroll-linked reading-progress marker on long editorial pages;
+- current-section movement in compact local navigation;
+- small focus, hover, pressed, theme, menu, and dialog transitions.
 
-Avoid page-load animation, scroll animation, parallax, and motion-heavy effects.
+Do not add automatic loops, custom cursors, decorative parallax, motion-only feedback, or effects that hide content before JavaScript runs. Motion must not change layout dimensions. Unsupported browsers keep a complete static interface, and `prefers-reduced-motion` removes every nonessential transition.
+
+See `docs/interaction-motion.md`.
 
 ## Design Acceptance Criteria
 

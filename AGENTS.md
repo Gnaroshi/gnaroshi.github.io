@@ -27,6 +27,7 @@ Before structural changes, read:
 - `docs/projects-content-model.md`
 - `docs/projects-editorial-rules.md`
 - `docs/projects-tech-stack.md`
+- `docs/interaction-motion.md`
 
 ## Stack
 
@@ -148,6 +149,7 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Keep application mode limited to public paper workflows and Activity views.
 - Use semantic landmarks and heading order.
 - Preserve visible focus states, keyboard navigation, contrast, and mobile overflow protection.
+- Keep motion tied to navigation, progress, or state; prefer progressive native CSS and preserve the complete reduced-motion experience.
 - Keep graph list fallback and heatmap labels accessible.
 - Do not expose developer or authoring instructions on public pages.
 - Apply the two-second semantic test to every large image: its broad subject must be clear before adjacent copy is read.

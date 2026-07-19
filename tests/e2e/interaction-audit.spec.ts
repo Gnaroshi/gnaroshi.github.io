@@ -242,6 +242,7 @@ test("Research navigation and diagram zoom preserve focus and scroll state", asy
     for (const route of ["/research/", "/ko/research/"]) {
       await page.goto(route);
       const navigation = page.locator(".research-overview");
+      await expect(navigation).not.toContainText(/Question [123]|질문 [123]/);
       const link = navigation.getByRole("link").nth(1);
       const hash = new URL((await link.getAttribute("href"))!, "https://gnaroshi.dev").hash;
       await link.click();
@@ -262,6 +263,57 @@ test("Research navigation and diagram zoom preserve focus and scroll state", asy
       await expect(trigger).toBeFocused();
     }
   }
+});
+
+test("editorial section indexes track scroll with exactly one current item", async ({ page }) => {
+  for (const { route, navigationSelector, targetId } of [
+    { route: "/research/", navigationSelector: ".research-overview", targetId: "human-ai-research-tools" },
+    { route: "/ko/research/", navigationSelector: ".research-overview", targetId: "human-ai-research-tools" },
+    { route: "/projects/", navigationSelector: ".projects-overview", targetId: "supporting-applications" },
+    { route: "/ko/projects/", navigationSelector: ".projects-overview", targetId: "supporting-applications" }
+  ]) {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(route);
+    const navigation = page.locator(navigationSelector);
+    const scroller = navigation.locator("[data-in-page-scroller]");
+    const firstLink = navigation.locator("[data-in-page-link]").first();
+    await expect(firstLink).toHaveAttribute("aria-current", "location");
+    await expect.poll(() => firstLink.evaluate((link) => {
+      const container = link.closest<HTMLElement>("[data-in-page-scroller]");
+      if (!container) return false;
+      const linkBounds = link.getBoundingClientRect();
+      const containerBounds = container.getBoundingClientRect();
+      return linkBounds.left >= containerBounds.left - 1 && linkBounds.right <= containerBounds.right + 1;
+    })).toBe(true);
+    await page.locator(`#${targetId}`).evaluate((target) => target.scrollIntoView({ block: "start" }));
+    await expect(navigation.locator('[aria-current="location"]')).toHaveCount(1);
+    await expect(navigation.locator('[aria-current="location"]')).toHaveAttribute("href", new RegExp(`#${escapeRegExp(targetId)}$`));
+    await expect.poll(() => scroller.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
+    await expect(firstLink).toHaveAttribute("aria-current", "location");
+    await expect.poll(() => scroller.evaluate((element) => element.scrollLeft)).toBe(0);
+  }
+});
+
+test("long editorial pages expose native scroll progress and stop motion on request", async ({ page }) => {
+  for (const route of ["/research/", "/projects/", "/projects/gnaroshi-dev/"]) {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto(route);
+    await expect(page.locator("body")).toHaveAttribute("data-page-progress", "true");
+    const progress = page.locator(".site-header__progress");
+    const animationName = await progress.evaluate((element) => getComputedStyle(element).animationName);
+    if (animationName !== "none") {
+      const startTransform = await progress.evaluate((element) => getComputedStyle(element).transform);
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await expect.poll(() => progress.evaluate((element) => getComputedStyle(element).transform)).not.toBe(startTransform);
+    }
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await expect.poll(() => progress.evaluate((element) => getComputedStyle(element).animationName)).toBe("none");
+  }
+
+  await page.goto("/");
+  await expect(page.locator("body")).not.toHaveAttribute("data-page-progress", "true");
 });
 
 test("Research navigation restores direct and history-managed locations", async ({ page }) => {
@@ -303,7 +355,7 @@ test("project detail table of contents supports direct hash and history", async 
   await expect(page.locator("#repository-boundaries")).toBeFocused();
   await page.locator(".project-section-nav a[href$='#current-state']").click();
   await expect(page.locator("#current-state")).toBeFocused();
-  await expect(page.locator(".project-section-nav [aria-current='location']")).toHaveText("Current state");
+  await expect(page.locator(".project-section-nav [aria-current='location']")).toHaveAttribute("href", /#current-state$/);
   await page.goBack();
   await expect(page.locator("#repository-boundaries")).toBeFocused();
 });
