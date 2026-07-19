@@ -38,22 +38,32 @@ const labels = locale === "ko" ? {
 };
 ---
 
-<BaseLayout locale={locale} title={translate(locale, "nav.projects")} description={translate(locale, "projects.intro")} width="wide">
+<BaseLayout locale={locale} title={translate(locale, "nav.projects")} description={translate(locale, "projects.intro")} width="wide" pageProgress>
   <PageShell class="projects-page">
     <PageHeader title={translate(locale, "projects.title")} description={translate(locale, "projects.intro")} />
 
-    <nav class="projects-overview" aria-label={labels.sections} data-in-page-navigation>
-      <a href={getLocalePath(locale, "/projects/#selected-projects")} data-in-page-link>{labels.selected}</a>
-      <a href={getLocalePath(locale, "/projects/#featured-applications")} data-in-page-link>{labels.featured}</a>
-      <a href={getLocalePath(locale, "/projects/#supporting-applications")} data-in-page-link>{labels.supporting}</a>
+    <nav class="projects-overview" aria-label={labels.sections} data-in-page-navigation data-scroll-spy>
+      <ol data-in-page-scroller>
+        {[
+          ["selected-projects", labels.selected],
+          ["featured-applications", labels.featured],
+          ["supporting-applications", labels.supporting]
+        ].map(([id, label], index) => (
+          <li>
+            <a href={getLocalePath(locale, `/projects/#${id}`)} data-in-page-link data-motion-surface>
+              <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>{label}
+            </a>
+          </li>
+        ))}
+      </ol>
     </nav>
 
-    <section id="selected-projects" class="project-section" aria-labelledby="selected-projects-heading" tabindex="-1">
+    <section id="selected-projects" class="project-section project-section--selected" aria-labelledby="selected-projects-heading" tabindex="-1" data-in-page-section>
       <header class="section-heading"><p class="eyebrow">{labels.selected}</p><h2 id="selected-projects-heading">{locale === "ko" ? "연구와 공개 시스템" : "Research and public systems"}</h2></header>
       <div class="selected-list">
         {selected.map((project) => { const story = getProjectStory(locale, project.id); const media = getProjectMedia(project.id)!; const href = getLocalePath(locale, `/projects/${project.slug}/`); return <article class="selected-project" data-project-id={project.id} data-project-kind={project.kind} style={`--source-media-ratio:${media.width}/${media.height}`}>
           <figure class="selected-project__figure">
-            <a class="selected-project__media" data-card-part="media" href={href}><ResponsiveImage asset={media} locale={locale} sizes="(min-width: 1024px) 58vw, 100vw"/></a>
+            <a class="selected-project__media" data-card-part="media" data-motion-media href={href}><ResponsiveImage asset={media} locale={locale} sizes="(min-width: 1024px) 58vw, 100vw"/></a>
             <figcaption><strong>{labels.evidence}</strong><span>{story.scenario.demoDisclosure}</span></figcaption>
           </figure>
           <div class="selected-project__copy"><ProjectCardHeader project={project} locale={locale} title={story.title} href={href}/><p class="project-meta" data-card-part="meta">{productStatusLabels[locale][project.productStatus]} · {project.platforms.map((id) => platformLabels[id][locale]).join(" · ")}</p><p data-card-part="summary" data-card-summary>{story.cardSummary}</p><TechStackStrip ids={project.techStack} max={4} label={labels.stack}/></div>
@@ -61,7 +71,7 @@ const labels = locale === "ko" ? {
       </div>
     </section>
 
-    <section id="featured-applications" class="project-section" aria-labelledby="featured-applications-heading" tabindex="-1">
+    <section id="featured-applications" class="project-section project-section--featured" aria-labelledby="featured-applications-heading" tabindex="-1" data-in-page-section>
       <header class="section-heading"><p class="eyebrow">{labels.featured}</p><h2 id="featured-applications-heading">{locale === "ko" ? "연구 작업 공간" : "Research workspaces"}</h2><p>{labels.featuredIntro}</p></header>
       <div class="featured-apps" data-application-group="research-workflow">
         {featuredLead && <FeaturedApplicationCard project={featuredLead} story={getProjectStory(locale, featuredLead.id)} media={getApprovedProjectShowcase(featuredLead.primaryShowcaseId)!} locale={locale} href={getLocalePath(locale, `/projects/${featuredLead.slug}/`)} stackLabel={labels.stack} lead/>}
@@ -71,7 +81,7 @@ const labels = locale === "ko" ? {
       </div>
     </section>
 
-    <section id="supporting-applications" class="project-section" aria-labelledby="supporting-applications-heading" tabindex="-1">
+    <section id="supporting-applications" class="project-section project-section--supporting" aria-labelledby="supporting-applications-heading" tabindex="-1" data-in-page-section>
       <header class="section-heading"><p class="eyebrow">{labels.supporting}</p><h2 id="supporting-applications-heading">{locale === "ko" ? "집중 도구" : "Focused utilities"}</h2><p>{labels.supportingIntro}</p></header>
       <div class="supporting-apps">
         {applicationGroups.flatMap((group) => supporting.filter((project) => project.applicationGroup === group).map((project) => <SupportingApplicationCard project={project} story={getProjectStory(locale, project.id)} locale={locale} href={getLocalePath(locale, `/projects/${project.slug}/`)} groupLabel={labels.groups[group]} stackLabel={labels.stack} platformsLabel={labels.platforms}/>))}

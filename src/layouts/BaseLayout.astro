@@ -2,6 +2,7 @@
 import "../styles/tokens.css";
 import "../styles/global.css";
 import "../styles/navigation.css";
+import "../styles/motion.css";
 import SEO from "../components/SEO.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
@@ -39,6 +40,7 @@ interface Props {
   articleTags?: string[];
   author?: string;
   minimalChrome?: boolean;
+  pageProgress?: boolean;
 }
 
 const {
@@ -66,7 +68,8 @@ const {
   modifiedTime,
   articleTags,
   author,
-  minimalChrome = false
+  minimalChrome = false,
+  pageProgress = false
 } = Astro.props;
 const rssPath = getLocalePath(locale, "/rss.xml");
 const contentFeedBuildInfo = getContentFeedBuildInfo();
@@ -110,6 +113,9 @@ const websiteBuildInfo = getWebsiteBuildInfo();
       author={author}
     />
     <slot name="head" />
+    <style is:inline id="cross-document-view-transition">
+      @view-transition { navigation: auto; }
+    </style>
     <script is:inline>
       (() => {
         const colors = { light: "#f4f5f2", dark: "#0f1311" };
@@ -135,7 +141,7 @@ const websiteBuildInfo = getWebsiteBuildInfo();
       });
     </script>
   </head>
-  <body data-mode={mode}>
+  <body data-mode={mode} data-page-progress={pageProgress ? "true" : undefined}>
     <a class="skip-link" href="#content">{translate(locale, "a11y.skipToContent")}</a>
     {!minimalChrome && <SiteHeader locale={locale} alternateUrls={alternateUrls} />}
     {!minimalChrome && paperLab && <PaperLabNav currentPath={Astro.url.pathname} locale={locale} />}

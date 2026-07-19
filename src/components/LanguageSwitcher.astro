@@ -49,6 +49,7 @@ const noticeId = `translation-status-${mobile ? "mobile" : "desktop"}`;
       window.addEventListener("popstate", updateTarget);
       link.addEventListener("click", () => {
         updateTarget();
+        document.getElementById("cross-document-view-transition")?.remove();
         try { window.localStorage.setItem("locale", link.lang.startsWith("ko") ? "ko" : "en"); } catch {}
       });
     }

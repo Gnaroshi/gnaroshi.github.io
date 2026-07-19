@@ -72,7 +72,7 @@ if (!focusFreshness.isFresh && import.meta.env.DEV) {
 
     <Section class="home-research" labelledby="research-questions-heading">
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.researchQuestions")}</p><h2 id="research-questions-heading">{translate(locale, "home.researchQuestionsTitle")}</h2></div>
-      <ol class="home-research-list">{data.researchAreas.map((area) => <li><a href={getLocalePath(locale, `/research/#${area.slug}`)}>{area.question}</a></li>)}</ol>
+      <ol class="home-research-list">{data.researchAreas.map((area, index) => <li><a href={getLocalePath(locale, `/research/#${area.slug}`)} data-motion-surface><span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span><strong>{area.question}</strong></a></li>)}</ol>
       <a class="text-link" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewAllResearch")}</a>
     </Section>
 
@@ -80,7 +80,7 @@ if (!focusFreshness.isFresh && import.meta.env.DEV) {
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.selectedWork")}</p><h2 id="selected-work-heading">{selectedProject.title}</h2></div>
       <article class="home-featured-project">
         <figure class="home-featured-project__figure">
-          <a class="home-featured-project__media" href={getLocalePath(locale, `/projects/${selectedProject.slug}/`)}>
+          <a class="home-featured-project__media" data-motion-media href={getLocalePath(locale, `/projects/${selectedProject.slug}/`)}>
             <ResponsiveImage asset={selectedProjectMedia} locale={locale} sizes="(min-width: 768px) 50vw, 100vw" />
           </a>
           <figcaption><strong>{translate(locale, "media.projectEvidence")}</strong><span>{selectedProjectStory.scenario.demoDisclosure}</span></figcaption>

@@ -26,10 +26,11 @@ const { project, story, media, locale, href, stackLabel, lead = false } = Astro.
   class:list={["featured-app", lead && "featured-app--lead", !lead && "featured-app--paired"]}
   data-project-id={project.id}
   data-project-kind={project.kind}
+  data-motion-surface
   style={`--source-media-ratio:${media.width}/${media.height}`}
 >
   <figure class="featured-app__figure">
-    <a class="featured-app__media" data-card-part="media" href={href}>
+    <a class="featured-app__media" data-card-part="media" data-motion-media href={href}>
       <ResponsiveImage asset={media} locale={locale} sizes={lead ? "(min-width: 1100px) 42vw, 100vw" : "(min-width: 1100px) 38vw, 100vw"} />
     </a>
     <figcaption><strong>{media.caption[locale]}</strong><span>{media.demoDisclosure[locale]}</span></figcaption>

@@ -119,6 +119,7 @@ export const koCopy = {
   },
   researchAreas: {
     "practical-vla-systems": {
+      shortTitle: "비교 가능한 VLA 실험",
       question: "서로 다른 VLA 모델을 같은 기준에서 비교하려면 어떤 실험 구조가 필요할까?",
       motivation: "VLA 저장소마다 모델과 환경, 결과를 정리하는 방식이 다릅니다. 같은 실험을 여러 모델에서 실행하고 살펴보기 어려운 이유입니다.",
       hypothesis: "공통 실행 구조를 두고 작은 어댑터로 모델별 동작을 분리하면 비교 과정을 더 분명하게 만들 수 있는지 확인하고 있습니다.",
@@ -126,6 +127,7 @@ export const koCopy = {
       relatedLabels: ["gnaroshi_vla"]
     },
     "efficient-model-execution": {
+      shortTitle: "효율적인 모델 실행",
       question: "계산을 줄이면서도 모델의 동작이 달라지지 않았는지 어떻게 확인할 수 있을까?",
       motivation: "계산을 줄였더라도 동작이 어떻게 달라졌는지 확인할 수 있어야 합니다. 상태 재사용과 근사의 범위를 분명히 두는 일이 필요합니다.",
       hypothesis: "재사용하는 상태와 갱신 경로를 따로 기록하고 여러 실험에서 비교하는 방법을 살펴보고 있습니다.",
@@ -133,6 +135,7 @@ export const koCopy = {
       relatedLabels: ["실험 환경"]
     },
     "human-ai-research-tools": {
+      shortTitle: "AI 도구와 연구 판단",
       question: "AI 도구가 연구자의 판단을 대신하지 않으면서 어디까지 도움을 줄 수 있을까?",
       motivation: "요약과 점수는 시간을 줄여 주지만 모르는 부분을 가릴 수도 있습니다. 처음 던진 질문과 직접 확인한 내용이 함께 남아야 합니다.",
       hypothesis: "노트를 정리하고 다음 질문을 제안하며 다시 읽을 시점을 알려 주되, 무엇이 맞는지는 대신 결정하지 않는 도구를 살펴보고 있습니다.",

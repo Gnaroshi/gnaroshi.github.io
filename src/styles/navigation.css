@@ -25,6 +25,7 @@
   color: var(--color-text);
   text-decoration: none;
   white-space: nowrap;
+  view-transition-name: site-brand;
 }
 
 .site-header__mark {
@@ -64,6 +65,7 @@
 .desktop-nav > span,
 .utility-nav > a,
 .utility-nav > span {
+  position: relative;
   display: inline-grid;
   min-height: 36px;
   align-items: center;
@@ -74,6 +76,22 @@
   white-space: nowrap;
 }
 
+.desktop-nav a::after,
+.desktop-nav > span::after,
+.utility-nav > a::after,
+.utility-nav > span::after {
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  left: 0;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: center;
+  background: var(--color-accent);
+  content: "";
+  transition: transform var(--duration-state) var(--ease-emphasized);
+}
+
 .desktop-nav a:hover,
 .desktop-nav > span[aria-current="page"],
 .utility-nav > a:hover,
@@ -81,9 +99,14 @@
   color: var(--color-accent);
 }
 
-.desktop-nav a[aria-current="page"],
-.utility-nav > a[aria-current="page"] {
-  box-shadow: inset 0 -2px 0 var(--color-accent);
+.desktop-nav a:hover::after,
+.utility-nav > a:hover::after {
+  transform: scaleX(.55);
+}
+
+.desktop-nav > span[aria-current="page"]::after,
+.utility-nav > span[aria-current="page"]::after {
+  transform: scaleX(1);
 }
 
 .language-switcher {
@@ -226,13 +249,24 @@
   display: flex;
   min-height: 52px;
   align-items: center;
+  padding-inline: var(--space-3);
   border-bottom: 1px solid var(--color-border);
   color: var(--color-text);
   font-weight: 700;
   text-decoration: none;
 }
 
-.mobile-nav__panel nav > span[aria-current="page"] { color: var(--color-accent); }
+.mobile-nav__panel a:hover,
+.mobile-nav__panel a:focus-visible {
+  background: var(--color-surface-muted);
+  color: var(--color-accent);
+}
+
+.mobile-nav__panel nav > span[aria-current="page"] {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  box-shadow: inset 3px 0 0 var(--color-identity-orange);
+}
 body.mobile-nav-open { overflow: hidden; }
 
 .paper-lab-nav {
@@ -336,4 +370,8 @@ body.mobile-nav-open { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle__icon { transition: none; }
+  .desktop-nav a::after,
+  .desktop-nav > span::after,
+  .utility-nav > a::after,
+  .utility-nav > span::after { transition: none; }
 }

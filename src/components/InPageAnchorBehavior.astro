@@ -14,6 +14,49 @@
     }
   }
 
+  function revealCurrentInScroller(current: HTMLElement | null): void {
+    const scroller = current?.closest<HTMLElement>("[data-in-page-scroller]");
+    const overflows = Boolean(scroller && scroller.scrollWidth > scroller.clientWidth + 1);
+    scroller?.toggleAttribute("data-overflow", overflows);
+    if (!current || !scroller || !overflows) return;
+    const links = [...scroller.querySelectorAll<HTMLElement>("a[href]")];
+    const index = links.indexOf(current);
+    const currentRect = current.getBoundingClientRect();
+    const scrollerRect = scroller.getBoundingClientRect();
+    const currentLeft = scroller.scrollLeft + currentRect.left - scrollerRect.left;
+    const centeredLeft = currentLeft - (scroller.clientWidth - currentRect.width) / 2;
+    const maximumLeft = scroller.scrollWidth - scroller.clientWidth;
+    const isBoundaryItem = index <= 0 || index === links.length - 1;
+    const left = index <= 0
+      ? 0
+      : index === links.length - 1
+        ? maximumLeft
+        : Math.min(maximumLeft, Math.max(0, centeredLeft));
+    requestAnimationFrame(() => scroller.scrollTo({
+      left,
+      behavior: reducedMotion.matches || isBoundaryItem ? "auto" : "smooth"
+    }));
+  }
+
+  function setNavigationCurrent(navigation: HTMLElement, locationCurrent: HTMLElement | null): void {
+    for (const link of navigation.querySelectorAll<HTMLElement>("[data-in-page-link]")) {
+      if (link === locationCurrent) link.setAttribute("aria-current", "location");
+      else if (link.getAttribute("aria-current") === "location") link.removeAttribute("aria-current");
+    }
+
+    const routeCurrent = navigation.querySelector<HTMLElement>("[data-paper-nav-route-current]");
+    if (routeCurrent) {
+      if (locationCurrent) routeCurrent.removeAttribute("aria-current");
+      else routeCurrent.setAttribute("aria-current", "page");
+    }
+
+    const current = locationCurrent ?? routeCurrent;
+    if (navigation.dataset.visibleCurrent !== current?.getAttribute("href")) {
+      navigation.dataset.visibleCurrent = current?.getAttribute("href") ?? "";
+      revealCurrentInScroller(current);
+    }
+  }
+
   function updateCurrentAnchor(): void {
     for (const navigation of document.querySelectorAll<HTMLElement>("[data-in-page-navigation]")) {
       let locationCurrent: HTMLElement | null = null;
@@ -22,31 +65,60 @@
         const isCurrent = normalizedPath(url.pathname) === normalizedPath(window.location.pathname)
           && url.hash === window.location.hash;
         if (isCurrent && url.hash) {
-          link.setAttribute("aria-current", "location");
           locationCurrent = link;
-        } else if (link.getAttribute("aria-current") === "location") {
-          link.removeAttribute("aria-current");
         }
       }
-
-      const routeCurrent = navigation.querySelector<HTMLElement>("[data-paper-nav-route-current]");
-      if (routeCurrent) {
-        if (locationCurrent) routeCurrent.removeAttribute("aria-current");
-        else routeCurrent.setAttribute("aria-current", "page");
-      }
-
-      const current = locationCurrent ?? routeCurrent;
-      const scroller = current?.closest<HTMLElement>("[data-in-page-scroller]");
-      const overflows = Boolean(scroller && scroller.scrollWidth > scroller.clientWidth + 1);
-      scroller?.toggleAttribute("data-overflow", overflows);
-      if (current && scroller && overflows) {
-        const left = current.offsetLeft - (scroller.clientWidth - current.offsetWidth) / 2;
-        requestAnimationFrame(() => scroller.scrollTo({
-          left: Math.max(0, left),
-          behavior: reducedMotion.matches ? "auto" : "smooth"
-        }));
-      }
+      setNavigationCurrent(navigation, locationCurrent);
     }
+  }
+
+  function updateScrollSpy(): void {
+    for (const navigation of document.querySelectorAll<HTMLElement>("[data-in-page-navigation][data-scroll-spy]")) {
+      const links = [...navigation.querySelectorAll<HTMLAnchorElement>("[data-in-page-link]")];
+      const pairs = links.flatMap((link) => {
+        const url = new URL(link.href, window.location.href);
+        const target = normalizedPath(url.pathname) === normalizedPath(window.location.pathname)
+          ? targetForHash(url.hash)
+          : null;
+        return target ? [{ link, target }] : [];
+      });
+      if (pairs.length === 0) continue;
+
+      const focusedHashPair = pairs.find((pair) => (
+        `#${encodeURIComponent(pair.target.id)}` === window.location.hash
+        || `#${pair.target.id}` === window.location.hash
+      ) && document.activeElement === pair.target);
+      if (focusedHashPair) {
+        setNavigationCurrent(navigation, focusedHashPair.link);
+        continue;
+      }
+
+      const headerBottom = document.querySelector<HTMLElement>(".site-header")?.getBoundingClientRect().bottom ?? 0;
+      const navigationBottom = navigation.getBoundingClientRect().bottom;
+      const activationLine = Math.max(headerBottom, navigationBottom) + 12;
+      let current = pairs[0]!;
+      let currentTop = Number.NEGATIVE_INFINITY;
+      for (const pair of pairs) {
+        const top = pair.target.getBoundingClientRect().top;
+        if (top <= activationLine && top > currentTop + 1) {
+          current = pair;
+          currentTop = top;
+        }
+        else break;
+      }
+      const atDocumentEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      if (atDocumentEnd) current = pairs.at(-1)!;
+      setNavigationCurrent(navigation, current.link);
+    }
+  }
+
+  let scrollFrame = 0;
+  function scheduleScrollSpy(): void {
+    if (scrollFrame) return;
+    scrollFrame = requestAnimationFrame(() => {
+      scrollFrame = 0;
+      updateScrollSpy();
+    });
   }
 
   function exposeTarget(hash: string, moveFocus = true): boolean {
@@ -62,10 +134,20 @@
   }
 
   document.addEventListener("click", (event) => {
-    const link = (event.target as Element | null)?.closest<HTMLAnchorElement>("a[href*='#']");
+    const link = (event.target as Element | null)?.closest<HTMLAnchorElement>("a[href]");
     if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const url = new URL(link.href, window.location.href);
-    if (url.origin !== window.location.origin || normalizedPath(url.pathname) !== normalizedPath(window.location.pathname) || !url.hash) return;
+    if (url.origin !== window.location.origin || normalizedPath(url.pathname) !== normalizedPath(window.location.pathname)) return;
+    if (!url.hash && window.location.hash && link.matches("[data-paper-nav-route-current]")) {
+      event.preventDefault();
+      history.pushState(null, "", `${url.pathname}${url.search}`);
+      window.dispatchEvent(new Event("gnaroshi:locationchange"));
+      window.scrollTo({ top: 0, behavior: reducedMotion.matches ? "auto" : "smooth" });
+      link.focus({ preventScroll: true });
+      updateCurrentAnchor();
+      return;
+    }
+    if (!url.hash) return;
     if (!targetForHash(url.hash)) return;
     event.preventDefault();
     if (window.location.hash !== url.hash) {
@@ -78,12 +160,22 @@
   window.addEventListener("hashchange", () => exposeTarget(window.location.hash));
   window.addEventListener("popstate", () => {
     if (window.location.hash) exposeTarget(window.location.hash);
-    else updateCurrentAnchor();
+    else {
+      updateCurrentAnchor();
+      scheduleScrollSpy();
+    }
   });
-  window.addEventListener("resize", updateCurrentAnchor);
+  window.addEventListener("scroll", scheduleScrollSpy, { passive: true });
+  window.addEventListener("resize", () => {
+    updateCurrentAnchor();
+    scheduleScrollSpy();
+  });
 
   requestAnimationFrame(() => {
     if (window.location.hash) exposeTarget(window.location.hash);
-    else updateCurrentAnchor();
+    else {
+      updateCurrentAnchor();
+      scheduleScrollSpy();
+    }
   });
 </script>

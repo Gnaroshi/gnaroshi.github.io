@@ -43,7 +43,7 @@ const tagLabels = Object.fromEntries(tags.map((tag) => [tag, getLocalizedTagLabe
   }} />
   <PageShell class="writing-page">
   <PageHeader title={translate(locale, "writing.title")} description={translate(locale, "writing.intro")} />
-  <section class="writing-index" aria-labelledby="writing-index-heading">
+  <section class:list={["writing-index", posts.length === 0 && "writing-index--empty"]} aria-labelledby="writing-index-heading">
     <div class="writing-index__header"><h2 id="writing-index-heading">{translate(locale, "writing.all")}</h2>{showArchive && <a href={getLocalePath(locale, "/blog/archive/")}>{translate(locale, "writing.archive")}</a>}</div>
     {posts.length === 0 ? <div class="app-empty-state"><p>{translate(locale, "writing.noPosts")}</p><a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "writing.emptyAction")}</a></div> : !showDiscovery ? <ol>{posts.map((post) => { const minutes = Number.parseInt(getPostReadingTime(post), 10) || 1; return <li><div class="writing-index__meta"><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time><span>{translate(locale, "writing.readingTime", { count: minutes })}</span>{post.data.featured && <span>{translate(locale, "writing.selected")}</span>}</div><h2><a href={getBlogPostHref(post)}>{post.data.title}</a></h2><p>{post.data.description}</p><div class="writing-index__tags">{post.data.tags.map((tag) => <span>{getLocalizedTagLabel(tag, locale)}</span>)}</div></li>; })}</ol> : null}
   </section>
@@ -54,6 +54,9 @@ const tagLabels = Object.fromEntries(tags.map((tag) => [tag, getLocalizedTagLabe
 <style>
   .writing-index { display: grid; }
   .writing-index__header { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: var(--space-4); border-bottom: 2px solid var(--color-text); }
+  .writing-index--empty { gap:var(--space-4); }
+  .writing-index--empty .writing-index__header { padding-bottom:0; border-bottom:0; }
+  .writing-index--empty .app-empty-state { padding:var(--space-5); background:var(--color-surface-muted); box-shadow:inset 4px 0 0 var(--color-identity-teal); }
   .writing-index > ol { padding: 0; margin: 0; list-style: none; }
   .writing-index > ol > li { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: var(--space-2) var(--space-6); padding: var(--space-6) 0; border-bottom: 1px solid var(--color-border); }
   .writing-index__meta { grid-row: span 3; display: grid; align-content: start; gap: var(--space-2); color: var(--color-text-muted); font-size: var(--text-sm); }
