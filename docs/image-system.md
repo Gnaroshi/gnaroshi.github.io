@@ -6,7 +6,6 @@ The previous abstract artwork system is retired. See:
 - `docs/media-rebuild-audit.md` for the legacy asset inventory.
 - `docs/generated-image-prompts.md` for the two allowed concept-scene prompts.
 - `docs/technical-diagrams.md` for editable diagram sources and exports.
-- `docs/scientific-figure-art-direction.md` for the living visual system and review decisions behind future paper and research figures.
 - `docs/project-screenshot-guide.md` for real-evidence capture rules.
 - `docs/image-semantic-review.md` for scores and approval state.
 - `docs/site-identity.md` for the raster favicon and restrained identity-color usage.
