@@ -1,0 +1,153 @@
+/*
+ * Motion explains navigation, progress, and available actions. Everything in
+ * this file is progressive enhancement; the site remains complete without it.
+ */
+
+::view-transition-old(page-content) {
+  animation: site-page-out var(--duration-state) var(--ease-standard) both;
+}
+
+::view-transition-new(page-content) {
+  animation: site-page-in var(--duration-page) var(--ease-emphasized) both;
+}
+
+.site-main {
+  view-transition-name: page-content;
+}
+
+@keyframes site-page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes site-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.site-header__progress {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--pixel-border) * -1);
+  left: 0;
+  display: none;
+  height: var(--pixel-border);
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: var(--color-identity-teal);
+  box-shadow: 3px 0 0 var(--color-identity-orange);
+  pointer-events: none;
+}
+
+body[data-page-progress="true"] .site-header__progress {
+  display: block;
+}
+
+@supports (animation-timeline: scroll()) {
+  body[data-page-progress="true"] .site-header__progress {
+    animation: site-reading-progress 1ms linear both;
+    animation-timeline: scroll(root block);
+  }
+
+  @keyframes site-reading-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+
+.button,
+[data-motion-media] img,
+[data-motion-surface] {
+  transition:
+    border-color var(--duration-state) var(--ease-standard),
+    box-shadow var(--duration-state) var(--ease-standard),
+    color var(--duration-state) var(--ease-standard),
+    background-color var(--duration-state) var(--ease-standard),
+    transform var(--duration-state) var(--ease-emphasized);
+}
+
+.button:hover {
+  transform: translate(-1px, -1px);
+}
+
+.button:active {
+  transform: translate(0, 0);
+  box-shadow: none;
+}
+
+[data-motion-media] {
+  isolation: isolate;
+}
+
+[data-motion-media] img {
+  transform: scale(1);
+}
+
+[data-motion-media]:where(:hover, :focus-visible) img {
+  transform: scale(1.018);
+}
+
+.mobile-nav__panel:not([hidden]) {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity var(--duration-state) var(--ease-standard),
+    transform var(--duration-page) var(--ease-emphasized);
+}
+
+@starting-style {
+  .mobile-nav__panel:not([hidden]) {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  .media-zoom__dialog[open] {
+    opacity: 0;
+    transform: translateY(8px) scale(.99);
+  }
+
+  .media-zoom__dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.media-zoom__dialog[open] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity var(--duration-state) var(--ease-standard),
+    transform var(--duration-page) var(--ease-emphasized);
+}
+
+.media-zoom__dialog[open]::backdrop {
+  opacity: 1;
+  transition: opacity var(--duration-state) var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: .001ms;
+  }
+
+  .site-header__progress,
+  .button,
+  [data-motion-media] img,
+  [data-motion-surface],
+  .mobile-nav__panel,
+  .media-zoom__dialog,
+  .media-zoom__dialog::backdrop {
+    animation: none;
+    transition: none;
+  }
+
+  [data-motion-media]:where(:hover, :focus-visible) img {
+    transform: none;
+  }
+}

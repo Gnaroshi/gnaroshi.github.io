@@ -11,7 +11,7 @@
   --color-surface-quiet: var(--color-surface-muted);
   --color-text: #18201c;
   --color-text-secondary: #3f4943;
-  --color-text-muted: #657169;
+  --color-text-muted: #5f6b63;
   --color-border: #d5dbd4;
   --color-border-strong: #aab5ac;
   --color-accent: #126954;
@@ -99,8 +99,11 @@
   --shadow-md: 4px 4px 0 rgb(24 32 28 / 18%);
   --duration-fast: 140ms;
   --duration-state: 180ms;
+  --duration-page: 240ms;
+  --ease-standard: cubic-bezier(.2, .75, .25, 1);
+  --ease-emphasized: cubic-bezier(.2, .9, .2, 1);
   --project-research-accent: #486f96;
-  --project-application-accent: #78679a;
+  --project-application-accent: #725f95;
   --project-infrastructure-accent: #7b6a2e;
 
   --gutter: 16px;
