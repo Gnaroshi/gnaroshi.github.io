@@ -19,12 +19,14 @@ const mediaByStep = new Map(media.map((asset) => [asset.stepId, asset]));
   {!withMedia && <p class="scenario__disclosure">{scenario.demoDisclosure}</p>}
 </section>
 <style>
-  .scenario{display:grid;gap:var(--space-6);padding-block:var(--space-8);border-block:1px solid var(--color-border)}
+  .scenario{display:grid;gap:var(--space-6);padding:var(--space-8) var(--space-5);background:var(--color-surface-muted)}
   header{display:grid;gap:var(--space-3);max-width:72ch} header>p:not(.eyebrow){color:var(--color-text-secondary);line-height:1.7}
-  ol{display:grid;gap:var(--space-8);margin:0;padding:0;list-style:none} li{display:grid;gap:var(--space-4)}
+  ol{display:grid;gap:var(--space-8);margin:0;padding:0;list-style:none} li{position:relative;display:grid;gap:var(--space-4)}
+  li:not(:last-child)::after{position:absolute;z-index:0;top:2.25rem;bottom:calc(var(--space-8) * -1);left:1.08rem;width:2px;background:var(--color-border-strong);content:""}
   .scenario__step{display:grid;grid-template-columns:2.25rem minmax(0,1fr);gap:var(--space-3);align-items:start;max-width:72ch}
-  .scenario__step>span{display:grid;place-items:center;width:2.25rem;height:2.25rem;border-radius:50%;color:var(--color-surface);background:var(--color-text);font-variant-numeric:tabular-nums}
+  .scenario__step>span{z-index:1;display:grid;place-items:center;width:2.25rem;height:2.25rem;color:var(--color-surface);background:var(--color-text);font-family:var(--font-mono);font-variant-numeric:tabular-nums;line-height:1;box-shadow:2px 2px 0 var(--color-identity-orange)}
   h3{padding-top:.25rem;font-size:var(--step-1)} .scenario__step p,.scenario__disclosure{margin-top:var(--space-2);color:var(--color-text-secondary);line-height:1.7}
   figure{display:grid;grid-template-rows:auto auto;margin:0;overflow:hidden;border:1px solid var(--color-border);background:var(--color-surface)} .scenario__media{min-width:0;overflow:hidden}.scenario__media :global(.responsive-media){width:100%;height:100%}.scenario__media :global(img){object-fit:contain}
   figcaption{padding:var(--space-3);color:var(--color-text-secondary);font-size:var(--step--1);line-height:1.55;border-top:1px solid var(--color-border)} figcaption span{display:block;margin-top:.2rem}
+  @media(max-width:479px){.scenario{margin-inline:calc(var(--space-3) * -1);padding-inline:var(--space-3)}}
 </style>
