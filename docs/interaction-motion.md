@@ -6,15 +6,19 @@ This site uses motion to explain navigation, reading progress, and available act
 
 ### Cross-document navigation
 
-Same-origin page changes opt into the CSS View Transition API with `@view-transition { navigation: auto; }`. Supporting browsers use a short opacity and vertical-position transition. Other browsers perform normal Astro multi-page navigation.
+Same-origin page changes opt into the CSS View Transition API with `@view-transition { navigation: auto; }`. Supporting browsers use a perceptible 480-millisecond opacity, position, and scale transition. Other browsers perform normal Astro multi-page navigation.
 
 The site mark has a stable transition identity so the persistent brand does not appear to jump between pages.
 
 Locale switches opt out before navigation. This avoids carrying a document snapshot across different `lang` trees and keeps reload, focus, and mobile-menu behavior deterministic.
 
+### Page and section entry
+
+Page headers draw their existing identity rail without moving the heading, while the Home hero uses one-time staggered position animations that work without client-side JavaScript. Text remains at full contrast throughout. Long editorial sections use CSS view timelines where supported, moving from a lower position to their final position as they enter the viewport. Unsupported browsers render the final state immediately.
+
 ### Long-page progress
 
-Research, Projects, and project detail pages show a two-pixel reading-progress line at the bottom of the sticky header. It uses a CSS scroll progress timeline, so progress follows the visitor's scroll without a JavaScript scroll listener.
+Research, Projects, and project detail pages show a four-pixel, two-color reading-progress line at the bottom of the sticky header. It uses a CSS scroll progress timeline, so progress follows the visitor's scroll without a JavaScript scroll listener.
 
 ### Section indexes
 
@@ -28,7 +32,7 @@ Research, Projects, and the long `gnaroshi.dev` case study use compact sticky in
 
 ### State transitions
 
-Buttons, linked evidence media, theme state, the mobile menu, and media dialogs use short transitions. These transitions identify an available action or a state change; they do not run on a loop.
+Buttons and navigable surfaces lift by three pixels. Linked evidence media scales by 5.5 percent and exposes an inset focus frame on hover or keyboard focus. Theme state, the mobile menu, and media dialogs use visible state transitions. These transitions identify an available action or a state change; they do not run on a loop.
 
 ## Constraints
 
@@ -59,3 +63,4 @@ References:
 - Does the interaction preserve focus and sticky-header offset?
 - Does reduced-motion remove the effect without removing feedback?
 - Is mobile horizontal navigation discoverable and is the active item fully visible?
+- Can a reviewer perceive each intended effect at normal speed without being told where to look?
