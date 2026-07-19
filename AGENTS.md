@@ -24,6 +24,7 @@ Before structural changes, read:
 - `docs/public-page-visual-checklist.md`
 - `docs/ui-ux-audit-2026-07-12.md`
 - `docs/site-identity.md`
+- `docs/scientific-figure-art-direction.md`
 - `docs/projects-content-model.md`
 - `docs/projects-editorial-rules.md`
 - `docs/projects-tech-stack.md`
@@ -151,6 +152,7 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Preserve visible focus states, keyboard navigation, contrast, and mobile overflow protection.
 - Keep motion tied to navigation, progress, or state; prefer progressive native CSS and preserve the complete reduced-motion experience.
 - Keep graph list fallback and heatmap labels accessible.
+- Before creating or revising a scientific figure, read `docs/scientific-figure-art-direction.md`; update its decision log when owner feedback establishes a reusable visual rule.
 - Do not expose developer or authoring instructions on public pages.
 - Apply the two-second semantic test to every large image: its broad subject must be clear before adjacent copy is read.
 - Generated images are limited to concrete concept scenes; technical systems use labeled diagrams and projects use real evidence.
