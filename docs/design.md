@@ -47,7 +47,7 @@ The current owner-selected direction adds a restrained pixel grammar to the exis
 - Keep body text, Korean copy, equations, code, photographs, diagrams, and actual application screenshots normally rendered. Never apply a global pixelation filter.
 - Keep system sans/serif typography for reading. System monospace may identify short eyebrow, technical, or status labels when contrast and EN/KO legibility remain intact.
 - Use the approved pixel site mark with nearest-neighbor exports and `image-rendering: pixelated` only where the compact raster mark is displayed.
-- Give each managed application one canonical functional role glyph and one key color: Studio lavender, PaperFlow mint, Arxiv sky, TR GPU Monitor coral, RunShelf butter yellow, and ContentDeck peach.
+- Give each application one canonical functional role glyph and one key color: Studio lavender, PaperFlow mint, Arxiv sky, TR GPU Monitor coral, RunShelf butter yellow, ContentDeck peach, and codex-unlock-stale teal.
 - Application key color communicates identity, never success, warning, failure, or availability by itself.
 - Do not surround every section with decorative frames or turn cards into game inventory slots. Dividers and whitespace remain the primary content structure.
 

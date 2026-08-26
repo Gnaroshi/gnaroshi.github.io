@@ -1,7 +1,7 @@
 import type { LocaleCopy } from "./types";
 
 export const enCopy = {
-  copyUpdatedAt: "2026-07-12",
+  copyUpdatedAt: "2026-08-26",
   profile: {
     headline: "I study AI systems\nand build software for research.",
     shortBio: "Right now, I’m interested in experiment infrastructure for vision-language-action models and better ways to read, revisit, and connect papers.",
@@ -366,6 +366,36 @@ export const enCopy = {
       ],
       relatedWriting: [],
       linkLabels: {}
+    },
+    "codex-unlock-stale": {
+      title: "codex-unlock-stale",
+      summary: "A Linux CLI for finding stale Codex extension hosts after Remote SSH reconnects and releasing their writer locks without editing conversation files.",
+      statusLabel: "Usable locally",
+      problem: "Laptop sleep or a network change can leave an older VS Code Remote extension host alive beside the current one, making a Codex conversation appear open elsewhere.",
+      designGoals: [
+        "Keep the newest recognized extension host alive.",
+        "Show every stale target before sending a signal.",
+        "Stop when a stale host may still own active work.",
+        "Never repair the condition by editing conversation files."
+      ],
+      architecture: [
+        "A Bash command inspects Linux process metadata for Codex app servers installed by the OpenAI VS Code extension.",
+        "Parent validation limits termination to older VS Code Remote extension hosts.",
+        "SIGTERM is the default cleanup path; forceful termination remains explicit."
+      ],
+      supportedAdapters: [],
+      reproducibility: [
+        "Isolated lifecycle tests replace process commands with deterministic fakes.",
+        "The public terminal evidence uses synthetic process IDs and does not read a live conversation."
+      ],
+      studioRelationship: "No Studio integration is planned; this remains a standalone terminal recovery command.",
+      currentState: "Version 0.1.0 is public, documented, and tested for the observed Linux VS Code Remote SSH duplicate-host condition.",
+      openProblems: [
+        "Track future OpenAI extension path changes without broadening process matching.",
+        "Document other verified Linux remote environments when reports are available."
+      ],
+      relatedWriting: [],
+      linkLabels: { repository: "Repository" }
     },
     contentdeck: {
       title: "ContentDeck",

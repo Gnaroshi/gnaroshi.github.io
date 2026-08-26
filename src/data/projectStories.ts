@@ -106,6 +106,16 @@ const en = {
     technicalNotes:["SwiftUI owns the presentation layer.","SQLite or UserDefaults can store local state.","SSH credentials and detailed processes remain inside the monitor."], studioRelationship:"Studio may receive a short sanitized summary and open the monitor; it never receives SSH credentials or full process arguments.",
     scenario:{title:"Example workflow",context:"Compare three synthetic hosts before choosing capacity for a training run.",demoDisclosure:"All host names, GPU values, and warning timestamps are deterministic example data.",steps:[{id:"check-hosts",title:"Check the overview",description:"See one available host, one high-memory host, and one stale host."},{id:"spot-pressure",title:"Find memory pressure",description:"Identify demo-gpu-02 before starting another workload."},{id:"compare-hosts",title:"Compare details",description:"Review utilization and memory for two synthetic A100 hosts."},{id:"review-warning",title:"Inspect the stale state",description:"Confirm the unreachable warning without attempting a real connection."}]}, detail:{}, linkLabels:{}
   },
+  "codex-unlock-stale": {
+    title:"codex-unlock-stale", cardSummary:"A Linux CLI that identifies stale Codex extension hosts after Remote SSH reconnects and releases their writer locks safely.",
+    heroSummary:"The utility keeps the newest recognized VS Code Remote extension host and terminates only older duplicates that can retain a Codex conversation writer lock.",
+    overview:"Laptop sleep and network changes can leave an older Remote SSH extension host running beside the current one. This narrow Bash utility makes that duplicate visible and provides a guarded cleanup path.", audience:"People using Codex through VS Code Remote SSH on a Linux host", primaryUse:"Inspect duplicate Codex app servers and release a stale conversation writer lock without editing session files.",
+    keyFeatures:["Dry-run process inspection","Newest-host preservation","Active-child safety stop","SIGTERM-first cleanup","No conversation-file access"],
+    privacySummary:"The script reads process metadata only. It never reads, edits, moves, or deletes ~/.codex conversation files; the approved terminal evidence uses synthetic process data.", currentState:"Version 0.1.0 is public and usable from a Linux shell after a VS Code Remote SSH reconnect.",
+    currentLimitations:["The process matcher targets the current OpenAI VS Code extension path and may need updates if that layout changes.","It is a recovery utility, not an official OpenAI-supported repair path."], nextMilestones:["Keep the matcher covered as extension layouts change.","Add verified reports for other Linux remote environments when available."],
+    technicalNotes:["Bash coordinates process inspection and guarded signals.","Linux ps supplies parent, age, and command metadata.","The matcher recognizes VS Code Remote extension hosts and the Codex app-server path."], studioRelationship:"No Studio integration is planned; the utility is intentionally a standalone terminal recovery command.",
+    scenario:{title:"Example recovery",context:"Inspect two synthetic extension hosts, preserve possible active work, and release only the stale lock.",demoDisclosure:"Process IDs, ages, and child commands are synthetic example data; no conversation data is read.",steps:[{id:"inspect",title:"Inspect first",description:"Run the dry-run path and confirm which extension host would be kept."},{id:"protect-active-work",title:"Protect active work",description:"Stop automatically when the stale host still has a non-helper command child."},{id:"release-lock",title:"Release the lock",description:"After the child is gone, terminate only the stale extension host and verify one current app server remains."}]}, detail:{}, linkLabels:{repository:"Repository"}
+  },
   contentdeck: {
     title:"ContentDeck", cardSummary:"A web and Electron player for subtitle-based practice with full or selected-segment repeat.",
     heroSummary:"ContentDeck keeps provider detection, subtitles, segment boundaries, and repeat state in one focused playback workspace.",
@@ -280,6 +290,28 @@ const ko: Record<keyof typeof en, ProjectStory> = {
     ] },
     detail: {},
     linkLabels: {}
+  },
+  "codex-unlock-stale": {
+    ...en["codex-unlock-stale"],
+    cardSummary: "Remote SSH 재연결 뒤 남은 Codex 확장 호스트를 찾아 작성 잠금을 안전하게 해제하는 Linux CLI입니다.",
+    heroSummary: "현재 VS Code Remote 확장 호스트는 남기고, Codex 대화 작성 잠금을 쥔 오래된 중복 호스트만 종료합니다.",
+    overview: "노트북 절전이나 네트워크 변경 뒤 이전 Remote SSH 확장 호스트와 현재 호스트가 함께 남을 수 있습니다. 이 Bash 도구는 중복 상태를 보여 주고 안전장치가 있는 정리 경로를 제공합니다.",
+    audience: "Linux 호스트에서 VS Code Remote SSH로 Codex를 사용하는 사람",
+    primaryUse: "중복 Codex app-server를 확인하고 세션 파일을 수정하지 않은 채 오래된 대화 작성 잠금을 해제합니다.",
+    keyFeatures: ["사전 점검", "최신 호스트 보존", "활성 하위 작업 보호", "SIGTERM 우선 종료", "대화 파일 접근 없음"],
+    privacySummary: "프로세스 메타데이터만 읽습니다. ~/.codex 대화 파일을 읽거나 수정, 이동, 삭제하지 않으며 승인된 터미널 화면은 합성 프로세스 자료를 사용합니다.",
+    currentState: "0.1.0 버전을 공개했으며 VS Code Remote SSH 재연결 뒤 Linux 셸에서 사용할 수 있습니다.",
+    currentLimitations: ["현재 OpenAI VS Code 확장 경로를 대상으로 하므로 설치 구조가 바뀌면 매처를 갱신해야 할 수 있습니다.", "공식 OpenAI 복구 기능이 아니라 범위를 좁힌 사용자 도구입니다."],
+    nextMilestones: ["확장 설치 구조가 바뀌어도 매처 검사를 유지합니다.", "다른 Linux 원격 환경의 검증된 사례가 생기면 범위를 문서화합니다."],
+    technicalNotes: ["Bash가 프로세스 확인과 안전한 시그널 전송을 조정합니다.", "Linux ps에서 부모 프로세스와 실행 시간, 명령 메타데이터를 읽습니다.", "VS Code Remote 확장 호스트와 Codex app-server 경로만 인식합니다."],
+    studioRelationship: "Studio 연결은 계획하지 않았습니다. 터미널에서 독립적으로 실행하는 복구 명령으로 유지합니다.",
+    scenario: { title: "오래된 잠금 복구", context: "합성 확장 호스트 두 개를 확인하고 진행 중일 수 있는 작업을 보호한 뒤 오래된 잠금만 해제합니다.", demoDisclosure: "프로세스 ID와 실행 시간, 하위 명령은 합성 예시 자료이며 대화 데이터는 읽지 않습니다.", steps: [
+      { id: "inspect", title: "먼저 확인", description: "사전 점검을 실행해 어느 확장 호스트를 남길지 확인합니다." },
+      { id: "protect-active-work", title: "진행 중 작업 보호", description: "오래된 호스트에 일반 하위 명령이 남아 있으면 자동으로 멈춥니다." },
+      { id: "release-lock", title: "잠금 해제", description: "하위 작업이 끝난 뒤 오래된 확장 호스트만 종료하고 현재 app-server 하나가 남았는지 확인합니다." }
+    ] },
+    detail: {},
+    linkLabels: { repository: "저장소" }
   },
   contentdeck: {
     ...en.contentdeck,

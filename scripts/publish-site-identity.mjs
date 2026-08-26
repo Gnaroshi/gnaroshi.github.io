@@ -25,7 +25,8 @@ for (const id of [
   "arxiv-discovery",
   "tr-gpu-monitor",
   "runshelf",
-  "contentdeck"
+  "contentdeck",
+  "codex-unlock-stale"
 ]) {
   const master = resolve(`media-sources/identity/apps/${id}-v1.png`);
   for (const width of [64, 128]) {

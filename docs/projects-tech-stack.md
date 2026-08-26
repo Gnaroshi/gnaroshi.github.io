@@ -13,6 +13,7 @@
 | Arxiv Discovery | Python, Flask, Jinja | `pyproject.toml`, Flask application, templates |
 | RunShelf | Python, Swift, SwiftUI | `pyproject.toml`, Swift package/source |
 | TR GPU Monitor | Swift, SwiftUI, SQLite | Xcode source and SQLite persistence implementation |
+| codex-unlock-stale | Shell, Linux, VS Code Remote SSH | public script, tests, and repository documentation |
 | ContentDeck | TypeScript, React, Electron, Vite, Fastify | `package.json` |
 
 ## Icons and rendering

@@ -1,6 +1,6 @@
 # Projects content model
 
-Projects are website-owned public portfolio records. The registry contains exactly eight entries: two selected projects and six managed applications. Adding a GitHub repository does not add it to the public portfolio automatically.
+Projects are website-owned public portfolio records. The registry contains exactly nine entries: two selected projects and seven applications. Adding a GitHub repository does not add it to the public portfolio automatically.
 
 ## Shared facts
 

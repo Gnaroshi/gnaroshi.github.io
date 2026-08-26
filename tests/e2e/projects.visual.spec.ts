@@ -2,7 +2,7 @@ import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 
-const slugs = ["gnaroshi-vla", "gnaroshi-dev", "gnaroshi-studio", "paperflow", "arxiv-discovery", "runshelf", "tr-gpu-monitor", "contentdeck"] as const;
+const slugs = ["gnaroshi-vla", "gnaroshi-dev", "gnaroshi-studio", "paperflow", "arxiv-discovery", "runshelf", "tr-gpu-monitor", "codex-unlock-stale", "contentdeck"] as const;
 const routes = ["/projects/", ...slugs.map((slug) => `/projects/${slug}/`), "/ko/projects/", ...slugs.map((slug) => `/ko/projects/${slug}/`)];
 const viewports = [
   { name:"desktop-1440",width:1440,height:1000 }, { name:"tablet-1024",width:1024,height:768 }, { name:"tablet-768",width:768,height:1024 },

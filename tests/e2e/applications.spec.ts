@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const applicationSlugs = ["gnaroshi-studio", "paperflow", "arxiv-discovery", "runshelf", "tr-gpu-monitor", "contentdeck"] as const;
+const applicationSlugs = ["gnaroshi-studio", "paperflow", "arxiv-discovery", "runshelf", "tr-gpu-monitor", "codex-unlock-stale", "contentdeck"] as const;
 const selectedProjectSlugs = ["gnaroshi-vla", "gnaroshi-dev"] as const;
 const projectTemplates = new Map([
   ["gnaroshi-vla","research"],["gnaroshi-dev","infrastructure"],
@@ -9,6 +9,7 @@ const projectTemplates = new Map([
 const publicRepositories = new Map([
   ["paperflow", "https://github.com/Gnaroshi/paperflow"],
   ["arxiv-discovery", "https://github.com/Gnaroshi/Arxiv-newest-paper-crawler"],
+  ["codex-unlock-stale", "https://github.com/Gnaroshi/codex-unlock-stale"],
   ["contentdeck", "https://github.com/Gnaroshi/content-looper"]
 ]);
 
@@ -18,10 +19,10 @@ test.describe("verified Gnaroshi applications", () => {
       await page.goto(route);
       await expect(page.locator(".selected-project")).toHaveCount(2);
       await expect(page.locator(".featured-app")).toHaveCount(3);
-      await expect(page.locator(".supporting-app")).toHaveCount(3);
-      for (const group of ["research-workflow", "system-utilities", "learning-tools"]) {
-        await expect(page.locator(`.supporting-app[data-application-group="${group}"]`)).toHaveCount(1);
-      }
+      await expect(page.locator(".supporting-app")).toHaveCount(4);
+      await expect(page.locator('.supporting-app[data-application-group="research-workflow"]')).toHaveCount(1);
+      await expect(page.locator('.supporting-app[data-application-group="system-utilities"]')).toHaveCount(2);
+      await expect(page.locator('.supporting-app[data-application-group="learning-tools"]')).toHaveCount(1);
       await expect(page.locator(".featured-app picture img")).toHaveCount(3);
       await expect(page.locator(".supporting-app picture")).toHaveCount(0);
       for (const slug of applicationSlugs) {
@@ -179,7 +180,8 @@ test.describe("verified Gnaroshi applications", () => {
         await page.setViewportSize({ width, height: 1000 });
         await page.goto(`${localePrefix}/projects/`);
         if (width >= 1100) await assertAligned(".featured-app--paired", ["media", "header", "meta", "summary", "stack"], 2);
-        await assertAligned(width < 1100 ? ".supporting-app:nth-child(-n+2)" : ".supporting-app", ["group", "header", "meta", "summary", "platforms", "stack"], width < 1100 ? 2 : 3);
+        await assertAligned(".supporting-app:nth-child(-n+2)", ["group", "header", "meta", "summary", "platforms", "stack"], 2);
+        await assertAligned(".supporting-app:nth-child(n+3)", ["group", "header", "meta", "summary", "platforms", "stack"], 2);
       }
 
       for (const card of await page.locator(".selected-project,.featured-app,.supporting-app").all()) {
@@ -198,7 +200,8 @@ test.describe("verified Gnaroshi applications", () => {
       const widths = await page.locator(".supporting-app").evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().width)));
       expect(widths[0], `${width}px first card`).toBeGreaterThanOrEqual(300);
       expect(widths[0]).toBe(widths[1]);
-      expect(widths[2]).toBeGreaterThan(widths[0] * 1.9);
+      expect(widths[2]).toBe(widths[3]);
+      expect(widths[0]).toBe(widths[2]);
     }
 
     await page.setViewportSize({ width: 1100, height: 1000 });
@@ -216,7 +219,7 @@ test.describe("verified Gnaroshi applications", () => {
       expect(columnCount, `${width}px columns: ${columns}`).toBe(expectedColumns === "1fr" ? 1 : 2);
     }
 
-    for (const { width, mode } of [{ width:699, mode:"one" }, { width:700, mode:"two" }, { width:1099, mode:"two" }, { width:1100, mode:"three" }] as const) {
+    for (const { width, mode } of [{ width:699, mode:"one" }, { width:700, mode:"two" }, { width:1099, mode:"two" }, { width:1100, mode:"two" }] as const) {
       await page.setViewportSize({ width, height: 1000 });
       await page.goto("/projects/");
       const cards = page.locator(".supporting-app");
@@ -224,10 +227,8 @@ test.describe("verified Gnaroshi applications", () => {
       const ratios = await cards.evaluateAll((elements, parentWidth) => elements.map((element) => element.getBoundingClientRect().width / parentWidth), containerWidth);
       if (mode === "one") expect(Math.min(...ratios), `${width}px one column`).toBeGreaterThan(.95);
       if (mode === "two") {
-        expect(Math.max(...ratios.slice(0, 2)), `${width}px first row`).toBeLessThan(.55);
-        expect(ratios[2], `${width}px trailing card`).toBeGreaterThan(.95);
+        expect(Math.max(...ratios), `${width}px two columns`).toBeLessThan(.55);
       }
-      if (mode === "three") expect(Math.max(...ratios), `${width}px three columns`).toBeLessThan(.35);
     }
   });
 

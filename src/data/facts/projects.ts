@@ -4,7 +4,7 @@ export type PlatformId = "web" | "macos" | "cli" | "static-site";
 export type TechId =
   | "python" | "shell" | "yaml" | "astro" | "typescript" | "github-actions" | "playwright"
   | "react" | "rust" | "tauri" | "swift" | "swiftui" | "zotero-local-api" | "flask"
-  | "jinja" | "sqlite" | "electron" | "vite" | "fastify";
+  | "jinja" | "sqlite" | "electron" | "vite" | "fastify" | "linux" | "vscode-remote-ssh";
 
 export type ProjectLink = { id: "repository" | "live-site"; href: string };
 export type ProjectScenario = {
@@ -113,6 +113,14 @@ export const projectFacts = [
     studioIntegrationStatus: "in-review", distribution: "local-development", dataOwner: "TR GPU Monitor",
     sourceRepository: "Gnaroshi/tr-gpu-monitor", sourceCommit: "3a2fa8173f3bb9d09ef67be66933070e1d350adc", primaryShowcaseId: "tr-gpu-monitor-host-overview", textOnlyExemption: null,
     scenario: { id: "compare-gpu-hosts", stepIds: ["check-hosts", "spot-pressure", "compare-hosts", "review-warning"], mediaIds: ["tr-gpu-monitor-host-overview", "tr-gpu-monitor-gpu-detail", "tr-gpu-monitor-warning-state"], usesDemoData: true }
+  },
+  {
+    id: "codex-unlock-stale", slug: "codex-unlock-stale", kind: "application", productStatus: "usable-locally", contentStage: "substantive",
+    platforms: ["cli"], techStack: ["shell", "linux", "vscode-remote-ssh"], links: [{ id: "repository", href: "https://github.com/Gnaroshi/codex-unlock-stale" }], updatedAt: "2026-08-26",
+    tags: ["Codex", "VS Code Remote SSH", "recovery"], portfolio: "managed-applications", applicationGroup: "system-utilities", applicationFeatured: false,
+    studioIntegrationStatus: "not-planned", distribution: "release", dataOwner: "Local VS Code Remote process tree",
+    sourceRepository: "Gnaroshi/codex-unlock-stale", sourceCommit: "2a3485ba5168b52f680d2cf6996f661eb784d8b4", primaryShowcaseId: "codex-unlock-stale-inspect", textOnlyExemption: null,
+    scenario: { id: "release-stale-writer-lock", stepIds: ["inspect", "protect-active-work", "release-lock"], mediaIds: ["codex-unlock-stale-inspect", "codex-unlock-stale-protect-active-work", "codex-unlock-stale-release-lock"], usesDemoData: true }
   },
   {
     id: "contentdeck", slug: "contentdeck", kind: "application", productStatus: "usable-locally", contentStage: "working",

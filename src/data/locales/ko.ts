@@ -1,7 +1,7 @@
 import type { LocaleCopy } from "./types";
 
 export const koCopy = {
-  copyUpdatedAt: "2026-07-12",
+  copyUpdatedAt: "2026-08-26",
   profile: {
     headline: "AI 시스템을 공부하고,\n연구에 필요한 소프트웨어를 만듭니다.",
     shortBio: "요즘은 비전-언어-행동 모델을 비교하기 위한 실험 환경과, 논문을 읽고 다시 꺼내보는 작업 흐름에 관심을 두고 있습니다.",
@@ -287,6 +287,21 @@ export const koCopy = {
       openProblems: ["최종 모니터 패키지와 메뉴 막대 식별 정보를 확인합니다.", "비공개 호스트 데이터 없이 대표 원격 호스트 상태를 확인합니다.", "실제 정제 모니터링 화면 캡처를 승인합니다."],
       relatedWriting: [],
       linkLabels: {}
+    },
+    "codex-unlock-stale": {
+      title: "codex-unlock-stale",
+      summary: "Remote SSH 재연결 뒤 오래된 Codex 확장 호스트를 찾아 대화 파일을 고치지 않고 작성 잠금을 해제하는 Linux CLI입니다.",
+      statusLabel: "로컬에서 사용 가능",
+      problem: "노트북 절전이나 네트워크 변경 뒤 이전 VS Code Remote 확장 호스트가 현재 호스트와 함께 남으면 Codex 대화가 다른 곳에서 열렸다고 표시될 수 있습니다.",
+      designGoals: ["가장 최신인 확장 호스트는 남깁니다.", "시그널을 보내기 전에 오래된 대상을 모두 보여 줍니다.", "오래된 호스트에 진행 중인 작업이 있을 수 있으면 멈춥니다.", "대화 파일을 수정하는 방식으로 복구하지 않습니다."],
+      architecture: ["Bash 명령이 OpenAI VS Code 확장에 포함된 Codex app-server의 Linux 프로세스 메타데이터를 확인합니다.", "부모 프로세스를 검증해 오래된 VS Code Remote 확장 호스트만 종료 대상으로 제한합니다.", "기본 정리는 SIGTERM을 사용하며 강제 종료는 명시적으로 선택해야 합니다."],
+      supportedAdapters: [],
+      reproducibility: ["격리된 수명주기 테스트가 프로세스 명령을 결정적인 가짜 명령으로 바꿔 검사합니다.", "공개 터미널 화면은 합성 프로세스 ID를 사용하며 실제 대화를 읽지 않습니다."],
+      studioRelationship: "Studio 연결은 계획하지 않았습니다. 독립적으로 실행하는 터미널 복구 명령으로 유지합니다.",
+      currentState: "0.1.0 버전을 공개했고 관찰된 Linux VS Code Remote SSH 중복 호스트 상황을 문서와 테스트로 확인했습니다.",
+      openProblems: ["프로세스 매칭 범위를 넓히지 않고 향후 OpenAI 확장 경로 변경을 따라갑니다.", "검증된 사례가 생기면 다른 Linux 원격 환경도 문서화합니다."],
+      relatedWriting: [],
+      linkLabels: { repository: "저장소" }
     },
     contentdeck: {
       title: "ContentDeck",

@@ -1,13 +1,13 @@
 import { projectFacts } from "../src/data/facts/projects.ts";
 import { projectStories } from "../src/data/projectStories.ts";
 
-const expectedIds = ["gnaroshi-vla","gnaroshi-dev","gnaroshi-studio","paperflow","arxiv-discovery","runshelf","tr-gpu-monitor","contentdeck"];
+const expectedIds = ["gnaroshi-vla","gnaroshi-dev","gnaroshi-studio","paperflow","arxiv-discovery","runshelf","tr-gpu-monitor","codex-unlock-stale","contentdeck"];
 const failures = [];
 const warnings = [];
 const sentenceCount = (value) => value.split(/[.!?]+(?:\s|$)/).filter((part) => part.trim()).length;
 const present = (value) => typeof value === "string" && value.trim().length > 0;
 
-if (projectFacts.map((project) => project.id).join("|") !== expectedIds.join("|")) failures.push("projectFacts must contain exactly the eight registered projects in portfolio order");
+if (projectFacts.map((project) => project.id).join("|") !== expectedIds.join("|")) failures.push("projectFacts must contain exactly the nine registered projects in portfolio order");
 
 for (const project of projectFacts) {
   if (!project.platforms.length) failures.push(`${project.id}: platforms must not be empty`);

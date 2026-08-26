@@ -406,6 +406,7 @@ p {
 :where([data-project-id="tr-gpu-monitor"], [data-app-id="tr-gpu-monitor"]) { --app-key: var(--color-app-gpu); }
 :where([data-project-id="runshelf"], [data-app-id="runshelf"]) { --app-key: var(--color-app-runshelf); }
 :where([data-project-id="contentdeck"], [data-app-id="contentdeck"]) { --app-key: var(--color-app-contentdeck); }
+:where([data-project-id="codex-unlock-stale"], [data-app-id="codex-unlock-stale"]) { --app-key: var(--color-app-codex-unlock); }
 
 .link-row {
   display: flex;

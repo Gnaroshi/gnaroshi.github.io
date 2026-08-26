@@ -6,7 +6,7 @@
   "rendering": "64px deterministic pixel source expanded to 2048px with nearest-neighbor resampling",
   "baseReference": "../gnaroshi-base-v1.png",
   "restrictions": [
-    "Use only these owner-approved P5 candidates for production identity exports.",
+    "Use only the listed owner-approved P5 candidates and explicitly approved repository-owned utility marks for production identity exports.",
     "Do not redraw, prompt-regenerate, smooth, blur, or interpolate the pixel masters.",
     "Do not use the full-color mascot as a menu-bar or functional toolbar icon.",
     "Keep application builds independent from network access to gnaroshi_mds."
@@ -159,6 +159,28 @@
         "macOS Electron application",
         "web favicon",
         "Studio managed-app card"
+      ]
+    },
+    {
+      "id": "codex-unlock-stale-v1",
+      "product": "codex-unlock-stale",
+      "sourceCandidate": "repository-owned-terminal-lock-v1",
+      "sourceSize": [
+        16,
+        16
+      ],
+      "sourceSha256": "b6a12a0bf8800f387b9bbc649a4f276ad7f4d2fdf7bbef588cd50d9b4a209b16",
+      "sourceFile": "codex-unlock-stale-v1.svg",
+      "masterFile": "codex-unlock-stale-v1.png",
+      "masterSize": [
+        128,
+        128
+      ],
+      "masterSha256": "52aa85c1cd0464b9e0078d98f1689a2280b5b45e9353ffb86cf42f35bb9359b1",
+      "exportedAt": "2026-08-26",
+      "targetPlatforms": [
+        "gnaroshi.dev project card",
+        "gnaroshi.dev project detail"
       ]
     }
   ]

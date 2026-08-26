@@ -28,11 +28,11 @@ const supporting = applications.filter((project) => !project.applicationFeatured
 type ApplicationGroup = ApplicationProject["applicationGroup"];
 const applicationGroups: readonly ApplicationGroup[] = ["research-workflow", "system-utilities", "learning-tools"];
 const labels = locale === "ko" ? {
-  selected:"선정 작업", featured:"대표 애플리케이션", featuredIntro:"연구 자료를 찾고 정리하고 발행하는 과정에서 직접 사용하는 도구입니다.", supporting:"보조 애플리케이션", supportingIntro:"실험 확인, 컴퓨팅 상태, 반복 학습을 각각 맡는 독립 도구입니다.", details:"자세히 보기", stack:"기술 구성", platforms:"지원 환경",
+  selected:"선정 작업", featured:"대표 애플리케이션", featuredIntro:"연구 자료를 찾고 정리하고 발행하는 과정에서 직접 사용하는 도구입니다.", supporting:"보조 애플리케이션", supportingIntro:"실험 확인, 컴퓨팅 상태, 원격 연결 복구, 반복 학습을 각각 맡는 독립 도구입니다.", details:"자세히 보기", stack:"기술 구성", platforms:"지원 환경",
   sections:"프로젝트 구역", evidence:"검증된 프로젝트 자료",
   groups:{"research-workflow":"연구 작업 흐름","system-utilities":"시스템 도구","learning-tools":"학습 도구"}
 } : {
-  selected:"Selected projects", featured:"Featured applications", featuredIntro:"Tools I use to find, organize, and publish research material.", supporting:"Supporting applications", supportingIntro:"Focused tools for inspecting experiments, compute state, and repeated practice.", details:"View details", stack:"Tech stack", platforms:"Platforms",
+  selected:"Selected projects", featured:"Featured applications", featuredIntro:"Tools I use to find, organize, and publish research material.", supporting:"Supporting applications", supportingIntro:"Focused tools for inspecting experiments, compute state, remote connection recovery, and repeated practice.", details:"View details", stack:"Tech stack", platforms:"Platforms",
   sections:"Project sections", evidence:"Verified project evidence",
   groups:{"research-workflow":"Research workflow","system-utilities":"System utilities","learning-tools":"Learning tools"}
 };
