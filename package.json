@@ -39,13 +39,13 @@
     "test:performance": "npm run performance:report && playwright test --grep \"@performance\""
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.2.1",
-    "@astrojs/mdx": "^7.0.2",
-    "@astrojs/react": "^6.0.1",
+    "@astrojs/markdown-remark": "^7.3.0",
+    "@astrojs/mdx": "^7.0.8",
+    "@astrojs/react": "^6.0.5",
     "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/sitemap": "^3.7.4",
     "@dagrejs/dagre": "^3.0.0",
-    "astro": "^7.0.7",
+    "astro": "^7.3.1",
     "katex": "^0.17.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
@@ -53,7 +53,7 @@
     "remark-math": "^6.0.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.9",
+    "@astrojs/check": "^0.9.10",
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
     "linkedom": "^0.18.13",
