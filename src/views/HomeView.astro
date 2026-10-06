@@ -89,7 +89,7 @@ if (!focusFreshness.isFresh && import.meta.env.DEV) {
       </article>
     </Section>
 
-    {(recentPosts.length > 0 || recentPapers.length > 0) && <Section class="home-notes" labelledby="latest-notes-heading">
+    {(recentPosts.length > 0 || recentPapers.length > 0) && <Section class="home-notes" labelledby="latest-notes-heading" contentGroup>
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.latestWork")}</p><h2 id="latest-notes-heading">{translate(locale, "home.writingAndPapers")}</h2></div>
       <div class="home-notes__columns">
         {recentPosts.length > 0 && <div><div class="home-list-heading"><h3>{translate(locale, "nav.writing")}</h3><a href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.allWriting")}</a></div><ol class="editorial-record-list">{recentPosts.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time></li>)}</ol></div>}

@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { getPrimaryNavigation } from "../../src/i18n/routes";
 
-const navigationSignature = "research|projects|papers|about";
+// Use the same selected public feed as the build, including CONTENT_FEED_PATH.
+const navigationSignature = getPrimaryNavigation("en")
+  .map((item) => item.href.split("/").filter(Boolean)[0])
+  .join("|");
 const publicRoutes = ["/", "/ko/", "/research/", "/papers/"];
 const scaffoldPhrases = [
   "editable in src",

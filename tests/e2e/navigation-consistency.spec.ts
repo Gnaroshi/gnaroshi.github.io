@@ -1,8 +1,10 @@
 import { expect, test } from "@playwright/test";
 import { englishQaRoutes, koreanQaRoutes } from "./qa-routes";
+import { getPrimaryNavigation, getUtilityNavigation } from "../../src/i18n/routes";
 
 test("primary and utility navigation capability snapshots are stable across every route and locale", async ({ page }) => {
-  const expected = ["/research", "/projects", "/papers", "/about"];
+  const expected = [...getPrimaryNavigation("en"), ...getUtilityNavigation("en")]
+    .map((item) => item.href.replace(/\/$/, "") || "/");
   for (const [locale, routes] of [["en", englishQaRoutes], ["ko", koreanQaRoutes]] as const) {
     for (const route of routes) {
       await page.goto(route === "/404" ? "/404.html" : route);

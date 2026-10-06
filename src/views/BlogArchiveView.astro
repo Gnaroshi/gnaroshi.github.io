@@ -25,7 +25,7 @@ const groups = getArchiveGroups(posts, locale);
       {groups.length === 0 ? (
         <div class="app-empty-state"><p>{translate(locale, "writing.noPosts")}</p><a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "writing.emptyAction")}</a></div>
       ) : groups.map((group) => (
-        <section class="archive-group" aria-labelledby={`archive-${group.key}`}>
+        <section class="archive-group" data-content-group aria-labelledby={`archive-${group.key}`}>
           <h2 id={`archive-${group.key}`}>{group.label}</h2>
           <div class="card-list">{group.posts.map((post) => <BlogCard post={post} locale={locale} />)}</div>
         </section>

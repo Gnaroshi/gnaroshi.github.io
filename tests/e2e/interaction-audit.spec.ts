@@ -149,9 +149,14 @@ test("theme, locale, and mobile-menu controls preserve observable state", async 
   await page.reload();
   const trigger = page.getByRole("button", { name: "메뉴" });
   await trigger.click();
-  await expect(page.locator("[data-mobile-nav-panel]")).toBeVisible();
-  await page.mouse.click(4, 400);
-  await expect(page.locator("[data-mobile-nav-panel]")).toBeHidden();
+  const panel = page.locator("[data-mobile-nav-panel]");
+  await expect(panel).toBeVisible();
+  const panelBounds = await panel.boundingBox();
+  expect(panelBounds).not.toBeNull();
+  const outsideY = panelBounds!.y + panelBounds!.height + 16;
+  expect(outsideY).toBeLessThan(page.viewportSize()!.height);
+  await page.mouse.click(4, outsideY);
+  await expect(panel).toBeHidden();
   await expect(trigger).toBeFocused();
 });
 

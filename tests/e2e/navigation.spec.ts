@@ -1,13 +1,17 @@
 import { expect, test } from "@playwright/test";
+import { getPaperLabNavigation, getPrimaryNavigation, getUtilityNavigation } from "../../src/i18n/routes";
+
+const primaryNavigation = getPrimaryNavigation("en");
+const utilityNavigation = getUtilityNavigation("en");
 
 test("desktop navigation stays concise", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
   const primary = page.getByRole("navigation", { name: "Primary navigation" });
-  await expect(primary.getByRole("link")).toHaveCount(4);
-  await expect(primary.getByRole("link", { name: "Writing" })).toHaveCount(0);
+  await expect(primary.getByRole("link")).toHaveCount(primaryNavigation.length);
+  await expect(primary.getByRole("link", { name: "Writing" })).toHaveCount(primaryNavigation.some((item) => item.href === "/blog/") ? 1 : 0);
   await expect(primary.getByRole("link", { name: "Reading" })).toHaveAttribute("href", "/papers/");
-  await expect(page.getByRole("link", { name: "Activity", exact: true })).toHaveCount(0);
+  await expect(page.locator('.utility-nav [data-nav-href="/growth/"]')).toHaveCount(utilityNavigation.some((item) => item.href === "/growth/") ? 1 : 0);
 });
 
 test("mobile menu traps focus, locks scroll, and returns focus on Escape", async ({ page }) => {
@@ -34,7 +38,7 @@ test("Reading local navigation exposes only available destinations without expan
   const localNav = page.getByRole("navigation", { name: "Reading navigation" });
   await expect(localNav).toBeVisible();
   await expect(localNav.locator("details")).toHaveCount(0);
-  await expect(localNav.getByRole("link")).toHaveCount(2);
+  await expect(localNav.getByRole("link")).toHaveCount(getPaperLabNavigation("en").length);
   await expect(localNav.getByRole("link", { name: "Overview" })).toHaveAttribute("href", "/papers/");
   await expect(localNav.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
   await expect(localNav.getByRole("link", { name: "Reading method" })).toHaveAttribute("href", "/papers/#reading-method");

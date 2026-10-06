@@ -14,11 +14,23 @@ function run(command, args, fixture, expectSuccess, extraEnv = {}) {
   }
 }
 
+run(process.execPath, ["--test", "scripts/lib/public-tone-structure.test.mjs"], "bootstrap-empty", true);
 for (const fixture of valid) run(process.execPath, ["scripts/content-feed-check.mjs"], fixture, true);
 for (const fixture of invalid) run(process.execPath, ["scripts/content-feed-check.mjs"], fixture, false);
 for (const fixture of valid) {
   run("npm", ["run", "build"], fixture, true);
   run(process.execPath, ["scripts/check-links.mjs"], fixture, true);
+  if (fixture === "bootstrap-empty" || fixture === "one-korean-blog") {
+    run(process.execPath, ["scripts/check-public-tone.mjs"], fixture, true);
+    // The first public post changes global navigation even when only KO has content.
+    // Verify the selected fixture, not a stale default .content-feed checkout.
+    run("npx", ["playwright", "test", "tests/e2e/production-smoke.spec.ts", "tests/e2e/navigation-consistency.spec.ts", "tests/e2e/empty-states.spec.ts"], fixture, true, {
+      PLAYWRIGHT_USE_EXISTING_BUILD: "1"
+    });
+    run("npx", ["playwright", "test", "tests/e2e/interaction-audit.spec.ts", "--grep", "theme, locale, and mobile-menu controls preserve observable state"], fixture, true, {
+      PLAYWRIGHT_USE_EXISTING_BUILD: "1"
+    });
+  }
   if (fixture === "one-english-blog") {
     const html = readFileSync("dist/blog/english-only/index.html", "utf8");
     if (html.includes('hreflang="ko"') || existsSync("dist/ko/blog/english-only/index.html")) throw new Error("English-only post received a fabricated Korean alternate");

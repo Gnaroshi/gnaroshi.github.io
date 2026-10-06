@@ -3,6 +3,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, relative, resolve, sep } from "node:path";
 import { parseHTML } from "linkedom";
+import { editorialIntroductions, shellElementCount } from "./lib/public-tone-structure.mjs";
 
 const root = resolve(".");
 const dist = join(root, "dist");
@@ -101,10 +102,7 @@ for (const file of htmlFiles) {
     }
   }
 
-  const pageIntroductions = [...document.querySelectorAll(".page-header > .lede, .paper-hero .lede, .identity-hero__bio")]
-    .filter((element) => !element.closest("[hidden]"))
-    .map((element) => normalize(element.textContent))
-    .filter(Boolean);
+  const pageIntroductions = editorialIntroductions(document);
   for (const introduction of new Set(pageIntroductions)) {
     const owners = introductions.get(introduction) ?? [];
     owners.push(route);
@@ -150,8 +148,8 @@ for (const englishRoute of requiredLocalePairs) {
   const korean = routes.get(koreanRoute)?.document;
   if (english && korean) {
     for (const selector of ["h1", "main section", "main nav"]) {
-      const enCount = english.querySelectorAll(selector).length;
-      const koCount = korean.querySelectorAll(selector).length;
+      const enCount = shellElementCount(english, selector);
+      const koCount = shellElementCount(korean, selector);
       if (enCount !== koCount) failures.push(`${englishRoute} / ${koreanRoute}: structural mismatch for ${selector} (${enCount} vs ${koCount})`);
     }
   }

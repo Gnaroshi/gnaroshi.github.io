@@ -43,6 +43,12 @@ This is why build success, artifact upload, and deployment must remain separate 
 - Core routes must respond with the expected navigation contract and contain no scaffold copy.
 - A mismatch is a failed release even when GitHub Pages reports an artifact deployment.
 
+## First-content regression boundary
+
+Local and production smoke tests derive expected navigation from the same selected public feed as the build (`CONTENT_FEED_PATH`). Publishing the first article may enable Writing navigation; an empty local fallback checkout must not determine expectations for a populated release.
+
+The feed-contract fixture runner checks both bootstrap-empty and Korean-only writing through the real build, navigation, empty-state, and public-tone checks. Different locale inventories are valid: do not invent translations to make archive groups or recent-writing sections numerically equal. `data-content-group` identifies those data-dependent groups for structural comparison; static page structure and every page heading remain checked. `data-content-role="count"` distinguishes aggregate counts from editorial introductions without exempting ordinary repeated copy.
+
 ## Security Boundary
 
 The website workflow reads only the public content feed. It does not hold a PAT, API key, private source checkout, or publishing credential. A GitHub App or fine-grained token used for workflow dispatch belongs to Studio or another publishing system and should receive only Actions write permission required for that dispatch.
