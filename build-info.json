@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "websiteCommit": "cb0a3c35a3b3f727d28e8873e72466eeff7c2b9e",
+  "contentFeedCommit": "cb042193c41a1df60fbf2d37fc20cc259efbedf7",
+  "builtAt": "2026-10-06T08:22:57.001Z",
+  "workflowRunId": "local",
+  "workflowRunAttempt": "0",
+  "environment": "production",
+  "contentHash": "c9a73861cd05863e59caee1bfb115bd979f2b59f25d5e72dbb8307179b5462ee",
+  "feedSchemaVersion": 1
+}
