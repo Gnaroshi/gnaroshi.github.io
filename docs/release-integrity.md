@@ -10,8 +10,8 @@
   "websiteCommit": "<40-character SHA>",
   "contentFeedCommit": "<40-character SHA>",
   "builtAt": "<UTC timestamp>",
-  "workflowRunId": "<GitHub run ID>",
-  "workflowRunAttempt": "<attempt>",
+  "workflowRunId": "local",
+  "workflowRunAttempt": "0",
   "environment": "production",
   "contentHash": "<feed manifest SHA-256>",
   "feedSchemaVersion": 1
@@ -19,6 +19,8 @@
 ```
 
 The record intentionally excludes credentials, private repository paths, private record IDs, source notes, and complete private-source metadata.
+
+The active [deployment procedure](deployment.md) builds locally and publishes static `gh-pages` output with Actions disabled. Local production builds use `local` / `0`; historical Actions artifacts retain their original run IDs and attempts. `websiteCommit` identifies the built source, not the deployment-branch commit or a later documentation/verification-tooling commit.
 
 ## Diagnosis Baseline
 
@@ -37,9 +39,9 @@ This is why build success, artifact upload, and deployment must remain separate 
 
 ## Verification Rules
 
-- A run is published only after Build, Deploy, and Verify all succeed.
-- A feed-only run must use an immutable `feed_commit` from Studio.
-- Live website/feed SHAs, content hash, run ID, run attempt, and environment must match the workflow's expected values.
+- A release is published only after local validation, branch publication, and live verification succeed.
+- A feed-only release must use an immutable public feed SHA.
+- Live website/feed SHAs, content hash, run ID, run attempt, and environment must match the selected artifact's expected values.
 - Core routes must respond with the expected navigation contract and contain no scaffold copy.
 - A mismatch is a failed release even when GitHub Pages reports an artifact deployment.
 
@@ -51,4 +53,4 @@ The feed-contract fixture runner checks both bootstrap-empty and Korean-only wri
 
 ## Security Boundary
 
-The website workflow reads only the public content feed. It does not hold a PAT, API key, private source checkout, or publishing credential. A GitHub App or fine-grained token used for workflow dispatch belongs to Studio or another publishing system and should receive only Actions write permission required for that dispatch.
+The website build reads only the public content feed. It does not hold a PAT, API key, private source checkout, or publishing credential. Local publication uses the operator's authenticated Git access; do not add repository tokens or reactivate retained workflows as a release shortcut.

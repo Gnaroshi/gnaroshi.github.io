@@ -4,7 +4,7 @@ Presentation-only Astro application for [gnaroshi.dev](https://gnaroshi.dev).
 
 The website renders public research and writing exported by [`Gnaroshi/gnaroshi-content-feed`](https://github.com/Gnaroshi/gnaroshi-content-feed). Canonical paper notes and writing do not live in this repository.
 
-**Status:** Active presentation layer deployed from `main` to GitHub Pages.
+**Status:** Active presentation layer built locally and published to GitHub Pages from `gh-pages:/`. Repository Actions are disabled.
 
 ## Repository Boundary
 
@@ -84,7 +84,7 @@ Every page includes:
 <meta name="content-feed-commit" content="...">
 ```
 
-`/build-info.json` exposes a versioned public provenance record: website and feed commits, feed content hash and schema, build time, workflow run and attempt, and environment. A richer diagnostics page with public feed state and counts exists at `/dev-diagnostics/content-feed/` only in development.
+`/build-info.json` exposes a versioned public provenance record: website and feed commits, feed content hash and schema, build time, workflow run and attempt, and environment. Local production releases record `local` / `0` for the run fields and `production` for the environment. The website SHA identifies the built source, not the deployment-branch commit or a later documentation/verification-tooling commit. A richer diagnostics page with public feed state and counts exists at `/dev-diagnostics/content-feed/` only in development.
 
 ## Profile And Project Data
 
@@ -103,16 +103,9 @@ Do not place private research notes, blog drafts, API credentials, or authoring 
 
 ## Deployment
 
-Pushes to `main` deploy through GitHub Actions. A feed-only release can dispatch the same workflow with an immutable feed SHA:
+Source pushes to `main` do not deploy. Build and validate an exact website/public-feed SHA pair locally, then publish only the checked static output to the root of `gh-pages`, including `.nojekyll` and `CNAME`. Confirm repository Actions remain disabled before publication and keep Pages set to **Deploy from a branch → gh-pages → / (root)**. The existing `gnaroshi.dev` domain and HTTPS remain unchanged.
 
-```bash
-gh workflow run deploy.yml \
-  --repo Gnaroshi/gnaroshi.github.io \
-  -f feed_commit=<FULL_SHA> \
-  -f feed_ref=<FULL_SHA>
-```
-
-`feed_commit` takes precedence and is verified against the checkout before build. Pull requests run non-deploying CI; production deployment runs static checks and a focused smoke suite, then verifies the live provenance and core routes. Use the manual rollback workflow only with an explicit public website ref and public feed SHA.
+A release is complete only after exact live provenance and route verification. Feed-only releases and rollback use the same local-build/branch-publication path. The retained Actions deploy, rollback, and CI workflows are inactive; do not dispatch or rerun them while Actions use is forbidden.
 
 No cross-repository PAT or private repository token is required. See [`docs/deployment.md`](docs/deployment.md), [`docs/release-integrity.md`](docs/release-integrity.md), and [`docs/rollback.md`](docs/rollback.md).
 

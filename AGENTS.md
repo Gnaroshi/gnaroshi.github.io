@@ -36,7 +36,7 @@ Before structural changes, read:
 - MDX imported from the public feed
 - React only for interactive presentation islands
 - Plain CSS and tokens in `src/styles/tokens.css`
-- GitHub Pages through GitHub Actions
+- GitHub Pages from locally built static output on `gh-pages:/`; repository Actions are disabled
 
 There is no backend, database, OAuth, authoring CLI, AI client, or private content checkout in this repository.
 
@@ -117,7 +117,7 @@ Do not manufacture missing evidence in adapters. No synthetic review dimensions/
 
 The initial `bootstrap-empty` feed is valid only when every declared count is zero, eligibility is false, and generated research claims are absent. Generated feeds must pass the canonical validator.
 
-Every production build exposes a minimal schema-v1 provenance record through meta tags and `/build-info.json`. It includes website/feed commits, content hash, feed schema, workflow run/attempt, build time, and environment. Development-only diagnostics use `/dev-diagnostics/content-feed/` and must not be emitted in production.
+Every production build exposes a minimal schema-v1 provenance record through meta tags and `/build-info.json`. It includes website/feed commits, content hash, feed schema, workflow run/attempt, build time, and environment. Local production releases use `workflowRunId: "local"`, `workflowRunAttempt: "0"`, and `environment: "production"`. The website SHA identifies the built source, not the separate `gh-pages` artifact commit or a later documentation/verification-tooling commit. Development-only diagnostics use `/dev-diagnostics/content-feed/` and must not be emitted in production.
 
 ## Routing
 
@@ -134,7 +134,7 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Keep factual IDs, dates, status, links, and verified project properties in `src/data/facts/`; locale files contain copy only.
 - Keep feed-specific compatibility logic out of UI components.
 - Avoid unnecessary dependencies and large chart libraries.
-- Do not commit `.content-feed/`, `dist/`, credentials, local caches, or machine-specific files.
+- Do not commit `.content-feed/`, `dist/`, credentials, local caches, or machine-specific files to source branches. Only validated public static output belongs at the root of the separate `gh-pages` deployment branch, as described in `docs/deployment.md`.
 - Do not write into the content-feed checkout.
 - Preserve stable IDs separately from `canonicalSlug`; render all declared aliases as static redirects.
 - Emit hreflang only for real public translation pairs and return unavailable locale switches to the collection index.
@@ -171,8 +171,9 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Do not add `apps/api`, a database, OAuth, or a server runtime.
 - Do not recompute canonical Growth, weekly review, or graph outputs from page content.
 - Do not set an Astro repository subpath base.
-- Do not weaken exact `feed_commit` verification, post-deploy verification, or the shared `pages-production` concurrency group.
-- Do not add repository tokens to trigger feed-only releases; Studio or an authenticated local `gh` session dispatches the public workflow.
+- Do not weaken exact website/feed SHA checks or post-deploy verification. Serialize local releases and stop if `gh-pages` changes during preparation.
+- Keep repository Actions disabled. Retained workflows are inactive historical tooling; do not dispatch, rerun, modify, or inspect runs/checks/logs without explicit owner authorization. Do not add repository tokens to trigger feed-only releases.
+- Publish only locally validated public output to `gh-pages:/`, preserving `.nojekyll`, `CNAME`, the custom domain, and HTTPS. Follow `docs/deployment.md` and `docs/rollback.md`; a source push alone is not a release.
 
 ## Verification
 

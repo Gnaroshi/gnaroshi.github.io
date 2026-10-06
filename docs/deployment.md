@@ -1,83 +1,92 @@
 # GitHub Pages Deployment
 
-## Release Inputs
+## Active Method And Inputs
 
-Every production artifact is defined by two immutable inputs:
+Build and validate locally, then publish public static files to `gh-pages:/`. Repository GitHub Actions are disabled. This direct branch-publication path was verified for this repository on 2026-10-06; it is not a claim that every GitHub account or Pages configuration supports the same behavior.
 
-- a `gnaroshi.github.io` commit
-- a `gnaroshi-content-feed` commit
+Source pushes to `main` do not deploy. Each artifact uses an immutable website source SHA and an immutable public `gnaroshi-content-feed` SHA. Use clean, isolated checkouts and verify both `HEAD` values against the selected full, lowercase 40-character SHAs before building. Never import private authoring sources. A feed-only release keeps the website SHA and selects a new exact public feed SHA.
 
-Pushes to website `main` deploy with feed `main` resolved and recorded at checkout time. Feed-only releases should dispatch `.github/workflows/deploy.yml` with an exact SHA:
+The live `websiteCommit` identifies the source that was built, not the separate `gh-pages` artifact commit. A later documentation/verification-tooling commit can be newer without changing the rendered website; do not rewrite provenance to claim an unbuilt revision.
+
+## Local Build And Validation
+
+Use Node 24 from `.node-version`. Set `CONTENT_FEED_PATH` and `CONTENT_FEED_CONTRACT_PATH` to the selected complete public-feed checkout, `WEBSITE_COMMIT` and `CONTENT_FEED_COMMIT` to their verified SHAs, a fixed `BUILD_TIMESTAMP`, and `DEPLOYMENT_ENVIRONMENT=production`. Do not rely on an ignored `.content-feed` fallback or a neighboring checkout that may be stale. Clear inherited `GITHUB_SHA`, `GITHUB_RUN_ID`, and `GITHUB_RUN_ATTEMPT` so local provenance is not mislabeled.
 
 ```bash
-gh workflow run deploy.yml \
-  --repo Gnaroshi/gnaroshi.github.io \
-  -f feed_commit=<FULL_SHA> \
-  -f feed_ref=<FULL_SHA>
+npm ci
+npm run content:check
+npm run check
+npm run test:feed-contract
+npm run build
+npm run check:i18n
+npm run check:public-tone
+npm run check:launch-content
+npm run check:links
+PLAYWRIGHT_USE_EXISTING_BUILD=1 npm run test:smoke
 ```
 
-`feed_commit` wins when both inputs are present. The build fails unless it is a lowercase full SHA and exactly equals `git -C .content-feed rev-parse HEAD`. Studio should use this flow after pushing the public feed; the website does not need a new commit.
+Install local Playwright Chromium if missing. Run additional route, accessibility, or visual checks when relevant. Keep smoke-test expectations on the same selected feed as the build. Complete fixture tests and rebuilding checks before preparing the final deployment tree.
 
-## Production Workflow
+Confirm `dist/build-info.json` contains the exact website/feed SHAs, manifest content hash and schema, `workflowRunId: "local"`, `workflowRunAttempt: "0"`, and `environment: "production"`.
 
-The `pages-production` concurrency group serializes deploy and rollback workflows. GitHub keeps at most one pending run, so a superseded pending artifact cannot deploy after a newer request.
+## Publish The Static Branch
 
-The build job runs:
+1. Confirm repository Actions remain disabled (`enabled: false`) before the publication push. This is a repository-settings check, not a workflow/run query. If enabled or unavailable, stop for owner direction; do not change the setting implicitly.
+2. In an isolated deployment checkout based on current remote `gh-pages`, replace the public static tree with the validated contents of `dist/`, not a nested `dist/` directory. Include root `.nojekyll` and `CNAME` containing exactly `gnaroshi.dev`.
+3. Inspect the staged tree: only public static output; no `.github/`, feed checkout, source, dependencies, credentials, local reports, or development diagnostics. Preserve the generated input provenance.
+4. Record the source SHA, feed SHA, content hash, and deployment commit. Serialize local releases. Recheck remote `gh-pages` before pushing; if it advanced, stop and reconcile. Use a normal fast-forward push, never a force-push.
+5. Keep Pages at **Deploy from a branch → gh-pages → / (root)** (`build_type: legacy`, source `gh-pages:/`). Preserve `gnaroshi.dev`, HTTPS, and DNS. If publication needs an explicit request, the Pages builds endpoint can be requested once while Actions remain disabled; a queued response is not proof of publication.
+6. Verify the exact live artifact below and confirm Actions remain disabled afterward. A source/branch push or Pages acceptance alone is not completion.
 
-1. Checkout website and requested public feed.
-2. Validate and record website SHA, feed SHA, feed schema, and manifest content hash.
-3. `npm ci` and Chromium installation without a persisted browser cache.
-4. `npm run content:check`.
-5. `npm run check`.
-6. `npm run build`.
-7. `npm run check:i18n`.
-8. `npm run check:links`.
-9. `npm run test:smoke` against the existing production build.
-10. Upload and deploy the exact `dist/` artifact through the `github-pages` environment.
-
-Full visual regression remains a PR/manual QA task. Failed deploy checks upload logs, Playwright reports, screenshots, and traces for seven days.
+`public/CNAME` must remain exactly `gnaroshi.dev`. `astro.config.mjs` must retain `site: "https://gnaroshi.dev"` with no repository subpath base. Include `.nojekyll` in every deployment tree even when absent from `dist/`.
 
 ## Post-Deploy Verification
 
-`scripts/verify-deployment.mjs` retries with bounded exponential backoff and verifies:
+Run the existing verifier locally with values from the validated artifact:
 
-- `/build-info.json` schema version 1
-- exact website and feed commits
-- feed content hash and schema version
-- workflow run ID and attempt
-- `environment: production`
-- HTTP success for `/`, `/ko/`, `/research/`, and `/papers/`
-- the stable primary-navigation signature
-- absence of known scaffold phrases
+```bash
+node scripts/verify-deployment.mjs \
+  --base-url https://gnaroshi.dev \
+  --website-commit <FULL_WEBSITE_SHA> \
+  --feed-commit <FULL_FEED_SHA> \
+  --content-hash <FEED_CONTENT_HASH> \
+  --feed-schema-version 1 \
+  --workflow-run-id local \
+  --workflow-run-attempt 0 \
+  --environment production
+```
 
-Failure marks the workflow failed, prints expected and actual provenance, retains the deployment URL in the run, and prints a rollback command. A Pages upload or successful Git push is not deployment proof; only the post-deploy verification job proves the live result.
+It retries with bounded backoff and checks schema-v1 provenance, exact expected values, core routes (`/`, `/ko/`, `/research/`, `/papers/`), consistent primary navigation, and absence of known scaffold copy. Also verify changed content routes; when establishing a new publication path, compare live article bytes with the validated static file.
 
-## Pull Request CI
-
-`.github/workflows/ci.yml` runs on pull requests and manual dispatch. It checks out the public feed, runs all static checks, automatically discovers all non-visual E2E tests, and runs axe accessibility tests. It has read-only repository permission and cannot deploy.
-
-Failure artifacts contain `artifacts/ci-logs/`, `playwright-report/`, and `test-results/`. Playwright browsers are installed per run instead of restoring an unsafe cross-version browser cache.
+Treat any mismatch as an unverified release even if Pages accepted the branch. Follow [rollback](rollback.md), not Actions reruns.
 
 ## Stale-Site Diagnosis
 
+Use ordinary Git/Pages metadata and the public endpoint, without Actions run/check/log queries:
+
 ```bash
 gh api repos/Gnaroshi/gnaroshi.github.io/commits/main --jq .sha
+gh api repos/Gnaroshi/gnaroshi.github.io/commits/gh-pages --jq .sha
 gh api repos/Gnaroshi/gnaroshi-content-feed/commits/main --jq .sha
-gh run list --repo Gnaroshi/gnaroshi.github.io --workflow deploy.yml --limit 5
 gh api repos/Gnaroshi/gnaroshi.github.io/pages
 curl -fsSL https://gnaroshi.dev/build-info.json
 ```
 
-Compare website main SHA, workflow head SHA, Pages artifact/run, and live `websiteCommit`. Then compare the requested/resolved feed SHA with live `contentFeedCommit`. A successful build with a failed or blocked `github-pages` environment job leaves the previous site live.
+Compare the selected input pair and content hash with the deployment-branch artifact and live provenance. Latest branch tips are not necessarily the selected release inputs. Distinguish local build success, branch publication, Pages acceptance, and exact live verification.
 
-## Manual GitHub Settings
+## Verified Publication Record — 2026-10-06
 
-- Settings -> Pages -> Build and deployment -> Source: **GitHub Actions**
-- Custom domain: `gnaroshi.dev`
-- Enforce HTTPS: enabled after certificate provisioning
-- Environment: `github-pages` must allow deployments from `main` and manual rollback runs
-- Actions: workflow permissions must permit Pages OIDC; no cross-repository PAT is needed
+- Actions were confirmed `enabled: false` before the publication push/settings change and after live verification. No Actions workflow execution or run/check/log query was used.
+- Pages changed from workflow publication (`main:/`) to `build_type: legacy`, source `gh-pages:/`; the custom domain and HTTPS were unchanged.
+- Initial orphan deployment commit: `154f2935b8c4c99f3c345e3772335ce680933348`, containing 397 public static files, root `.nojekyll`, and `CNAME`.
+- Website source: `cb0a3c35a3b3f727d28e8873e72466eeff7c2b9e`.
+- Public feed: `cb042193c41a1df60fbf2d37fc20cc259efbedf7`.
+- Feed content hash: `c9a73861cd05863e59caee1bfb115bd979f2b59f25d5e72dbb8307179b5462ee`.
+- One Pages build request returned `queued` while Actions were disabled. Subsequent live verification matched the exact inputs, `local` / `0`, and `production`.
+- The [Korean article](https://gnaroshi.dev/ko/blog/phizero-physical-language/) returned HTTP 200 and matched local static bytes. Desktop/mobile, light/dark checks found no JavaScript errors, overflow, or broken images. Previous live website/feed revisions were `18f7850` / `0a2b5c5`.
 
-`public/CNAME` must contain exactly `gnaroshi.dev`. `astro.config.mjs` must keep `site: "https://gnaroshi.dev"` with no repository subpath base.
+## Retained Workflows — Inactive
 
-See `docs/release-integrity.md` for provenance interpretation and `docs/rollback.md` for recovery.
+Deploy, rollback, and PR CI files under `.github/workflows/` remain historical tooling, not the active release path. Their `pages-production` concurrency group and `github-pages` environment describe the former Actions method and do not serialize local publication. Do not dispatch, rerun, enable, modify, or query workflow runs/checks/logs while Actions use is forbidden. Reactivation requires explicit owner authorization and configuration review.
+
+See [release integrity](release-integrity.md) for provenance and historical evidence, and [rollback](rollback.md) for recovery.

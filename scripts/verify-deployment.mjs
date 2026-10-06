@@ -114,6 +114,6 @@ console.error(`Deployment verification failed for ${baseUrl}`);
 console.error(`Expected website commit: ${expected.websiteCommit}`);
 console.error(`Expected content feed commit: ${expected.contentFeedCommit}`);
 console.error(`Last error: ${lastError?.message ?? "unknown"}`);
-console.error("Rollback command:");
-console.error(`gh workflow run rollback.yml --repo Gnaroshi/gnaroshi.github.io -f website_ref=${expected.websiteCommit} -f feed_commit=${expected.contentFeedCommit}`);
+console.error("Keep the last verified publication and follow docs/rollback.md. Do not mark this release published.");
+console.error("Do not run or re-enable GitHub Actions as a deployment retry.");
 process.exit(1);
