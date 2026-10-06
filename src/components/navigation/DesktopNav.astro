@@ -8,7 +8,7 @@ const { currentPath, locale } = Astro.props;
 const primaryNavigation = getPrimaryNavigation(locale);
 ---
 
-<nav class="desktop-nav" aria-label={translate(locale, "a11y.primaryNavigation")}>
+<nav class="desktop-nav" lang="en" aria-label={translate(locale, "a11y.primaryNavigation")}>
   {primaryNavigation.map((item) => isNavigationActive(currentPath, item.href) ? (
     <span aria-current="page" data-current-nav-item data-nav-href={item.href}>{item.label}</span>
   ) : (

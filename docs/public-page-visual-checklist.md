@@ -78,3 +78,21 @@ Completed on 2026-07-12:
 - The three-pass method is an unframed ordered sequence rather than nested cards, with centered numbered markers at every viewport.
 - All eight current project records render in English and Korean; private repository URLs remain omitted.
 - Empty About, Writing, Reading, Activity, paper-tool, insight, Contact, and 404 states intentionally remain image-free when no truthful subject or public evidence exists.
+
+## Article correction — 2026-10-06
+
+The July checklist did not establish acceptance for the first published article. Owner review rejected its redundant metadata, forced Korean navigation, and narrow reading column. Baseline: website `bd9531506629eebbc193321712e3dcddf218bc73`; guidance `751ed3561273ad451c787a2c5d2d3ca7bfcd5ca4`.
+
+| Component | Corrected behavior and local evidence |
+| --- | --- |
+| Global navigation | English names in header/mobile/footer; Korean content and locale routes preserved. |
+| Breadcrumbs | Home / Writing links without repeating the article title; full structured breadcrumb data retained. |
+| Article header | Estimated reading time, language badge and duplicate content-type eyebrow removed; actual date/tags retained. |
+| Language control | No permanent notice or promised translation; missing counterpart explained on request, explicit collection link, Enter/Tab/Escape/outside-click verified. Mobile popup stays inside 360px viewport. |
+| Reading surface | At 2155px, title width increased from 496px to 880px, prose from 639px to 880px, text from 16px to 18px. First body entry moved from y=888px to y=505px. Title/body edges align. |
+| Contents | Separate desktop column, compact narrow disclosure; anchor focus/history and scroll-following single current item tested. Empty previous/next region removed. |
+| Content boundary | Personal-interpretation and AI-assistance disclosures, original source links and public feed unchanged. No authoring source or deployment change. |
+
+Independent visual review covered 360/390/768/1024/1440/2155px, light/dark, with no overflow or clipped controls. A 12px subgrid alignment error and 360px popup clipping were found and corrected before acceptance. Local E2E: 195 passed, two populated-paper cases reserved for their fixture; accessibility: 58 passed; focused article/locale checks: 14 passed. The isolated feed-contract suite passed 11 valid builds and six rejection fixtures, including unpaired EN/KO interactions and populated-paper navigation. Screenshots are local ignored review artifacts, not new public media. Reusable rules are in `gnaroshi_mds` commit `04dd093`.
+
+Delivery is source plus local preview only. The public Pages artifact is unchanged. Rollback is a normal revert of this presentation change; no feed/schema migration or data rollback is needed.

@@ -2,7 +2,7 @@
 import Card from "../common/Card.astro";
 import SectionHeader from "../common/SectionHeader.astro";
 import { formatDate } from "../../utils/date";
-import { getPostReadingTime, getPublishedBlogPosts } from "../../utils/content";
+import { getPublishedBlogPosts } from "../../utils/content";
 
 const posts = (await getPublishedBlogPosts()).slice(0, 3);
 ---
@@ -22,7 +22,7 @@ const posts = (await getPublishedBlogPosts()).slice(0, 3);
       {posts.map((post) => (
         <Card title={post.data.title} href={`/blog/${post.id}/`} description={post.data.description}>
           <p class="metadata">
-            {formatDate(post.data.pubDate)} · {getPostReadingTime(post)} · {post.data.tags.join(", ")}
+            {formatDate(post.data.pubDate)}{post.data.tags.length > 0 && ` · ${post.data.tags.join(", ")}`}
           </p>
         </Card>
       ))}

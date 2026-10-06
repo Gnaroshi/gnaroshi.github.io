@@ -5,14 +5,17 @@ import StructuredData from "./StructuredData.astro";
 export interface BreadcrumbItem {
   name: string;
   href: string;
+  lang?: string;
 }
 
 interface Props {
   items: BreadcrumbItem[];
   label?: string;
+  showCurrent?: boolean;
 }
 
-const { items, label = "Breadcrumb" } = Astro.props;
+const { items, label = "Breadcrumb", showCurrent = true } = Astro.props;
+const visibleItems = showCurrent ? items : items.slice(0, -1);
 const itemListElement = items.map((item, index) => ({
   "@type": "ListItem",
   position: index + 1,
@@ -23,9 +26,9 @@ const itemListElement = items.map((item, index) => ({
 
 <nav class="breadcrumbs" aria-label={label}>
   <ol>
-    {items.map((item, index) => (
+    {visibleItems.map((item, index) => (
       <li>
-        {index === items.length - 1 ? <span aria-current="page">{item.name}</span> : <a href={item.href}>{item.name}</a>}
+        {index === items.length - 1 ? <span aria-current="page" lang={item.lang}>{item.name}</span> : <a href={item.href} lang={item.lang}>{item.name}</a>}
       </li>
     ))}
   </ol>

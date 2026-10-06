@@ -18,8 +18,8 @@ const footerNavigation = getFooterNavigation(locale);
 
     <nav class="site-footer__links" aria-label={translate(locale, "a11y.footerNavigation")}>
       {footerNavigation.map((item) => isNavigationActive(currentPath, item.href)
-        ? <span aria-current="page" data-current-nav-item data-nav-href={item.href}>{item.label}</span>
-        : <a href={item.href} data-nav-href={item.href}>{item.label}</a>)}
+        ? <span lang="en" aria-current="page" data-current-nav-item data-nav-href={item.href}>{item.label}</span>
+        : <a lang="en" href={item.href} data-nav-href={item.href}>{item.label}</a>)}
       <a href={getLocalePath(locale, "/rss.xml")}>{translate(locale, "nav.rss")}</a>
       <a href={profile.links.github}>{translate(locale, "nav.github")}</a>
     </nav>

@@ -4,7 +4,6 @@ import { formatLocalizedMonth } from "../i18n/date";
 import type { Locale } from "../i18n/types";
 import { getLocalePath } from "../i18n/utils";
 import { getTranslationEntry } from "./localizedContent";
-import { getReadingTime } from "./readingTime";
 import { slugify } from "./slug";
 import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
 import { getContentFeedRecordCount } from "./contentFeed";
@@ -18,7 +17,6 @@ export type BlogPostPreview = {
   pubDate: string;
   tags: string[];
   series?: string;
-  readingTime: string;
   locale: Locale;
 };
 
@@ -105,10 +103,6 @@ export function getAdjacentPosts(posts: BlogPost[], currentPost: BlogPost) {
   };
 }
 
-export function getPostReadingTime(post: BlogPost): string {
-  return String(getReadingTime(post.body ?? ""));
-}
-
 export function toBlogPostPreview(post: BlogPost): BlogPostPreview {
   return {
     slug: post.data.canonicalSlug,
@@ -117,7 +111,6 @@ export function toBlogPostPreview(post: BlogPost): BlogPostPreview {
     pubDate: post.data.pubDate.toISOString(),
     tags: post.data.tags,
     series: post.data.series,
-    readingTime: getPostReadingTime(post),
     locale: post.data.locale
   };
 }

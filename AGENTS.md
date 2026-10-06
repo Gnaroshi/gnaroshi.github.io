@@ -107,7 +107,7 @@ Studio-owned:
 - formula/question/weekly/graph builders
 - publishing and repository writes
 
-The website may format dates, filter public records, calculate reading time for display, and adapt feed records to UI props. It must display canonical Growth snapshots, weekly reviews, activity, and graph data from the feed without recomputing private-source metrics.
+The website may format dates, filter public records, and adapt feed records to UI props. Do not add estimated reading time to public writing. It must display canonical Growth snapshots, weekly reviews, activity, and graph data from the feed without recomputing private-source metrics.
 
 Do not manufacture missing evidence in adapters. No synthetic review dimensions/history, badges, effort estimates, reading completion, translation status, graph fallback types, durations, or epoch dates.
 
@@ -137,7 +137,7 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 - Do not commit `.content-feed/`, `dist/`, credentials, local caches, or machine-specific files to source branches. Only validated public static output belongs at the root of the separate `gh-pages` deployment branch, as described in `docs/deployment.md`.
 - Do not write into the content-feed checkout.
 - Preserve stable IDs separately from `canonicalSlug`; render all declared aliases as static redirects.
-- Emit hreflang only for real public translation pairs and return unavailable locale switches to the collection index.
+- Emit hreflang only for real public translation pairs. An unavailable locale opens an on-request explanation with an explicit collection link, not a silent redirect or permanent page warning.
 - Serve only declared content-addressed assets with supported media types.
 - Keep `BaseLayout` limited to tokens, base typography/accessibility, and navigation CSS. Load blog, paper, insight, prose, code, and KaTeX styles only from routes that use them.
 - Use `StructuredData.astro` and `Breadcrumbs.astro`; serialize only factual public values and omit unknown identity fields.
@@ -146,6 +146,7 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 ## Design And Accessibility
 
 - Maintain the minimal academic/editorial design.
+- Keep site navigation and site-owned breadcrumb labels English in both locales; preserve Korean article content and natural Korean task copy. Do not stack language badges, estimated reading time, or a duplicate content-type eyebrow before article titles.
 - Keep application mode limited to public paper workflows and Activity views.
 - Use semantic landmarks and heading order.
 - Preserve visible focus states, keyboard navigation, contrast, and mobile overflow protection.

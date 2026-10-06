@@ -25,7 +25,7 @@ const canonicalPath = getLocalePath(locale, `/week/${review.weekId}/`);
 <BaseLayout locale={locale} title={review.weekId} description={summary} canonical={canonicalPath} mode="application" robots={sufficient ? "index, follow" : "noindex, follow"}>
   <article class="weekly-review-detail">
     <Breadcrumbs label={locale === "ko" ? "현재 위치" : "Breadcrumb"} items={[
-      { name: locale === "ko" ? "홈" : "Home", href: getLocalePath(locale, "/") },
+      { name: "Home", href: getLocalePath(locale, "/"), lang: "en" },
       { name: locale === "ko" ? "주간 리뷰" : "Weekly reviews", href: getLocalePath(locale, "/week/") },
       { name: review.weekId, href: canonicalPath }
     ]} />

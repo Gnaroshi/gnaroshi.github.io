@@ -63,6 +63,7 @@ const blogPosting = {
   ogImageHeight={socialImage ? socialAsset?.height : undefined}
   ogImageAlt={socialImage ? socialAsset?.alt : undefined}
   type="article"
+  width="dashboard"
   locale={locale}
   alternateUrls={alternateUrls}
   robots={post.data.visibility === "unlisted" ? "noindex, follow" : "index, follow"}
@@ -73,15 +74,13 @@ const blogPosting = {
 >
   <FeatureStyles slot="head" styles={hasMath ? ["katex"] : []} />
   <article class="blog-post">
-    <Breadcrumbs label={locale === "ko" ? "현재 위치" : "Breadcrumb"} items={[
-      { name: locale === "ko" ? "홈" : "Home", href: locale === "ko" ? "/ko/" : "/" },
-      { name: locale === "ko" ? "글" : "Writing", href: locale === "ko" ? "/ko/blog/" : "/blog/" },
+    <Breadcrumbs showCurrent={false} label={locale === "ko" ? "현재 위치" : "Breadcrumb"} items={[
+      { name: "Home", href: locale === "ko" ? "/ko/" : "/", lang: "en" },
+      { name: "Writing", href: locale === "ko" ? "/ko/blog/" : "/blog/", lang: "en" },
       { name: post.data.title, href: canonicalPath }
     ]} />
     <StructuredData data={blogPosting} />
-    {!alternateUrls.translationAvailable && <p class="content-language-badge"><span class="paper-badge paper-badge--muted">{locale === "ko" ? "한국어 콘텐츠" : "English content"}</span> {locale === "ko" ? "영어 번역 없음" : "Korean translation unavailable"}</p>}
     <header class="blog-post__header">
-      <p class="eyebrow">{translate(locale, "nav.writing")}</p>
       <h1>{post.data.title}</h1>
       <p class="lede">{post.data.description}</p>
       <BlogMeta post={post} locale={locale} />
@@ -89,13 +88,14 @@ const blogPosting = {
     </header>
 
     <SeriesNav posts={seriesPosts} currentId={post.id} locale={locale} />
-    <TableOfContents headings={headings} locale={locale} />
-
-    <div class="prose">
-      <slot />
+    <div class="blog-post__body">
+      <TableOfContents headings={headings} />
+      <div class="prose">
+        <slot />
+      </div>
     </div>
 
-    <nav class="post-nav" aria-label={translate(locale, "nav.writing")}>
+    {(previous || next) && <nav class="post-nav" aria-label="Writing">
       <div>
         {previous && (
           <>
@@ -112,7 +112,7 @@ const blogPosting = {
           </>
         )}
       </div>
-    </nav>
+    </nav>}
   </article>
 
   <script is:inline define:vars={{ linkLabel: locale === "ko" ? "제목 링크" : "Link to heading" }}>

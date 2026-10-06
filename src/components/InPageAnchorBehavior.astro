@@ -51,6 +51,8 @@
     }
 
     const current = locationCurrent ?? routeCurrent;
+    const currentLabel = navigation.closest("[data-in-page-region]")?.querySelector("[data-in-page-current]");
+    if (currentLabel) currentLabel.textContent = current?.textContent?.trim() ?? "";
     if (navigation.dataset.visibleCurrent !== current?.getAttribute("href")) {
       navigation.dataset.visibleCurrent = current?.getAttribute("href") ?? "";
       revealCurrentInScroller(current);
@@ -84,18 +86,24 @@
       });
       if (pairs.length === 0) continue;
 
+      const headerBottom = document.querySelector<HTMLElement>(".site-header")?.getBoundingClientRect().bottom ?? 0;
       const focusedHashPair = pairs.find((pair) => (
         `#${encodeURIComponent(pair.target.id)}` === window.location.hash
         || `#${pair.target.id}` === window.location.hash
-      ) && document.activeElement === pair.target);
+      ) && document.activeElement === pair.target && (
+        navigation.dataset.scrollSpyOffset !== "header"
+        || (pair.target.getBoundingClientRect().top >= headerBottom - 1
+          && pair.target.getBoundingClientRect().top <= headerBottom + Number.parseFloat(getComputedStyle(pair.target).scrollMarginTop) + 1)
+      ));
       if (focusedHashPair) {
         setNavigationCurrent(navigation, focusedHashPair.link);
         continue;
       }
 
-      const headerBottom = document.querySelector<HTMLElement>(".site-header")?.getBoundingClientRect().bottom ?? 0;
       const navigationBottom = navigation.getBoundingClientRect().bottom;
-      const activationLine = Math.max(headerBottom, navigationBottom) + 12;
+      const activationLine = navigation.dataset.scrollSpyOffset === "header"
+        ? headerBottom + 12
+        : Math.max(headerBottom, navigationBottom) + 12;
       let current = pairs[0]!;
       let currentTop = Number.NEGATIVE_INFINITY;
       for (const pair of pairs) {

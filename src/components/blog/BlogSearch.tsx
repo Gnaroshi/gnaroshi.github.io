@@ -7,7 +7,6 @@ type PostPreview = {
   pubDate: string;
   tags: string[];
   series?: string;
-  readingTime: string;
   locale: "en" | "ko";
 };
 
@@ -96,7 +95,7 @@ export default function BlogSearch({ posts, tags, locale, messages, tagLabels }:
                 <h3><a href={`${locale === "ko" ? "/ko" : ""}/blog/${post.slug}/`}>{post.title}</a></h3>
                 <p>{post.description}</p>
                 <p className="metadata">
-                  {formatDate(post.pubDate, locale)} · {post.readingTime} · {post.tags.map((tag) => tagLabels[tag] ?? tag).join(", ")}
+                  {formatDate(post.pubDate, locale)}{post.tags.length > 0 && ` · ${post.tags.map((tag) => tagLabels[tag] ?? tag).join(", ")}`}
                 </p>
               </li>
             ))}

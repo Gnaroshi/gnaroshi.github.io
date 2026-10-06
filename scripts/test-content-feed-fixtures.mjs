@@ -34,7 +34,7 @@ for (const fixture of valid) {
   if (fixture === "one-english-blog") {
     const html = readFileSync("dist/blog/english-only/index.html", "utf8");
     if (html.includes('hreflang="ko"') || existsSync("dist/ko/blog/english-only/index.html")) throw new Error("English-only post received a fabricated Korean alternate");
-    if (!html.includes("Translation unavailable; opens the collection.")) throw new Error("English-only post is missing a visible translation fallback explanation");
+    if (!html.includes("This page has no Korean translation.") || !html.includes('class="language-switcher__fallback"')) throw new Error("English-only post is missing an on-request translation fallback");
     if (html.includes('title="Translation unavailable"')) throw new Error("English-only post relies on a hover-only translation explanation");
     run("npx", ["playwright", "test", "tests/e2e/translation-fallback.spec.ts"], fixture, true, {
       TRANSLATION_FIXTURE_LOCALE: "en",
@@ -44,7 +44,7 @@ for (const fixture of valid) {
   if (fixture === "one-korean-blog") {
     if (!existsSync("dist/ko/blog/korean-only/index.html")) throw new Error("Korean-only post route was not built");
     const html = readFileSync("dist/ko/blog/korean-only/index.html", "utf8");
-    if (!html.includes("번역 준비 중 · 목록으로 이동")) throw new Error("Korean-only post is missing a visible translation fallback explanation");
+    if (!html.includes("영어 번역이 없는 글입니다.") || !html.includes('class="language-switcher__fallback"')) throw new Error("Korean-only post is missing an on-request translation fallback");
     run("npx", ["playwright", "test", "tests/e2e/translation-fallback.spec.ts"], fixture, true, {
       TRANSLATION_FIXTURE_LOCALE: "ko",
       PLAYWRIGHT_USE_EXISTING_BUILD: "1"

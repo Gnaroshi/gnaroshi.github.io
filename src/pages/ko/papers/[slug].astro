@@ -65,8 +65,8 @@ const techArticle = {
   <FeatureStyles slot="head" styles={hasMath ? ["katex"] : []} />
   <article class="paper-detail">
     <Breadcrumbs label="현재 위치" items={[
-      { name: "홈", href: "/ko/" },
-      { name: "논문 읽기", href: "/ko/papers/" },
+      { name: "Home", href: "/ko/", lang: "en" },
+      { name: "Reading", href: "/ko/papers/", lang: "en" },
       { name: paper.data.title, href: canonicalPath }
     ]} />
     <StructuredData data={techArticle} />

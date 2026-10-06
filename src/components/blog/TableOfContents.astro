@@ -4,48 +4,88 @@ interface Heading {
   slug: string;
   text: string;
 }
-import type { Locale } from "../../i18n/types";
-import { translate } from "../../i18n/utils";
-
 interface Props {
   headings: Heading[];
-  locale?: Locale;
 }
 
-const { headings, locale = "en" } = Astro.props;
+const { headings } = Astro.props;
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 ---
 
 {tocHeadings.length > 0 && (
-  <nav class="toc" aria-labelledby="toc-heading">
-    <h2 id="toc-heading">{translate(locale, "writing.tableOfContents")}</h2>
-    <ol>
-      {tocHeadings.map((heading) => (
-        <li class:list={[`toc__item`, `toc__item--depth-${heading.depth}`]}>
-          <a href={`#${heading.slug}`}>{heading.text}</a>
-        </li>
-      ))}
-    </ol>
-  </nav>
+  <details class="toc" open data-article-toc data-in-page-region>
+    <summary>
+      <span lang="en">Contents</span>
+      <span class="toc__current" data-in-page-current></span>
+    </summary>
+    <nav aria-label="Contents" data-in-page-navigation data-scroll-spy data-scroll-spy-offset="header">
+      <ol>
+        {tocHeadings.map((heading) => (
+          <li class:list={[`toc__item`, `toc__item--depth-${heading.depth}`]}>
+            <a href={`#${heading.slug}`} data-in-page-link>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </details>
 )}
+
+<script>
+  for (const toc of document.querySelectorAll<HTMLDetailsElement>("[data-article-toc]")) {
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const summary = toc.querySelector<HTMLElement>("summary")!;
+    let narrowOpen = false;
+    const applyLayout = () => {
+      toc.open = desktop.matches || narrowOpen;
+    };
+    toc.addEventListener("toggle", () => {
+      if (!desktop.matches) narrowOpen = toc.open;
+    });
+    toc.addEventListener("click", (event) => {
+      if (!desktop.matches && (event.target as Element).closest("a[href]")) toc.open = false;
+    });
+    toc.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !desktop.matches && toc.open) {
+        toc.open = false;
+        summary.focus();
+      }
+    });
+    desktop.addEventListener("change", applyLayout);
+    applyLayout();
+  }
+</script>
 
 <style>
   .toc {
-    display: grid;
-    gap: var(--space-3);
-    padding: var(--space-4);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: var(--color-surface);
+    min-width: 0;
+    border-bottom: 1px solid var(--color-border);
   }
 
-  .toc h2 {
-    font-size: var(--text-lg);
+  .toc summary {
+    padding-block: var(--space-3);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .toc__current {
+    margin-left: var(--space-3);
+    color: var(--color-text-muted);
+    font-weight: 400;
+  }
+
+  .toc[open] .toc__current {
+    display: none;
+  }
+
+  .toc nav {
+    padding-bottom: var(--space-4);
   }
 
   .toc ol {
     display: grid;
-    gap: var(--space-2);
+    gap: var(--space-1);
     padding: 0;
     margin: 0;
     list-style: none;
@@ -56,12 +96,41 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
   }
 
   .toc a {
+    display: block;
+    padding-block: var(--space-2);
     color: var(--color-text-secondary);
     font-size: var(--text-sm);
     text-decoration: none;
   }
 
-  .toc a:hover {
+  .toc a:hover,
+  .toc a[aria-current="location"] {
     color: var(--color-accent);
+  }
+
+  .toc a[aria-current="location"] {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: var(--space-1);
+  }
+
+  @media (min-width: 1280px) {
+    .toc {
+      position: sticky;
+      top: calc(var(--header-height) + var(--space-6));
+      border-bottom: 0;
+      border-left: 1px solid var(--color-border);
+      padding-left: var(--space-5);
+      max-height: calc(100vh - var(--header-height) - var(--space-8));
+      overflow-y: auto;
+    }
+
+    .toc summary {
+      padding-top: 0;
+    }
+
+    .toc nav {
+      padding-bottom: 0;
+    }
   }
 </style>

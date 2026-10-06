@@ -10,7 +10,9 @@ const islandMessages = await loadExports(join(root, "src", "i18n", "islands.ts")
 const failures = [];
 const englishKeys = Object.keys(en).sort();
 const koreanKeys = Object.keys(ko).sort();
-const allowedCopies = new Set(["site.name", "nav.rss", "nav.github"]);
+// Owner-selected site navigation stays English; content and task copy remain localized.
+const allowedCopies = new Set(["site.name", "nav.rss", "nav.github", "a11y.primaryNavigation",
+  "nav.home", "nav.research", "nav.projects", "nav.writing", "nav.paperLab", "nav.about", "nav.growth", "nav.now", "nav.links"]);
 const properNounPattern = /^(Gnaroshi|GitHub|Astro|React|MDX|RSS|AI)$/;
 
 for (const key of englishKeys.filter((key) => !(key in ko))) failures.push(`missing Korean key: ${key}`);

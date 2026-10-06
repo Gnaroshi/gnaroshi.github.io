@@ -73,7 +73,7 @@ Use a global shell with:
 - Wider layout option for dashboards such as `/papers`.
 - Footer with links, RSS if implemented, and small metadata.
 
-Container widths are centralized as 720px prose, 1040px content, 1200px wide, and a 1440px-capped full shell. Gutters step from 16px to 20px, 28px, 32px, and 40px at the shared 480/768/1024/1280 breakpoints.
+General containers use 720px prose, 1040px content, 1200px wide, and a 1440px-capped full shell. Long-form articles use a wider reading column with the title aligned to it and a separate TOC on sufficiently wide screens; do not compound the article width with a second narrower prose or title limit. Gutters step from 16px to 20px, 28px, 32px, and 40px at the shared 480/768/1024/1280 breakpoints.
 
 The first viewport of `/` should immediately identify:
 
@@ -93,6 +93,8 @@ Primary navigation is limited to five destinations; the brand links to Home:
 - Writing
 - Reading
 - About
+
+These names remain English across locales, including mobile, footer, and site-owned breadcrumb labels. Korean articles retain Korean body text, dates, and natural task copy. Article headers lead with the title and useful summary/date metadata, without duplicate category eyebrows, source-language badges, or estimated reading time. Missing translation information appears only when the alternate-language control is opened.
 
 Activity is a utility destination. Now and public links belong in the homepage, About, and footer. Reading workflows stay grouped under a local Reading navigation instead of competing in the global header.
 

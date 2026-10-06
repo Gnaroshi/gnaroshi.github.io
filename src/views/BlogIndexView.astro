@@ -11,7 +11,7 @@ import { formatLocalizedDate } from "../i18n/date";
 import { getLocalizedTagLabel } from "../i18n/tags";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
-import { getAllBlogTags, getBlogPostHref, getPostReadingTime, getPublishedBlogPosts, toBlogPostPreview } from "../utils/content";
+import { getAllBlogTags, getBlogPostHref, getPublishedBlogPosts, toBlogPostPreview } from "../utils/content";
 import { profile } from "../data/profile";
 import "../styles/blog.css";
 
@@ -45,7 +45,7 @@ const tagLabels = Object.fromEntries(tags.map((tag) => [tag, getLocalizedTagLabe
   <PageHeader title={translate(locale, "writing.title")} description={translate(locale, "writing.intro")} />
   <section class:list={["writing-index", posts.length === 0 && "writing-index--empty"]} aria-labelledby="writing-index-heading">
     <div class="writing-index__header"><h2 id="writing-index-heading">{translate(locale, "writing.all")}</h2>{showArchive && <a href={getLocalePath(locale, "/blog/archive/")}>{translate(locale, "writing.archive")}</a>}</div>
-    {posts.length === 0 ? <div class="app-empty-state"><p>{translate(locale, "writing.noPosts")}</p><a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "writing.emptyAction")}</a></div> : !showDiscovery ? <ol>{posts.map((post) => { const minutes = Number.parseInt(getPostReadingTime(post), 10) || 1; return <li><div class="writing-index__meta"><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time><span>{translate(locale, "writing.readingTime", { count: minutes })}</span>{post.data.featured && <span>{translate(locale, "writing.selected")}</span>}</div><h2><a href={getBlogPostHref(post)}>{post.data.title}</a></h2><p>{post.data.description}</p><div class="writing-index__tags">{post.data.tags.map((tag) => <span>{getLocalizedTagLabel(tag, locale)}</span>)}</div></li>; })}</ol> : null}
+    {posts.length === 0 ? <div class="app-empty-state"><p>{translate(locale, "writing.noPosts")}</p><a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "writing.emptyAction")}</a></div> : !showDiscovery ? <ol>{posts.map((post) => <li><div class="writing-index__meta"><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time>{post.data.featured && <span>{translate(locale, "writing.selected")}</span>}</div><h2><a href={getBlogPostHref(post)}>{post.data.title}</a></h2><p>{post.data.description}</p><div class="writing-index__tags">{post.data.tags.map((tag) => <span>{getLocalizedTagLabel(tag, locale)}</span>)}</div></li>)}</ol> : null}
   </section>
   {showDiscovery && <section class="section" aria-labelledby="writing-discovery-heading"><SectionHeader id="writing-discovery-heading" title={translate(locale, "writing.find")} description={translate(locale, "writing.findDescription")} /><div class="writing-discovery-layout"><BlogSearch client:visible posts={posts.map(toBlogPostPreview)} tags={tags} locale={locale} messages={searchMessages} tagLabels={tagLabels} /><aside aria-label={translate(locale, "writing.topics")}><h2>{translate(locale, "writing.topics")}</h2><TagList tags={tags} locale={locale} /></aside></div></section>}
   </PageShell>

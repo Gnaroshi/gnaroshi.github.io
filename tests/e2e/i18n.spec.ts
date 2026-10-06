@@ -12,7 +12,10 @@ test("English remains the unprefixed default and Korean uses /ko", async ({ page
   await expect(page.locator(".utility-nav .language-switcher__current")).toHaveText("한국어");
   await expect(page.locator('.utility-nav .language-switcher a[lang="ko"]')).toHaveCount(0);
   await expect(page.getByRole("link", { name: "EN" }).first()).toHaveAttribute("href", "/");
-  await expect(page.getByRole("navigation", { name: "주요 메뉴" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
+  await expect(page.locator(".desktop-nav")).toContainText("Research");
+  await expect(page.locator(".desktop-nav")).toContainText("Reading");
+  await expect(page.locator(".desktop-nav")).not.toContainText("논문 읽기");
 });
 
 test("language switch preserves an equivalent static route", async ({ page }) => {

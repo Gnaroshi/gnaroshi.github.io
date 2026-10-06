@@ -41,7 +41,7 @@ for (const viewport of qaViewports) {
 
 for (const [locale, route, navName, menuName] of [
   ["en", "/", "Primary navigation", "Menu"],
-  ["ko", "/ko/", "주요 메뉴", "메뉴"]
+  ["ko", "/ko/", "Primary navigation", "메뉴"]
 ] as const) {
   test(`${locale} navigation, theme, language, and mobile drawer controls remain stable`, async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });

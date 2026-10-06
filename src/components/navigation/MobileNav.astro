@@ -22,7 +22,7 @@ const mobileNavigation = [...getPrimaryNavigation(locale), ...getUtilityNavigati
     <span>{translate(locale, "nav.menu")}</span>
   </button>
   <div class="mobile-nav__panel" id="mobile-navigation-panel" hidden data-mobile-nav-panel>
-    <nav aria-label={translate(locale, "a11y.mobileNavigation")}>
+    <nav lang="en" aria-label={translate(locale, "a11y.mobileNavigation")}>
       {mobileNavigation.map((item) => isNavigationActive(currentPath, item.href) ? (
         <span aria-current="page" data-current-nav-item data-nav-href={item.href}>{item.label}</span>
       ) : (
@@ -39,9 +39,11 @@ const mobileNavigation = [...getPrimaryNavigation(locale), ...getUtilityNavigati
     const panel = root.querySelector<HTMLElement>("[data-mobile-nav-panel]");
     if (!trigger || !panel) continue;
 
-    const focusable = () => [...panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')];
+    const focusable = () => [...panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), summary')]
+      .filter((item) => item.getClientRects().length > 0);
     const close = () => {
       panel.hidden = true;
+      for (const details of panel.querySelectorAll<HTMLDetailsElement>("details[open]")) details.open = false;
       trigger.setAttribute("aria-expanded", "false");
       document.body.classList.remove("mobile-nav-open");
       requestAnimationFrame(() => trigger.focus());

@@ -1,10 +1,10 @@
 # Localization Terminology
 
-Use these terms consistently in Korean public copy. Choose the contextual alternative only when it reads more naturally.
+Use these terms consistently in Korean content and task copy. Global navigation and site-owned breadcrumb labels remain English in both locales by owner choice: Home, Research, Projects, Writing, Reading, About, Activity, Now, and Links. Do not translate those stable navigation labels merely because the article is Korean.
 
 | English | Korean | Notes |
 | --- | --- | --- |
-| Reading | 논문 읽기 | Public navigation label for `/papers/`. Do not use `Papers`, `Paper Lab`, `논문`, or `논문 연구실` as the standalone public label. |
+| Reading | 논문 읽기 | Use Korean in descriptive content; the public navigation label for `/papers/` is `Reading` in both locales. |
 | Paper Reading Notes | 논문 읽기 기록 | Public page title. |
 | Reading Note | 읽기 기록 | Singular public record label. |
 | Note Review | 노트 검토 | Review of evidence written in a note; never a claim of true understanding. |

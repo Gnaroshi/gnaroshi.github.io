@@ -3,7 +3,6 @@ import type { BlogPost } from "../../utils/content";
 import { formatLocalizedDate } from "../../i18n/date";
 import type { Locale } from "../../i18n/types";
 import { translate } from "../../i18n/utils";
-import { getPostReadingTime } from "../../utils/content";
 
 interface Props {
   post: BlogPost;
@@ -11,8 +10,6 @@ interface Props {
 }
 
 const { post, locale = post.data.locale } = Astro.props;
-const readingTime = getPostReadingTime(post);
-const readingMinutes = Number.parseInt(readingTime, 10) || 1;
 ---
 
 <p class="blog-meta">
@@ -23,8 +20,6 @@ const readingMinutes = Number.parseInt(readingTime, 10) || 1;
       <span>{translate(locale, "writing.updated")} <time datetime={post.data.updatedDate.toISOString()}>{formatLocalizedDate(post.data.updatedDate, locale)}</time></span>
     </>
   )}
-  <span aria-hidden="true">·</span>
-  <span>{translate(locale, "writing.readingTime", { count: readingMinutes })}</span>
   {post.data.series && (
     <>
       <span aria-hidden="true">·</span>
