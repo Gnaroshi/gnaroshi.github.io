@@ -1,10 +1,16 @@
 name: Deploy to GitHub Pages
+run-name: ${{ inputs.publication_id && format('Studio publication {0}', inputs.publication_id) || 'Deploy to GitHub Pages' }}
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
     inputs:
+      publication_id:
+        description: Optional opaque Studio publication identifier for exact request recovery
+        required: false
+        default: ""
+        type: string
       website_commit:
         description: Optional exact 40-character website commit; defaults to the triggering revision
         required: false
