@@ -25,6 +25,11 @@ concurrency:
   group: pages-production
   cancel-in-progress: false
 
+defaults:
+  run:
+    # Explicit bash includes pipefail, so diagnostic tee cannot hide a failed check.
+    shell: bash
+
 jobs:
   build:
     name: Build and validate production artifact
