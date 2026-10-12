@@ -5,6 +5,7 @@ import PageShell from "../components/layout/PageShell.astro";
 import ResponsiveImage from "../components/media/ResponsiveImage.astro";
 import MediaZoomDialog from "../components/common/MediaZoomDialog.astro";
 import SectionNav from "../components/navigation/SectionNav.astro";
+import ResearchLens from "../components/research/ResearchLens.astro";
 import { getResearchMedia } from "../data/approvedMedia";
 import { getLocalizedData } from "../data/locales";
 import type { Locale } from "../i18n/types";
@@ -38,10 +39,7 @@ const mediaLabels = locale === "ko"
               <h2>{area.question}</h2>
             </header>
             <p>{area.motivation}</p>
-            <dl class="research-theme__assessment">
-              <div class="research-theme__assessment-item research-theme__assessment-item--hypothesis"><dt>{translate(locale, "research.hypothesis")}</dt><dd>{area.hypothesis}</dd></div>
-              <div class="research-theme__assessment-item research-theme__assessment-item--uncertainty"><dt>{translate(locale, "research.uncertainty")}</dt><dd>{area.uncertainty}</dd></div>
-            </dl>
+            <ResearchLens id={area.slug} hypothesis={area.hypothesis} uncertainty={area.uncertainty} locale={locale} />
             <div class="link-row">{area.related.map((link) => <a href={link.href}>{link.label}</a>)}</div>
           </div>
           <figure class:list={["research-theme__media", index > 0 && "research-theme__media--diagram"]}>
@@ -70,15 +68,6 @@ const mediaLabels = locale === "ko"
   .research-theme__media figcaption { display:grid; gap:var(--space-1); padding:var(--space-3) var(--space-4); border-top:1px solid var(--color-border); color:var(--color-text-muted); font-size:var(--text-xs); line-height:1.5; }
   .research-theme__media figcaption strong { color:var(--color-text-secondary); }
   .research-theme__copy > p:not(.eyebrow) { color: var(--color-text-secondary); font-size: var(--editorial-body); line-height: 1.7; }
-  .research-theme__assessment { display:grid; gap:var(--space-3); margin:var(--space-2) 0 0; }
-  .research-theme__assessment-item { display:grid; gap:var(--space-2); align-content:start; padding:var(--space-4); background:var(--color-surface-muted); }
-  .research-theme__assessment-item--hypothesis { box-shadow:inset 3px 0 0 var(--color-identity-teal); }
-  .research-theme__assessment-item--uncertainty { box-shadow:inset 3px 0 0 var(--color-identity-orange); }
-  .research-theme dt { color: var(--color-text); font-size: var(--text-sm); font-weight: 750; }
-  .research-theme dd { margin:0; color:var(--color-text-secondary); line-height:1.65; }
-  @media (min-width: 680px) {
-    .research-theme__assessment { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  }
   @media (min-width: 768px) { .research-theme { gap:var(--space-8); } .research-theme__copy { max-width:820px; } }
   @media (min-width: 1024px) {
     .research-theme { grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr); align-items:start; gap:var(--space-7); }

@@ -1,0 +1,62 @@
+---
+import type { Locale } from "../../i18n/types";
+import { translate } from "../../i18n/utils";
+interface Props { id: string; hypothesis:string; uncertainty:string; locale:Locale }
+const { id,hypothesis,uncertainty,locale } = Astro.props;
+const entries = [
+  { key:"hypothesis",label:translate(locale,"research.hypothesis"),body:hypothesis },
+  { key:"uncertainty",label:translate(locale,"research.uncertainty"),body:uncertainty }
+];
+---
+<div class="research-lens" data-research-lens>
+  <div class="research-lens__tabs" role="tablist" aria-label={locale === "ko" ? "질문 살펴보기" : "Explore the question"}>
+    {entries.map((entry,index) => <button type="button" role="tab" id={`${id}-${entry.key}-tab`} aria-controls={`${id}-${entry.key}-panel`} aria-selected={index === 0 ? "true" : "false"} tabindex={index === 0 ? 0 : -1}>{entry.label}</button>)}
+  </div>
+  <div class="research-lens__panels">
+    {entries.map((entry) => <div class={`research-lens__panel research-lens__panel--${entry.key}`} role="tabpanel" id={`${id}-${entry.key}-panel`} aria-labelledby={`${id}-${entry.key}-tab`}><p class="research-lens__label"><strong>{entry.label}</strong></p><p>{entry.body}</p></div>)}
+  </div>
+</div>
+<script>
+  for (const lens of document.querySelectorAll<HTMLElement>("[data-research-lens]")) {
+    const tabs = [...lens.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...lens.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+    const select = (index:number) => {
+      tabs.forEach((tab,i) => { tab.setAttribute("aria-selected",String(i === index)); tab.tabIndex = i === index ? 0 : -1; });
+      panels.forEach((panel,i) => { panel.toggleAttribute("inert",i !== index); if (i === index) panel.removeAttribute("aria-hidden"); else panel.setAttribute("aria-hidden","true"); });
+    };
+    tabs.forEach((tab,index) => {
+      tab.addEventListener("click",() => select(index));
+      tab.addEventListener("keydown",(event) => {
+        let next = index;
+        if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+        else if (event.key === "ArrowLeft") next = (index + tabs.length - 1) % tabs.length;
+        else if (event.key === "Home") next = 0;
+        else if (event.key === "End") next = tabs.length - 1;
+        else return;
+        event.preventDefault(); select(next); tabs[next]?.focus();
+      });
+    });
+    select(0);
+    lens.dataset.enhanced = "true";
+  }
+</script>
+<style>
+  .research-lens { display:grid; gap:var(--space-4); }
+  .research-lens__tabs { display:none; gap:var(--space-4); border-bottom:1px solid var(--color-border); }
+  [data-enhanced] .research-lens__tabs { display:flex; }
+  button { position:relative; min-height:44px; padding:var(--space-2) 0; border:0; background:none; color:var(--color-text-muted); font:inherit; font-size:var(--text-sm); font-weight:700; cursor:pointer; }
+  button::after { position:absolute; inset:auto 0 -1px; height:3px; background:var(--color-accent); transform:scaleX(0); transform-origin:left; transition:transform 250ms var(--ease-emphasized); content:""; }
+  button[aria-selected="true"] { color:var(--color-text); cursor:default; }
+  button[aria-selected="true"]::after { transform:scaleX(1); }
+  .research-lens__panels { display:grid; gap:var(--space-4); }
+  .research-lens__panel { padding-inline-start:var(--space-4); border-inline-start:3px solid var(--color-identity-teal); align-self:start; visibility:visible; }
+  [data-enhanced] .research-lens__panel { grid-area:1/1; }
+  [data-enhanced] .research-lens__label { display:none; }
+  .research-lens__panel--uncertainty { border-color:var(--color-identity-orange); }
+  .research-lens__panel[aria-hidden="true"] { visibility:hidden; pointer-events:none; }
+  .research-lens__panel p { margin:0; color:var(--color-text-secondary); line-height:1.7; }
+  @media (prefers-reduced-motion:no-preference) { .research-lens__panel:not([aria-hidden]) { animation:lens-enter 250ms var(--ease-emphasized); } }
+  @keyframes lens-enter { from { clip-path:inset(0 100% 0 0); } to { clip-path:inset(0); } }
+  @media (prefers-reduced-motion:reduce) { button::after { transition:none; } }
+  @media print { .research-lens__panels { display:block; } .research-lens__panel[aria-hidden="true"] { visibility:visible; } .research-lens__panel { margin-block:1rem; } }
+</style>
