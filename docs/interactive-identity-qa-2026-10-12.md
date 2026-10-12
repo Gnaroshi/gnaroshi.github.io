@@ -90,7 +90,8 @@ PLAYWRIGHT_USE_EXISTING_BUILD=1 npm run test:e2e -- --workers=2
 PLAYWRIGHT_USE_EXISTING_BUILD=1 npm run test:a11y -- --workers=2
 PLAYWRIGHT_USE_EXISTING_BUILD=1 npm run test:performance -- --workers=2
 PLAYWRIGHT_USE_EXISTING_BUILD=1 VISUAL_SET=interactive-2026-10-12 npm run test:visual -- --workers=2
-PLAYWRIGHT_USE_EXISTING_BUILD=1 PLAYWRIGHT_BROWSER=webkit npx playwright test tests/e2e/interactive-identity.spec.ts tests/e2e/interaction-audit.spec.ts tests/e2e/layout-rhythm.spec.ts --grep-invert '@visual|@a11y|interactive identity stays framed' --workers=1
+PLAYWRIGHT_USE_EXISTING_BUILD=1 PLAYWRIGHT_BROWSER=webkit npx playwright test tests/e2e/interactive-identity.spec.ts tests/e2e/interaction-audit.spec.ts tests/e2e/layout-rhythm.spec.ts --grep-invert '@visual|@a11y' --workers=1
+PLAYWRIGHT_USE_EXISTING_BUILD=1 npm run test:smoke -- --workers=1
 npm run test:feed-contract
 ```
 
@@ -100,3 +101,61 @@ npm run test:feed-contract
 - Missing public paper activity, portrait, email, Scholar link, and stale current-focus data remain honest content limitations, not filled with generated claims.
 - Unsupported graphics browsers retain the original mark, not a pretend 3D object.
 - Temporary browser/preview processes must be closed; the explicitly requested user localhost server may remain available for review.
+
+## Final Release Verification
+
+Selected immutable inputs and artifact:
+
+- Website source: `951f178b8a858d83362bb93f982efd9130aad208`.
+- Public feed: `cb042193c41a1df60fbf2d37fc20cc259efbedf7`.
+- Content hash: `c9a73861cd05863e59caee1bfb115bd979f2b59f25d5e72dbb8307179b5462ee`.
+- Static branch commit: `013844cb38c505ad8c7d8551e0501a1088113ce6`.
+- Build timestamp: `2026-10-12T13:10:06Z`; schema 1, feed schema 1, `local` / `0`, `production`.
+- Previous deployment for rollback: `c8d42402d5a9a32c65a7b07239e6d714496adbec`.
+
+All final suites ran in an isolated checkout of the selected source. The fixture suite completed before rebuilding the exact selected public feed; browser suites then consumed immutable output. Results:
+
+| Check | Final Result |
+| --- | --- |
+| Feed contract | 11 valid builds and 6 invalid-feed rejection fixtures passed; populated navigation/translation fixtures included |
+| Astro check | 294 files, zero errors/warnings/hints |
+| Build | 59 static HTML pages |
+| i18n | 260 page keys and 341 island keys, exact EN/KO parity |
+| Public tone / launch content | Passed; missing identity/activity evidence remains explicitly absent |
+| Media / project readiness | Passed; 9 projects, 28 approved screenshots; no replacement identity or evidence |
+| Internal links | 2,339 targets across 59 HTML files passed |
+| Chromium E2E | 222 passed, 2 skipped for the current feed's absent papers; populated fixtures passed separately |
+| Accessibility | 60 passed, including keyboard, immediate theme changes, active foil and research lenses |
+| Visual | 52 passed; EN/KO, light/dark, 320 through 1440px |
+| WebKit interaction/layout | 52 passed, including the full identity viewport/theme/locale matrix |
+| Performance | 7 route budgets passed; initial About JS 4.5KB gzip, no initial Three.js request |
+| Production smoke | 5 passed |
+| Deployment privacy tree | 403 static files, no source/feed/diagnostics/PDF/credential-pattern/local-home-path files |
+| Live provenance | Exact source, feed, content hash, schema and production metadata verified |
+| Live HTML | All 59 served files returned HTTP 200 and matched the validated local HTML bytes |
+| Live browser | 64 route/viewport/theme checks passed; no console/page errors, overflow or broken eager images |
+
+Manual review: 1,304 final local screenshots were inspected at layout level in all 55 contact sheets (`sheet-000` through `sheet-054`). Critical About 3D/foil frames were additionally inspected at readable size; full-page captures verify the painted face remains visible after the renderer stops. This is not a claim that every line of article prose was reread from a thumbnail. The 72 live captures were reviewed in three contact sheets, with desktop dark and Korean mobile light foil inspected separately. Existing approved screenshots, full-face logo and factual prose remain unchanged.
+
+Live interactions include the third-click 3D transition, sixth-click foil, stopped idle frame counter, reset, Research tab selection, exactly-one-current Reading hash navigation, workflow selection and mobile-menu Escape. Reduced-motion, no-JS, unavailable WebGL, canceled imports, pause/offscreen/background behavior and keyboard rotation were covered by local suites.
+
+Publication used a normal fast-forward `gh-pages` push and one Pages build request. Actions were confirmed disabled before and after; no workflow was executed and no Actions run/check/log query was made. Pages remains `legacy`, `gh-pages:/`, `gnaroshi.dev`, HTTPS enforced. A later documentation-only commit is not relabeled as the built website source.
+
+Additional exact release commands:
+
+```bash
+npm ci
+git ls-remote origin refs/heads/main refs/heads/gh-pages
+gh api repos/Gnaroshi/gnaroshi.github.io/actions/permissions
+gh api repos/Gnaroshi/gnaroshi.github.io/pages
+rsync -a --delete --exclude=.git <validated-checkout>/dist/ <isolated-deployment>/
+git push origin HEAD:gh-pages
+gh api -X POST repos/Gnaroshi/gnaroshi.github.io/pages/builds
+node scripts/verify-deployment.mjs --base-url https://gnaroshi.dev --website-commit 951f178b8a858d83362bb93f982efd9130aad208 --feed-commit cb042193c41a1df60fbf2d37fc20cc259efbedf7 --content-hash c9a73861cd05863e59caee1bfb115bd979f2b59f25d5e72dbb8307179b5462ee --feed-schema-version 1 --workflow-run-id local --workflow-run-attempt 0 --environment production
+```
+
+The ad-hoc live Playwright/byte comparison and contact-sheet helpers are retained with ignored local QA evidence, not published or added as authoring responsibilities. Release logs and screenshots are under `artifacts/interactive-release-2026-10-12/` locally.
+
+Tooling diagnostics: the unfiltered deployment `git diff --cached --check` reported whitespace inside bundled upstream Three.js GLSL strings. The generated byte-verified bundle was preserved; checking the remaining artifact diff with `:(exclude)` passed. A first exclusion spelling using `:!` was unsupported by the installed Git and was corrected. No final required site suite failed or was left unrun; the two E2E skips and dependency/chunk warnings above remain disclosed.
+
+Focused implementation and follow-up history: [PR 44](https://github.com/Gnaroshi/gnaroshi.github.io/pull/44), [PR 45](https://github.com/Gnaroshi/gnaroshi.github.io/pull/45), [PR 46](https://github.com/Gnaroshi/gnaroshi.github.io/pull/46). Reusable interaction/lifecycle guidance was synchronized in `gnaroshi_mds` at `2c9d39144b9ffc76a466c072bf0a562cd0d08be5`.
