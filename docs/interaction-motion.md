@@ -6,7 +6,7 @@ This site uses motion to explain navigation, reading progress, and available act
 
 ### Cross-document navigation
 
-Same-origin page changes opt into the CSS View Transition API with `@view-transition { navigation: auto; }`. Supporting browsers use a perceptible 480-millisecond opacity, position, and scale transition. Other browsers perform normal Astro multi-page navigation.
+Same-origin page changes opt into the CSS View Transition API with `@view-transition { navigation: auto; }`. Supporting browsers use a 480-millisecond opacity transition without displacing content. Other browsers perform normal Astro multi-page navigation.
 
 The site mark has a stable transition identity so the persistent brand does not appear to jump between pages.
 
@@ -14,7 +14,7 @@ Locale switches opt out before navigation. This avoids carrying a document snaps
 
 ### Page and section entry
 
-Page headers draw their existing identity rail without moving the heading, while the Home hero uses one-time staggered position animations that work without client-side JavaScript. Text remains at full contrast throughout. Long editorial sections use CSS view timelines where supported, moving from a lower position to their final position as they enter the viewport. Unsupported browsers render the final state immediately.
+Page headers draw their identity rail without moving the heading. Home uses one-time, 12px staggered copy entry and a contained 3.5% image entry. Text remains at full contrast. Editorial sections and sticky indexes never translate during scrolling: their spacing is identical with ordinary and reduced motion. There are no blank heading spacer rows.
 
 ### Long-page progress
 
@@ -32,7 +32,9 @@ Research, Projects, and the long `gnaroshi.dev` case study use compact sticky in
 
 ### State transitions
 
-Buttons and navigable surfaces lift by three pixels. Linked evidence media scales by 5.5 percent and exposes an inset focus frame on hover or keyboard focus. Theme state, the mobile menu, and media dialogs use visible state transitions. These transitions identify an available action or a state change; they do not run on a loop.
+Actions change color and shadow without lifting their hit targets. Linked evidence images retain their readable size and crop; a bottom rail identifies the destination on hover or focus. Section indexes animate their current underline. Theme state, mobile menus, and media dialogs retain native state transitions.
+
+The optional personal reading checklist starts collapsed. Browsers supporting `interpolate-size` animate its requested disclosure; others open it immediately. The system explorer traces downstream connections once after a selection. It does not simulate live publishing or run a loop. Mobile workflow controls reserve the same border width in every state.
 
 ## Constraints
 
@@ -41,18 +43,23 @@ Buttons and navigable surfaces lift by three pixels. Linked evidence media scale
 - No parallax or decorative scroll choreography.
 - No animation that hides required content before JavaScript runs.
 - No transform that changes layout dimensions.
+- No scroll transform that creates visual gaps between otherwise adjacent content.
+- No hover zoom or inset ornament that crops meaningful screenshot evidence.
 - No motion-only status communication.
 - No animation framework for effects supported by native CSS.
 - `prefers-reduced-motion: reduce` disables page, control, dialog, menu, and media motion.
 
 ## Browser Strategy
 
-View Transitions, scroll-driven animations, and `@starting-style` are used only as progressive enhancements. Unsupported browsers keep normal navigation, a static header, and immediately visible menus and dialogs.
+View Transitions, scroll-driven progress, `@starting-style`, and intrinsic-size disclosure transitions are progressive enhancements. Unsupported browsers keep normal navigation, a static header, and immediate state changes. No runtime animation library is required.
 
 References:
 
 - [MDN: Using the View Transition API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using)
 - [MDN: Scroll-driven animation timelines](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll-driven_animations/Timelines)
+- [Chrome: intrinsic-size animation](https://developer.chrome.com/docs/css-ui/animate-to-height-auto)
+- [Chrome: Web UI at I/O 2026](https://developer.chrome.com/blog/new-in-web-ui-io26)
+- [Linear: March 2026 interface refresh](https://linear.app/now/behind-the-latest-design-refresh)
 
 ## Review Checklist
 

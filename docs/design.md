@@ -24,6 +24,14 @@ The design should make writing, reading, and research activity feel primary. Vis
 7. Accessible by default.
 8. Static-export compatible.
 
+## Content Rhythm
+
+Use `--space-flow` for related blocks and `--space-section` for editorial bands. Page headers inside a page shell do not add their own bottom margin. Do not create blank eyebrow rows to align unrelated heading hierarchies. Sticky section indexes are compact, shared navigation rather than oversized numbered cards.
+
+Research themes keep the same text-to-evidence order at every breakpoint. Paired text blocks align to their first content line, not their shared height. Project scenarios pair a step with its screenshot on wide screens and preserve that reading order on mobile. Only actual ordered workflows use connectors.
+
+Normal and reduced-motion screens must have identical section geometry at the same scroll position. Evidence screenshots remain uncropped on hover. See [interaction and motion](interaction-motion.md) and the [October audit](design-audit-2026-10-12.md).
+
 ## Visual Language
 
 Use a restrained academic interface:

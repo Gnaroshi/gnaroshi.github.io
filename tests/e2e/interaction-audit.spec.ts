@@ -195,11 +195,15 @@ test("three-pass checklist is local-only, persistent, and resettable", async ({ 
   const checklist = page.locator("[data-reading-checklist]");
   const inputs = checklist.getByRole("checkbox");
   const reset = checklist.getByRole("button", { name: "Reset" });
+  const disclosure = page.locator(".reading-checklist-disclosure");
+  await expect(disclosure).not.toHaveAttribute("open");
+  await disclosure.locator("summary").click();
   await expect(inputs).toHaveCount(3);
   await expect(reset).toBeDisabled();
   await inputs.first().check();
   await expect(reset).toBeEnabled();
   await page.reload();
+  await disclosure.locator("summary").click();
   await expect(inputs.first()).toBeChecked();
   await reset.click();
   await expect(inputs.first()).not.toBeChecked();
@@ -293,7 +297,14 @@ test("editorial section indexes track scroll with exactly one current item", asy
     await page.locator(`#${targetId}`).evaluate((target) => target.scrollIntoView({ block: "start" }));
     await expect(navigation.locator('[aria-current="location"]')).toHaveCount(1);
     await expect(navigation.locator('[aria-current="location"]')).toHaveAttribute("href", new RegExp(`#${escapeRegExp(targetId)}$`));
-    await expect.poll(() => scroller.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+    const overflows = await scroller.evaluate((element) => element.scrollWidth > element.clientWidth + 1);
+    if (overflows) await expect.poll(() => scroller.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+    await expect.poll(() => navigation.locator('[aria-current="location"]').evaluate((link) => {
+      const container = link.closest<HTMLElement>("[data-in-page-scroller]")!;
+      const bounds = link.getBoundingClientRect();
+      const viewport = container.getBoundingClientRect();
+      return bounds.left >= viewport.left - 1 && bounds.right <= viewport.right + 1;
+    })).toBe(true);
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
     await expect(firstLink).toHaveAttribute("aria-current", "location");
     await expect.poll(() => scroller.evaluate((element) => element.scrollLeft)).toBe(0);
@@ -354,16 +365,13 @@ test("signature motion is perceptible and remains optional", async ({ page }) =>
   const evidence = page.locator("[data-motion-media]").first();
   await evidence.scrollIntoViewIfNeeded();
   await evidence.hover();
-  await expect.poll(() => evidence.locator("img").evaluate((image) => new DOMMatrix(getComputedStyle(image).transform).a)).toBeGreaterThan(1.04);
+  await expect(evidence.locator("img")).toHaveCSS("transform", "none");
   await expect.poll(() => evidence.evaluate((element) => Number.parseFloat(getComputedStyle(element, "::after").opacity))).toBeGreaterThan(.8);
 
   await page.goto("/research/");
   await expect(page.locator(".site-header__progress")).toHaveCSS("height", "4px");
-  const sectionAnimation = await page.locator(".research-theme").first().evaluate((element) => ({
-    name: getComputedStyle(element).animationName,
-    timeline: getComputedStyle(element).animationTimeline
-  }));
-  if (sectionAnimation.timeline !== "auto") expect(sectionAnimation.name).toContain("site-section-reveal");
+  await expect(page.locator(".research-theme").first()).toHaveCSS("animation-name", "none");
+  await expect(page.locator(".research-theme").first()).toHaveCSS("transform", "none");
 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");

@@ -120,13 +120,13 @@ test("theme SVG is optically centered in both themes", async ({ page }) => {
   }
 });
 
-test("page title starts align within each shell", async ({ page }) => {
+test("page header starts align within each shell without blank eyebrow spacers", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   for (const routesInShell of [["/research/", "/projects/", "/blog/", "/about/"], ["/papers/", "/growth/"]]) {
     const starts = [];
     for (const route of routesInShell) {
       await page.goto(route);
-      starts.push(Math.round((await page.locator("main h1").boundingBox())!.y));
+      starts.push(Math.round((await page.locator("main .page-header, main .paper-hero").boundingBox())!.y));
     }
     expect(Math.max(...starts) - Math.min(...starts)).toBeLessThanOrEqual(4);
   }
@@ -159,7 +159,7 @@ test("approved Hero and evidence media stay measurable", async ({ page }) => {
       expect(copy).not.toBeNull();
       await expect(page.locator(".identity-hero__media picture img")).toBeVisible();
       expect(copy!.x + copy!.width).toBeLessThanOrEqual(viewport.width);
-      const writingAvailable = await page.locator('.desktop-nav [data-nav-href$="/blog"]').count();
+      const writingAvailable = await page.locator('.desktop-nav [data-nav-href$="/blog"], .desktop-nav [data-nav-href$="/blog/"]').count();
       await expect(page.locator(".identity-hero__actions .button")).toHaveCount(1 + writingAvailable);
       await expect(page.locator('.identity-hero__actions a[href$="/research/"]')).toHaveCount(1);
       await expect(page.locator('.identity-hero__actions a[href$="/blog/"]')).toHaveCount(writingAvailable);
