@@ -32,7 +32,8 @@ export async function createIdentityScene(host:HTMLElement,source:string,initial
     if (y > 0) pending.push(cell-64); if (y < 63) pending.push(cell+64);
   }
   const included = Array.from({length:4096},(_,index) => index).filter((index) => !outside[index]);
-  const renderer = new THREE.WebGLRenderer({ alpha:true,antialias:true,powerPreference:"low-power",preserveDrawingBuffer:false });
+  // The render loop stops at rest; retain the small capped buffer for repaint/capture.
+  const renderer = new THREE.WebGLRenderer({ alpha:true,antialias:true,powerPreference:"low-power",preserveDrawingBuffer:true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000,0);
@@ -92,6 +93,7 @@ export async function createIdentityScene(host:HTMLElement,source:string,initial
   scene.add(mesh);
   let reduced = initialReduced, paused = false, visible = true, disposed = false;
   let frame = 0, deadline = 0, lastTime = 0, serial = 0;
+  let surfaceWidth = 0, surfaceHeight = 0;
   let targetX = -.12,targetY = .18,kick = 0;
   mesh.rotation.set(targetX,targetY,0);
   const draw = () => {
@@ -119,11 +121,12 @@ export async function createIdentityScene(host:HTMLElement,source:string,initial
   };
   const resize = () => {
     const {width,height} = host.getBoundingClientRect();
-    if (!width || !height) return;
+    if (!width || !height || disposed || (width === surfaceWidth && height === surfaceHeight)) return;
+    surfaceWidth = width; surfaceHeight = height;
     renderer.setSize(width,height,false);
     const aspect = width/height;
     camera.left = -2.15*aspect; camera.right = 2.15*aspect; camera.top=2.15;camera.bottom=-2.15;camera.updateProjectionMatrix();
-    requestDraw(0);
+    if (visible && !document.hidden) draw();
   };
   const onVisibility = () => { if (document.hidden) { cancelAnimationFrame(frame);frame=0; } else requestDraw(0); };
   document.addEventListener("visibilitychange",onVisibility);

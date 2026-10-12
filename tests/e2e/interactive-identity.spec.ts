@@ -30,7 +30,9 @@ for (const locale of ["", "/ko"]) {
     const pixels=await sharp(await canvas.screenshot()).stats();
     for(const channel of pixels.channels.slice(0,3))expect(channel.stdev).toBeGreaterThan(20);
     await page.mouse.move(0,0);await page.waitForTimeout(1000);
-    const front=await canvas.screenshot();await stage.press("ArrowRight");await stage.press("ArrowRight");await page.waitForTimeout(750);
+    const front=await canvas.screenshot();
+    for(const channel of (await sharp(front).stats()).channels.slice(0,3))expect(channel.stdev).toBeGreaterThan(20);
+    await stage.press("ArrowRight");await stage.press("ArrowRight");await page.waitForTimeout(750);
     expect((await canvas.screenshot()).equals(front)).toBe(false);
     await expect(identity.locator("[data-identity-canvas]")).toHaveAttribute("data-draw-calls","1");
     for(let count=4;count<=5;count++) { await stage.click();await expect(identity).toHaveAttribute("data-mode","dimensional"); }
@@ -154,6 +156,19 @@ test("interactive identity stays framed in both themes and narrow locales",async
     for(let count=0;count<6;count++)await stage.click();await expect(identity).toHaveAttribute("data-renderer","webgl");
     expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
     await page.mouse.move(0,0);await page.waitForTimeout(1100);
-    await page.screenshot({path:`artifacts/interactive-identity/${locale?"ko":"en"}-${width}-${theme}-foil.png`,fullPage:true});
+    const canvas=identity.locator("canvas");
+    const bounds=await canvas.boundingBox();
+    const scroll=await page.evaluate(()=>({x:scrollX,y:scrollY}));
+    for(let capture=0;capture<2;capture++) {
+      const full=await page.screenshot({path:capture?`artifacts/interactive-identity/${locale?"ko":"en"}-${width}-${theme}-foil.png`:undefined,fullPage:true,scale:"css"});
+      const rendered=await sharp(full).extract({left:Math.round(bounds!.x+scroll.x),top:Math.round(bounds!.y+scroll.y),width:Math.floor(bounds!.width),height:Math.floor(bounds!.height)}).removeAlpha().raw().toBuffer({resolveWithObject:true});
+      let coloredPixels=0;
+      for(let offset=0;offset<rendered.data.length;offset+=rendered.info.channels) {
+        const channels=[rendered.data[offset],rendered.data[offset+1],rendered.data[offset+2]];
+        if(Math.max(...channels)-Math.min(...channels)>45)coloredPixels++;
+      }
+      // A neutral empty stage or its corner marks cannot satisfy this painted-area check.
+      expect(coloredPixels/(rendered.info.width*rendered.info.height),`${locale}/${width}/${theme} settled full-page painted area #${capture}`).toBeGreaterThan(.03);
+    }
   }
 });
