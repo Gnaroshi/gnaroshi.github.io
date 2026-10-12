@@ -73,11 +73,37 @@ Local ignored evidence: `artifacts/project-desk/`, `artifacts/project-desk-qa-20
 - [x] Evidence/privacy, feed contracts, type, content, localization, links, and complete functional checks.
 - [x] Complete visual suite and final narrow-layout verification.
 - [x] Final accessibility/performance checks and WebKit interaction checks.
-- [ ] Purpose-separated commits, PR, and source push.
-- [ ] Clean production build from immutable website/feed SHAs.
-- [ ] Fast-forward static publication with repository Actions still disabled.
-- [ ] Exact live provenance and live Home interaction verification.
-- [ ] Owned QA processes stopped; requested localhost retained.
+- [x] Purpose-separated commits, PR, and source push.
+- [x] Clean production build from immutable website/feed SHAs.
+- [x] Fast-forward static publication with repository Actions still disabled.
+- [x] Exact live provenance and live Home interaction verification.
+- [x] Owned QA processes stopped; requested localhost retained.
+
+## Published Release
+
+- Feature: `5d22422`; interaction tests: `1b485d7`; guidance/QA: `1c90eaf`.
+- [PR #47](https://github.com/Gnaroshi/gnaroshi.github.io/pull/47) merged into `main` as `138c97eda9cc717e06745f0a71333f71b45effa0`.
+- Immutable public feed: `cb042193c41a1df60fbf2d37fc20cc259efbedf7`; schema 1; content hash recorded above.
+- Build timestamp: `2026-10-12T19:16:58.028Z` (2026-10-13 in Korea); `local` / `0` / `production`.
+- Static artifact: `5e269d07ac8fa9729eb91fa76eca3be490fb7cd1`; 408 public files; ordinary fast-forward from `d4550b591e1963eac8a6fe4cf44c34139756731e`.
+- The previous artifact had advanced to the already-verified `127fc5c` source during QA. It was reconciled before preparation; the remote deployment tip was checked again immediately before publication. Nothing was force-pushed.
+- Clean isolated `npm ci`, type check, all 11 valid/6 rejection feed fixtures, 59-page build, i18n/tone/copy/launch/links, 5 smoke checks, and 11 desk interaction/axe checks passed against the selected input pair.
+- Root `.nojekyll` and `CNAME` were preserved. Static-tree inspection found no source checkout, dependency directory, development diagnostics, credentials, or local paths.
+- Repository Actions were confirmed disabled before and after publication. No Actions run/check/log query, dispatch, or rerun was used. One permitted Pages build request returned `queued`; that response was not treated as publication proof.
+- `scripts/verify-deployment.mjs` subsequently verified exact live website/feed SHAs, content hash, schema, environment, run fields, core routes, navigation, and scaffold-copy absence.
+- Live Home selection, flip, and horizontal drag passed in EN/KO at 1440 and 390px, light/dark: eight combinations, zero page errors or overflow, loaded images, and one selected choice. All 16 selected/front-back screenshots were inspected in four contact sheets.
+- Live EN/KO About retained original identity, third-click WebGL relief, sixth-click foil, and reset. Research retained one H1, no mobile overflow, and no page errors.
+- Ignored live evidence: `artifacts/project-desk-live/`; verifier and command logs: `artifacts/project-desk-qa-2026-10-13/`. Owned preview and headless browsers closed; the user-requested `127.0.0.1:4321` server remains available.
+
+### Non-Passing Attempts And Remaining Warnings
+
+The isolated feed-fixture run initially reused the previously running QA server on port 4324 and compared fixture expectations against the wrong feed. It stopped with six failures. The owned server was closed; the complete fixture runner passed from the isolated checkout, then the selected production feed was rebuilt and smoke-tested. No test invariant was weakened to resolve this environment mismatch.
+
+The first PR merge request used an abbreviated SHA and was rejected with HTTP 422. Retrying with the exact 40-character head SHA succeeded. This did not change or bypass merge requirements.
+
+`npm audit --json` returned exit 1 for four existing low-severity KaTeX/remark-math/rehype-katex dependency advisories, with no moderate, high, or critical findings. They are not introduced by Lucide. The reported automatic remedies include breaking upgrades/downgrades, so no forced dependency rewrite was applied during this interaction task. This remains a separate dependency-hardening item, not a claim of a clean security audit.
+
+This final release record is a later documentation-only revision. Live provenance intentionally identifies the built merge source `138c97e`, not the subsequent report commit.
 
 ## Known Limits
 
