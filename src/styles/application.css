@@ -28,10 +28,7 @@ body[data-mode="application"] button,
 body[data-mode="application"] select,
 body[data-mode="application"] input,
 body[data-mode="application"] textarea {
-  transition:
-    border-color var(--duration-fast) ease,
-    background-color var(--duration-fast) ease,
-    color var(--duration-fast) ease;
+  transition: border-color var(--duration-fast) ease;
 }
 
 @media (min-width: 768px) {

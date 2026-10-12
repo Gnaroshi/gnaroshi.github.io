@@ -55,6 +55,7 @@ The 3D scene is a relief derived from the existing raster, not a newly modeled p
 11. An initial full-page assertion used a color-variance threshold that rejected a visibly correct darker foil frame. Replaced it with a foreground-area assertion and document-coordinate cropping; neither an empty neutral stage nor its small corner marks can pass it.
 12. The feed-contract suite builds fixtures into `dist`; a subsequent browser run accidentally tested the last fixture. Rebuilding with the exact production feed restored the expected route/content assertions. Final release tests run only after that rebuild, with no concurrent output mutation.
 13. WebKit's default device scale made a CSS-coordinate crop inspect the wrong physical pixels, despite a visibly correct screenshot. Full-page pixel captures now explicitly use CSS scale in both browsers; the same painted-area requirement remains enforced.
+14. The final accessibility rerun caught a 4.42:1 intermediate theme frame on the selected Research section-navigation label. Removed text/background interpolation from the shared section links and the analogous application/fallback controls; selection underlines and border feedback still animate. The active-foil/lens axe suite checks the interaction immediately, not only a delayed settled frame.
 
 ## Pre-release Results
 

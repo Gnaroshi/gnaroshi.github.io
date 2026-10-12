@@ -89,7 +89,7 @@
 .system-diagram__fallback-repositories > li { min-width:0; }
 .system-diagram__fallback-repositories [data-system-explorer-static-control],
 .system-diagram__fallback-control { display:grid; width:100%; min-height:44px; gap:.15rem; align-content:center; padding:var(--space-2) var(--space-3); border:1px solid var(--color-border); border-radius:var(--radius-sm); background:var(--color-surface-raised); color:var(--color-text); text-align:left; }
-.system-diagram__fallback-control { cursor:pointer; border-width:2px; transition:border-color var(--duration-state),background-color var(--duration-state); }
+.system-diagram__fallback-control { cursor:pointer; border-width:2px; transition:border-color var(--duration-state); }
 .system-diagram__fallback-control:hover { border-color:var(--color-border-strong); }
 .system-diagram__fallback-repositories small { color:var(--color-text-secondary); font-size:var(--text-xs); line-height:1.4; }
 .system-diagram__fallback-control[data-relation="selected"] { border:2px solid var(--color-identity-orange); }
