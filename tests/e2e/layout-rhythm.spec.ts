@@ -5,9 +5,10 @@ for (const locale of ["", "/ko"]) {
     for (const viewport of [{ width:320, height:568 }, { width:390, height:844 }, { width:1024, height:768 }]) {
       await page.setViewportSize(viewport);
       await page.goto(`${locale}/`);
-      const nextHeading = page.locator(".home-research h2");
+      const nextHeading = page.locator(".home-desk h2");
       const box = await nextHeading.boundingBox();
       expect(box!.y + box!.height).toBeLessThan(viewport.height);
+      await expect(page.locator("[data-desk-select]").first()).toBeInViewport();
       const actions = await page.locator(".identity-hero__actions .button").all();
       for (const action of actions) {
         const actionBox = await action.boundingBox();
@@ -72,7 +73,7 @@ test("public content never inherits undefined legacy typography tokens", async (
   await page.goto("/projects/");
   await expect(page.locator(".tech-stack li").first()).toHaveCSS("font-size", "14px");
   await page.goto("/");
-  await expect(page.locator(".tag-row")).toHaveCSS("list-style-type", "none");
+  await expect(page.locator('[data-desk-story="0"] .home-desk__open ul')).toHaveCSS("list-style-type", "disc");
 });
 
 test("workflow motion traces the selected public path without moving content", async ({ page }) => {

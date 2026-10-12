@@ -1,0 +1,121 @@
+import {expect,test} from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+import sharp from "sharp";
+
+for(const locale of ["","/ko"]) {
+  test(`project desk changes evidence and workflow, not just hover ${locale||"en"}`,async ({page})=>{
+    const errors:string[]=[];page.on("pageerror",error=>errors.push(error.message));
+    await page.emulateMedia({reducedMotion:"no-preference"});
+    await page.goto(`${locale}/`);
+    const desk=page.locator("[data-project-desk]");const stage=desk.locator("[data-desk-stage]");
+    await stage.scrollIntoViewIfNeeded();await expect(desk).toHaveAttribute("data-renderer","3d");
+    await page.waitForTimeout(1000);
+    const first=await stage.screenshot();
+    const firstPixels=await sharp(first).stats();
+    expect(firstPixels.channels[0].stdev).toBeGreaterThan(25);
+    await desk.locator('[data-desk-select="1"]').click();
+    await expect(desk).toHaveAttribute("data-selected","1");
+    await expect(desk.locator('[data-desk-select][aria-pressed="true"]')).toHaveCount(1);
+    await expect(desk.locator('[data-desk-story="1"]')).toContainText("Gnaroshi Studio");
+    await expect(desk.locator('[data-desk-story="0"]')).toHaveAttribute("inert","");
+    await page.waitForTimeout(1000);
+    expect((await stage.screenshot()).equals(first)).toBe(false);
+    const height=await desk.evaluate(e=>e.getBoundingClientRect().height);
+    await desk.locator("[data-desk-flip]").click();await expect(desk).toHaveAttribute("data-side","workflow");
+    await page.waitForTimeout(1000);
+    await expect(desk.locator('[data-desk-story="1"] [data-desk-workflow]')).toBeVisible();
+    await expect(desk.locator('[data-desk-story="1"] [data-desk-summary]')).toBeHidden();
+    expect(await desk.evaluate(e=>e.getBoundingClientRect().height)).toBeCloseTo(height,0);
+    await desk.locator("[data-desk-reset]").click();await expect(desk).toHaveAttribute("data-selected","0");await expect(desk).toHaveAttribute("data-side","evidence");
+    await stage.focus();await stage.press("ArrowRight");await expect(desk).toHaveAttribute("data-selected","1");
+    await stage.press("Space");await expect(desk).toHaveAttribute("data-side","workflow");await stage.press("Escape");await expect(desk).toHaveAttribute("data-side","evidence");
+    const bounds=(await stage.boundingBox())!;
+    await page.mouse.move(bounds.x+bounds.width*.6,bounds.y+bounds.height*.5);await page.mouse.down();
+    await page.mouse.move(bounds.x+bounds.width*.25,bounds.y+bounds.height*.5,{steps:12});await page.mouse.up();
+    await expect(desk).toHaveAttribute("data-selected","2");await expect(desk.locator("[data-desk-stage]")).toBeFocused();
+    await page.waitForTimeout(1100);const frame=await desk.locator("[data-desk-renderer]").getAttribute("data-frame");
+    await page.waitForTimeout(200);expect(await desk.locator("[data-desk-renderer]").getAttribute("data-frame")).toBe(frame);
+    await page.evaluate(()=>scrollTo(0,document.documentElement.scrollHeight));await page.waitForTimeout(200);
+    const hidden=await desk.locator("[data-desk-renderer]").getAttribute("data-frame");
+    await page.waitForTimeout(200);expect(await desk.locator("[data-desk-renderer]").getAttribute("data-frame")).toBe(hidden);
+    expect(errors).toEqual([]);
+  });
+
+  test(`project desk reduced-motion keeps selection without the engine ${locale||"en"}`,async ({page})=>{
+    const requests:string[]=[];page.on("request",request=>{if(request.url().includes("projectDeskScene"))requests.push(request.url());});
+    await page.emulateMedia({reducedMotion:"reduce"});await page.goto(`${locale}/`);
+    const desk=page.locator("[data-project-desk]");await expect(desk).toHaveAttribute("data-enhanced","true");
+    await desk.locator('[data-desk-select="2"]').click();await desk.locator("[data-desk-flip]").click();
+    await expect(desk).toHaveAttribute("data-selected","2");await expect(desk).toHaveAttribute("data-side","workflow");
+    await expect(desk.locator('[data-desk-sheet="2"] [data-desk-back]')).toBeVisible();expect(requests).toHaveLength(0);
+    await page.emulateMedia({reducedMotion:"no-preference"});await expect(desk).toHaveAttribute("data-renderer","3d");
+    await page.emulateMedia({reducedMotion:"reduce"});await expect(desk.locator("[data-desk-renderer] > div")).toHaveCount(0);
+    await expect(desk).toHaveAttribute("data-side","workflow");await expect(desk.locator('[data-desk-sheet="2"] [data-desk-back]')).toBeVisible();
+  });
+}
+
+test("project desk stays useful with no JavaScript or a failed scene import",async ({browser,page,baseURL})=>{
+  const context=await browser.newContext({javaScriptEnabled:false,baseURL});const fallback=await context.newPage();
+  try {await fallback.goto("/");await expect(fallback.locator('[data-desk-sheet="0"] img')).toBeVisible();await expect(fallback.locator('[data-desk-story="0"] a')).toHaveAttribute("href","/projects/gnaroshi-vla/");await expect(fallback.locator("[data-desk-select]").first()).toBeDisabled();}finally{await context.close();}
+  await page.route("**/*projectDeskScene*.js",route=>route.abort());await page.goto("/");
+  const desk=page.locator("[data-project-desk]");await desk.locator("[data-desk-stage]").scrollIntoViewIfNeeded();await expect(desk).toHaveAttribute("data-renderer","flat");
+  await desk.locator('[data-desk-select="1"]').click();await expect(desk.locator('[data-desk-sheet="1"] img')).toBeVisible();
+  await desk.locator("[data-desk-flip]").click();await expect(desk.locator('[data-desk-story="1"] [data-desk-workflow]')).toBeVisible();
+});
+
+test("project desk touch gestures preserve ordinary vertical scrolling",async ({browser,baseURL,browserName})=>{
+  test.skip(browserName!=="chromium","Chromium CDP sends real touch input; other engines use pointer and keyboard tests.");
+  const context=await browser.newContext({baseURL,viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:"no-preference"});const page=await context.newPage();
+  try {
+    await page.goto("/");const desk=page.locator("[data-project-desk]");const stage=desk.locator("[data-desk-stage]");
+    await stage.scrollIntoViewIfNeeded();await expect(desk).toHaveAttribute("data-renderer","3d");
+    const session=await context.newCDPSession(page);const bounds=(await stage.boundingBox())!;
+    const x=bounds.x+bounds.width*.7,y=bounds.y+bounds.height*.5;
+    await session.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[{x,y}]});
+    for(let step=1;step<=8;step++)await session.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[{x:x-step*15,y}]});
+    await session.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});await expect(desk).toHaveAttribute("data-selected","1");
+    const before=await page.evaluate(()=>scrollY);
+    await session.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[{x,y}]});
+    for(let step=1;step<=8;step++)await session.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[{x,y:y-step*15}]});
+    await session.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
+    await expect(desk).toHaveAttribute("data-selected","1");expect(await page.evaluate(()=>scrollY)).toBeGreaterThan(before);
+  } finally {await context.close();}
+});
+
+test("zoom uses a readable flat view and preserves the selected project",async({page,context,browserName})=>{
+  test.skip(browserName!=="chromium","Chromium CDP emulates browser viewport zoom.");
+  await page.goto("/");const desk=page.locator("[data-project-desk]");await desk.locator('[data-desk-select="1"]').click();
+  await expect(desk).toHaveAttribute("data-renderer","3d");const session=await context.newCDPSession(page);
+  await session.send("Emulation.setPageScaleFactor",{pageScaleFactor:2});await expect(desk).toHaveAttribute("data-renderer","flat");
+  await expect(desk).toHaveAttribute("data-selected","1");await expect(desk.locator('[data-desk-sheet="1"] img')).toBeVisible();
+  await session.send("Emulation.setPageScaleFactor",{pageScaleFactor:1});await expect(desk).toHaveAttribute("data-renderer","3d");
+});
+
+for(const locale of ["","/ko"])for(const theme of ["light","dark"])test(`project desk accessible selected and flipped ${locale||"en"} ${theme}`,{tag:"@a11y"},async({page})=>{
+  await page.setViewportSize({width:390,height:844});await page.goto(`${locale}/`);await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+  const desk=page.locator("[data-project-desk]");await desk.locator('[data-desk-select="1"]').click();
+  expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+  await desk.locator("[data-desk-flip]").click();expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+});
+
+for(const width of [1440,1024,768,430,390,360,320])for(const locale of ["","/ko"])for(const theme of ["light","dark"])test(`project desk visual ${locale||"en"} ${width} ${theme}`,{tag:["@visual","@visual-v3"]},async({page})=>{
+  await page.setViewportSize({width,height:width>=1024?1000:844});await page.goto(`${locale}/`);await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+  await page.emulateMedia({reducedMotion:"no-preference"});
+  const desk=page.locator("[data-project-desk]");const stage=desk.locator("[data-desk-stage]");
+  await expect(desk.locator("h2")).toBeInViewport();await stage.scrollIntoViewIfNeeded();await expect(desk).toHaveAttribute("data-renderer","3d");await page.waitForTimeout(1000);
+  for(let index=0;index<3;index++) {
+    await desk.locator(`[data-desk-select="${index}"]`).click();await page.waitForTimeout(950);
+    await expect(desk.locator(`[data-desk-sheet="${index}"] img`)).toHaveCSS("object-fit","contain");
+    await desk.screenshot({path:`artifacts/project-desk/${locale?"ko":"en"}-${width}-${theme}-${index}-front.png`,scale:"css",style:".site-header { visibility: hidden !important; }"});
+    const pixels=await sharp(await stage.screenshot({scale:"css"})).stats();expect(pixels.channels[0].stdev).toBeGreaterThan(20);
+    await desk.locator("[data-desk-flip]").click();await page.waitForTimeout(950);
+    if(width===320) {
+      const list=desk.locator(`[data-desk-story="${index}"] [data-desk-workflow] ol`);
+      const starts=await list.locator("li").evaluateAll(items=>items.map(item=>Math.round(item.getBoundingClientRect().left)));
+      expect(new Set(starts).size).toBe(1);
+    }
+    await desk.screenshot({path:`artifacts/project-desk/${locale?"ko":"en"}-${width}-${theme}-${index}-back.png`,scale:"css",style:".site-header { visibility: hidden !important; }"});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
+    const buttons=await desk.locator("button").all();for(const button of buttons){const bounds=(await button.boundingBox())!;expect(bounds.width).toBeGreaterThanOrEqual(42);expect(bounds.height).toBeGreaterThanOrEqual(42);}
+  }
+});

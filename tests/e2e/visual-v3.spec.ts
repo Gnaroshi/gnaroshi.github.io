@@ -167,7 +167,8 @@ test("approved Hero and evidence media stay measurable", async ({ page }) => {
       const images = page.locator("main img");
       for (let index = 0; index < await images.count(); index += 1) {
         const image = images.nth(index);
-        await expect(image).toHaveAttribute("alt", /.+/);
+        const hidden = await image.evaluate(element=>Boolean(element.closest('[aria-hidden="true"]')));
+        await expect(image).toHaveAttribute("alt",hidden?"":/.+/);
         const dimensions = await image.evaluate((element: HTMLImageElement) => ({ width: element.naturalWidth, height: element.naturalHeight }));
         expect(dimensions.width).toBeGreaterThan(0);
         expect(dimensions.height).toBeGreaterThan(0);

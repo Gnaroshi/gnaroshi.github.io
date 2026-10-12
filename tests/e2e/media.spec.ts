@@ -41,12 +41,11 @@ test.describe("approved public media", () => {
       await expect(page.locator(".identity-hero picture img")).toHaveCount(1);
       await expect(page.locator(".identity-hero__media[aria-hidden]")).toHaveCount(0);
       await expect(page.locator(".identity-hero picture img")).not.toHaveAttribute("alt", "");
-      await expect(page.locator(".home-featured-project picture img")).toHaveCount(1);
-      await expect(page.locator(".home-featured-project__media")).not.toHaveAttribute("aria-hidden", "true");
-      await expect(page.locator(".home-featured-project__media")).not.toHaveAttribute("tabindex", "-1");
-      await expect(page.locator(".home-featured-project__figure figcaption")).toBeVisible();
+      await expect(page.locator(".home-desk picture img")).toHaveCount(3);
+      await expect(page.locator('[data-desk-sheet="0"] [data-desk-front]')).toHaveAttribute("aria-hidden", "false");
+      await expect(page.locator(".home-desk__media-caption")).toContainText(/demonstration data|데모 자료/);
       const images = page.locator("main picture img");
-      await expect(images).toHaveCount(2);
+      await expect(images).toHaveCount(4);
       for (let index = 0; index < await images.count(); index += 1) {
         const image = images.nth(index);
         await expect(image).toHaveAttribute("width", /\d+/);

@@ -42,6 +42,18 @@ Pointer presses on commands and project links produce a short pixel-corner pulse
 
 Palette changes are immediate on text-bearing buttons/surfaces. Interpolating light and dark button backgrounds created a gray midpoint with insufficient text contrast; shadow, border, icon, and press feedback carry motion instead of blending foreground/background palettes.
 
+### Discoverable project desk
+
+Home now places a three-project desk immediately after the compact personal introduction, before research questions. It is a content exploration surface, not another hover effect: project selection rearranges the evidence sheets and replaces the title, summary, limitations, disclosure, and detail destination. Horizontal dragging selects the next or previous project; clicking the active sheet or the workflow control turns it over to the existing example workflow. Arrow keys and Space provide equivalent input. Reset returns to the first front-facing project.
+
+The sources are the already-approved VLA repository evidence, Studio managed-app screen, and PaperFlow plan-review screen. No replacement screenshot or new achievement is generated. Demo disclosure stays visible, and the selected image receives its localized alternative. Inactive sheets are decorative previews with empty alt; their story and focus targets are inert. The readable workflow is outside the perspective scene, so its text is never available only as a rotated visual.
+
+Three.js `CSS3DRenderer` supplies actual perspective to ordinary DOM evidence. It needs no WebGL canvas, texture copies, continuously running GPU renderer, or React hydration. The engine loads when the desk approaches the viewport; it is not globally loaded. Motion settles after 850ms, stops offscreen/background, and tears down on page exit. Reduced-motion avoids the engine and keeps the same selection/workflow controls with immediate flat views. Without JavaScript, the first approved evidence and case-study link remain readable. A failed engine import keeps every ordinary selection available.
+
+The desk reserves its story geometry across selection and turning. The front uses that space for existing limitations rather than leaving a hidden-workflow-sized blank. Mobile choices use three stable columns, and dragging never captures a vertical scrolling gesture. DOM screenshot pixel checks, input/state tests, and the complete EN/KO light/dark viewport matrix verify the scene; canvas pixel checks still apply separately to About's WebGL identity.
+
+`CSS3DRenderer` documents a 100% zoom limit. Detected pinch zoom or a pixel-ratio change therefore restores the flat DOM view, preserving the selected story, and restores perspective when the zoom returns. Lucide controls are server-rendered SVGs with local ISC/Feather MIT attribution; no icon client runtime is hydrated.
+
 ### Opt-in identity interaction
 
 About renders the existing approved full-face logo, not a replacement asset or portrait. Clicks one and two give a short press/rotation response. Click three loads a Three.js relief reconstructed from the approved raster. Clicks four and five produce rotational impulses; click six adds a view-dependent prismatic foil shader. Later clicks repeat the response without adding a timer loop. The effect is personal identity, not evidence of a product or achievement; no commercial trading-card artwork is used.
@@ -65,7 +77,7 @@ The engine is dynamically imported only on click three, never on Home, Research,
 
 ## Browser Strategy
 
-Scroll-driven progress, `@starting-style`, and intrinsic-size disclosure transitions are progressive enhancements. Unsupported browsers keep normal navigation, a static header, and immediate state changes. Three.js is required only for the explicitly requested, opt-in About object; ordinary page interaction needs no animation library.
+Scroll-driven progress, `@starting-style`, and intrinsic-size disclosure transitions are progressive enhancements. Unsupported browsers keep normal navigation, a static header, and immediate state changes. Three.js is route-owned: Home uses its DOM renderer for project exploration, while About loads the WebGL identity only on the third click. Ordinary navigation and reading interaction need no animation library.
 
 References:
 
@@ -76,6 +88,8 @@ References:
 - [Linear: March 2026 interface refresh](https://linear.app/now/behind-the-latest-design-refresh)
 - [Chrome: snapshot cross-fade and blending behavior](https://developer.chrome.com/docs/web-platform/view-transitions/same-document)
 - [Three.js: ShaderMaterial](https://threejs.org/docs/pages/ShaderMaterial.html)
+- [Three.js: CSS3DRenderer](https://threejs.org/docs/pages/CSS3DRenderer.html)
+- [Three.js: rendering on demand](https://threejs.org/manual/pages/rendering-on-demand.html)
 
 ## Review Checklist
 

@@ -217,7 +217,7 @@ Motion must explain destination, progress, or state. The site uses progressive n
 
 Do not add automatic loops, custom cursors, decorative parallax, motion-only feedback, or effects that hide content before JavaScript runs. Motion must not change layout dimensions. Unsupported browsers keep a complete static interface, and `prefers-reduced-motion` removes every nonessential transition.
 
-The owner-requested About identity is an intentional exception to purely utilitarian micro-interaction: an opt-in 3D relief and holographic foil provide personal expression. Preserve the approved full-face raster, keep it unframed, reserve control geometry, and load/render the engine only after interaction. This does not authorize arbitrary 3D decoration across reading pages.
+The owner-requested About identity and Home project desk are intentional exceptions to purely utilitarian micro-interaction. About provides opt-in relief and foil while preserving the approved full-face raster. Home provides a discoverable perspective desk for selecting and turning existing project evidence, not arbitrary decoration: each action changes the actual object or selected public story. Keep reading routes static and text-forward. Reserve control geometry, avoid idle rendering, and retain complete flat/reduced-motion fallbacks.
 
 See `docs/interaction-motion.md`.
 

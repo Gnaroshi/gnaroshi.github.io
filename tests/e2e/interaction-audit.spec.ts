@@ -125,6 +125,11 @@ test("every visible button has an observable action", async ({ page }) => {
       const before = await controlState(page, button);
       await button.click();
       const after = await controlState(page, button);
+      if (await button.evaluate((element) => element.matches('[data-desk-select][aria-pressed="true"]')) && before.pressed === "true") {
+        expect(after, `${route}: current project selection is stable`).toEqual(before);
+        await expect(page.locator('[data-desk-select][aria-pressed="true"]')).toHaveCount(1);
+        continue;
+      }
       expect(after, `${route}: ${before.label}`).not.toEqual(before);
     }
   }
@@ -361,7 +366,7 @@ test("signature motion is perceptible and remains optional", async ({ page }) =>
   expect(railSizes).not.toBeNull();
   expect(railSizes!.start).not.toBe(railSizes!.end);
 
-  await page.goto("/");
+  await page.goto("/projects/");
   const evidence = page.locator("[data-motion-media]").first();
   await evidence.scrollIntoViewIfNeeded();
   await evidence.hover();
@@ -376,6 +381,7 @@ test("signature motion is perceptible and remains optional", async ({ page }) =>
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.locator(".identity-hero h1")).toHaveCSS("animation-name", "none");
+  await page.goto("/projects/");
   const reducedEvidence = page.locator("[data-motion-media]").first();
   await reducedEvidence.scrollIntoViewIfNeeded();
   await reducedEvidence.hover();

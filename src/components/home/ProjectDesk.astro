@@ -1,0 +1,71 @@
+---
+import { ArrowLeft, ArrowRight, RotateCcw, FlipHorizontal2 } from "lucide-react";
+import ResponsiveImage from "../media/ResponsiveImage.astro";
+import { getLocalizedData } from "../../data/locales";
+import { getProjectMedia } from "../../data/approvedMedia";
+import { approvedProjectShowcases } from "../../data/approvedProjectShowcases";
+import { getProjectStory, productStatusLabels } from "../../data/projectStories";
+import type { Locale } from "../../i18n/types";
+import { getLocalePath } from "../../i18n/utils";
+import "../../styles/project-desk.css";
+interface Props { locale:Locale }
+const { locale } = Astro.props;
+const labels = locale === "ko" ? {
+  title:"만들고 있는 것들", all:"모든 프로젝트", selection:"프로젝트 선택", previous:"이전 프로젝트", next:"다음 프로젝트", reset:"정면으로 돌아가기", workflow:"작업 흐름 보기", evidence:"자료 보기", detail:"자세히 보기", scene:"프로젝트 작업대", instruction:"좌우로 끌거나 방향키로 프로젝트를 선택합니다. Space 키로 자료와 작업 흐름을 전환합니다.", workflowLabel:"예시 흐름", image:"프로젝트 자료", open:"남은 문제", disclosure:"앱 화면에는 데모 자료를 사용했습니다."
+} : {
+  title:"Things I’m building", all:"All projects", selection:"Select a project", previous:"Previous project", next:"Next project", reset:"Return to front view", workflow:"See the workflow", evidence:"See the evidence", detail:"View details", scene:"Project desk", instruction:"Drag horizontally or use the arrow keys to select a project. Space switches between evidence and workflow.", workflowLabel:"Example workflow", image:"Project material", open:"Still open", disclosure:"App screens use demonstration data."
+};
+const data = getLocalizedData(locale);
+const entries = (["gnaroshi-vla", "gnaroshi-studio", "paperflow"] as const).map((id) => {
+  const project = data.projects.find((entry) => entry.id === id)!;
+  const showcase = project.kind === "application" ? approvedProjectShowcases.find((asset) => asset.id === project.primaryShowcaseId) : undefined;
+  const media = showcase ?? getProjectMedia(id);
+  if (!media) throw new Error(`Project desk requires approved evidence: ${id}`);
+  const story = getProjectStory(locale,id);
+  return { project,media,story,disclosure:showcase?.demoDisclosure[locale] ?? story.scenario.demoDisclosure };
+});
+---
+<section class="home-desk" id="project-desk" aria-labelledby="project-desk-heading" data-project-desk data-selected="0" data-side="evidence" data-labels={JSON.stringify(labels)}>
+  <header class="home-desk__heading"><h2 id="project-desk-heading">{labels.title}</h2><a href={getLocalePath(locale,"/projects/")}>{labels.all}</a></header>
+  <div class="home-desk__choices" role="group" aria-label={labels.selection}>
+    {entries.map(({story},index) => <button type="button" data-desk-select={index} aria-pressed={index === 0 ? "true" : "false"} disabled><span aria-hidden="true">{String(index+1).padStart(2,"0")}</span>{story.title}</button>)}
+  </div>
+  <p id="project-desk-instructions" class="sr-only">{labels.instruction}</p>
+  <div class="home-desk__stage" tabindex="0" role="group" aria-label={labels.scene} aria-describedby="project-desk-instructions" data-desk-stage>
+    <div class="home-desk__sheets" data-desk-sheets>
+      {entries.map(({media,story},index) => <div class="home-desk__sheet" data-desk-sheet={index} data-desk-alt={media.alt[locale]} aria-hidden={index > 0 ? "true" : undefined} inert={index > 0}>
+        <div class="home-desk__face" data-desk-front>
+          <ResponsiveImage asset={index === 0 ? media : {...media,alt:{en:"",ko:""}}} locale={locale} sizes="(min-width:768px) 640px, 88vw" fit="contain" />
+        </div>
+        <div class="home-desk__face home-desk__back" data-desk-back aria-hidden="true" inert>
+          <p>{story.title}</p>
+          <ol>{story.scenario.steps.map((step) => <li>{step.title}</li>)}</ol>
+        </div>
+      </div>)}
+    </div>
+    <div class="home-desk__renderer" data-desk-renderer></div>
+    <span class="home-desk__baseline" aria-hidden="true"></span>
+  </div>
+  <div class="home-desk__toolbar">
+    <div class="home-desk__arrows">
+      <button type="button" data-desk-previous aria-label={labels.previous} title={labels.previous} disabled><ArrowLeft size={20} aria-hidden="true" /></button>
+      <button type="button" data-desk-next aria-label={labels.next} title={labels.next} disabled><ArrowRight size={20} aria-hidden="true" /></button>
+    </div>
+    <button type="button" class="home-desk__flip" data-desk-flip disabled><FlipHorizontal2 size={18} aria-hidden="true" /><span>{labels.workflow}</span></button>
+    <button type="button" data-desk-reset aria-label={labels.reset} title={labels.reset} disabled><RotateCcw size={18} aria-hidden="true" /></button>
+  </div>
+  <p class="home-desk__media-caption">{labels.disclosure}</p>
+  <div class="home-desk__stories" aria-live="polite" aria-atomic="true" data-content-group>
+    {entries.map(({project,story,disclosure},index) => <article class="home-desk__story" data-desk-story={index} data-active={index === 0} aria-hidden={index > 0 ? "true" : undefined} inert={index > 0}>
+      <div class="home-desk__facts"><h3>{story.title}</h3><span>{productStatusLabels[locale][project.productStatus]}</span><a href={getLocalePath(locale,`/projects/${project.slug}/`)}>{labels.detail}</a></div>
+      <div class="home-desk__body">
+        <div class="home-desk__summary" data-desk-summary><p>{story.cardSummary}</p><div class="home-desk__open"><h4>{labels.open}</h4><ul>{story.currentLimitations.slice(0,2).map((limitation)=><li>{limitation}</li>)}</ul></div><p class="home-desk__disclosure"><strong>{labels.image}.</strong> {disclosure}</p></div>
+        <div class="home-desk__workflow" data-desk-workflow aria-hidden="true" inert><p class="eyebrow">{labels.workflowLabel}</p><ol>{story.scenario.steps.map((step) => <li><strong>{step.title}</strong><span>{step.description}</span></li>)}</ol><p class="home-desk__disclosure">{disclosure}</p></div>
+      </div>
+    </article>)}
+  </div>
+</section>
+<script>
+  import { mountProjectDesk } from "../../utils/projectDesk";
+  for (const root of document.querySelectorAll<HTMLElement>("[data-project-desk]")) mountProjectDesk(root);
+</script>

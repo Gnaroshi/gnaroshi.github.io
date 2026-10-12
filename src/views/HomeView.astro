@@ -4,10 +4,8 @@ import StructuredData from "../components/StructuredData.astro";
 import Hero from "../components/home/Hero.astro";
 import Section from "../components/layout/Section.astro";
 import SystemWorkflow from "../components/system/SystemWorkflow.astro";
-import ResponsiveImage from "../components/media/ResponsiveImage.astro";
-import { getProjectMedia } from "../data/approvedMedia";
+import ProjectDesk from "../components/home/ProjectDesk.astro";
 import { getLocalizedData } from "../data/locales";
-import { getProjectStory } from "../data/projectStories";
 import { formatLocalizedDate } from "../i18n/date";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
@@ -23,10 +21,6 @@ const data = getLocalizedData(locale);
 const [papers, posts] = await Promise.all([getPublishedPapers(locale), getPublishedBlogPosts(locale)]);
 const recentPosts = posts.filter((post) => post.data.contentStage === "substantive" && post.data.category !== "build-note").slice(0, 3);
 const recentPapers = papers.filter((paper) => paper.data.contentStage === "substantive").slice(0, 3);
-const selectedProject = data.projects.find((project) => project.portfolio === "selected-projects") ?? data.projects[0];
-const selectedProjectMedia = getProjectMedia(selectedProject.id);
-if (!selectedProjectMedia) throw new Error(`Featured project is missing approved media: ${selectedProject.id}`);
-const selectedProjectStory = getProjectStory(locale, selectedProject.id);
 const focusFreshness = getCurrentFocusFreshness(data.now.lastUpdated);
 if (!focusFreshness.isFresh && import.meta.env.DEV) {
   console.warn(`[current-focus] Hidden from Home because ${data.now.lastUpdated} has freshness state ${focusFreshness.status}.`);
@@ -70,23 +64,12 @@ if (!focusFreshness.isFresh && import.meta.env.DEV) {
       currentFocusUpdated={focusFreshness.isFresh ? data.now.lastUpdated : undefined}
     />
 
+    <ProjectDesk locale={locale} />
+
     <Section class="home-research" labelledby="research-questions-heading">
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.researchQuestions")}</p><h2 id="research-questions-heading">{translate(locale, "home.researchQuestionsTitle")}</h2></div>
       <ol class="home-research-list">{data.researchAreas.map((area, index) => <li><a href={getLocalePath(locale, `/research/#${area.slug}`)} data-motion-surface><span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span><strong>{area.question}</strong></a></li>)}</ol>
       <a class="text-link" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewAllResearch")}</a>
-    </Section>
-
-    <Section class="home-selected" labelledby="selected-work-heading">
-      <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.selectedWork")}</p><h2 id="selected-work-heading">{selectedProject.title}</h2></div>
-      <article class="home-featured-project" style={`--source-media-ratio:${selectedProjectMedia.width}/${selectedProjectMedia.height}`}>
-        <figure class="home-featured-project__figure">
-          <a class="home-featured-project__media" data-motion-media href={getLocalePath(locale, `/projects/${selectedProject.slug}/`)}>
-            <ResponsiveImage asset={selectedProjectMedia} locale={locale} sizes="(min-width: 768px) 50vw, 100vw" />
-          </a>
-          <figcaption><strong>{translate(locale, "media.projectEvidence")}</strong><span>{selectedProjectStory.scenario.demoDisclosure}</span></figcaption>
-        </figure>
-        <div class="home-featured-project__copy"><p>{selectedProject.summary}</p><ul class="tag-row" aria-label={selectedProject.title}>{selectedProject.tags.map((tag) => <li>{tag}</li>)}</ul><a class="text-link" href={getLocalePath(locale, `/projects/${selectedProject.slug}/`)}>{translate(locale, "home.openCaseStudy")}</a></div>
-      </article>
     </Section>
 
     {(recentPosts.length > 0 || recentPapers.length > 0) && <Section class="home-notes" labelledby="latest-notes-heading" contentGroup>
