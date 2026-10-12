@@ -27,9 +27,15 @@ test.describe("project story visual matrix", { tag:"@visual-v3" }, () => {
           for (let top=0;top<document.documentElement.scrollHeight;top+=window.innerHeight) { window.scrollTo(0,top); await new Promise((resolve) => setTimeout(resolve,20)); }
           await Promise.all([...document.images].map((image) => image.decode().catch(() => undefined)));
           window.scrollTo(0,0);
+          await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
         });
+        const sectionNav = page.locator(".section-nav");
+        if (await sectionNav.count()) {
+          await expect(sectionNav.locator("[aria-current]")).toHaveCount(1);
+          await expect(sectionNav.locator("a").first()).toHaveAttribute("aria-current", "location");
+        }
         expect(await page.evaluate(() => document.documentElement.scrollWidth-document.documentElement.clientWidth),route).toBeLessThanOrEqual(1);
-        await page.screenshot({path:path.join(directory,`${nameFor(route)}.png`),fullPage:true});
+        await page.screenshot({path:path.join(directory,`${nameFor(route)}.png`),fullPage:true,animations:"disabled"});
       }
     });
   }

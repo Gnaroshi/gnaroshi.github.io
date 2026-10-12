@@ -35,7 +35,7 @@ test.describe("all public page visual checklist", { tag: "@visual-v3" }, () => {
           expect(metrics.overflow, route).toBeLessThanOrEqual(1);
           expect(metrics.h1, route).toBe(1);
           report.push({ route, ...metrics });
-          await page.screenshot({ path: path.join(directory, `${routeName(route)}.png`), fullPage: false });
+          await page.screenshot({ path: path.join(directory, `${routeName(route)}.png`), fullPage: false, animations: "disabled" });
         }
 
         await writeFile(path.join(directory, "report.json"), `${JSON.stringify(report, null, 2)}\n`);

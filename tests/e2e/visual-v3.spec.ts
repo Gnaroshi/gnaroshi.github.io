@@ -91,7 +91,8 @@ for (const viewport of viewports) {
         expect(pageMeasurements.horizontalOverflow, route).toBeLessThanOrEqual(1);
         await page.screenshot({
           path: path.join(directory, `${filenameFor(route)}.png`),
-          fullPage: false
+          fullPage: false,
+          animations: "disabled"
         });
       }
 

@@ -36,12 +36,12 @@ test.describe("system workflow visual review", { tag: "@visual-v3" }, () => {
           await page.addStyleTag({ content: ".site-header { position: static !important; } .skip-link { display: none !important; }" });
           const workflow = page.locator(`[data-system-workflow="${item.variant}"]`);
           await expect(workflow).toBeVisible();
-          await workflow.screenshot({ path: path.join(directory, `${item.name}.png`) });
+          await workflow.screenshot({ path: path.join(directory, `${item.name}.png`), animations: "disabled" });
           if (item.variant === "full") {
             const control = workflow.locator('[data-explorer-control="studio"]:visible').first();
             await control.click();
             await expect(workflow.locator("[data-system-explorer-selection]")).toBeVisible();
-            await workflow.screenshot({ path: path.join(directory, `${item.name}-selected.png`) });
+            await workflow.screenshot({ path: path.join(directory, `${item.name}-selected.png`), animations: "disabled" });
           }
           expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), item.route).toBeLessThanOrEqual(1);
         }
