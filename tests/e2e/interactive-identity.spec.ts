@@ -132,6 +132,7 @@ for(const locale of ["","/ko"])test(`identity and selected research states remai
     for(let count=0;count<6;count++)await stage.click();await expect(identity).toHaveAttribute("data-renderer","webgl");
     expect((await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21aa"]).analyze()).violations).toEqual([]);
     await page.goto(`${locale}/research/`);await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+    await expect(page.locator(".section-nav a").first()).toHaveCSS("transition-duration","0s");
     await page.locator("[data-research-lens]").first().getByRole("tab").nth(1).click();
     expect((await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21aa"]).analyze()).violations).toEqual([]);
   }
