@@ -18,8 +18,8 @@ export default defineConfig({
   },
   webServer: {
     command: process.env.PLAYWRIGHT_USE_EXISTING_BUILD
-      ? `npm run preview -- --host 127.0.0.1 --port ${port}`
-      : `npm run build && npm run preview -- --host 127.0.0.1 --port ${port}`,
+      ? `npm run preview -- --ignore-lock --host 127.0.0.1 --port ${port}`
+      : `npm run build && npm run preview -- --ignore-lock --host 127.0.0.1 --port ${port}`,
     url: `http://127.0.0.1:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000
