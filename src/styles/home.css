@@ -5,7 +5,7 @@
   display: grid;
   gap: var(--space-6);
   align-items: center;
-  min-height: clamp(560px, calc(100svh - var(--header-height) - 64px), 680px);
+  min-height: 560px;
   overflow: hidden;
   padding: 0;
   border-bottom: var(--pixel-border) solid var(--color-border-strong);
@@ -45,7 +45,7 @@
 .home-selected { margin-inline:calc(var(--space-4) * -1); padding-inline:var(--space-4); border-top:0; background:var(--color-surface-muted); }
 .home-featured-project { display: grid; gap: var(--space-5); }
 .home-featured-project__figure { display:grid; gap:var(--space-2); min-width:0; margin:0; }
-.home-featured-project__media { display:block; aspect-ratio:16/10; overflow:hidden; border:var(--pixel-border) solid var(--color-border); background:var(--color-surface); box-shadow:var(--shadow-sm); }
+.home-featured-project__media { display:block; aspect-ratio:var(--source-media-ratio,16/10); overflow:hidden; border:var(--pixel-border) solid var(--color-border); background:var(--color-surface); box-shadow:var(--shadow-sm); }
 .home-featured-project__media .responsive-media { width:100%; height:100%; }
 .home-featured-project__media img { object-fit:contain; }
 .home-featured-project__figure:focus-within .home-featured-project__media { border-color:var(--color-accent); box-shadow:var(--shadow-md); }
@@ -53,7 +53,10 @@
 .home-featured-project__figure figcaption strong { color:var(--color-text-secondary); }
 .home-featured-project__copy { display: grid; gap: var(--space-4); align-content: center; }
 .home-featured-project__copy > p { color: var(--color-text-secondary); font-size: var(--editorial-body); line-height: 1.7; }
+.tag-row { display:flex; flex-wrap:wrap; gap:var(--space-2) var(--space-3); padding:0; margin:0; list-style:none; color:var(--color-text-muted); font-size:var(--text-sm); }
+.tag-row li + li { padding-inline-start:var(--space-3); border-inline-start:1px solid var(--color-border-strong); }
 .home-notes__columns { display: grid; gap: var(--space-7); }
+.home-notes__columns:has(> :only-child) { grid-template-columns: minmax(0, 1fr); }
 .home-list-heading { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: var(--space-3); border-bottom: 2px solid var(--color-text); }
 .home-list-heading a { font-size: var(--text-sm); }
 .editorial-record-list { padding: 0; margin: 0; list-style: none; }

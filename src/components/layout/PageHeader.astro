@@ -7,7 +7,7 @@ interface Props {
 }
 const { eyebrow, title, description, id } = Astro.props;
 ---
-<header class:list={["page-header", !eyebrow && "page-header--without-eyebrow"]}>
+<header class="page-header">
   {eyebrow && <p class="eyebrow">{eyebrow}</p>}
   <h1 id={id}>{title}</h1>
   {description && <p class="lede">{description}</p>}

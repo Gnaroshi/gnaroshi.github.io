@@ -41,9 +41,9 @@ const rightIds = managedApplications.slice(3);
   .managed-map__side a { display:grid; gap:var(--space-1); padding:var(--space-3) 0; border-top:1px solid var(--color-border); color:var(--color-text); text-decoration:none; }
   .managed-map__side a:last-child { border-bottom:1px solid var(--color-border); }
   .managed-map__side a:hover strong { text-decoration:underline; text-underline-offset:.2em; }
-  .managed-map__side span, .managed-map__center span { color:var(--color-text-secondary); font-size:var(--step--1); line-height:1.5; }
+  .managed-map__side span, .managed-map__center span { color:var(--color-text-secondary); font-size:var(--text-sm); line-height:1.5; }
   .managed-map__center { display:grid; order:-1; gap:var(--space-1); padding:var(--space-4); border-inline-start:var(--pixel-border) solid var(--color-accent); background:var(--color-accent-soft); }
-  .managed-map figcaption { color:var(--color-text-secondary); font-size:var(--step--1); line-height:1.6; }
+  .managed-map figcaption { color:var(--color-text-secondary); font-size:var(--text-sm); line-height:1.6; }
   @media (min-width:768px) {
     .managed-map { grid-template-columns:minmax(0,1fr) minmax(180px,.8fr) minmax(0,1fr); align-items:center; gap:var(--space-6); }
     .managed-map__center { order:0; position:relative; border-inline-start:0; border-block:var(--pixel-border) solid var(--color-accent); text-align:center; }

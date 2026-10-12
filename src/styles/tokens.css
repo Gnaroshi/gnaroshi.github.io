@@ -91,6 +91,8 @@
   --space-8: 4rem;
   --space-9: 5rem;
   --space-10: 6rem;
+  --space-flow: 1.5rem;
+  --space-section: 3rem;
 
   --radius-sm: 0;
   --radius-md: 0;
@@ -118,11 +120,12 @@
   --width-dashboard: min(var(--container-wide), calc(100vw - (var(--gutter) * 2)));
   --header-height: 64px;
   --paper-nav-height: 48px;
+  --section-nav-height: 60px;
   --paper-sticky-offset: calc(var(--header-height) + var(--paper-nav-height));
 }
 
 @media (min-width: 480px) { :root { --gutter: 20px; } }
-@media (min-width: 768px) { :root { --gutter: 28px; } }
+@media (min-width: 768px) { :root { --gutter: 28px; --space-flow: 2rem; --space-section: 4rem; } }
 @media (min-width: 1024px) { :root { --gutter: 32px; --header-height: 68px; } }
 @media (min-width: 1280px) { :root { --gutter: 40px; } }
 

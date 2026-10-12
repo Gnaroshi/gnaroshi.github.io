@@ -212,14 +212,9 @@ video {
 .page-header {
   display: grid;
   gap: var(--space-3);
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-flow);
   padding-inline-start: var(--space-4);
   border-inline-start: 4px solid var(--color-identity-orange);
-}
-
-.page-header--without-eyebrow::before {
-  height: 1.4rem;
-  content: "";
 }
 
 .eyebrow {
@@ -232,7 +227,7 @@ video {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -253,8 +248,9 @@ h3 {
 }
 
 h1 {
-  max-width: 13ch;
+  max-width: 24ch;
   font-size: var(--text-3xl);
+  text-wrap: balance;
 }
 
 h2 {
@@ -289,8 +285,13 @@ p {
 .page-shell,
 .app-shell {
   display: grid;
-  gap: var(--space-7);
+  gap: var(--space-flow);
 }
+
+.page-shell > .page-header,
+.app-shell > .page-header { margin-bottom: 0; }
+
+.page-shell > .section { padding-block: var(--space-flow) 0; }
 
 .hero-shell {
   min-height: 600px;
@@ -299,7 +300,7 @@ p {
 .content-section {
   display: grid;
   gap: var(--space-5);
-  padding-block: var(--space-8);
+  padding-block: var(--space-section);
   border-top: var(--pixel-border) solid var(--color-border);
 }
 
@@ -469,12 +470,12 @@ p {
 }
 
 @media (min-width: 768px) {
-  .site-main { padding-top: 56px; }
+  .site-main { padding-top: 48px; }
   .site-main--flush { padding-top: 0; }
 }
 
 @media (min-width: 1024px) {
-  .site-main { padding-top: 72px; }
+  .site-main { padding-top: 48px; }
   .site-main--flush { padding-top: 0; }
 }
 

@@ -7,6 +7,7 @@ import FeaturedApplicationCard from "../components/projects/FeaturedApplicationC
 import ProjectCardHeader from "../components/projects/ProjectCardHeader.astro";
 import SupportingApplicationCard from "../components/projects/SupportingApplicationCard.astro";
 import TechStackStrip from "../components/projects/TechStackStrip.astro";
+import SectionNav from "../components/navigation/SectionNav.astro";
 import { getProjectMedia } from "../data/approvedMedia";
 import { getApprovedProjectShowcase } from "../data/approvedProjectShowcases";
 import { platformLabels } from "../data/facts/techCatalog";
@@ -42,21 +43,9 @@ const labels = locale === "ko" ? {
   <PageShell class="projects-page">
     <PageHeader title={translate(locale, "projects.title")} description={translate(locale, "projects.intro")} />
 
-    <nav class="projects-overview" aria-label={labels.sections} data-in-page-navigation data-scroll-spy>
-      <ol data-in-page-scroller>
-        {[
-          ["selected-projects", labels.selected],
-          ["featured-applications", labels.featured],
-          ["supporting-applications", labels.supporting]
-        ].map(([id, label], index) => (
-          <li>
-            <a href={getLocalePath(locale, `/projects/#${id}`)} data-in-page-link data-motion-surface>
-              <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>{label}
-            </a>
-          </li>
-        ))}
-      </ol>
-    </nav>
+    <SectionNav class="projects-overview" label={labels.sections} items={[
+      ["selected-projects", labels.selected], ["featured-applications", labels.featured], ["supporting-applications", labels.supporting]
+    ].map(([id, label]) => ({href:getLocalePath(locale, `/projects/#${id}`), label:label!}))} />
 
     <section id="selected-projects" class="project-section project-section--selected" aria-labelledby="selected-projects-heading" tabindex="-1" data-in-page-section>
       <header class="section-heading"><p class="eyebrow">{labels.selected}</p><h2 id="selected-projects-heading">{locale === "ko" ? "연구와 공개 시스템" : "Research and public systems"}</h2></header>
