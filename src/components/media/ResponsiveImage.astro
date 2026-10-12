@@ -9,6 +9,7 @@ interface Props {
   sizes?: string;
   loading?: "eager" | "lazy";
   fetchpriority?: "high" | "low" | "auto";
+  fit?: "cover" | "contain";
 }
 
 const {
@@ -17,7 +18,8 @@ const {
   class: className,
   sizes = "(min-width: 1024px) 50vw, 100vw",
   loading = "lazy",
-  fetchpriority = "auto"
+  fetchpriority = "auto",
+  fit
 } = Astro.props;
 const src = (width: number, format: "avif" | "webp") => `/media/approved/${asset.id}-${width}.${format}`;
 const srcset = (format: "avif" | "webp") => asset.widths.map((width) => `${src(width, format)} ${width}w`).join(", ");
@@ -34,7 +36,7 @@ const srcset = (format: "avif" | "webp") => asset.widths.map((width) => `${src(w
     loading={loading}
     decoding="async"
     fetchpriority={fetchpriority}
-    style={`object-position:${asset.focalPoint}`}
+    style={`object-position:${asset.focalPoint}${fit ? `;object-fit:${fit}` : ""}`}
   />
 </picture>
 
