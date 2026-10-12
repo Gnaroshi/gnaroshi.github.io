@@ -51,6 +51,10 @@ The 3D scene is a relief derived from the existing raster, not a newly modeled p
 7. Dark-theme interaction axe checks caught a 4.03:1 intermediate button contrast during palette interpolation. Removed that interpolation rather than waiting past the invalid frame.
 8. The first full visual matrix found About's centered introduction displaced its header by 120px. Top alignment fixes the common start line; the focused alignment/identity rerun passed 13 tests.
 9. The in-app browser's localhost transport returned `ERR_SOCKET_NOT_CONNECTED` during reload while ordinary HTTP and independent browser tests succeeded. No firewall/security setting was changed; this is tracked separately from site assertions.
+10. Manual review of the final full-page captures found blank idle canvases even though immediate canvas-pixel checks passed. Retain the capped WebGL drawing buffer, skip redundant resize resets, and draw synchronously after an actual resize. The render loop still stops at rest. Two consecutive full-page captures now verify a nontrivial painted logo area after settling.
+11. An initial full-page assertion used a color-variance threshold that rejected a visibly correct darker foil frame. Replaced it with a foreground-area assertion and document-coordinate cropping; neither an empty neutral stage nor its small corner marks can pass it.
+12. The feed-contract suite builds fixtures into `dist`; a subsequent browser run accidentally tested the last fixture. Rebuilding with the exact production feed restored the expected route/content assertions. Final release tests run only after that rebuild, with no concurrent output mutation.
+13. WebKit's default device scale made a CSS-coordinate crop inspect the wrong physical pixels, despite a visibly correct screenshot. Full-page pixel captures now explicitly use CSS scale in both browsers; the same painted-area requirement remains enforced.
 
 ## Pre-release Results
 
