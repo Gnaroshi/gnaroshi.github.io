@@ -1,5 +1,13 @@
 export const en = {
   "site.name": "Gnaroshi",
+  "identity.original": "Original",
+  "identity.dimensional": "3D relief",
+  "identity.foil": "Holographic foil",
+  "identity.activate": "Activate Gnaroshi logo",
+  "identity.pause": "Pause logo motion",
+  "identity.reset": "Reset logo",
+  "identity.loading": "Opening 3D",
+  "identity.unavailable": "Original · 3D unavailable",
   "site.footerTagline": "Notes on AI, software, and research.",
   "site.rssTitle": "Gnaroshi Writing",
   "a11y.skipToContent": "Skip to content",

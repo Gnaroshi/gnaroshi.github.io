@@ -2,6 +2,14 @@ import type { Dictionary } from "./en";
 
 export const ko = {
   "site.name": "Gnaroshi",
+  "identity.original": "원본",
+  "identity.dimensional": "3D 입체",
+  "identity.foil": "홀로그램 포일",
+  "identity.activate": "Gnaroshi 로고 활성화",
+  "identity.pause": "로고 움직임 일시 정지",
+  "identity.reset": "로고 초기화",
+  "identity.loading": "3D 여는 중",
+  "identity.unavailable": "원본 · 3D를 사용할 수 없습니다",
   "site.footerTagline": "AI와 소프트웨어, 연구에 관한 기록.",
   "site.rssTitle": "Gnaroshi 글",
   "a11y.skipToContent": "본문으로 건너뛰기",

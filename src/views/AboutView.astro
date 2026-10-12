@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ExternalLink from "../components/common/ExternalLink.astro";
 import PageHeader from "../components/layout/PageHeader.astro";
 import PageShell from "../components/layout/PageShell.astro";
+import InteractiveIdentity from "../components/identity/InteractiveIdentity.astro";
 import { getLocalizedData } from "../data/locales";
 import { profile } from "../data/profile";
 import type { Locale } from "../i18n/types";
@@ -13,9 +14,9 @@ const data = getLocalizedData(locale);
 const links = [{ label: "GitHub", href: profile.links.github }, profile.links.email ? { label: "Email", href: `mailto:${profile.links.email}` } : null, profile.links.scholar ? { label: "Google Scholar", href: profile.links.scholar } : null, profile.links.linkedin ? { label: "LinkedIn", href: profile.links.linkedin } : null, profile.links.cv ? { label: "CV", href: profile.links.cv } : null].filter(Boolean) as Array<{ label: string; href: string }>;
 ---
 
-<BaseLayout locale={locale} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction}>
+<BaseLayout locale={locale} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} width="wide">
   <PageShell class="about-page">
-    <PageHeader eyebrow={profile.displayName} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} />
+    <div class="about-introduction"><PageHeader eyebrow={profile.displayName} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} /><InteractiveIdentity locale={locale} /></div>
     <section class="section" aria-labelledby="about-bio"><h2 id="about-bio">{translate(locale, "about.bio")}</h2><div class="prose-stack">{data.profile.bio.map((paragraph) => <p>{paragraph}</p>)}</div></section>
     <section class="section" aria-labelledby="about-skills"><h2 id="about-skills">{translate(locale, "about.skills")}</h2><div class="plain-groups">{data.skillGroups.map((group) => <div><h3>{group.title}</h3><ul class="about-skill-list">{group.skills.map((skill) => <li>{skill}</li>)}</ul></div>)}</div></section>
     <section class="section" aria-labelledby="about-values"><h2 id="about-values">{translate(locale, "about.values")}</h2><ul>{data.profile.researcherValues.map((value) => <li>{value}</li>)}</ul></section>
@@ -24,10 +25,14 @@ const links = [{ label: "GitHub", href: profile.links.github }, profile.links.em
 </BaseLayout>
 
 <style>
+  .about-introduction { display:grid; gap:var(--space-5); align-items:start; }
+  .about-introduction :global(.page-header) { margin:0; }
+  .about-page .prose-stack { max-width:720px; }
   .plain-groups { display:grid; gap:var(--space-5); }
   .plain-groups > div { display:grid; gap:var(--space-3); }
   .about-page .section > ul { display:grid; gap:var(--space-3); margin:0; padding-inline-start:1.2rem; color:var(--color-text-secondary); }
   .about-skill-list { display:flex; flex-wrap:wrap; gap:var(--space-2) var(--space-4); padding:0; margin:0; list-style:none; }
   .about-skill-list li { position:relative; padding-inline-start:var(--space-3); color:var(--color-text-secondary); }
   .about-skill-list li::before { position:absolute; top:.62em; left:0; width:5px; height:5px; background:var(--color-identity-teal); content:""; }
+  @media (min-width:768px) { .about-introduction { grid-template-columns:minmax(0,1fr) minmax(240px,.6fr); gap:var(--space-7); } .plain-groups { grid-template-columns:repeat(3,minmax(0,1fr)); } .about-skill-list { display:grid; } }
 </style>
