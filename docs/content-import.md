@@ -67,15 +67,17 @@ Only entries declared by `.content-feed/assets/index.json` are emitted. Public p
 
 ## Provenance
 
-The actual feed checkout SHA is resolved with `git rev-parse HEAD`, or from `CONTENT_FEED_COMMIT` in CI. It is recorded in page metadata and `/build-info.json` together with the manifest `contentHash` and schema version.
+The actual feed checkout SHA is resolved with `git rev-parse HEAD`, or from the exact
+`CONTENT_FEED_COMMIT` selected by the local release runner. It is recorded in page
+metadata and `/build-info.json` together with the manifest `contentHash` and schema
+version.
 
-Production manual dispatch accepts both `feed_ref` and `feed_commit`. `feed_ref` is a human-friendly branch, tag, or commit. `feed_commit` is an optional immutable 40-character SHA, takes precedence, and must exactly match the checkout. Studio publishing should always pass `feed_commit`; a moving branch name alone is not a deterministic release input.
+Production publication builds the selected clean website and feed commits locally,
+then delivers validated static output to the existing `gh-pages:/` destination.
+Both inputs are full immutable SHAs; a moving branch alone is not a deterministic
+release input. Follow [deployment](deployment.md) for the checks, isolated output,
+fast-forward delivery, and exact live verification. A source push is not a release.
 
-```bash
-gh workflow run deploy.yml \
-  --repo Gnaroshi/gnaroshi.github.io \
-  -f feed_commit=<FULL_SHA> \
-  -f feed_ref=<FULL_SHA>
-```
-
-The public feed needs no PAT because it is public. Credentials used to dispatch the website workflow belong only to Studio, a GitHub App, or the operator's authenticated local `gh` session.
+The public feed needs no PAT because it is public. Git delivery uses the operator's
+existing local authentication. Repository Actions are disabled; retained workflow
+files are not the current publication path.
