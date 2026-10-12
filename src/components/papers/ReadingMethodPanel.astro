@@ -41,8 +41,20 @@ const principles = [
       </li>
     ))}
   </ol>
-  <ReadingPassChecklist locale={locale} passes={passes} />
   <ul class="paper-method-panel__principles">
     {principles.map((principle) => <li>{principle}</li>)}
   </ul>
+  <details class="reading-checklist-disclosure">
+    <summary>{locale === "ko" ? "개인 체크리스트 열기" : "Open a personal checklist"}</summary>
+    <ReadingPassChecklist locale={locale} passes={passes} />
+  </details>
 </section>
+
+<style>
+  .reading-checklist-disclosure { border-top:1px solid var(--color-border); }
+  summary { display:flex; min-height:48px; align-items:center; justify-content:space-between; gap:var(--space-3); cursor:pointer; list-style:none; font-size:var(--text-sm); font-weight:700; }
+  summary::-webkit-details-marker { display:none; }
+  summary::after { width:.5rem; height:.5rem; margin-inline-end:var(--space-2); border-inline-end:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(45deg); content:""; transition:transform var(--duration-state) var(--ease-emphasized); }
+  details[open] summary::after { transform:rotate(225deg); }
+  @media (prefers-reduced-motion:reduce) { summary::after { transition:none; } }
+</style>

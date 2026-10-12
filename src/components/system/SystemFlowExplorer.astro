@@ -96,6 +96,10 @@ const payload = JSON.stringify({
     const repositoryById = new Map(payload.repositories.map((repository) => [repository.id, repository]));
     let selectedId: string | null = null;
 
+    for (const edge of root.querySelectorAll<SVGPathElement>("path[data-connection-from]")) {
+      edge.style.setProperty("--edge-length", String(edge.getTotalLength()));
+    }
+
     for (const label of root.querySelectorAll<HTMLElement>("[data-system-explorer-static-control]")) {
       const repositoryId = label.dataset.repositoryId;
       if (!repositoryId) continue;

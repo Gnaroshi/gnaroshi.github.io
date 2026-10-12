@@ -18,39 +18,25 @@
 @keyframes site-page-out {
   to {
     opacity: .35;
-    transform: translateY(-12px) scale(.995);
   }
 }
 
 @keyframes site-page-in {
   from {
     opacity: .25;
-    transform: translateY(18px) scale(.99);
-  }
-}
-
-@keyframes site-content-enter {
-  from {
-    transform: translateY(24px);
   }
 }
 
 @keyframes site-hero-image-enter {
   from {
     opacity: .55;
-    transform: scale(1.075);
+    transform: scale(1.035);
   }
 }
 
 @keyframes site-hero-copy-enter {
   from {
-    transform: translateX(-28px);
-  }
-}
-
-@keyframes site-section-reveal {
-  from {
-    transform: translateY(42px);
+    transform: translateX(-12px);
   }
 }
 
@@ -69,10 +55,6 @@
   animation: site-page-rail-enter 700ms var(--ease-emphasized) both;
 }
 
-.page-shell > nav[data-in-page-navigation] {
-  animation: site-content-enter 620ms 300ms var(--ease-emphasized) both;
-}
-
 .identity-hero__media img {
   animation: site-hero-image-enter 1000ms var(--ease-emphasized) both;
 }
@@ -86,29 +68,6 @@
 .identity-hero__copy > :nth-child(3) { animation-delay: 260ms; }
 .identity-hero__copy > :nth-child(4) { animation-delay: 340ms; }
 .identity-hero__copy > :nth-child(n + 5) { animation-delay: 420ms; }
-
-@supports (animation-timeline: view()) {
-  :where(
-    .content-section,
-    .research-theme,
-    .project-section,
-    .project-detail .evidence-section,
-    .project-detail .at-a-glance,
-    .project-detail .prose-section,
-    .project-detail .scenario,
-    .project-detail .split-section,
-    .project-detail .tech-section,
-    .project-detail .technical-facts,
-    .project-detail .project-links
-  ) {
-    animation-name: site-section-reveal;
-    animation-duration: 1ms;
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-    animation-timeline: view(block);
-    animation-range: entry 0% cover 28%;
-  }
-}
 
 .site-header__progress {
   position: absolute;
@@ -157,8 +116,7 @@ body[data-page-progress="true"] .site-header__progress {
 }
 
 .button:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: 4px 4px 0 color-mix(in srgb, var(--color-text) 24%, transparent);
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--color-text) 24%, transparent);
 }
 
 .button:active {
@@ -173,11 +131,12 @@ body[data-page-progress="true"] .site-header__progress {
 
 [data-motion-media]::after {
   position: absolute;
-  inset: var(--space-3);
-  border: 2px solid color-mix(in srgb, var(--color-identity-teal) 82%, white);
+  inset: auto 0 0;
+  height: 4px;
+  background: var(--color-accent);
   opacity: 0;
-  transform: scale(.96);
-  box-shadow: 4px 4px 0 color-mix(in srgb, var(--color-identity-orange) 78%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
   content: "";
   pointer-events: none;
   transition:
@@ -186,41 +145,42 @@ body[data-page-progress="true"] .site-header__progress {
 }
 
 [data-motion-media] img {
-  transform: scale(1);
+  transform: none;
 }
 
 @media (hover: hover) {
-  [data-motion-media]:hover img {
-    transform: scale(1.055);
-  }
-
   [data-motion-media]:hover::after {
     opacity: 1;
-    transform: scale(1);
+    transform: scaleX(1);
   }
 
   [data-motion-surface]:not([aria-current]):hover {
-    transform: translateY(-3px);
     box-shadow: var(--shadow-md);
   }
 }
 
-[data-motion-media]:focus-visible img {
-  transform: scale(1.055);
-}
-
 [data-motion-media]:focus-visible::after {
   opacity: 1;
-  transform: scale(1);
+  transform: scaleX(1);
 }
 
 [data-motion-surface]:not([aria-current]):focus-visible {
-  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
 }
 
 [data-motion-surface]:active {
-  transform: translateY(0) scale(.985);
+  box-shadow: none;
+}
+
+/* Disclosure content is the only layout-changing motion: it follows a request. */
+@supports (interpolate-size: allow-keywords) {
+  .reading-checklist-disclosure { interpolate-size: allow-keywords; }
+  .reading-checklist-disclosure::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size var(--duration-state) var(--ease-emphasized), content-visibility var(--duration-state) allow-discrete;
+  }
+  .reading-checklist-disclosure[open]::details-content { block-size: auto; }
 }
 
 .mobile-nav__panel:not([hidden]) {
@@ -307,4 +267,6 @@ body[data-page-progress="true"] .site-header__progress {
   .button:where(:hover, :active) {
     transform: none !important;
   }
+
+  .reading-checklist-disclosure::details-content { transition: none; }
 }
