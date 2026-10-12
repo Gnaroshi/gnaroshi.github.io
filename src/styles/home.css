@@ -5,7 +5,7 @@
   display: grid;
   gap: var(--space-6);
   align-items: center;
-  min-height: 560px;
+  min-height: min(560px, calc(100svh - var(--header-height) - 160px));
   overflow: hidden;
   padding: 0;
   border-bottom: var(--pixel-border) solid var(--color-border-strong);
@@ -67,6 +67,12 @@
 @media (min-width: 480px) {
   .identity-hero__actions { display: flex; flex-wrap: wrap; }
   .identity-hero__actions .button { width: fit-content; }
+}
+
+@media (max-width: 767px) and (max-height: 700px) {
+  .identity-hero__copy { gap:var(--space-3); padding-block:var(--space-5); }
+  .identity-hero__bio { display:none; }
+  .identity-hero__actions { grid-template-columns:repeat(2,minmax(0,1fr)); margin-top:0; }
 }
 
 @media (min-width: 768px) {

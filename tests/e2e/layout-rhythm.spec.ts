@@ -1,5 +1,23 @@
 import { expect, test } from "@playwright/test";
 
+for (const locale of ["", "/ko"]) {
+  test(`compact home introduction reveals its next section ${locale || "en"}`, async ({ page }) => {
+    for (const viewport of [{ width:320, height:568 }, { width:390, height:844 }, { width:1024, height:768 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto(`${locale}/`);
+      const nextHeading = page.locator(".home-research h2");
+      const box = await nextHeading.boundingBox();
+      expect(box!.y + box!.height).toBeLessThan(viewport.height);
+      const actions = await page.locator(".identity-hero__actions .button").all();
+      for (const action of actions) {
+        const actionBox = await action.boundingBox();
+        expect(actionBox!.y + actionBox!.height).toBeLessThan(viewport.height);
+        expect(actionBox!.width).toBeGreaterThanOrEqual(44);
+      }
+    }
+  });
+}
+
 for (const width of [1440, 1024, 768, 390, 360]) {
   for (const locale of ["", "/ko"]) {
     test(`stable content rhythm ${locale || "en"} ${width}`, async ({ page }) => {
