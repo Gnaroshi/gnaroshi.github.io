@@ -45,3 +45,7 @@ Do not apply a global pixelation filter, bitmap body font, game HUD treatment, o
 ## Small-Size Check
 
 Review the 16px, 32px, and 64px outputs on light and dark backgrounds after changing the master. The ears, teal eyes, face mass, and teeth must all remain distinguishable; an ears-only silhouette is not an acceptable site mark.
+
+## About Interaction
+
+The About logo uses the same approved full-face `/icon-512.png`. Its opt-in 3D relief samples that raster at runtime; it does not edit the master, change the favicon/header/footer, use the rejected canopy asset, or introduce an AI-generated replacement. The three-click/three-click state sequence, foil shader, lifecycle, and accessibility contract are documented in [interaction-motion.md](interaction-motion.md).
