@@ -1,0 +1,21 @@
+<script>
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  document.addEventListener("pointerdown", (event) => {
+    if (reduced.matches || event.button !== 0) return;
+    const control = (event.target as Element | null)?.closest<HTMLElement>(".button,.theme-toggle,.mobile-nav__trigger,[data-motion-surface]");
+    if (!control) return;
+    control.querySelectorAll(".interaction-pulse").forEach((pulse) => pulse.remove());
+    const bounds = control.getBoundingClientRect();
+    const pulse = document.createElement("span");
+    pulse.className = "interaction-pulse";
+    pulse.setAttribute("aria-hidden", "true");
+    pulse.style.setProperty("--pulse-x", `${Math.max(18,Math.min(bounds.width - 18,event.clientX - bounds.left))}px`);
+    pulse.style.setProperty("--pulse-y", `${Math.max(18,Math.min(bounds.height - 18,event.clientY - bounds.top))}px`);
+    control.append(pulse);
+    const animation = pulse.animate([
+      { opacity:.65, transform:"translate(-50%,-50%) scale(.5)" },
+      { opacity:0, transform:"translate(-50%,-50%) scale(1.4)" }
+    ], { duration:420, easing:"cubic-bezier(.2,.8,.2,1)" });
+    void animation.finished.then(() => pulse.remove()).catch(() => pulse.remove());
+  }, { passive:true });
+</script>

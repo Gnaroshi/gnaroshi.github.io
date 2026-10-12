@@ -3,28 +3,16 @@
  * this file is progressive enhancement; the site remains complete without it.
  */
 
-::view-transition-old(page-content) {
-  animation: site-page-out 320ms var(--ease-standard) both;
-}
-
-::view-transition-new(page-content) {
-  animation: site-page-in var(--duration-page) var(--ease-emphasized) both;
-}
-
+/* Animate only the new document, never overlapping old/new text snapshots. */
 .site-main {
-  view-transition-name: page-content;
-}
-
-@keyframes site-page-out {
-  to {
-    opacity: .35;
-  }
+  animation:site-page-in 280ms var(--ease-emphasized);
 }
 
 @keyframes site-page-in {
   from {
-    opacity: .25;
+    clip-path: inset(0 0 100% 0);
   }
+  to { clip-path: inset(0); }
 }
 
 @keyframes site-hero-image-enter {
@@ -110,10 +98,37 @@ body[data-page-progress="true"] .site-header__progress {
   transition:
     border-color var(--duration-state) var(--ease-standard),
     box-shadow var(--duration-state) var(--ease-standard),
-    color var(--duration-state) var(--ease-standard),
-    background-color var(--duration-state) var(--ease-standard),
     transform var(--duration-state) var(--ease-emphasized);
 }
+
+.button, .theme-toggle, .mobile-nav__trigger, [data-motion-surface] {
+  position: relative;
+  isolation: isolate;
+}
+
+.interaction-pulse {
+  position: absolute;
+  z-index: 1;
+  left: var(--pulse-x);
+  top: var(--pulse-y);
+  width: 36px;
+  height: 36px;
+  border: 2px solid currentColor;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  clip-path: polygon(0 0, 35% 0, 35% 8%, 8% 8%, 8% 35%, 0 35%, 0 0, 100% 0, 100% 35%, 92% 35%, 92% 8%, 65% 8%, 65% 0, 100% 0, 100% 100%, 65% 100%, 65% 92%, 92% 92%, 92% 65%, 100% 65%, 100% 100%, 0 100%, 0 65%, 8% 65%, 8% 92%, 35% 92%, 35% 100%, 0 100%);
+}
+
+.home-research-list a:where(:hover,:focus-visible) > span { background:var(--color-accent); color:var(--color-bg); }
+.featured-app:where(:hover,:focus-within) .role-icon,
+.supporting-app:where(:hover,:focus-within) .role-icon { transform:rotate(-5deg); }
+.role-icon { transition:transform 280ms var(--ease-emphasized); }
+
+.desktop-nav a:focus-visible::after { transform:scaleX(1); }
+.language-switcher__options { transform-origin:top right; }
+@starting-style { .language-switcher__fallback[open] .language-switcher__options { opacity:0; transform:translateY(-6px); } }
+.language-switcher__fallback[open] .language-switcher__options { transition:opacity 160ms,transform 220ms var(--ease-emphasized); }
 
 .button:hover {
   box-shadow: 3px 3px 0 color-mix(in srgb, var(--color-text) 24%, transparent);
@@ -221,6 +236,8 @@ body[data-page-progress="true"] .site-header__progress {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .interaction-pulse { display:none; }
+  .role-icon, .language-switcher__options { transition:none !important; transform:none !important; }
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
@@ -228,6 +245,7 @@ body[data-page-progress="true"] .site-header__progress {
   }
 
   .site-header__progress,
+  .site-main,
   .page-header,
   .page-shell > nav[data-in-page-navigation],
   .identity-hero__media img,
