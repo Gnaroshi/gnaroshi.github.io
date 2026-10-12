@@ -78,7 +78,7 @@ if (!focusFreshness.isFresh && import.meta.env.DEV) {
 
     <Section class="home-selected" labelledby="selected-work-heading">
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.selectedWork")}</p><h2 id="selected-work-heading">{selectedProject.title}</h2></div>
-      <article class="home-featured-project">
+      <article class="home-featured-project" style={`--source-media-ratio:${selectedProjectMedia.width}/${selectedProjectMedia.height}`}>
         <figure class="home-featured-project__figure">
           <a class="home-featured-project__media" data-motion-media href={getLocalePath(locale, `/projects/${selectedProject.slug}/`)}>
             <ResponsiveImage asset={selectedProjectMedia} locale={locale} sizes="(min-width: 768px) 50vw, 100vw" />
