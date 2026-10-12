@@ -12,6 +12,6 @@ const primaryNavigation = getPrimaryNavigation(locale);
   {primaryNavigation.map((item) => isNavigationActive(currentPath, item.href) ? (
     <span aria-current="page" data-current-nav-item data-nav-href={item.href}>{item.label}</span>
   ) : (
-    <a href={item.href} data-nav-href={item.href}>{item.label}</a>
+    <a href={item.href} data-nav-href={item.href} data-astro-prefetch>{item.label}</a>
   ))}
 </nav>

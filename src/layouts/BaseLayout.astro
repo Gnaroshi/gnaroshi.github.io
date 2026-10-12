@@ -8,6 +8,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import PaperLabNav from "../components/navigation/PaperLabNav.astro";
 import InPageAnchorBehavior from "../components/InPageAnchorBehavior.astro";
+import InteractiveFeedback from "../components/InteractiveFeedback.astro";
 import { ogLocales } from "../i18n/config";
 import type { AlternateUrls, Locale } from "../i18n/types";
 import { getLocaleFromUrl, getLocalePath, translate } from "../i18n/utils";
@@ -114,7 +115,7 @@ const websiteBuildInfo = getWebsiteBuildInfo();
     />
     <slot name="head" />
     <style is:inline id="cross-document-view-transition">
-      @view-transition { navigation: auto; }
+      @view-transition { navigation: none; }
     </style>
     <script is:inline>
       (() => {
@@ -150,5 +151,6 @@ const websiteBuildInfo = getWebsiteBuildInfo();
     </main>
     {!minimalChrome && <SiteFooter locale={locale} currentPath={Astro.url.pathname} />}
     <InPageAnchorBehavior />
+    <InteractiveFeedback />
   </body>
 </html>

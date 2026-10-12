@@ -101,6 +101,12 @@ Facts such as IDs, dates, status, links, repository URLs, and verified technical
 
 Do not place private research notes, blog drafts, API credentials, or authoring tools in this repository.
 
+## Interactive Presentation
+
+Navigation uses intent-based prefetch and a new-document reveal, without overlapping page snapshots. Research questions have keyboard-accessible hypothesis/uncertainty tabs. About preserves the approved logo: three activations open a 3D relief, and three more enable holographic foil. Reset, pause, reduced-motion, no-JavaScript, and unavailable-WebGL states remain supported. The Three.js engine loads only after activation and stops rendering at rest or offscreen. Its MIT notice is shipped at `/licenses/three.txt`.
+
+See [`docs/interaction-motion.md`](docs/interaction-motion.md) for the interaction and performance contract.
+
 ## Deployment
 
 Source pushes to `main` do not deploy. Build and validate an exact website/public-feed SHA pair locally, then publish only the checked static output to the root of `gh-pages`, including `.nojekyll` and `CNAME`. Confirm repository Actions remain disabled before publication and keep Pages set to **Deploy from a branch → gh-pages → / (root)**. The existing `gnaroshi.dev` domain and HTTPS remain unchanged.

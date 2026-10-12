@@ -117,11 +117,11 @@ test("every visible button has an observable action", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   for (const route of qaRoutes) {
     await page.goto(route);
-    const buttons = page.locator("button:visible:not([disabled]):not([data-heading-link])");
+    const buttons = page.locator('button:visible:not([disabled]):not([data-heading-link]):not([role="tab"][aria-selected="true"])');
     const count = await buttons.count();
     for (let index = 0; index < count; index += 1) {
       await page.goto(route);
-      const button = page.locator("button:visible:not([disabled]):not([data-heading-link])").nth(index);
+      const button = page.locator('button:visible:not([disabled]):not([data-heading-link]):not([role="tab"][aria-selected="true"])').nth(index);
       const before = await controlState(page, button);
       await button.click();
       const after = await controlState(page, button);
@@ -467,6 +467,7 @@ async function controlState(page: Page, button: ReturnType<Page["locator"]>) {
     url: page.url(),
     expanded: await button.getAttribute("aria-expanded"),
     pressed: await button.getAttribute("aria-pressed"),
+    selected: await button.getAttribute("aria-selected"),
     disabled: await button.isDisabled(),
     theme: await page.locator("html").getAttribute("data-theme"),
     bodyClass: await page.locator("body").getAttribute("class"),

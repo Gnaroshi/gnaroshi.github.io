@@ -210,12 +210,14 @@ Minimum requirements:
 
 Motion must explain destination, progress, or state. The site uses progressive native CSS rather than a general animation framework:
 
-- short same-origin page transitions;
+- short incoming-document reveals without overlapping outgoing snapshots;
 - a scroll-linked reading-progress marker on long editorial pages;
 - current-section movement in compact local navigation;
 - small focus, hover, pressed, theme, menu, and dialog transitions.
 
 Do not add automatic loops, custom cursors, decorative parallax, motion-only feedback, or effects that hide content before JavaScript runs. Motion must not change layout dimensions. Unsupported browsers keep a complete static interface, and `prefers-reduced-motion` removes every nonessential transition.
+
+The owner-requested About identity is an intentional exception to purely utilitarian micro-interaction: an opt-in 3D relief and holographic foil provide personal expression. Preserve the approved full-face raster, keep it unframed, reserve control geometry, and load/render the engine only after interaction. This does not authorize arbitrary 3D decoration across reading pages.
 
 See `docs/interaction-motion.md`.
 
