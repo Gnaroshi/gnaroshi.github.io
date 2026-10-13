@@ -102,6 +102,6 @@ The endpoint contains no private source paths, private IDs, credentials, or unpu
 
 ## Deployment
 
-GitHub Actions checks out the website and an explicitly resolved public feed commit into `.content-feed`, validates all static contracts, runs a focused route smoke suite, and deploys `dist/` to GitHub Pages. A post-deploy verifier compares live provenance and navigation with the exact inputs. PR CI never deploys.
+The active release path builds immutable website/public-feed commits locally, validates contracts and routes, then publishes only the verified public static tree to `gh-pages:/`. Repository Actions remain disabled; retained workflows are historical tooling, not the current deployment path. A post-deploy verifier compares exact live provenance and navigation with the selected inputs. Source pushes do not deploy. See [deployment](deployment.md).
 
 The Astro site remains rooted at `https://gnaroshi.dev` with no repository subpath `base`.

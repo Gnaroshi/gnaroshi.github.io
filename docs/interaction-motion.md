@@ -62,6 +62,18 @@ Pointer position and arrow keys change the relief angle. Enter/Space activate th
 
 The engine is dynamically imported only on click three, never on Home, Research, Projects, or initial About. One instanced draw call uses a 64×64 raster grid. Pixel ratio is capped at 1.5; rendering stops after an interaction settles, while paused, offscreen, or in a hidden document. Page exit releases geometry/material/WebGL resources; history restoration safely reconstructs the view. No React island or external texture request is introduced.
 
+### Content-led About, Research, and Projects
+
+The three editorial routes do not repeat the Home flip interaction:
+
+- About connects a selected technology to the public projects whose verified `techStack` includes it. Desktop draws only those relationships in the reserved column gutter; mobile shows the matching project links without connectors. Arrow keys and ordinary buttons use the same selection. This is a view of project technologies, not a skill score or a claim of mastery. The introduction and existing biography share one column beside the approved identity, avoiding a separate sparse biography band.
+- Research offers a focused question view and an explicit complete view. The existing question links and hashes select the relevant topic before the shared anchor controller focuses it. Direct loads, history, and scrolling retain one current navigation item. The selected reading lens can compare the existing hypothesis and uncertainty side by side; comparison expands naturally on narrow screens rather than leaving a large reserved blank region. Same-document navigation preserves an explicit complete-view choice. No-JavaScript keeps all three questions and both positions readable.
+- Projects lets visitors scrub three approved demo captures for each featured application. A native range, previous/next controls, and the matching scenario description change together. The expand link opens the selected approved original for reading small application text. Only captured steps appear; missing captures are not fabricated or inferred. Product status, source provenance, and demo disclosure are unchanged. App identity and summary precede the viewer on narrow/paired layouts. Without JavaScript the approved primary screen and ordinary detail link remain useful.
+
+Selection changes use one-time connector or incoming-image traces, not idle loops. All new content uses static Astro and route-local DOM controllers, with no new dependency or React hydration. Focus on the reading lenses and app controls is made visible immediately instead of waiting for a long page-scroll animation. Scroll margins reserve the actual header/local-navigation boundary. Reduced-motion retains every state without the trace.
+
+QA measures adjacent block gaps in a single browser frame, checks focused-control hit testing, inspects full-page and detailed captures, and verifies normal/reduced-motion geometry. Below-fold media is deliberately scrolled into view before full-page QA capture; a screenshot of an unrequested lazy image is not treated as a broken public image. See [the content interaction QA record](content-interactions-qa-2026-10-13.md).
+
 ## Constraints
 
 - No custom cursor.
