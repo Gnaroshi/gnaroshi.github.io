@@ -28,7 +28,7 @@ The design should make writing, reading, and research activity feel primary. Vis
 
 Use `--space-flow` for related blocks and `--space-section` for editorial bands. Page headers inside a page shell do not add their own bottom margin. Do not create blank eyebrow rows to align unrelated heading hierarchies. Sticky section indexes are compact, shared navigation rather than oversized numbered cards.
 
-Research themes keep the same text-to-evidence order at every breakpoint. Paired text blocks align to their first content line, not their shared height. Project scenarios pair a step with its screenshot on wide screens and preserve that reading order on mobile. Only actual ordered workflows use connectors.
+Research puts the selected question before its paired explanation and image. Desktop uses a reading spread; mobile puts the directly manipulable image before the longer explanation. Paired text blocks align to their first content line, not their shared height. Project scenarios pair a step with its screenshot on wide screens and preserve that reading order on mobile. Only actual ordered workflows use connectors.
 
 Normal and reduced-motion screens must have identical section geometry at the same scroll position. Evidence screenshots remain uncropped on hover. See [interaction and motion](interaction-motion.md) and the [October audit](design-audit-2026-10-12.md).
 
@@ -98,15 +98,15 @@ Primary navigation is limited to five destinations; the brand links to Home:
 
 - Research
 - Projects
-- Writing
-- Reading
+- Blog (when public posts exist)
+- Reading (when public paper notes exist)
 - About
 
 These names remain English across locales, including mobile, footer, and site-owned breadcrumb labels. Korean articles retain Korean body text, dates, and natural task copy. Article headers lead with the title and useful summary/date metadata, without duplicate category eyebrows, source-language badges, or estimated reading time. Missing translation information appears only when the alternate-language control is opened.
 
 Activity is a utility destination. Now and public links belong in the homepage, About, and footer. Reading workflows stay grouped under a local Reading navigation instead of competing in the global header.
 
-Public navigation follows feed-backed capability evidence. Empty Writing and Activity destinations are omitted, while the Reading onboarding route may remain available through its explicit feature flag. Reading local navigation uses scan-friendly direct links rather than independently expandable menus: the empty state exposes only Overview and Reading method, and review, practice, build, or insight links appear only after their corresponding public records are available.
+Public navigation follows feed-backed capability evidence. Empty Blog, Reading, and Activity destinations are omitted. The owner retired the empty Reading landing page: its existing URLs forward to the research-tools question, and no empty local Reading navigation is rendered. A real public paper collection retains its evidence-backed index and detail URLs. Populated Reading local navigation uses scan-friendly direct links rather than independently expandable menus; review, practice, build, or insight links appear only after their corresponding public records are available.
 
 ### System Workflow
 
@@ -180,7 +180,7 @@ Component boundaries should reflect behavior and content type. Do not put conten
 
 The `/papers` page grows with the record:
 
-- At 0 papers, show one onboarding action, a short reading method, and a collapsed note template.
+- At 0 papers, redirect the retired empty landing page to the existing research-tools question; do not advertise an empty capability.
 - At 1-2 papers, show a compact note list and activity summary.
 - At 3+ papers, reveal the heatmap and basic filters.
 - At 2+ AI reviews, reveal review aggregates.
@@ -217,7 +217,7 @@ Motion must explain destination, progress, or state. The site uses progressive n
 
 Do not add automatic loops, custom cursors, decorative parallax, motion-only feedback, or effects that hide content before JavaScript runs. Motion must not change layout dimensions. Unsupported browsers keep a complete static interface, and `prefers-reduced-motion` removes every nonessential transition.
 
-The owner-requested About identity and Home project desk are intentional exceptions to purely utilitarian micro-interaction. About provides opt-in relief and foil while preserving the approved full-face raster. Home provides a discoverable perspective desk for selecting and turning existing project evidence, not arbitrary decoration: each action changes the actual object or selected public story. Keep reading routes static and text-forward. Reserve control geometry, avoid idle rendering, and retain complete flat/reduced-motion fallbacks.
+The owner-requested About identity, Home project desk, and Research image explorer are intentional exceptions to purely utilitarian micro-interaction. These defaults are not blanket bans on visual expression: preserve their intent (truthful content, readable hierarchy, bounded motion) while giving the visitor something meaningful to manipulate. About provides opt-in relief and foil while preserving the approved full-face raster. Home selects and turns existing project evidence. Research couples physical image dragging, keyboard arrows, and question selection to the actual question, explanation, and provenance caption. Keep reading routes static and text-forward. Reserve control geometry, avoid idle rendering, and retain complete flat/reduced-motion fallbacks.
 
 See `docs/interaction-motion.md`.
 

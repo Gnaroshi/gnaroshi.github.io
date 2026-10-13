@@ -72,7 +72,7 @@ Canonical generated JSON is loaded from:
 
 This includes public reviews, activity, Growth snapshots, weekly reviews, and the research graph. Feed assets are emitted under `/assets/` during the static build.
 
-The bootstrap-empty feed is a deliberate zero-content migration state. It renders honest empty states without treating seed or demo records as public activity.
+The bootstrap-empty feed is a deliberate zero-content migration state. It never treats seed or demo records as public activity. Empty Reading indexes are retired compatibility redirects to the research-tools question, not advertised onboarding. Public writing is labeled Blog throughout site navigation; canonical content ownership is unchanged.
 
 See [`docs/content-import.md`](docs/content-import.md) for the schema and failure behavior.
 
@@ -103,7 +103,7 @@ Do not place private research notes, blog drafts, API credentials, or authoring 
 
 ## Interactive Presentation
 
-Navigation uses intent-based prefetch and a new-document reveal, without overlapping page snapshots. Research questions have keyboard-accessible hypothesis/uncertainty tabs. About preserves the approved logo: three activations open a 3D relief, and three more enable holographic foil. Reset, pause, reduced-motion, no-JavaScript, and unavailable-WebGL states remain supported. The Three.js engine loads only after activation and stops rendering at rest or offscreen. Its MIT notice is shipped at `/licenses/three.txt`.
+Navigation uses intent-based prefetch and a new-document reveal, without overlapping page snapshots. Research images can be dragged to change the selected question, explanation, and caption together; arrow controls, keyboard input, and an all-questions fallback remain available. Its route-local Embla 8.6.0 engine has a bundled MIT notice at `/licenses/embla-carousel.txt`. About preserves the approved logo: three activations open a 3D relief, three more enable holographic foil, and page-wide mouse/pen movement changes the angle without moving the layout. Escape resets, P pauses, and reduced-motion, no-JavaScript, and unavailable-WebGL states remain supported. No visible identity caption/control strip or generic skills section is shown. The Three.js engine loads only after activation and stops rendering at rest or offscreen. Its MIT notice is shipped at `/licenses/three.txt`.
 
 See [`docs/interaction-motion.md`](docs/interaction-motion.md) for the interaction and performance contract.
 
