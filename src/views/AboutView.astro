@@ -18,7 +18,7 @@ const links = [{ label: "GitHub", href: profile.links.github }, profile.links.em
 <BaseLayout locale={locale} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} width="wide">
   <PageShell class="about-page">
     <div class="about-introduction"><div class="about-introduction__copy"><PageHeader eyebrow={profile.displayName} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} /><div class="prose-stack">{data.profile.bio.map((paragraph) => <p>{paragraph}</p>)}</div></div><InteractiveIdentity locale={locale} /></div>
-    <section class="section" aria-labelledby="about-skills"><h2 id="about-skills">{translate(locale, "about.skills")}</h2><div class="plain-groups">{data.skillGroups.map((group) => <div><h3>{group.title}</h3><ul class="about-skill-list">{group.skills.map((skill) => <li>{skill}</li>)}</ul></div>)}</div><ToolConnections locale={locale} /></section>
+    <ToolConnections locale={locale} />
     <section class="section" aria-labelledby="about-values"><h2 id="about-values">{translate(locale, "about.values")}</h2><ul>{data.profile.researcherValues.map((value) => <li>{value}</li>)}</ul></section>
     {links.length > 0 && <section class="section" aria-labelledby="about-links"><h2 id="about-links">{translate(locale, "about.links")}</h2><div class="link-row">{links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}</div></section>}
   </PageShell>
@@ -29,11 +29,6 @@ const links = [{ label: "GitHub", href: profile.links.github }, profile.links.em
   .about-introduction__copy { display:grid; gap:var(--space-5); }
   .about-introduction :global(.page-header) { margin:0; }
   .about-page .prose-stack { max-width:720px; }
-  .plain-groups { display:grid; gap:var(--space-5); }
-  .plain-groups > div { display:grid; gap:var(--space-3); }
   .about-page .section > ul { display:grid; gap:var(--space-3); margin:0; padding-inline-start:1.2rem; color:var(--color-text-secondary); }
-  .about-skill-list { display:flex; flex-wrap:wrap; gap:var(--space-2) var(--space-4); padding:0; margin:0; list-style:none; }
-  .about-skill-list li { position:relative; padding-inline-start:var(--space-3); color:var(--color-text-secondary); }
-  .about-skill-list li::before { position:absolute; top:.62em; left:0; width:5px; height:5px; background:var(--color-identity-teal); content:""; }
-  @media (min-width:768px) { .about-introduction { grid-template-columns:minmax(0,1fr) minmax(240px,.6fr); gap:var(--space-7); } .plain-groups { grid-template-columns:repeat(3,minmax(0,1fr)); } .about-skill-list { display:grid; } }
+  @media (min-width:768px) { .about-introduction { grid-template-columns:minmax(0,1fr) minmax(240px,.6fr); gap:var(--space-7); } }
 </style>

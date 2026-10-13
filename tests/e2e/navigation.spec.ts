@@ -9,8 +9,8 @@ test("desktop navigation stays concise", async ({ page }) => {
   await page.goto("/");
   const primary = page.getByRole("navigation", { name: "Primary navigation" });
   await expect(primary.getByRole("link")).toHaveCount(primaryNavigation.length);
-  await expect(primary.getByRole("link", { name: "Writing" })).toHaveCount(primaryNavigation.some((item) => item.href === "/blog/") ? 1 : 0);
-  await expect(primary.getByRole("link", { name: "Reading" })).toHaveAttribute("href", "/papers/");
+  await expect(primary.getByRole("link", { name: "Blog" })).toHaveCount(primaryNavigation.some((item) => item.href === "/blog/") ? 1 : 0);
+  await expect(primary.getByRole("link", { name: "Reading" })).toHaveCount(primaryNavigation.some((item) => item.href === "/papers/") ? 1 : 0);
   await expect(page.locator('.utility-nav [data-nav-href="/growth/"]')).toHaveCount(utilityNavigation.some((item) => item.href === "/growth/") ? 1 : 0);
 });
 
@@ -34,6 +34,7 @@ test("mobile menu traps focus, locks scroll, and returns focus on Escape", async
 });
 
 test("Reading local navigation exposes only available destinations without expandable menus", async ({ page }) => {
+  test.skip(getPaperLabNavigation("en").length === 0,"Requires published paper notes; the empty Reading page is retired.");
   await page.goto("/papers/");
   const localNav = page.getByRole("navigation", { name: "Reading navigation" });
   await expect(localNav).toBeVisible();
@@ -66,6 +67,7 @@ test("evidence-gated Reading routes show parent context without advertising unav
   ] as const) {
     await page.goto(route);
     const navigation = page.getByRole("navigation", { name: route.startsWith("/ko/") ? "논문 읽기 메뉴" : "Reading navigation" });
+    if (getPaperLabNavigation("en").length === 0) {await expect(navigation).toHaveCount(0);continue;}
     await expect(navigation.getByRole("link", { name: label })).toHaveAttribute("href", route.startsWith("/ko/") ? "/ko/papers/" : "/papers/");
     await expect(navigation.locator('[aria-current]')).toHaveCount(0);
     await expect(navigation).not.toContainText(/Reviews|Formula|Graph|복습|수식|연결/);

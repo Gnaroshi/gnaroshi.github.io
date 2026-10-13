@@ -8,6 +8,7 @@ const invalid = ["invalid-dangling-graph-edge", "invalid-manifest-count", "inval
 
 function run(command, args, fixture, expectSuccess, extraEnv = {}) {
   const feedPath = resolve(contractRoot, "fixtures", fixture);
+  console.log(`[content-feed] ${fixture}: ${command} ${args.join(" ")}`);
   const result = spawnSync(command, args, { cwd: resolve("."), encoding: "utf8", env: { ...process.env, CONTENT_FEED_PATH: feedPath, CONTENT_FEED_CONTRACT_PATH: contractRoot, ...extraEnv } });
   if ((result.status === 0) !== expectSuccess) {
     throw new Error(`${fixture}: expected ${expectSuccess ? "success" : "failure"}\n${result.stdout}\n${result.stderr}`);
@@ -64,10 +65,16 @@ for (const fixture of valid) {
     const html = readFileSync("dist/papers/paper-pair-english/index.html", "utf8");
     if (!html.includes('hreflang="ko"') || !html.includes("/ko/papers/paper-pair-korean/")) throw new Error("Translated paper pair is missing its real hreflang");
     if (!existsSync("dist/ko/papers/old-korean-paper-slug/index.html")) throw new Error("Korean paper alias redirect was not built");
+    run("npx", ["playwright", "test", "tests/e2e/interaction-audit.spec.ts", "--grep", "Reading method|Reading overview", "--workers", "1"], fixture, true, {
+      PLAYWRIGHT_USE_EXISTING_BUILD: "1"
+    });
   }
   if (fixture === "one-rich-review") {
     run("npx", ["playwright", "test", "tests/e2e/populated-paper-nav.spec.ts"], fixture, true, {
       PAPER_NAV_POPULATED: "true",
+      PLAYWRIGHT_USE_EXISTING_BUILD: "1"
+    });
+    run("npx", ["playwright", "test", "tests/e2e/interaction-audit.spec.ts", "--grep", "Reading method|Reading overview|three-pass checklist", "--workers", "1"], fixture, true, {
       PLAYWRIGHT_USE_EXISTING_BUILD: "1"
     });
   }

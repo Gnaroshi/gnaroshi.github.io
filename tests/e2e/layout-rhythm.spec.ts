@@ -32,7 +32,7 @@ for (const width of [1440, 1024, 768, 390, 360]) {
         const rhythm = await page.evaluate(() => {
           const header = document.querySelector(".page-header")!.getBoundingClientRect();
           const nav = document.querySelector(".section-nav")!.getBoundingClientRect();
-          const heading = document.querySelector(".research-theme h2, .project-section h2")!.getBoundingClientRect();
+          const heading = document.querySelector(".research-heading h2, .project-section h2")!.getBoundingClientRect();
           const controls = document.querySelector("[data-research-controls]")?.getBoundingClientRect();
           return { headerToNav: (controls?.top ?? nav.top) - header.bottom, controlsToNav: controls ? nav.top - controls.bottom : 0, navToContent: heading.top - nav.bottom };
         });

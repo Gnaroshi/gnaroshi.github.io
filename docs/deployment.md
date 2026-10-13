@@ -56,7 +56,7 @@ node scripts/verify-deployment.mjs \
   --environment production
 ```
 
-It retries with bounded backoff and checks schema-v1 provenance, exact expected values, core routes (`/`, `/ko/`, `/research/`, `/papers/`), consistent primary navigation, and absence of known scaffold copy. Also verify changed content routes; when establishing a new publication path, compare live article bytes with the validated static file.
+It retries with bounded backoff and checks schema-v1 provenance, exact expected values, core routes (`/`, `/ko/`, `/research/`, `/about/`), consistent primary navigation, and absence of known scaffold copy. Also verify changed content routes and the retired empty Reading redirects; when establishing a new publication path, compare live article bytes with the validated static file.
 
 Treat any mismatch as an unverified release even if Pages accepted the branch. Follow [rollback](rollback.md), not Actions reruns.
 

@@ -75,10 +75,10 @@ test("editorial and empty application routes keep feature boundaries", async ({ 
   }
 
   await page.goto("/papers/");
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, follow");
+  await expect(page).toHaveURL(/\/research\/#human-ai-research-tools$/);
   await expect(page.locator("astro-island")).toHaveCount(0);
   const paperStyles = await page.locator('link[rel="stylesheet"]').evaluateAll((links) => links.map((link) => (link as HTMLLinkElement).href));
-  expect(paperStyles.some((href) => href.includes("/papers."))).toBe(true);
+  expect(paperStyles.some((href) => href.includes("/papers."))).toBe(false);
   expect(paperStyles.some((href) => href.includes("/katex."))).toBe(false);
 });
 
@@ -86,12 +86,10 @@ test("About and current-focus surfaces keep truthful semantics", async ({ page }
   await page.goto("/about/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("About");
   await expect(page.locator(".about-monogram")).toHaveCount(0);
-  const skillGroups = page.locator(".about-skill-list");
-  expect(await skillGroups.count()).toBeGreaterThan(0);
-  for (const group of await skillGroups.all()) {
-    expect(await group.evaluate((element) => ["UL", "OL"].includes(element.tagName))).toBe(true);
-    expect(await group.getByRole("listitem").count()).toBeGreaterThan(0);
-  }
+  await expect(page.locator(".about-skill-list, #about-skills")).toHaveCount(0);
+  const projectList = page.locator(".tool-connections__results ul");
+  await expect(projectList).toHaveJSProperty("tagName","UL");
+  await expect(projectList.getByRole("listitem")).toHaveCount(9);
 
   await page.goto("/now/");
   const state = await page.locator("[data-current-focus-state]").getAttribute("data-current-focus-state");

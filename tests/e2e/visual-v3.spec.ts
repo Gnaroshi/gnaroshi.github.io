@@ -63,7 +63,7 @@ for (const viewport of viewports) {
             window.scrollTo(0, top);
             await new Promise((resolve) => setTimeout(resolve, 30));
           }
-          const visibleImages = [...document.images].filter((image) => !image.closest("dialog:not([open])"));
+          const visibleImages = [...document.images].filter((image) => !image.closest('dialog:not([open]),[inert],[hidden],[aria-hidden="true"]'));
           await Promise.all(visibleImages.map((image) => image.complete ? image.decode().catch(() => undefined) : new Promise<void>((resolve) => {
             image.addEventListener("load", () => resolve(), { once: true });
             image.addEventListener("error", () => resolve(), { once: true });
@@ -123,7 +123,7 @@ test("theme SVG is optically centered in both themes", async ({ page }) => {
 
 test("page header starts align within each shell without blank eyebrow spacers", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
-  for (const routesInShell of [["/research/", "/projects/", "/blog/", "/about/"], ["/papers/", "/growth/"]]) {
+  for (const routesInShell of [["/research/", "/projects/", "/blog/", "/about/"], ["/queue/", "/growth/"]]) {
     const starts = [];
     for (const route of routesInShell) {
       await page.goto(route);

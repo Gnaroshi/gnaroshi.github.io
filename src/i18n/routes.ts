@@ -34,6 +34,7 @@ export function getFooterNavigation(locale: Locale, capabilities: PublicCapabili
 }
 
 export function getPaperLabNavigation(locale: Locale, capabilities: PublicCapabilities = getPublicCapabilities()) {
+  if (!capabilities.hasPapers && !publicFeatureFlags.paperLabOnboarding) return [];
   const path = (value: string) => getLocalePath(locale, value);
   return [
     { href: path("/papers/"), label: translate(locale, "paperLab.overview") },

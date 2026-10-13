@@ -1,4 +1,7 @@
 ---
 import PaperLabView from "../../views/PaperLabView.astro";
+import { getPublishedPapers } from "../../utils/papers";
+import RedirectPage from "../../components/RedirectPage.astro";
+const hasPapers=(await getPublishedPapers("en")).length > 0;
 ---
-<PaperLabView locale="en" />
+{hasPapers ? <PaperLabView locale="en" /> : <RedirectPage target="/research/#human-ai-research-tools" />}

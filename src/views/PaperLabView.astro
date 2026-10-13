@@ -12,6 +12,9 @@ import "../styles/papers.css";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const papers = await getPublishedPapers(locale);
+const peerLocale=locale === "en" ? "ko" : "en";
+const translationAvailable=(await getPublishedPapers(peerLocale)).length > 0;
+const alternateUrls={en:"/papers/",ko:"/ko/papers/",translationAvailable};
 const today = getTodayKey();
 const activity = getActivityCalendar();
 const stats = getPaperStats(papers, today, activity);
@@ -20,4 +23,4 @@ const tags = normalizePaperTags(papers);
 const reviewsBySlug = getPublicPaperReviewMap(papers);
 const reviewStats = getPaperReviewStats(papers, reviewsBySlug, today);
 ---
-<BaseLayout locale={locale} title={translate(locale, "papers.title")} description={translate(locale, "papers.subtitle")} width="dashboard" mode="application"><AppShell><PaperDashboard papers={papers} stats={stats} countsByDate={countsByDate} tags={tags} today={today} reviewStats={reviewStats} reviewsBySlug={reviewsBySlug} locale={locale} /></AppShell></BaseLayout>
+<BaseLayout locale={locale} title={translate(locale, "papers.title")} description={translate(locale, "papers.subtitle")} alternateUrls={alternateUrls} width="dashboard" mode="application"><AppShell><PaperDashboard papers={papers} stats={stats} countsByDate={countsByDate} tags={tags} today={today} reviewStats={reviewStats} reviewsBySlug={reviewsBySlug} locale={locale} /></AppShell></BaseLayout>

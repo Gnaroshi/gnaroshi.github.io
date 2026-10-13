@@ -128,6 +128,7 @@ const payload = JSON.stringify({
         if (event.key !== "Enter" && event.key !== " ") return;
         event.preventDefault();
         select(repositoryId);
+        control.scrollIntoView({block:"nearest",behavior:"instant"});
       });
     }
 
@@ -212,6 +213,8 @@ const payload = JSON.stringify({
 
     function clear(): void {
       if (!selectedId) return;
+      const current=controls.find(control=>control.dataset.explorerControl === selectedId && control.getClientRects().length>0);
+      const restoreFocus=ui.selection.contains(document.activeElement);
       selectedId = null;
       delete root.dataset.explorerActive;
       for (const control of controls) {
@@ -223,6 +226,10 @@ const payload = JSON.stringify({
       ui.selection.hidden = true;
       ui.clearButton.hidden = true;
       ui.status.textContent = payload.labels.clearedStatus;
+      if(restoreFocus) {
+        current?.focus({preventScroll:true});
+        current?.scrollIntoView({block:"nearest",behavior:"instant"});
+      }
     }
 
     ui.clearButton.addEventListener("click", clear);

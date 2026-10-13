@@ -49,6 +49,7 @@ test("main routes do not overflow at 390px", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   for (const route of routes) {
     await page.goto(route);
+    await expect(page.locator(".site-header")).toHaveCount(1);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow, `${route} horizontal overflow`).toBeLessThanOrEqual(1);
   }

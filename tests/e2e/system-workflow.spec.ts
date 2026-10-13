@@ -130,6 +130,7 @@ test.describe("public system workflow", () => {
     const clear = explorer.getByRole("button", { name: "Clear selection" });
     await expect(clear).toBeVisible();
     await clear.click();
+    await expect(studio).toBeFocused();
     await expect(explorer).not.toHaveAttribute("data-explorer-active");
     await expect(explorer.locator("[data-system-explorer-instruction]")).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);

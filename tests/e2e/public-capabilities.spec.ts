@@ -19,8 +19,8 @@ const graph = {
 };
 
 const fixtures: Array<{ name: string; evidence: PublicCapabilityEvidence; localCount: number; writing: boolean; growth: boolean }> = [
-  { name: "bootstrap empty", evidence: emptyEvidence, localCount: 2, writing: false, growth: false },
-  { name: "writing only", evidence: { ...emptyEvidence, counts: { blogPosts: 1 } }, localCount: 2, writing: true, growth: false },
+  { name: "bootstrap empty", evidence: emptyEvidence, localCount: 0, writing: false, growth: false },
+  { name: "writing only", evidence: { ...emptyEvidence, counts: { blogPosts: 1 } }, localCount: 0, writing: true, growth: false },
   { name: "one paper", evidence: { ...emptyEvidence, counts: { papers: 1 } }, localCount: 3, writing: false, growth: false },
   { name: "paper and review", evidence: { ...emptyEvidence, counts: { papers: 1, reviews: 1 } }, localCount: 5, writing: false, growth: false },
   { name: "paper and oral exam", evidence: { ...emptyEvidence, counts: { papers: 1, oralExams: 1 } }, localCount: 4, writing: false, growth: false },
@@ -53,6 +53,9 @@ for (const fixture of fixtures) {
 
     expect(enPrimary.some((item) => item.href === "/blog/")).toBe(fixture.writing);
     expect(koPrimary.some((item) => item.href === "/ko/blog/")).toBe(fixture.writing);
+    expect(enPrimary.some((item) => item.href === "/papers/")).toBe(capabilities.hasPapers);
+    expect(koPrimary.some((item) => item.href === "/ko/papers/")).toBe(capabilities.hasPapers);
+    expect(enPrimary.find(item => item.href === "/blog/")?.label).toBe(fixture.writing ? "Blog" : undefined);
     expect(getUtilityNavigation("en", capabilities).length > 0).toBe(fixture.growth);
     expect(getUtilityNavigation("ko", capabilities).length > 0).toBe(fixture.growth);
     expect(enLocal).toHaveLength(fixture.localCount);

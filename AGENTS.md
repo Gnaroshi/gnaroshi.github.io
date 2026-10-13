@@ -125,6 +125,8 @@ Keep English unprefixed and Korean under `/ko/`. Preserve existing public route 
 
 Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render silent English fallback content at a Korean content URL.
 
+The public writing destination is named Blog, not Writing. When there are no public paper notes in a locale, `/papers/` or `/ko/papers/` is a compatibility redirect to the existing research-tools question, not an empty onboarding page. Do not restore empty Reading navigation. Preserve populated paper routes and feed boundaries.
+
 ## Coding Rules
 
 - Use TypeScript and static-compatible Astro APIs.
@@ -145,7 +147,7 @@ Use shared locale-aware views. Never add `/en/` or `/kr/` routes. Do not render 
 
 ## Design And Accessibility
 
-- Maintain the minimal academic/editorial design.
+- Maintain readable academic/editorial content, but follow the owner's interaction intent rather than treating visual defaults as blanket bans. About identity, Home project desk, and the Research image explorer are approved, bounded direct-manipulation surfaces with complete keyboard/reduced-motion fallbacks.
 - Keep site navigation and site-owned breadcrumb labels English in both locales; preserve Korean article content and natural Korean task copy. Do not stack language badges, estimated reading time, or a duplicate content-type eyebrow before article titles.
 - Keep application mode limited to public paper workflows and Activity views.
 - Use semantic landmarks and heading order.

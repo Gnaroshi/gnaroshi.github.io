@@ -1,6 +1,6 @@
 # Localization Terminology
 
-Use these terms consistently in Korean content and task copy. Global navigation and site-owned breadcrumb labels remain English in both locales by owner choice: Home, Research, Projects, Writing, Reading, About, Activity, Now, and Links. Do not translate those stable navigation labels merely because the article is Korean.
+Use these terms consistently in Korean content and task copy. Global navigation and site-owned breadcrumb labels remain English in both locales by owner choice: Home, Research, Projects, Blog, Reading, About, Activity, Now, and Links. Blog replaces the previous public Writing label; private writing-workspace names do not change. Reading is exposed only with public paper notes, not as empty onboarding. Do not translate those stable navigation labels merely because the article is Korean.
 
 | English | Korean | Notes |
 | --- | --- | --- |

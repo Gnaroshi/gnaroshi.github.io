@@ -1,4 +1,4 @@
 export const publicFeatureFlags = {
   writingOnboarding: false,
-  paperLabOnboarding: true
+  paperLabOnboarding: false
 } as const;
