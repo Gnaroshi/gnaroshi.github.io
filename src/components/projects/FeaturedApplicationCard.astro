@@ -5,7 +5,7 @@ import { platformLabels } from "../../data/facts/techCatalog";
 import type { ProjectStory } from "../../data/projectStories";
 import { productStatusLabels } from "../../data/projectStories";
 import type { Locale } from "../../i18n/types";
-import ResponsiveImage from "../media/ResponsiveImage.astro";
+import WalkthroughMedia from "./WalkthroughMedia.astro";
 import ProjectCardHeader from "./ProjectCardHeader.astro";
 import TechStackStrip from "./TechStackStrip.astro";
 
@@ -29,12 +29,6 @@ const { project, story, media, locale, href, stackLabel, lead = false } = Astro.
   data-motion-surface
   style={`--source-media-ratio:${media.width}/${media.height}`}
 >
-  <figure class="featured-app__figure">
-    <a class="featured-app__media" data-card-part="media" data-motion-media href={href}>
-      <ResponsiveImage asset={media} locale={locale} sizes={lead ? "(min-width: 1100px) 42vw, 100vw" : "(min-width: 1100px) 38vw, 100vw"} />
-    </a>
-    <figcaption><strong>{media.caption[locale]}</strong><span>{media.demoDisclosure[locale]}</span></figcaption>
-  </figure>
   <div class="featured-app__copy">
     <ProjectCardHeader project={project} locale={locale} title={story.title} href={href} />
     <p class="project-meta" data-card-part="meta">
@@ -43,4 +37,5 @@ const { project, story, media, locale, href, stackLabel, lead = false } = Astro.
     <p data-card-part="summary" data-card-summary>{story.cardSummary}</p>
     <TechStackStrip ids={project.techStack} max={4} label={stackLabel} />
   </div>
+  <WalkthroughMedia project={project} story={story} locale={locale} lead={lead} />
 </article>
