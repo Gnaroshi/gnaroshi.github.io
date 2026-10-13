@@ -82,7 +82,7 @@
         const target = normalizedPath(url.pathname) === normalizedPath(window.location.pathname)
           ? targetForHash(url.hash)
           : null;
-        return target ? [{ link, target }] : [];
+        return target && target.getClientRects().length > 0 ? [{ link, target }] : [];
       });
       if (pairs.length === 0) continue;
 
@@ -130,6 +130,7 @@
   }
 
   function exposeTarget(hash: string, moveFocus = true): boolean {
+    window.dispatchEvent(new CustomEvent("gnaroshi:reveal-anchor", { detail: { hash } }));
     const target = targetForHash(hash);
     if (!target) return false;
     target.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "start" });

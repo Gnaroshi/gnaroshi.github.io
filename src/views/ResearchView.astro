@@ -27,12 +27,17 @@ const mediaLabels = locale === "ko"
 <BaseLayout locale={locale} title={translate(locale, "nav.research")} description={translate(locale, "research.intro")} width="wide" pageProgress>
   <PageShell class="research-page">
     <PageHeader eyebrow={translate(locale, "research.eyebrow")} title={translate(locale, "research.title")} description={translate(locale, "research.intro")} />
+    <div class="research-explorer" data-research-explorer>
+    <div class="research-explorer__controls" hidden data-research-controls role="group" aria-label={locale === "ko" ? "질문 보기" : "Question view"}>
+      <button type="button" data-research-mode="focus" aria-pressed="true">{locale === "ko" ? "한 질문에 집중" : "Focus on one question"}</button>
+      <button type="button" data-research-mode="all" aria-pressed="false">{locale === "ko" ? "전체 질문" : "All questions"}</button>
+    </div>
     <SectionNav class="research-overview" label={locale === "ko" ? "연구 질문" : "Research questions"} items={data.researchAreas.map((area) => ({ href:getLocalePath(locale, `/research/#${area.slug}`), label:area.shortTitle }))} />
-    <div class="research-themes">
+    <div class="research-themes" data-research-themes>
       {data.researchAreas.map((area, index) => {
         const media = getResearchMedia(area.id, locale);
         const caption = index === 0 ? mediaLabels.concept : mediaLabels.diagram;
-        return <article id={area.slug} class="research-theme" data-in-page-section tabindex="-1">
+        return <article id={area.slug} class="research-theme" data-research-topic data-in-page-section tabindex="-1">
           <div class="research-theme__copy">
             <header class="research-theme__header">
               <p class="eyebrow">{String(index + 1).padStart(2, "0")} · {area.shortTitle}</p>
@@ -50,12 +55,71 @@ const mediaLabels = locale === "ko"
         </article>;
       })}
     </div>
+    </div>
   </PageShell>
 </BaseLayout>
 
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-research-explorer]")) {
+    const topics = [...root.querySelectorAll<HTMLElement>("[data-research-topic]")];
+    const modes = [...root.querySelectorAll<HTMLButtonElement>("[data-research-mode]")];
+    let mode = "focus";
+    let selected = topics[0]!;
+    const topicForHash = () => {
+      try { return document.getElementById(decodeURIComponent(location.hash.slice(1)))?.closest<HTMLElement>("[data-research-topic]"); }
+      catch { return null; }
+    };
+    const select = (topic:HTMLElement) => {
+      selected = topic;
+      root.dataset.mode = mode;
+      topics.forEach(item => {item.hidden = mode === "focus" && item !== selected;item.inert = item.hidden;item.dataset.selected = String(item === selected);});
+      modes.forEach(button => button.setAttribute("aria-pressed",String(button.dataset.researchMode === mode)));
+      if (mode === "focus") for (const link of root.querySelectorAll<HTMLAnchorElement>("[data-in-page-link]")) {
+        if (link.hash === `#${selected.id}`) link.setAttribute("aria-current","location");
+        else link.removeAttribute("aria-current");
+      }
+    };
+    // Reveal the destination before the shared anchor controller focuses it.
+    root.addEventListener("click",event => {
+      const anchor = (event.target as Element).closest<HTMLAnchorElement>("a[href]");
+      if (!anchor || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const url = new URL(anchor.href);
+      if (url.pathname !== location.pathname || url.origin !== location.origin) return;
+      try { const topic = document.getElementById(decodeURIComponent(url.hash.slice(1)))?.closest<HTMLElement>("[data-research-topic]");if(topic) select(topic); } catch { /* Invalid hashes retain ordinary navigation. */ }
+    },true);
+    const onLocation = () => {const topic = topicForHash();select(topic ?? topics[0]!);};
+    window.addEventListener("hashchange",onLocation);
+    window.addEventListener("popstate",onLocation);
+    window.addEventListener("gnaroshi:reveal-anchor",event => {
+      const hash = (event as CustomEvent<{hash:string}>).detail.hash;
+      try {const topic = document.getElementById(decodeURIComponent(hash.slice(1)))?.closest<HTMLElement>("[data-research-topic]");if(topic)select(topic);}catch { /* The shared anchor controller handles invalid targets. */ }
+    });
+    modes.forEach(button => button.addEventListener("click",() => {
+      if (button.dataset.researchMode === mode) return;
+      mode = button.dataset.researchMode!;
+      if (mode === "focus") {
+        const headerBottom = document.querySelector(".site-header")!.getBoundingClientRect().bottom;
+        selected = topics.filter(topic => topic.getBoundingClientRect().top <= headerBottom + 100).at(-1) ?? selected;
+      }
+      select(selected);
+      if (mode === "focus") {selected.scrollIntoView({block:"start",behavior:"auto"});selected.focus({preventScroll:true});}
+      window.dispatchEvent(new Event("resize"));
+    }));
+    root.querySelector<HTMLElement>("[data-research-controls]")!.hidden = false;
+    root.dataset.enhanced = "true";onLocation();
+  }
+</script>
+
 <style>
   .research-themes { display: grid; }
+  .research-explorer { display:grid; gap:var(--space-4); }
+  .research-explorer__controls { display:flex; flex-wrap:wrap; gap:var(--space-2); }
+  .research-explorer__controls[hidden] { display:none; }
+  .research-explorer__controls button { min-height:44px; padding:var(--space-2) var(--space-3); border:1px solid var(--color-border); background:var(--color-surface); color:var(--color-text-secondary); font:inherit; font-size:var(--text-sm); font-weight:650; cursor:pointer; }
+  .research-explorer__controls button[aria-pressed="true"] { color:var(--color-accent); border-color:var(--color-accent); background:var(--color-accent-soft); box-shadow:inset 3px 0 var(--color-identity-orange); }
   .research-theme { display:grid; gap:var(--space-flow); padding-block:var(--space-flow); }
+  .research-theme[hidden] { display:none; }
+  [data-mode="focus"] .research-theme { padding-block:0; border-top:0; }
   .research-theme:first-child { padding-block-start:0; }
   .research-theme + .research-theme { border-top:1px solid var(--color-border); }
   .research-theme { scroll-margin-top:calc(var(--header-height) + var(--section-nav-height) + var(--space-2)); }
