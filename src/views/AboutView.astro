@@ -4,6 +4,7 @@ import ExternalLink from "../components/common/ExternalLink.astro";
 import PageHeader from "../components/layout/PageHeader.astro";
 import PageShell from "../components/layout/PageShell.astro";
 import InteractiveIdentity from "../components/identity/InteractiveIdentity.astro";
+import ToolConnections from "../components/about/ToolConnections.astro";
 import { getLocalizedData } from "../data/locales";
 import { profile } from "../data/profile";
 import type { Locale } from "../i18n/types";
@@ -16,9 +17,8 @@ const links = [{ label: "GitHub", href: profile.links.github }, profile.links.em
 
 <BaseLayout locale={locale} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} width="wide">
   <PageShell class="about-page">
-    <div class="about-introduction"><PageHeader eyebrow={profile.displayName} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} /><InteractiveIdentity locale={locale} /></div>
-    <section class="section" aria-labelledby="about-bio"><h2 id="about-bio">{translate(locale, "about.bio")}</h2><div class="prose-stack">{data.profile.bio.map((paragraph) => <p>{paragraph}</p>)}</div></section>
-    <section class="section" aria-labelledby="about-skills"><h2 id="about-skills">{translate(locale, "about.skills")}</h2><div class="plain-groups">{data.skillGroups.map((group) => <div><h3>{group.title}</h3><ul class="about-skill-list">{group.skills.map((skill) => <li>{skill}</li>)}</ul></div>)}</div></section>
+    <div class="about-introduction"><div class="about-introduction__copy"><PageHeader eyebrow={profile.displayName} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} /><div class="prose-stack">{data.profile.bio.map((paragraph) => <p>{paragraph}</p>)}</div></div><InteractiveIdentity locale={locale} /></div>
+    <section class="section" aria-labelledby="about-skills"><h2 id="about-skills">{translate(locale, "about.skills")}</h2><div class="plain-groups">{data.skillGroups.map((group) => <div><h3>{group.title}</h3><ul class="about-skill-list">{group.skills.map((skill) => <li>{skill}</li>)}</ul></div>)}</div><ToolConnections locale={locale} /></section>
     <section class="section" aria-labelledby="about-values"><h2 id="about-values">{translate(locale, "about.values")}</h2><ul>{data.profile.researcherValues.map((value) => <li>{value}</li>)}</ul></section>
     {links.length > 0 && <section class="section" aria-labelledby="about-links"><h2 id="about-links">{translate(locale, "about.links")}</h2><div class="link-row">{links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}</div></section>}
   </PageShell>
@@ -26,6 +26,7 @@ const links = [{ label: "GitHub", href: profile.links.github }, profile.links.em
 
 <style>
   .about-introduction { display:grid; gap:var(--space-5); align-items:start; }
+  .about-introduction__copy { display:grid; gap:var(--space-5); }
   .about-introduction :global(.page-header) { margin:0; }
   .about-page .prose-stack { max-width:720px; }
   .plain-groups { display:grid; gap:var(--space-5); }
