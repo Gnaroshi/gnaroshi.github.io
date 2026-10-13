@@ -33,10 +33,12 @@ for (const width of [1440, 1024, 768, 390, 360]) {
           const header = document.querySelector(".page-header")!.getBoundingClientRect();
           const nav = document.querySelector(".section-nav")!.getBoundingClientRect();
           const heading = document.querySelector(".research-theme h2, .project-section h2")!.getBoundingClientRect();
-          return { headerToNav: nav.top - header.bottom, navToContent: heading.top - nav.bottom };
+          const controls = document.querySelector("[data-research-controls]")?.getBoundingClientRect();
+          return { headerToNav: (controls?.top ?? nav.top) - header.bottom, controlsToNav: controls ? nav.top - controls.bottom : 0, navToContent: heading.top - nav.bottom };
         });
         expect(rhythm.headerToNav).toBeGreaterThanOrEqual(16);
         expect(rhythm.headerToNav).toBeLessThanOrEqual(33);
+        if(route === "/research/")expect(rhythm.controlsToNav).toBeLessThanOrEqual(24);
         expect(rhythm.navToContent).toBeGreaterThanOrEqual(16);
         expect(rhythm.navToContent).toBeLessThanOrEqual(75);
         await expect(nav).toHaveCSS("transform", "none");

@@ -192,6 +192,9 @@
   .selected-project:nth-child(even) > :first-child {
     order: 2;
   }
+  .featured-app--lead > .featured-app__copy { grid-column:2; grid-row:1; }
+  .featured-app--lead > .featured-app__figure { grid-column:1; grid-row:1; }
+  .featured-app--paired { grid-template-columns:minmax(17rem,.85fr) minmax(0,1.15fr); }
 }
 
 @media (min-width: 1100px) {

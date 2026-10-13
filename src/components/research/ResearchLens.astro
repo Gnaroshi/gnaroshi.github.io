@@ -7,25 +7,33 @@ const entries = [
   { key:"hypothesis",label:translate(locale,"research.hypothesis"),body:hypothesis },
   { key:"uncertainty",label:translate(locale,"research.uncertainty"),body:uncertainty }
 ];
+const compare = locale === "ko" ? "나란히 비교" : "Compare both";
 ---
 <div class="research-lens" data-research-lens>
   <div class="research-lens__tabs" role="tablist" aria-label={locale === "ko" ? "질문 살펴보기" : "Explore the question"}>
     {entries.map((entry,index) => <button type="button" role="tab" id={`${id}-${entry.key}-tab`} aria-controls={`${id}-${entry.key}-panel`} aria-selected={index === 0 ? "true" : "false"} tabindex={index === 0 ? 0 : -1}>{entry.label}</button>)}
+    <button type="button" role="tab" id={`${id}-compare-tab`} aria-controls={`${id}-compare-panel`} aria-selected="false" tabindex="-1">{compare}</button>
   </div>
   <div class="research-lens__panels">
     {entries.map((entry) => <div class={`research-lens__panel research-lens__panel--${entry.key}`} role="tabpanel" id={`${id}-${entry.key}-panel`} aria-labelledby={`${id}-${entry.key}-tab`}><p class="research-lens__label"><strong>{entry.label}</strong></p><p>{entry.body}</p></div>)}
+  </div>
+  <div class="research-lens__comparison" role="tabpanel" id={`${id}-compare-panel`} aria-labelledby={`${id}-compare-tab`} hidden>
+    {entries.map(entry => <div><h3>{entry.label}</h3><p>{entry.body}</p></div>)}
   </div>
 </div>
 <script>
   for (const lens of document.querySelectorAll<HTMLElement>("[data-research-lens]")) {
     const tabs = [...lens.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
-    const panels = [...lens.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+    const panels = tabs.map(tab => document.getElementById(tab.getAttribute("aria-controls")!)!);
     const select = (index:number) => {
       tabs.forEach((tab,i) => { tab.setAttribute("aria-selected",String(i === index)); tab.tabIndex = i === index ? 0 : -1; });
       panels.forEach((panel,i) => { panel.toggleAttribute("inert",i !== index); if (i === index) panel.removeAttribute("aria-hidden"); else panel.setAttribute("aria-hidden","true"); });
+      panels[2]!.hidden = index !== 2;
+      lens.querySelector<HTMLElement>(".research-lens__panels")!.hidden = index === 2;
     };
     tabs.forEach((tab,index) => {
       tab.addEventListener("click",() => select(index));
+      tab.addEventListener("focus",() => tab.scrollIntoView({block:"nearest",behavior:"instant"}));
       tab.addEventListener("keydown",(event) => {
         let next = index;
         if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
@@ -42,13 +50,20 @@ const entries = [
 </script>
 <style>
   .research-lens { display:grid; gap:var(--space-4); }
-  .research-lens__tabs { display:none; gap:var(--space-4); border-bottom:1px solid var(--color-border); }
-  [data-enhanced] .research-lens__tabs { display:flex; }
-  button { position:relative; min-height:44px; padding:var(--space-2) 0; border:0; background:none; color:var(--color-text-muted); font:inherit; font-size:var(--text-sm); font-weight:700; cursor:pointer; }
+  .research-lens__tabs { display:none; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--space-3); border-bottom:1px solid var(--color-border); }
+  [data-enhanced] .research-lens__tabs { display:grid; }
+  button { position:relative; min-width:0; min-height:44px; padding:var(--space-2) 0; border:0; background:none; color:var(--color-text-muted); font:inherit; font-size:var(--text-sm); font-weight:700; text-align:start; cursor:pointer; scroll-margin-block:calc(var(--header-height) + var(--section-nav-height) + var(--space-2)) var(--space-4); }
   button::after { position:absolute; inset:auto 0 -1px; height:3px; background:var(--color-accent); transform:scaleX(0); transform-origin:left; transition:transform 250ms var(--ease-emphasized); content:""; }
   button[aria-selected="true"] { color:var(--color-text); cursor:default; }
   button[aria-selected="true"]::after { transform:scaleX(1); }
   .research-lens__panels { display:grid; gap:var(--space-4); }
+  .research-lens__panels[hidden],.research-lens__comparison[hidden] { display:none; }
+  .research-lens__comparison { display:grid; gap:var(--space-4); }
+  .research-lens__comparison > div { padding-inline-start:var(--space-4); border-inline-start:3px solid var(--color-identity-teal); display:grid; align-content:start; gap:var(--space-2); }
+  .research-lens__comparison > div:last-child { border-color:var(--color-identity-orange); }
+  .research-lens__comparison h3 { font-size:var(--text-sm); }
+  .research-lens__comparison p { color:var(--color-text-secondary); line-height:1.7; }
+  @media(min-width:768px) { .research-lens__comparison { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   .research-lens__panel { padding-inline-start:var(--space-4); border-inline-start:3px solid var(--color-identity-teal); align-self:start; visibility:visible; }
   [data-enhanced] .research-lens__panel { grid-area:1/1; }
   [data-enhanced] .research-lens__label { display:none; }
