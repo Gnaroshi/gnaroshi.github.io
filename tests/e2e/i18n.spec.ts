@@ -14,7 +14,7 @@ test("English remains the unprefixed default and Korean uses /ko", async ({ page
   await expect(page.getByRole("link", { name: "EN" }).first()).toHaveAttribute("href", "/");
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
   await expect(page.locator(".desktop-nav")).toContainText("Research");
-  await expect(page.locator(".desktop-nav")).toContainText("Reading");
+  await expect(page.locator(".desktop-nav")).toContainText("Blog");
   await expect(page.locator(".desktop-nav")).not.toContainText("논문 읽기");
 });
 
@@ -31,20 +31,20 @@ for (const viewport of [
 ] as const) {
   test(`language switch preserves query, shared hash, and focus on ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize(viewport);
-    await page.goto("/papers/?view=method");
-    await page.getByRole("navigation", { name: "Reading navigation" }).getByRole("link", { name: "Reading method" }).click();
+    await page.goto("/research/?view=current");
+    await page.locator('.research-overview a[href$="#efficient-model-execution"]').click();
     if (viewport.name === "mobile") await page.getByRole("button", { name: "Menu" }).click();
     const switcher = viewport.name === "mobile" ? page.locator(".mobile-nav__panel .language-switcher") : page.locator(".utility-nav .language-switcher");
-    await expect(switcher.getByRole("link", { name: "한국어" })).toHaveAttribute("href", "/ko/papers/?view=method#reading-method");
+    await expect(switcher.getByRole("link", { name: "한국어" })).toHaveAttribute("href", "/ko/research/?view=current#efficient-model-execution");
     await switcher.getByRole("link", { name: "한국어" }).click();
-    await expect(page).toHaveURL(/\/ko\/papers\/\?view=method#reading-method$/);
-    await expect(page.locator("#reading-method")).toBeFocused();
+    await expect(page).toHaveURL(/\/ko\/research\/\?view=current#efficient-model-execution$/);
+    await expect(page.locator("#efficient-model-execution")).toBeFocused();
 
     if (viewport.name === "mobile") await page.getByRole("button", { name: "메뉴" }).click();
     const koreanSwitcher = viewport.name === "mobile" ? page.locator(".mobile-nav__panel .language-switcher") : page.locator(".utility-nav .language-switcher");
     await koreanSwitcher.getByRole("link", { name: "EN" }).click();
-    await expect(page).toHaveURL(/\/papers\/\?view=method#reading-method$/);
-    await expect(page.locator("#reading-method")).toBeFocused();
+    await expect(page).toHaveURL(/\/research\/\?view=current#efficient-model-execution$/);
+    await expect(page.locator("#efficient-model-execution")).toBeFocused();
   });
 }
 
@@ -73,9 +73,9 @@ test("localized SEO, date formatting, RSS, and sitemap are emitted", async ({ pa
   expect(sitemap).toContain("https://gnaroshi.dev/ko/");
 });
 
-test("Korean Reading page renders translated shell and controls", async ({ page }) => {
+test("retired empty Korean Reading page redirects without exposing a scaffold", async ({ page }) => {
   await page.goto("/ko/papers/");
-  await expect(page.getByRole("navigation", { name: "논문 읽기 메뉴" })).toBeVisible();
-  await expect(page.getByText("3단계 읽기", { exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/ko\/research\/#human-ai-research-tools$/);
+  await expect(page.getByRole("navigation", { name: "논문 읽기 메뉴" })).toHaveCount(0);
   await expect(page.getByText("Paper Reading Queue", { exact: true })).toHaveCount(0);
 });

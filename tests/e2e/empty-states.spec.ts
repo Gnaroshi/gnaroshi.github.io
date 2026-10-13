@@ -18,15 +18,16 @@ function publicBlogSlugs(locale: "en" | "ko") {
     });
 }
 
-test("empty Reading page uses onboarding without dashboard machinery", async ({ page }) => {
+test("retired empty Reading page forwards to an existing research question", async ({ page }) => {
   await page.goto("/papers");
-  await expect(page.getByRole("heading", { name: "No reading notes have been published yet." })).toBeVisible();
+  await expect(page).toHaveURL(/\/research\/#human-ai-research-tools$/);
+  await expect(page.locator("#human-ai-research-tools")).toBeFocused();
   await expect(page.locator(".paper-stats")).toHaveCount(0);
   await expect(page.locator(".paper-heatmap")).toHaveCount(0);
   await expect(page.locator(".paper-filter-panel")).toHaveCount(0);
   await expect(page.locator("astro-island")).toHaveCount(0);
   await expect(page.locator("#new-paper-template")).toHaveCount(0);
-  await expect(page.locator(".paper-onboarding .button--primary")).toHaveAttribute("href", "#reading-method");
+  await expect(page.locator(".paper-lab-nav")).toHaveCount(0);
 });
 
 test("Activity stays non-numeric before enough records exist", async ({ page }) => {
@@ -37,7 +38,7 @@ test("Activity stays non-numeric before enough records exist", async ({ page }) 
   await expect(page.getByText(/public feed|eligibility|evidence gate/i)).toHaveCount(0);
 });
 
-test("Writing and archive indexing follow actual public content in each locale", async ({ page, request }) => {
+test("Blog and archive indexing follow actual public content in each locale", async ({ page, request }) => {
   const sitemap = await (await request.get("/sitemap-0.xml")).text();
   for (const locale of ["en", "ko"] as const) {
     const prefix = locale === "ko" ? "/ko" : "";
@@ -59,7 +60,7 @@ test("Writing and archive indexing follow actual public content in each locale",
     }
   }
   await page.goto("/week/");
-  await expect(page.locator(".app-empty-state .button")).toHaveAttribute("href", "/papers/#reading-method");
+  await expect(page.locator(".app-empty-state .button")).toHaveAttribute("href", "/research/");
 
   for (const path of ["/contact/", "/ko/contact/"]) {
     await page.goto(path);

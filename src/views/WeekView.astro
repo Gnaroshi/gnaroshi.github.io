@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
 import { getAllWeeklyReviews } from "../utils/weeklyReviews";
+import { getPublishedPapers } from "../utils/papers";
 import "../styles/application.css";
 import "../styles/insights.css";
 
@@ -11,6 +12,7 @@ const { locale } = Astro.props;
 const reviews = getAllWeeklyReviews();
 const current = reviews[0];
 const complete = reviews.filter((review) => review.state === "complete" && review.meaningfulEventCount >= 2);
+const hasPapers = (await getPublishedPapers(locale)).length > 0;
 ---
 
 <BaseLayout locale={locale} title={translate(locale, "paperLab.weeklyReviews")} description={translate(locale, "week.subtitle")} width="wide" mode="application">
@@ -40,7 +42,7 @@ const complete = reviews.filter((review) => review.state === "complete" && revie
       <div class="app-empty-state">
         <h2>{translate(locale, "week.empty")}</h2>
         <p>{translate(locale, "week.emptyBody")}</p>
-        <a class="button button--primary" href={getLocalePath(locale, "/papers/#reading-method")}>{translate(locale, "week.action")}</a>
+        <a class="button button--primary" href={getLocalePath(locale, hasPapers ? "/papers/#reading-method" : "/research/")}>{translate(locale, hasPapers ? "week.action" : "nav.research")}</a>
       </div>
     )}
   </section>

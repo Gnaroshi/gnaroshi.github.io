@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import {hasLocalePapers} from "./public-paper-fixture";
 
 test.describe("populated Reading navigation", () => {
   test.skip(process.env.PAPER_NAV_POPULATED !== "true", "Runs against the populated public-feed contract fixture.");
@@ -11,6 +12,10 @@ test.describe("populated Reading navigation", () => {
       await page.setViewportSize({ width: 360, height: 800 });
       await page.goto(route);
       const navigation = page.getByRole("navigation", { name: navName });
+      if(!hasLocalePapers(route.startsWith("/ko/")?"ko":"en")) {
+        await expect(navigation).toHaveCount(0);
+        return;
+      }
       const scroller = navigation.locator(".paper-lab-nav__groups");
       const current = navigation.locator('[aria-current="page"], [aria-current="location"]');
 

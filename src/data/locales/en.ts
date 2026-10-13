@@ -139,7 +139,7 @@ export const enCopy = {
       motivation: "Generated summaries and scores can save time, but they can also hide uncertainty. The original question and the researcher’s own check still need to remain visible.",
       hypothesis: "I’m exploring tools that help organize notes, suggest questions, and make revisiting easier without deciding what is true on the researcher’s behalf.",
       uncertainty: "The right amount of structure will only become clear through repeated use.",
-      relatedLabels: ["Writing", "Reading"]
+      relatedLabels: ["Blog", "Reading"]
     }
   },
   projects: {

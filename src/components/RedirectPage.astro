@@ -9,20 +9,25 @@ const target = new URL(Astro.props.target, profile.domain);
 if (target.origin !== profile.domain || !target.pathname.startsWith("/")) {
   throw new Error(`Unsafe redirect target: ${Astro.props.target}`);
 }
+const locale=target.pathname.startsWith("/ko/")?"ko":"en";
+const destination=`${target.pathname}${target.search}${target.hash}`;
+const title=locale === "ko"?"이동 중":"Continuing";
+const label=locale === "ko"?"계속하기":"Continue";
+const canonical=new URL(target);canonical.search="";canonical.hash="";
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, follow" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <link rel="canonical" href={target.toString()} />
-    <meta http-equiv="refresh" content={`0;url=${target.pathname}`} />
-    <title>Redirecting | Gnaroshi</title>
+    <link rel="canonical" href={canonical.toString()} />
+    <meta http-equiv="refresh" content={`0;url=${destination}`} />
+    <title>{title} | Gnaroshi</title>
   </head>
   <body>
-    <p>Redirecting to <a href={target.pathname}>{target.pathname}</a>.</p>
+    <main><h1>{title}</h1><p><a href={destination}>{label}</a></p></main>
   </body>
 </html>
