@@ -9,9 +9,10 @@ interface Props {
   locale: Locale;
   title: string;
   caption: string;
+  mediaKind?: "concept" | "diagram";
 }
 
-const { asset, locale, title, caption } = Astro.props;
+const { asset, locale, title, caption, mediaKind = "diagram" } = Astro.props;
 const dialogId = `media-dialog-${asset.id}`;
 const original = `/media/approved/${asset.id}-${asset.widths.at(-1)}.webp`;
 ---
@@ -19,7 +20,7 @@ const original = `/media/approved/${asset.id}-${asset.widths.at(-1)}.webp`;
 <div class="media-zoom" data-media-zoom>
   <div class="media-zoom__actions">
     <button type="button" class="button" data-media-zoom-open aria-haspopup="dialog" aria-controls={dialogId}>
-      {locale === "ko" ? "도식 크게 보기" : "View larger diagram"}
+      {mediaKind === "concept" ? (locale === "ko" ? "이미지 크게 보기" : "View larger image") : (locale === "ko" ? "도식 크게 보기" : "View larger diagram")}
     </button>
     <a href={original} target="_blank" rel="noopener noreferrer">
       {locale === "ko" ? "원본 파일 열기" : "Open original file"}
@@ -29,7 +30,7 @@ const original = `/media/approved/${asset.id}-${asset.widths.at(-1)}.webp`;
     <div class="media-zoom__panel">
       <header>
         <div>
-          <p class="eyebrow">{locale === "ko" ? "기술 도식" : "Technical diagram"}</p>
+          <p class="eyebrow">{mediaKind === "concept" ? (locale === "ko" ? "생성한 개념 장면" : "Generated concept scene") : (locale === "ko" ? "기술 도식" : "Technical diagram")}</p>
           <h2 id={`${dialogId}-title`}>{title}</h2>
         </div>
         <button type="button" class="media-zoom__close" data-media-zoom-close aria-label={translate(locale, "common.close")}>×</button>
@@ -71,7 +72,12 @@ const original = `/media/approved/${asset.id}-${asset.widths.at(-1)}.webp`;
     });
     dialog.addEventListener("close", () => {
       document.body.classList.remove("media-dialog-open");
-      requestAnimationFrame(() => trigger.focus());
+      requestAnimationFrame(() => {
+        const target = trigger.closest("[inert], [hidden]")
+          ? root.closest("[data-research-explorer]")?.querySelector<HTMLElement>("[data-research-viewport]")
+          : trigger;
+        target?.focus({preventScroll:true});
+      });
     });
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog) close();

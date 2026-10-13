@@ -32,8 +32,10 @@ const compare = locale === "ko" ? "나란히 비교" : "Compare both";
       lens.querySelector<HTMLElement>(".research-lens__panels")!.hidden = index === 2;
     };
     tabs.forEach((tab,index) => {
-      tab.addEventListener("click",() => select(index));
-      tab.addEventListener("focus",() => tab.scrollIntoView({block:"nearest",behavior:"instant"}));
+      tab.addEventListener("click",() => {
+        select(index);
+        tab.scrollIntoView({block:"nearest",behavior:"instant"});
+      });
       tab.addEventListener("keydown",(event) => {
         let next = index;
         if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
@@ -41,7 +43,8 @@ const compare = locale === "ko" ? "나란히 비교" : "Compare both";
         else if (event.key === "Home") next = 0;
         else if (event.key === "End") next = tabs.length - 1;
         else return;
-        event.preventDefault(); select(next); tabs[next]?.focus();
+        event.preventDefault(); select(next); tabs[next]?.focus({preventScroll:true});
+        tabs[next]?.scrollIntoView({block:"nearest",behavior:"instant"});
       });
     });
     select(0);
