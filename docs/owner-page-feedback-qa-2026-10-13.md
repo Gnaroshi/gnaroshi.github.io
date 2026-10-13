@@ -51,7 +51,7 @@ The complete code gate ran in a clean isolated snapshot, without sharing Astro c
 | `npm run test:e2e -- --workers 2` | 247 passed; 15 conditional skips on the actual zero-paper feed |
 | `npm run test:a11y -- --workers 2` | 68 passed |
 | `npm run test:visual -- --workers 2` | 108 passed; complete tagged visual suite, not just the core routes |
-| Owner feedback visual matrix | 32 scenarios; final image-crop assertions and screenshots supersede earlier captures |
+| `npx playwright test tests/e2e/owner-feedback.visual.spec.ts --workers 2 --fully-parallel` | 32 passed; final image-crop assertions and screenshots supersede earlier captures |
 | Scoped WebKit content/Research interaction tests | 25 passed; not a physical Safari/device claim |
 | `npm run test:performance -- --workers 1` | Seven route budgets and seven synthetic browser checks passed |
 | `npm run media:check` | 24 review and 208 approved production outputs; passed |
@@ -66,7 +66,23 @@ Local logs remain under ignored `artifacts/about-owner-feedback-2026-10-13/`; fi
 
 ## Release
 
-Source and artifact publication is recorded separately after exact live website/feed/hash verification. A branch push alone is not reported as deployment. Repository Actions remain disabled; no run/check/log query or dispatch is used.
+Completed 2026-10-14 (Asia/Seoul):
+
+- [PR #49](https://github.com/Gnaroshi/gnaroshi.github.io/pull/49) preserves six purpose-separated commits and was merged into main.
+- Built website source: `269eaa59e5108136716c7ba2692249701086b273`.
+- Selected public feed: `3b7e1fd92c5a6d3ef7a1298c3592b498da172d41`, schema 1, content hash `c9a73861cd05863e59caee1bfb115bd979f2b59f25d5e72dbb8307179b5462ee`.
+- Fixed build time: `2026-10-13T16:32:56.225Z`; local workflow identity `local` / `0`; environment `production`.
+- Public static artifact commit: `1f878bb09a1891f553488eda2fac06b8ab728e49`, a normal fast-forward from `fece75b88014bcc01e987eb7cd561e0c55abed62` on `gh-pages`.
+- Clean immutable source/feed checkouts repeated installation, content validation, type checks, all 11 valid/six rejected feed fixtures, final build, i18n, tone, copy, launch-content, links, and five production smoke tests. The staged publication contained only public static output, including root CNAME and `.nojekyll`; development diagnostics and source were absent.
+- Repository Actions were verified disabled before publication and after verification. Pages remains `legacy`, `gh-pages:/`, `gnaroshi.dev`, HTTPS enforced. One permitted Pages build request returned queued; no Actions run/check/log query or dispatch was used.
+- Exact live verification initially observed the previous artifact during propagation, then matched the expected website/feed/hash/schema/environment without weakening assertions.
+- Ten live documents matched the validated HTML bytes exactly: `/`, `/ko/`, EN/KO About, Research, Blog, and retired Reading compatibility documents.
+- Eight live interaction scenarios (1440/390, EN/KO, light/dark) generated 48 captures across all three About and Research states. They passed visible image/canvas pixels, page-wide pointer response, one current question, no horizontal overflow, no JavaScript errors, Blog labels, removed About sections, and the localized Reading redirect/hash.
+- [Live build provenance](https://gnaroshi.dev/build-info.json) identifies the built merge, not a later documentation-only verification commit. Source push alone is not claimed as deployment.
+
+The localhost server was refreshed against the real pinned public feed after fixture testing. A transient connection check made before restart completed was repeated successfully. Owned QA browsers/previews were closed; the owner-requested localhost remains available.
+
+Purpose-separated changes: About/identity `339ecbb`, Blog/Reading `2d5f3dd`, Research exploration `493a06c`, workflow focus `1928a94`, regression tests `11fa2ed`, and guidance/QA `67424a7`. This final release record is documentation-only and does not relabel the already-built artifact.
 
 ## Limits
 
