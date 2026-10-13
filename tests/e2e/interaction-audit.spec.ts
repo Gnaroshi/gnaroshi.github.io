@@ -125,9 +125,10 @@ test("every visible button has an observable action", async ({ page }) => {
       const before = await controlState(page, button);
       await button.click();
       const after = await controlState(page, button);
-      if (await button.evaluate((element) => element.matches('[data-desk-select][aria-pressed="true"]')) && before.pressed === "true") {
-        expect(after, `${route}: current project selection is stable`).toEqual(before);
-        await expect(page.locator('[data-desk-select][aria-pressed="true"]')).toHaveCount(1);
+      if (await button.evaluate((element) => element.matches('[data-desk-select][aria-pressed="true"], [data-tool-choice][aria-pressed="true"], [data-research-mode][aria-pressed="true"]')) && before.pressed === "true") {
+        expect(after, `${route}: current selection is stable`).toEqual(before);
+        const group=button.locator('xpath=ancestor::*[@role="group"][1]');
+        await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
         continue;
       }
       expect(after, `${route}: ${before.label}`).not.toEqual(before);
@@ -288,6 +289,7 @@ test("editorial section indexes track scroll with exactly one current item", asy
   ]) {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(route);
+    if(route.includes("/research/"))await page.locator('[data-research-mode="all"]').click();
     const navigation = page.locator(navigationSelector);
     const scroller = navigation.locator("[data-in-page-scroller]");
     const firstLink = navigation.locator("[data-in-page-link]").first();

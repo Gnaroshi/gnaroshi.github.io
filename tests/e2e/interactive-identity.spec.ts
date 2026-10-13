@@ -95,11 +95,12 @@ test("WebGL-unavailable keeps the full approved logo and honest fallback",async 
 test("research lenses retain height and support arrow-key selection",async ({page}) => {
   for(const locale of ["","/ko"]) {
     await page.goto(`${locale}/research/`);
+    await page.locator('[data-research-mode="all"]').click();
     for(const lens of await page.locator("[data-research-lens]").all()) {
       const initial=await lens.boundingBox();const tabs=lens.getByRole("tab");await tabs.nth(1).click();
       await expect(tabs.nth(1)).toHaveAttribute("aria-selected","true");await expect(lens.locator('[role="tabpanel"]:not([aria-hidden])')).toHaveCount(1);
       await expect(lens.locator('[role="tab"][aria-selected="true"]')).toHaveCount(1);
-      await expect(lens.locator('[role="tabpanel"][aria-hidden="true"]')).toHaveAttribute("inert","");
+      for(const panel of await lens.locator('[role="tabpanel"][aria-hidden="true"]').all())await expect(panel).toHaveAttribute("inert","");
       expect((await lens.boundingBox())!.height).toBeCloseTo(initial!.height,0);
       await tabs.nth(1).press("ArrowLeft");await expect(tabs.nth(0)).toBeFocused();await expect(tabs.nth(0)).toHaveAttribute("aria-selected","true");
     }

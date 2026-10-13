@@ -72,8 +72,10 @@ test.describe("approved public media", () => {
     test(`${route} renders selected evidence and approved featured-app screenshots`, async ({ page }) => {
       await page.goto(route);
       await expect(page.locator(".selected-project picture img")).toHaveCount(2);
-      await expect(page.locator(".featured-app picture img")).toHaveCount(3);
-      await expect(page.locator(".featured-app__media[aria-hidden], .selected-project__media[aria-hidden]")).toHaveCount(0);
+      await expect(page.locator(".featured-app picture img")).toHaveCount(9);
+      await expect(page.locator('.featured-app [data-walkthrough-screen][data-active="true"] picture img')).toHaveCount(3);
+      for(const screen of await page.locator('.featured-app [data-walkthrough-screen][data-active="true"]').all())await expect(screen).toHaveAttribute("aria-hidden", "false");
+      await expect(page.locator(".selected-project__media[aria-hidden]")).toHaveCount(0);
       await expect(page.locator(".featured-app__figure figcaption")).toHaveCount(3);
       await expect(page.locator(".selected-project__figure figcaption")).toHaveCount(2);
     });
