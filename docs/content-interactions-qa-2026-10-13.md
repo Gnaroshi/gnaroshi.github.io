@@ -68,10 +68,32 @@ The complete pre-existing `@visual-v3` suite was not rerun for this task. The ch
 - [x] Final type, content, locale, tone/copy, links, media, readiness, smoke, and feed fixtures.
 - [x] WebKit interaction checks.
 - [x] Complete contact-sheet and detailed viewport review.
-- [ ] Purpose-separated commits, PR, and push.
-- [ ] Clean pinned production build and normal static publication.
-- [ ] Exact live provenance and changed-route interaction checks.
-- [ ] Owned QA processes closed; requested localhost retained.
+- [x] Purpose-separated commits, PR, and push.
+- [x] Clean pinned production build and normal static publication.
+- [x] Exact live provenance and changed-route interaction checks.
+- [x] Owned QA processes closed; requested localhost retained.
+
+## Publication And Live Verification
+
+[PR #48](https://github.com/Gnaroshi/gnaroshi.github.io/pull/48) retains five focused source commits: About `d797ee2`, Research `088cd2c`, Projects `6fc286e`, regression tests `b9f78b4`, and documentation `bf69d66`. It was merged into `main` as `e6ddbb8b47581bc4182610805f97865d10af4c61`.
+
+During release preflight, an independently published artifact `bcf22ee1a3bcd0a709c6a2f41871208c38589f85` was already live, using source `16e2b6949bb3f87f22cba1f8a9c12d28ad70354f` and public feed `3b7e1fd92c5a6d3ef7a1298c3592b498da172d41`. The feed diff from the local QA input was limited to manifest generation/source metadata; its canonical public content hash was unchanged. This newer feed was preserved rather than rolled back.
+
+Clean isolated source/feed checkouts verified both full SHAs before building. `npm ci`, `content:check`, `check`, `test:feed-contract` (11 valid / six rejection), `build`, `check:i18n`, `check:public-tone`, the built-copy checker, `check:launch-content`, `check:links`, `media:check`, `check:project-readiness`, five smoke tests, and 13 changed-route interaction tests all passed on these pinned inputs. An initial background fixture command placed an environment option after an assignment and exited before testing; corrected option order passed all fixtures. No source/build failure was hidden.
+
+The static tree contained 473 file/directory entries; 94 textual outputs were additionally scanned for credential/private-path patterns. Source, dependencies, private feed checkouts, workflow files, and development diagnostics were absent. Publication used a normal fast-forward commit on `gh-pages`, with root `.nojekyll` and `CNAME` retained. Remote `gh-pages` was rechecked before pushing; no competing publication was overwritten. Repository Actions were confirmed disabled before and after publication, and no workflow/run/check/log query or dispatch was used.
+
+- Built website: `e6ddbb8b47581bc4182610805f97865d10af4c61`.
+- Public feed: `3b7e1fd92c5a6d3ef7a1298c3592b498da172d41`.
+- Public content hash: `c9a73861cd05863e59caee1bfb115bd979f2b59f25d5e72dbb8307179b5462ee`.
+- Artifact commit: `0fd60fde4c0802f552c99735ba5285af42258f69`.
+- Fixed build timestamp: `2026-10-13T05:24:11.672Z`; run `local` / attempt `0`; production, schema 1.
+
+One ordinary Pages publication request returned queued; publication was considered complete only after `scripts/verify-deployment.mjs` matched every exact input above and the core navigation/routes. The six live About/Research/Projects EN/KO HTML responses also matched their local static bytes exactly.
+
+Post-deploy Playwright checked 36 selected route combinations: three routes, two locales, light/dark, and 1440/390/320px. Technology selection, third-question comparison, all three captured app screens, one current/active state, successful visible images, and no page/console errors or horizontal overflow passed. Six selected-original image popups loaded successfully. All 36 combinations were captured; six representative live full-page views were visually reviewed after the more extensive local matrix. This distinction avoids treating automated capture as manual inspection of every live image.
+
+Owned headless browsers were closed through test teardown/finally blocks. QA preview port 4324 and the isolated release checkouts were removed; requested localhost port 4321 remains running. A later documentation-only verification commit records this result but is not the built website SHA. Recovery uses the previous verified artifact `bcf22ee` as a new normal commit following [rollback](rollback.md), never a reset or force-push.
 
 ## Known Limits
 
