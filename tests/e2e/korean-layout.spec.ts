@@ -12,6 +12,7 @@ for (const viewport of viewports) {
     await page.setViewportSize(viewport);
     for (const route of routes) {
       await page.goto(route);
+      await expect(page.locator(".site-header")).toHaveCount(1);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, `${route} overflows horizontally`).toBeLessThanOrEqual(1);
       await expect(page.locator("html")).toHaveAttribute("lang", "ko");

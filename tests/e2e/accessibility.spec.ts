@@ -6,6 +6,7 @@ test.describe("accessibility", { tag: "@a11y" }, () => {
   for (const route of qaRoutes) {
     test(`${route} has no automatically detectable accessibility violations`, async ({ page }) => {
       await page.goto(route);
+      if(route === "/papers" || route === "/ko/papers")await expect(page.locator(".site-header")).toHaveCount(1);
       const results = await new AxeBuilder({ page }).analyze();
       expect(results.violations).toEqual([]);
     });

@@ -62,9 +62,9 @@ test.describe("approved public media", () => {
       await expect(page.locator('.research-theme__media > picture source[srcset*="research-vla-task"]')).toHaveCount(2);
       await expect(page.locator(`.research-theme__media > picture source[srcset*="efficient-execution${localeSuffix}"]`)).toHaveCount(2);
       await expect(page.locator(`.research-theme__media > picture source[srcset*="research-workflow${localeSuffix}"]`)).toHaveCount(2);
-      await expect(page.locator(".research-theme figcaption")).toHaveCount(3);
-      await expect(page.locator(".research-theme figcaption").first()).toContainText(route.startsWith("/ko/") ? "생성한 개념 장면" : "Generated concept scene");
-      await expect(page.locator(".research-theme figcaption").nth(1)).toContainText(route.startsWith("/ko/") ? "기술 도식" : "Technical diagram");
+      await expect(page.locator(".research-theme__media figcaption")).toHaveCount(3);
+      await expect(page.locator(".research-theme__media figcaption").first()).toContainText(route.startsWith("/ko/") ? "생성한 개념 장면" : "Generated concept scene");
+      await expect(page.locator(".research-theme__media figcaption").nth(1)).toContainText(route.startsWith("/ko/") ? "기술 도식" : "Technical diagram");
     });
   }
 
@@ -89,7 +89,7 @@ test.describe("approved public media", () => {
   }
 
   test("empty evidence-gated routes do not gain decorative media", async ({ page }) => {
-    for (const route of ["/blog/", "/papers/", "/growth/", "/queue/", "/reviews/", "/formula/", "/questions/", "/implementations/", "/graph/", "/week/"]) {
+    for (const route of ["/blog/", "/growth/", "/queue/", "/reviews/", "/formula/", "/questions/", "/implementations/", "/graph/", "/week/"]) {
       await page.goto(route);
       await expect(page.locator("main picture, main img"), route).toHaveCount(0);
     }

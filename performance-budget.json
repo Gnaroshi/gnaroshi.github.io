@@ -14,7 +14,7 @@
     "/research/": { "kind": "editorial", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 46.9, "forbiddenStyles": ["blog", "papers", "insights", "katex"] },
     "/projects/": { "kind": "editorial", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 47.3, "forbiddenStyles": ["blog", "papers", "insights", "katex"] },
     "/blog/": { "kind": "editorial", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 60.1, "forbiddenStyles": ["papers", "insights", "katex"] },
-    "/papers/": { "kind": "application-empty", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 64.8, "forbiddenStyles": ["blog", "insights", "katex"] },
+    "/ko/research/": { "kind": "editorial", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 46.9, "forbiddenStyles": ["blog", "papers", "insights", "katex"] },
     "/growth/": { "kind": "application-empty", "maxHydratedIslands": 0, "baselineUnusedCssPercent": 60.5, "forbiddenStyles": ["blog", "papers", "katex"] }
   }
 }

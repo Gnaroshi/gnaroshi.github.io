@@ -1,5 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 import { qaRoutes } from "./qa-routes";
+import { getPublicCapabilities } from "../../src/utils/publicCapabilities";
+import {hasLocalePapers} from "./public-paper-fixture";
+const hasPublishedPapers = getPublicCapabilities().hasPapers;
 
 const readingCases = [
   { locale: "en", route: "/papers/", nav: "Reading navigation", overview: "Overview", method: "Reading method" },
@@ -17,6 +20,7 @@ const readingViewports = [
 for (const readingCase of readingCases) {
   for (const viewport of readingViewports) {
     test(`${readingCase.locale} Reading method exposes and focuses its target at ${viewport.name}`, async ({ page }) => {
+      test.skip(!hasLocalePapers(readingCase.locale),"Requires public paper content in this locale; empty Reading is retired.");
       await page.setViewportSize(viewport);
       await page.goto(readingCase.route);
       const localNav = page.getByRole("navigation", { name: readingCase.nav });
@@ -65,11 +69,17 @@ for (const readingCase of readingCases) {
 }
 
 test("Reading overview remains an operable link while its current state changes", async ({ page }) => {
+  test.skip(!hasPublishedPapers,"Requires public paper content; empty Reading is retired.");
   for (const [route, navName, overview] of [
     ["/papers/", "Reading navigation", "Overview"],
     ["/ko/papers/", "논문 읽기 메뉴", "개요"]
   ] as const) {
     await page.goto(route);
+    if(!hasLocalePapers(route.startsWith("/ko/")?"ko":"en")) {
+      await expect(page).toHaveURL(/\/research\/#human-ai-research-tools$/);
+      await expect(page.locator(".paper-lab-nav")).toHaveCount(0);
+      continue;
+    }
     const nav = page.getByRole("navigation", { name: navName });
     const current = nav.getByRole("link", { name: overview, exact: true });
     await expect(current).toHaveAttribute("aria-current", "page");
@@ -89,6 +99,7 @@ test("Reading overview remains an operable link while its current state changes"
 test("same-page links expose a real target and update the hash", async ({ page }) => {
   for (const route of qaRoutes) {
     await page.goto(route);
+    if(/^\/(?:ko\/)?papers\/?$/.test(route))await expect(page.locator(".site-header")).toHaveCount(1);
     const anchors = page.locator('main a[href*="#"]:visible');
     const hrefs = await anchors.evaluateAll((links) => links
       .map((link) => link.getAttribute("href"))
@@ -115,13 +126,14 @@ test("same-page links expose a real target and update the hash", async ({ page }
 
 test("every visible button has an observable action", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
+  const actionable = 'button:visible:not([disabled]):not([data-heading-link]):not([role="tab"][aria-selected="true"]):not([inert] button):not([aria-hidden="true"] button)';
   for (const route of qaRoutes) {
     await page.goto(route);
-    const buttons = page.locator('button:visible:not([disabled]):not([data-heading-link]):not([role="tab"][aria-selected="true"])');
+    const buttons = page.locator(actionable);
     const count = await buttons.count();
     for (let index = 0; index < count; index += 1) {
       await page.goto(route);
-      const button = page.locator('button:visible:not([disabled]):not([data-heading-link]):not([role="tab"][aria-selected="true"])').nth(index);
+      const button = page.locator(actionable).nth(index);
       const before = await controlState(page, button);
       await button.click();
       const after = await controlState(page, button);
@@ -192,11 +204,13 @@ test("bootstrap Reading view does not expose controls without public evidence", 
   for (const route of ["/papers/", "/ko/papers/"]) {
     await page.goto(route);
     await expect(page.locator(".paper-stats, .paper-heatmap, .paper-filter-panel, #new-paper-template, #ai-review-workflow, .paper-recall-trend")).toHaveCount(0);
-    await expect(page.locator("#reading-method")).toBeVisible();
+    if (!hasLocalePapers(route.startsWith("/ko/")?"ko":"en")) {await expect(page).toHaveURL(/\/research\/#human-ai-research-tools$/);await expect(page.locator("#reading-method")).toHaveCount(0);}
+    else await expect(page.locator("#reading-method")).toBeVisible();
   }
 });
 
 test("three-pass checklist is local-only, persistent, and resettable", async ({ page }) => {
+  test.skip(!hasLocalePapers("en"),"Requires public English paper content; empty Reading is retired.");
   await page.goto("/papers/");
   const checklist = page.locator("[data-reading-checklist]");
   const inputs = checklist.getByRole("checkbox");

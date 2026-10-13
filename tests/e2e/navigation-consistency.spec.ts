@@ -15,6 +15,7 @@ test("primary and utility navigation capability snapshots are stable across ever
         await expect(page.locator('[data-not-found-locale="en"] .not-found-links a')).toHaveCount(3);
         continue;
       }
+      await expect(page.locator(".site-header")).toHaveCount(1);
       const desktop = await page.locator(".desktop-nav [data-nav-href]").evaluateAll((items) => items.map((item) => item.getAttribute("data-nav-href")));
       const utility = await page.locator(".utility-nav [data-nav-href]").evaluateAll((items) => items.map((item) => item.getAttribute("data-nav-href")));
       const normalized = [...desktop, ...utility].map((href) => String(href).replace(/^\/ko(?=\/|$)/, "").replace(/\/$/, "") || "/");

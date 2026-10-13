@@ -12,6 +12,7 @@ async function checkGeometry(page:Page) {
   expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
   await expect(page.locator("h1")).toHaveCount(1);
   for(const item of await page.locator('main button:visible, main input[type="range"]:visible, [data-walkthrough-open]:visible').all()) {
+    if(await item.evaluate(item=>Boolean(item.closest('[inert],[aria-hidden="true"]'))))continue;
     const box=(await item.boundingBox())!;
     expect(box.height).toBeGreaterThanOrEqual(44);
     expect(box.x).toBeGreaterThanOrEqual(-1);
@@ -23,14 +24,15 @@ async function checkGeometry(page:Page) {
     await expect(root.locator('[data-walkthrough-screen][data-active="true"]')).toHaveCount(1);
     await expect(root.locator('[data-walkthrough-note][data-active="true"]')).toHaveCount(1);
   }
-  if(await page.locator(".about-introduction").count())await ordered(page.locator(".about-introduction"),page.locator("#about-skills").locator(".."),16);
+  if(await page.locator(".about-introduction").count())await ordered(page.locator(".about-introduction"),page.locator("[data-tool-connections]"),16);
   if(await page.locator("[data-research-explorer]").count()) {
-    await ordered(page.locator("[data-research-controls]"),page.locator(".research-overview"));
-    await ordered(page.locator(".research-overview"),page.locator(".research-theme:visible").first(),8);
+    await ordered(page.locator(".research-overview"),page.locator("[data-research-topic-heading]:visible").first(),8);
     for(const topic of await page.locator(".research-theme:visible").all()) {
-      const {copy,media}=await topic.evaluate(topic=>({copy:topic.querySelector(".research-theme__copy")!.getBoundingClientRect().toJSON(),media:topic.querySelector(".research-theme__media")!.getBoundingClientRect().toJSON()}));
-      if(media.y < copy.y+copy.height-1)expect(media.x).toBeGreaterThanOrEqual(copy.x+copy.width+15);
-      else expect(media.y).toBeGreaterThanOrEqual(copy.y+copy.height+15);
+      const {copy,media}=await topic.evaluate(topic=>({copy:topic.querySelector(".research-theme__copy")!.getBoundingClientRect().toJSON(),media:(topic.querySelector(".research-theme__media") ?? document.querySelector('.research-gallery [data-selected="true"]'))!.getBoundingClientRect().toJSON()}));
+      if(media.x >= copy.x+copy.width-1)expect(media.x).toBeGreaterThanOrEqual(copy.x+copy.width+15);
+      else if(copy.x >= media.x+media.width-1)expect(copy.x).toBeGreaterThanOrEqual(media.x+media.width+15);
+      else if(media.y >= copy.y+copy.height-1)expect(media.y).toBeGreaterThanOrEqual(copy.y+copy.height+15);
+      else expect(copy.y).toBeGreaterThanOrEqual(media.y+media.height+15);
       if(await topic.locator(".research-lens__comparison:visible").count()) {
         const gaps=await topic.locator(".research-lens__comparison > div").evaluateAll(items=>items.map(item=>item.querySelector("p")!.getBoundingClientRect().top-item.querySelector("h3")!.getBoundingClientRect().bottom));
         expect(Math.abs(gaps[0]-gaps[1])).toBeLessThanOrEqual(1);
@@ -52,6 +54,7 @@ async function checkActiveControl(page:Page) {
 
 async function loadVisibleMedia(page:Page) {
   for(const image of await page.locator("main img:visible").all()) {
+    if(await image.evaluate(image=>Boolean(image.closest('[inert],[aria-hidden="true"]'))))continue;
     await image.scrollIntoViewIfNeeded();
     await expect.poll(()=>image.evaluate((image:HTMLImageElement)=>image.complete&&image.naturalWidth>0)).toBe(true);
   }
@@ -63,6 +66,9 @@ for(const locale of ["","/ko"]) {
   test(`tool connections reflect verified project stacks ${locale||"en"}`,async({page})=>{
     await page.goto(`${locale}/about/`);const root=page.locator("[data-tool-connections]");
     await expect(root).toHaveAttribute("data-enhanced","true");
+    await expect(page.locator("#about-skills, .about-skill-list, [data-tool-result]")).toHaveCount(0);
+    await expect(root.getByRole("heading")).toHaveAttribute("id","about-tools");
+    await expect(root.getByRole("heading")).toHaveJSProperty("tagName","H2");
     for(const tool of ["python","typescript","swift","react","shell"]) {
       await root.locator(`[data-tool-choice="${tool}"]`).click();
       await expect(root.locator('[aria-pressed="true"]')).toHaveCount(1);
@@ -81,10 +87,10 @@ for(const locale of ["","/ko"]) {
     await expect(topics.filter({visible:true})).toHaveCount(1);
     for(let index=0;index<3;index++) {
       await nav.locator("a").nth(index).click();const topic=topics.nth(index);
-      await expect(topic).toBeVisible();await expect(topic).toBeFocused();
+      await expect(topic).toBeVisible();await expect(page.locator(`[data-research-topic-heading][id="${await topic.getAttribute("data-topic-id")}"]`)).toBeFocused();
       await expect(topics.filter({visible:true})).toHaveCount(1);
       await expect(nav.locator('[aria-current]')).toHaveCount(1);
-      await expect(nav.locator('[aria-current]')).toHaveAttribute("href",new RegExp(`#${await topic.getAttribute("id")}$`));
+      await expect(nav.locator('[aria-current]')).toHaveAttribute("href",new RegExp(`#${await topic.getAttribute("data-topic-id")}$`));
       const bounds=(await topic.boundingBox())!,navBounds=(await nav.boundingBox())!;expect(bounds.y).toBeGreaterThanOrEqual(navBounds.y+navBounds.height-1);
       const lens=topic.locator("[data-research-lens]");await lens.getByRole("tab").nth(2).click();
       await expect(lens.locator(".research-lens__comparison")).toBeVisible();
@@ -93,11 +99,11 @@ for(const locale of ["","/ko"]) {
       await page.evaluate(()=>scrollTo({top:0,behavior:"instant"}));
       await checkGeometry(page);
     }
-    await page.goBack();await expect(topics.nth(1)).toBeVisible();await expect(topics.nth(1)).toBeFocused();
+    await page.goBack();await expect(topics.nth(1)).toBeVisible();await expect(page.locator("#efficient-model-execution")).toBeFocused();
     await page.goForward();await expect(topics.nth(2)).toBeVisible();
     await page.locator('[data-research-mode="all"]').click();await expect(topics.filter({visible:true})).toHaveCount(3);
     await nav.locator("a").last().click();await expect(topics.filter({visible:true})).toHaveCount(3);
-    await page.reload();await expect(topics.nth(2)).toBeVisible();await expect(topics.nth(2)).toBeFocused();
+    await page.reload();await expect(topics.nth(2)).toBeVisible();await expect(page.locator("#human-ai-research-tools")).toBeFocused();
     await expect(topics.filter({visible:true})).toHaveCount(1);
   });
 
@@ -128,7 +134,7 @@ test("new interactions retain static reading without JavaScript",async({browser,
   const context=await browser.newContext({baseURL,javaScriptEnabled:false});const page=await context.newPage();
   try {
     await page.goto("/about/");await expect(page.locator("[data-tool-project]:visible")).toHaveCount(9);
-    await page.goto("/research/");await expect(page.locator("[data-research-topic]:visible")).toHaveCount(3);await expect(page.locator("[data-research-controls]")).toBeHidden();
+    await page.goto("/research/");await expect(page.locator("[data-research-topic]:visible")).toHaveCount(3);await expect(page.locator("[data-research-mode]")).toBeHidden();
     await page.goto("/projects/");await expect(page.locator(".walkthrough img:visible")).toHaveCount(3);await expect(page.locator(".walkthrough__controls:visible")).toHaveCount(0);
   }finally{await context.close();}
 });
