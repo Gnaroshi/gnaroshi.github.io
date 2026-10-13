@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "websiteCommit": "4d9fbc557ae32e74b91e94261293a1a39368ad4a",
-  "contentFeedCommit": "a72edcd9587cc86be5a28c133e36de5bc0c97cc8",
-  "builtAt": "2026-10-13T07:45:16.784664+00:00",
+  "contentFeedCommit": "15276431db2b33a66ff544f061b093647c65cb0b",
+  "builtAt": "2026-10-13T07:49:14.481591+00:00",
   "workflowRunId": "local",
   "workflowRunAttempt": "0",
   "environment": "production",
-  "contentHash": "29930cc4a90983a90a7baaed34b3c16ae2c238c221336c0614d114ef78896207",
+  "contentHash": "7c4a71216ffe11ea6772aa90b446a7ff8c4ead9f9e84dc733836c78cb46b52e6",
   "feedSchemaVersion": 1
 }
