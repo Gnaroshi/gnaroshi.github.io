@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "websiteCommit": "4d9fbc557ae32e74b91e94261293a1a39368ad4a",
-  "contentFeedCommit": "1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb",
-  "builtAt": "2026-10-13T08:29:06.674271+00:00",
+  "websiteCommit": "269eaa59e5108136716c7ba2692249701086b273",
+  "contentFeedCommit": "3b7e1fd92c5a6d3ef7a1298c3592b498da172d41",
+  "builtAt": "2026-10-13T16:32:56.225Z",
   "workflowRunId": "local",
   "workflowRunAttempt": "0",
   "environment": "production",
