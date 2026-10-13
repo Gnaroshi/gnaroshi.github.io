@@ -7,6 +7,7 @@ export const ko = {
   "identity.foil": "홀로그램 포일",
   "identity.activate": "Gnaroshi 로고 활성화",
   "identity.pause": "로고 움직임 일시 정지",
+  "identity.paused": "움직임 일시 정지됨",
   "identity.reset": "로고 초기화",
   "identity.loading": "3D 여는 중",
   "identity.unavailable": "원본 · 3D를 사용할 수 없습니다",

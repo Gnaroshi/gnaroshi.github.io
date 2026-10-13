@@ -5,6 +5,7 @@ export const en = {
   "identity.foil": "Holographic foil",
   "identity.activate": "Activate Gnaroshi logo",
   "identity.pause": "Pause logo motion",
+  "identity.paused": "Motion paused",
   "identity.reset": "Reset logo",
   "identity.loading": "Opening 3D",
   "identity.unavailable": "Original · 3D unavailable",

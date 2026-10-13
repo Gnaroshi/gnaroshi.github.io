@@ -96,15 +96,25 @@ export async function createIdentityScene(host:HTMLElement,source:string,initial
   let surfaceWidth = 0, surfaceHeight = 0;
   let targetX = -.12,targetY = .18,kick = 0;
   mesh.rotation.set(targetX,targetY,0);
+  const inViewport = () => {
+    const rect=host.getBoundingClientRect();
+    visible=rect.width>0 && rect.height>0 && rect.bottom>0 && rect.top<innerHeight && rect.right>0 && rect.left<innerWidth;
+    host.dataset.visible=String(visible);
+    return visible;
+  };
   const draw = () => {
     renderer.render(scene,camera);
     host.dataset.frame = String(++serial);
     host.dataset.drawCalls = String(renderer.info.render.calls);
+    host.dataset.rotationX = String(mesh.rotation.x);
+    host.dataset.rotationY = String(mesh.rotation.y);
   };
   const tick = (time:number) => {
     frame = 0;
-    if (disposed || !visible || document.hidden || paused) return;
-    const amount = 1-Math.exp(-Math.min(time-lastTime,50)/85); lastTime = time;
+    if (disposed || !inViewport() || document.hidden || paused) return;
+    // A queued RAF timestamp can precede a fresh performance.now() after repaint.
+    const elapsed = Math.max(0,Math.min(time-lastTime,50));
+    const amount = 1-Math.exp(-elapsed/85); lastTime = time;
     kick *= .82;
     mesh.rotation.x += (targetX-mesh.rotation.x)*amount;
     mesh.rotation.y += (targetY+kick-mesh.rotation.y)*amount;
@@ -114,7 +124,7 @@ export async function createIdentityScene(host:HTMLElement,source:string,initial
     if (time < deadline) frame = requestAnimationFrame(tick);
   };
   const requestDraw = (duration=650) => {
-    if (disposed || !visible || document.hidden) return;
+    if (disposed || !inViewport() || document.hidden) return;
     if (reduced || paused) { mesh.rotation.set(targetX,targetY,0); mesh.scale.setScalar(1); draw(); return; }
     const now = performance.now(); deadline = now + duration;
     if (!frame) { lastTime = now; frame = requestAnimationFrame(tick); }
@@ -126,12 +136,13 @@ export async function createIdentityScene(host:HTMLElement,source:string,initial
     renderer.setSize(width,height,false);
     const aspect = width/height;
     camera.left = -2.15*aspect; camera.right = 2.15*aspect; camera.top=2.15;camera.bottom=-2.15;camera.updateProjectionMatrix();
-    if (visible && !document.hidden) draw();
+    // Resizing clears the backing buffer; always restore its static frame once.
+    if (!document.hidden) draw();
   };
   const onVisibility = () => { if (document.hidden) { cancelAnimationFrame(frame);frame=0; } else requestDraw(0); };
   document.addEventListener("visibilitychange",onVisibility);
   const resizeObserver = new ResizeObserver(resize);resizeObserver.observe(host);
-  const intersection = new IntersectionObserver(([entry]) => { visible = Boolean(entry?.isIntersecting); if (!visible) { cancelAnimationFrame(frame);frame=0; } else requestDraw(0); });intersection.observe(host);
+  const intersection = new IntersectionObserver(() => { if (!inViewport()) { cancelAnimationFrame(frame);frame=0; } else requestDraw(0); });intersection.observe(host);
   const onContextLost = (event:Event) => {
     event.preventDefault(); cancelAnimationFrame(frame);frame=0;
     host.closest<HTMLElement>("[data-interactive-identity]")!.dataset.renderer = "fallback";

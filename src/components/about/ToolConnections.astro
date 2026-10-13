@@ -9,19 +9,18 @@ interface Props { locale: Locale }
 const { locale } = Astro.props;
 const tools = ["python", "typescript", "swift", "react", "shell"] as const;
 const labels = locale === "ko"
-  ? { title:"도구에서 프로젝트로", intro:"프로젝트에 실제로 쓰인 기술을 연결해 봅니다.", tools:"기술 선택", projects:"연결된 프로젝트", result:"이 기술을 사용하는 프로젝트", all:"전체 프로젝트" }
-  : { title:"From tools to projects", intro:"A closer look at the technologies used in these projects.", tools:"Choose a technology", projects:"Connected projects", result:"Projects using this technology", all:"All projects" };
+  ? { title:"도구에서 프로젝트로", tools:"기술 선택", projects:"연결된 프로젝트", all:"전체 프로젝트" }
+  : { title:"From tools to projects", tools:"Choose a technology", projects:"Connected projects", all:"All projects" };
 ---
-<div class="tool-connections" data-tool-connections>
-  <header><h3>{labels.title}</h3><p>{labels.intro}</p></header>
+<section class="section tool-connections" data-tool-connections aria-labelledby="about-tools">
+  <h2 id="about-tools">{labels.title}</h2>
   <div class="tool-connections__map" data-tool-map>
     <div class="tool-connections__tools" role="group" aria-label={labels.tools}>
       {tools.map((id) => <button type="button" data-tool-choice={id} aria-pressed="false" disabled>{techCatalog[id].label}<span aria-hidden="true">→</span></button>)}
     </div>
     <svg class="tool-connections__paths" aria-hidden="true" data-tool-paths></svg>
     <div class="tool-connections__results">
-      <p class="tool-connections__result" role="status" data-tool-result data-label={labels.result}>{labels.projects}</p>
-      <ul>
+      <ul aria-label={labels.projects}>
         {projectFacts.map((project) => <li data-tool-project data-tools={project.techStack.join(" ")}>
           <a href={getLocalePath(locale,`/projects/${project.slug}/`)}><span>{getProjectStory(locale,project.id).title}</span><ArrowUpRight size={16} aria-hidden="true" /></a>
           <span class="tool-connections__match" data-tool-match></span>
@@ -30,14 +29,13 @@ const labels = locale === "ko"
     </div>
   </div>
   <a class="text-link" href={getLocalePath(locale,"/projects/")}>{labels.all}</a>
-</div>
+</section>
 <script>
   for (const root of document.querySelectorAll<HTMLElement>("[data-tool-connections]")) {
     const map = root.querySelector<HTMLElement>("[data-tool-map]")!;
     const svg = root.querySelector<SVGSVGElement>("[data-tool-paths]")!;
     const choices = [...root.querySelectorAll<HTMLButtonElement>("[data-tool-choice]")];
     const projects = [...root.querySelectorAll<HTMLElement>("[data-tool-project]")];
-    const result = root.querySelector<HTMLElement>("[data-tool-result]")!;
     let selected = choices[0]!;
     let frame = 0;
     const draw = () => {
@@ -63,54 +61,52 @@ const labels = locale === "ko"
       selected = button;
       const tool = button.dataset.toolChoice!;
       choices.forEach(choice => choice.setAttribute("aria-pressed",String(choice === button)));
-      let count = 0;
       projects.forEach(project => {
         const connected = project.dataset.tools!.split(" ").includes(tool);
         project.dataset.connected = String(connected);
         project.querySelector<HTMLElement>("[data-tool-match]")!.textContent = connected ? button.childNodes[0]!.textContent : "";
-        if (connected) count++;
       });
-      result.textContent = `${result.dataset.label}: ${count}`;
       schedule();
     };
     choices.forEach((button,index) => {
       button.disabled = false;
-      button.addEventListener("click",() => select(button));
+      button.addEventListener("click",() => {
+        select(button);
+        button.scrollIntoView({block:"nearest",behavior:"instant"});
+      });
       button.addEventListener("keydown",event => {
         const delta = ["ArrowRight","ArrowDown"].includes(event.key) ? 1 : ["ArrowLeft","ArrowUp"].includes(event.key) ? -1 : 0;
         if (!delta) return;
         event.preventDefault();
         const next = choices[(index + delta + choices.length) % choices.length]!;
-        next.focus(); select(next);
+        next.focus({preventScroll:true}); select(next);
+        next.scrollIntoView({block:"nearest",behavior:"instant"});
       });
     });
     root.dataset.enhanced = "true";
     select(selected);
     const observer = new ResizeObserver(schedule); observer.observe(map);
-    window.addEventListener("pagehide",() => {observer.disconnect();cancelAnimationFrame(frame);});
+    window.addEventListener("pagehide",() => {observer.disconnect();cancelAnimationFrame(frame);frame=0;});
     window.addEventListener("pageshow",event => {if(event.persisted){observer.observe(map);schedule();}});
   }
 </script>
 <style>
-  .tool-connections { display:grid; gap:var(--space-4); margin-top:var(--space-5); padding-top:var(--space-5); border-top:1px solid var(--color-border); }
-  header { display:grid; gap:var(--space-2); }
-  header p { color:var(--color-text-secondary); }
+  .tool-connections { display:grid; gap:var(--space-4); }
   .tool-connections__map { position:relative; display:grid; gap:var(--space-4); }
   .tool-connections__tools { display:flex; flex-wrap:wrap; gap:var(--space-2); }
-  button { display:flex; align-items:center; justify-content:space-between; gap:var(--space-3); min-height:44px; padding:var(--space-2) var(--space-3); border:1px solid var(--color-border); background:var(--color-surface); color:var(--color-text); font:inherit; font-size:var(--text-sm); cursor:pointer; }
+  button { display:flex; align-items:center; justify-content:space-between; gap:var(--space-3); min-height:44px; padding:var(--space-2) var(--space-3); border:1px solid var(--color-border); background:var(--color-surface); color:var(--color-text); font:inherit; font-size:var(--text-sm); cursor:pointer; scroll-margin-block:calc(var(--header-height) + var(--space-3)) var(--space-4); }
   button[aria-pressed="true"] { border-color:var(--color-accent); box-shadow:inset 3px 0 var(--color-identity-orange); background:var(--color-accent-soft); }
   button:disabled { cursor:default; }
   button span { color:var(--color-accent); }
   .tool-connections__paths { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
   .tool-connections__paths :global(path) { fill:none; stroke:var(--color-identity-teal); stroke-width:2; stroke-dasharray:6 4; }
   .tool-connections__results { position:relative; }
-  .tool-connections__result { margin-bottom:var(--space-2); color:var(--color-text-secondary); font-size:var(--text-sm); }
   ul { display:grid; padding:0; margin:0; list-style:none; }
   li { display:flex; gap:var(--space-2); align-items:center; border-bottom:1px solid var(--color-border); padding-inline:var(--space-3); background:var(--color-bg); }
   li[data-connected="true"] { background:var(--color-accent-soft); box-shadow:inset 3px 0 var(--color-accent); }
   li a { display:flex; flex:1; align-items:center; justify-content:space-between; min-width:0; min-height:44px; gap:var(--space-2); color:var(--color-text); text-decoration:none; font-weight:650; }
   .tool-connections__match { color:var(--color-accent); font-size:var(--text-xs); }
-  @media(min-width:768px) { .tool-connections__map { grid-template-columns:minmax(150px,.45fr) minmax(0,1fr); gap:80px; } .tool-connections__tools { display:grid; align-content:start; padding-block-start:calc(var(--text-sm) * 1.5 + var(--space-2)); } }
+  @media(min-width:768px) { .tool-connections__map { grid-template-columns:minmax(150px,.45fr) minmax(0,1fr); gap:80px; } .tool-connections__tools { display:grid; align-content:start; } }
   @media(max-width:767px) { .tool-connections__paths { display:none; } [data-enhanced] li[data-connected="false"] { display:none; } }
   @media(prefers-reduced-motion:no-preference) { .tool-connections__paths :global(path) { animation:tool-path 420ms ease-out; } @keyframes tool-path { from { stroke-dashoffset:60; } to { stroke-dashoffset:0; } } }
 </style>

@@ -38,8 +38,8 @@ for (const locale of ["", "/ko"]) {
     for(let count=4;count<=5;count++) { await stage.click();await expect(identity).toHaveAttribute("data-mode","dimensional"); }
     await stage.click();await expect(identity).toHaveAttribute("data-mode","foil");
     expect((await identity.boundingBox())!.height).toBeCloseTo(initialBounds!.height,0);
-    await expect(identity.locator("[data-identity-dot][data-active]")).toHaveCount(6);
-    await identity.locator("[data-identity-reset]").click();
+    await expect(identity.locator("figcaption, [data-identity-dot], [data-identity-reset], [data-identity-pause]")).toHaveCount(0);
+    await stage.press("Escape");
     await expect(identity).toHaveAttribute("data-mode","original");await expect(canvas).toHaveCount(0);await expect(stage).toBeFocused();
     expect(errors).toEqual([]);
   });
@@ -55,7 +55,9 @@ for (const locale of ["", "/ko"]) {
     expect(await stage.locator("img").evaluate(element=>element.getAnimations().length)).toBe(0);
     const host=identity.locator("[data-identity-canvas]");const frame=await host.getAttribute("data-frame");
     await page.waitForTimeout(250);expect(await host.getAttribute("data-frame")).toBe(frame);
-    await identity.locator("[data-identity-reset]").click();await expect(identity.locator("canvas")).toHaveCount(0);
+    await page.mouse.move(5,100);await page.mouse.move(900,100);
+    expect(await host.getAttribute("data-frame")).toBe(frame);
+    await stage.press("Escape");await expect(identity.locator("canvas")).toHaveCount(0);
   });
 }
 
@@ -65,17 +67,46 @@ test("3D rendering stops at rest, on pause, and offscreen",async ({page}) => {
   await expect(identity).toHaveAttribute("data-renderer","webgl");const host=identity.locator("[data-identity-canvas]");
   await page.mouse.move(0,0);await page.waitForTimeout(1200);const settled=await host.getAttribute("data-frame");
   await page.waitForTimeout(250);expect(await host.getAttribute("data-frame")).toBe(settled);
-  const pause=identity.locator("[data-identity-pause]");await pause.click();await expect(pause).toHaveAttribute("aria-pressed","true");
+  await stage.press("p");await expect(identity).toHaveAttribute("data-paused","true");
   const stopped=await host.getAttribute("data-frame");await stage.hover();await page.waitForTimeout(200);expect(await host.getAttribute("data-frame")).toBe(stopped);
-  await pause.click();await page.evaluate(()=>scrollTo(0,document.documentElement.scrollHeight));await page.waitForTimeout(200);
+  await stage.press("p");await page.evaluate(()=>scrollTo(0,document.documentElement.scrollHeight));await page.waitForTimeout(200);
   const hidden=await host.getAttribute("data-frame");await page.waitForTimeout(250);expect(await host.getAttribute("data-frame")).toBe(hidden);
 });
 
 test("reset safely cancels a pending 3D import",async ({page}) => {
   await page.route("**/*identityScene*.js",async route=> {await new Promise(resolve=>setTimeout(resolve,300));await route.continue();});
   await page.goto("/about/");const identity=page.locator("[data-interactive-identity]");const stage=identity.locator("[data-identity-stage]");
-  await expect(identity).toHaveAttribute("data-ready","true");for(let count=0;count<3;count++)await stage.click();await identity.locator("[data-identity-reset]").click();
+  await expect(identity).toHaveAttribute("data-ready","true");for(let count=0;count<3;count++)await stage.click();await stage.press("Escape");
   await page.waitForTimeout(600);await expect(identity).toHaveAttribute("data-mode","original");await expect(identity.locator("canvas")).toHaveCount(0);
+});
+
+for(const locale of ["","/ko"])for(const width of [1440,390,320])test(`3D tracks the page pointer outside the logo ${locale||"en"} ${width}`,async({page})=>{
+  await page.setViewportSize({width,height:900});await page.goto(`${locale}/about/`);
+  const root=page.locator("[data-interactive-identity]"),stage=root.locator("[data-identity-stage]");
+  await expect(root).toHaveAttribute("data-ready","true");
+  await expect(root).not.toHaveAttribute("data-pointer-tracking","true");
+  for(let count=0;count<3;count++)await stage.click();
+  await expect(root).toHaveAttribute("data-renderer","webgl");
+  await expect(root).toHaveAttribute("data-pointer-tracking","true");
+  const bounds=(await stage.boundingBox())!,canvas=root.locator("canvas"),host=root.locator("[data-identity-canvas]");
+  const y=bounds.y+bounds.height/2;
+  expect(bounds.x).toBeGreaterThan(5);expect(bounds.x+bounds.width).toBeLessThan(width-5);
+  await page.mouse.move(5,y);await page.waitForTimeout(1100);
+  expect(await stage.evaluate(element=>element.matches(":hover"))).toBe(false);
+  const left=await canvas.screenshot();
+  await page.mouse.move(width-5,y);await page.waitForTimeout(800);
+  expect(await stage.evaluate(element=>element.matches(":hover"))).toBe(false);
+  const right=await canvas.screenshot();expect(right.equals(left)).toBe(false);
+  for(const channel of (await sharp(right).stats()).channels.slice(0,3))expect(channel.stdev).toBeGreaterThan(20);
+  expect(await stage.boundingBox()).toEqual(bounds);
+  const settled=await host.getAttribute("data-frame");
+  await page.waitForTimeout(250);expect(await host.getAttribute("data-frame")).toBe(settled);
+  await page.evaluate(()=>document.dispatchEvent(new PointerEvent("pointermove",{pointerType:"touch",clientX:5,clientY:100})));
+  await page.waitForTimeout(100);expect(await host.getAttribute("data-frame")).toBe(settled);
+  await stage.press("Escape");await expect(root).not.toHaveAttribute("data-pointer-tracking","true");
+  await page.mouse.move(5,y);await expect(root.locator("canvas")).toHaveCount(0);
+  for(let count=0;count<3;count++)await stage.press("Enter");
+  await expect(root).toHaveAttribute("data-renderer","webgl");await expect(root).toHaveAttribute("data-pointer-tracking","true");
 });
 
 test("WebGL-unavailable keeps the full approved logo and honest fallback",async ({page}) => {
