@@ -90,3 +90,9 @@ Compare the selected input pair and content hash with the deployment-branch arti
 Deploy, rollback, and PR CI files under `.github/workflows/` remain historical tooling, not the active release path. Their `pages-production` concurrency group and `github-pages` environment describe the former Actions method and do not serialize local publication. Do not dispatch, rerun, enable, modify, or query workflow runs/checks/logs while Actions use is forbidden. Reactivation requires explicit owner authorization and configuration review.
 
 See [release integrity](release-integrity.md) for provenance and historical evidence, and [rollback](rollback.md) for recovery.
+
+## Verified Immersive Release — 2026-10-15
+
+Website source `bcae578471b0c737b31751d73cde603af617e999` and public feed `3b7e1fd92c5a6d3ef7a1298c3592b498da172d41` were built in isolated clean checkouts with Node 24. Validated public output was published as `ba4b44bf1a7961b9e38f2c45790a9ccaa569a17c` on `gh-pages`, advancing normally from `1f878bb09a1891f553488eda2fac06b8ab728e49`.
+
+Exact live provenance, 31 live HTML byte comparisons, and 32 desktop/mobile EN/KO light/dark core interaction states passed. Actions stayed disabled, Pages stayed `legacy` / `gh-pages:/`, and the custom domain/HTTPS were unchanged. Full test, failure-correction, performance, capture-readiness, and release inputs are in [immersive scene QA](immersive-scenes-qa-2026-10-15.md). A documentation-only source commit after this publication is not a different deployed website revision.

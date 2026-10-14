@@ -101,6 +101,35 @@ The final input changes were rechecked with types/build, Chromium, WebKit, full 
 
 Actual first-viewport engine cost is approximately 139-147 KB gzip, separately documented in [route budgets](route-budget-report.md); the small directly referenced initial scripts are not the whole JS payload. Deployment uses an immutable source/feed pair, never a source-push assumption. Exact release provenance is appended after live verification.
 
+## Verified Release
+
+- PR [50](https://github.com/Gnaroshi/gnaroshi.github.io/pull/50) merged through an exact-head ordinary repository merge, without querying Actions runs/checks/logs.
+- Built website source: `bcae578471b0c737b31751d73cde603af617e999`.
+- Public feed: `3b7e1fd92c5a6d3ef7a1298c3592b498da172d41`.
+- Public static deployment commit: `ba4b44bf1a7961b9e38f2c45790a9ccaa569a17c`.
+- Previous verified static deployment retained in Git: `1f878bb09a1891f553488eda2fac06b8ab728e49`.
+- Fixed build timestamp: `2026-10-14T17:50:37.000Z`; schema 1, `production`, `local` / `0`, exact content hash above.
+
+The merged website and pinned public feed were cloned into separate clean checkouts. `npm ci`, content validation, types, all 17 feed fixtures, real-feed rebuild, i18n, the actual `check:public-tone` wrapper, copy, launch, links, media, project readiness, five smoke tests, and all 68 accessibility tests passed again. Only that final `dist/` tree was copied into a checkout based on the unchanged remote `gh-pages` tip. The staged tree contained no source, `.github`, dependency directory, feed checkout, credentials, or development diagnostics. Secret/private-path scans found no matches. `CNAME` and `.nojekyll` were preserved; the push was a normal fast-forward.
+
+A single allowed Pages build request returned queued. Exact endpoint verification then passed:
+
+```bash
+node scripts/verify-deployment.mjs \
+  --base-url https://gnaroshi.dev \
+  --website-commit bcae578471b0c737b31751d73cde603af617e999 \
+  --feed-commit 3b7e1fd92c5a6d3ef7a1298c3592b498da172d41 \
+  --content-hash c9a73861cd05863e59caee1bfb115bd979f2b59f25d5e72dbb8307179b5462ee \
+  --feed-schema-version 1 --workflow-run-id local \
+  --workflow-run-attempt 0 --environment production
+```
+
+All 31 checked live HTML documents matched the validated production bytes: the four core pages in EN/KO, both Blog indexes, both retired empty Reading compatibility redirects, the Korean article, and all nine project details in both locales. Live Chromium additionally verified 32 core viewport/locale/theme states (1440 x 1000 and 390 x 844), actual WebGL pixels, keyboard manipulation, layer separation, the six-click identity foil, global pointer tracking, single H1, no horizontal overflow, and no JavaScript/console errors. All eight four-route live contact sheets were manually reviewed.
+
+The first cold AVIF full-page capture had a loaded-but-not-yet-decoded blank image. `complete` and `naturalWidth` alone were insufficient capture readiness. The final live captures explicitly awaited `image.decode()`; the selected research image then painted correctly. The existing full visual-v3 suite already awaits decode. This was a capture-readiness correction, not a fabricated replacement screenshot or an unverified image-file repair.
+
+Repository Actions remained `enabled: false` before/after publication. Pages remains `legacy`, `gh-pages:/`, domain `gnaroshi.dev`, HTTPS enforced, approved certificate. Later documentation commits record this release but are not substituted for its built website source SHA. Owned test browsers/previews and temporary checkouts are closed/removed after preserving ignored QA evidence; the owner's localhost server remains available.
+
 ## Reference Review
 
 The loaded Arnaud Rocca full-bleed scene and its author's Codrops case study informed direct manipulation and scene/editorial hierarchy. Bruno Simon and Lusion were explored but remained at splash/loading screens in the captured sessions; those captures are not claimed as completed demo verification. A Three.js example URL redirected to its index, so that capture is also not claimed as a working example. No reference assets or shaders were copied. Links and detailed motion policy are in [interaction and motion](interaction-motion.md).
