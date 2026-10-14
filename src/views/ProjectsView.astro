@@ -8,6 +8,7 @@ import ProjectCardHeader from "../components/projects/ProjectCardHeader.astro";
 import SupportingApplicationCard from "../components/projects/SupportingApplicationCard.astro";
 import TechStackStrip from "../components/projects/TechStackStrip.astro";
 import SectionNav from "../components/navigation/SectionNav.astro";
+import SpatialScene from "../components/scene/SpatialScene.astro";
 import { getProjectMedia } from "../data/approvedMedia";
 import { getApprovedProjectShowcase } from "../data/approvedProjectShowcases";
 import { platformLabels } from "../data/facts/techCatalog";
@@ -41,7 +42,7 @@ const labels = locale === "ko" ? {
 
 <BaseLayout locale={locale} title={translate(locale, "nav.projects")} description={translate(locale, "projects.intro")} width="wide" pageProgress>
   <PageShell class="projects-page">
-    <PageHeader title={translate(locale, "projects.title")} description={translate(locale, "projects.intro")} />
+    <div class="projects-intro" data-scene-surface><SpatialScene variant="assembly" locale={locale} /><div data-scene-copy><PageHeader title={translate(locale, "projects.title")} description={translate(locale, "projects.intro")} /></div></div>
 
     <SectionNav class="projects-overview" label={labels.sections} items={[
       ["selected-projects", labels.selected], ["featured-applications", labels.featured], ["supporting-applications", labels.supporting]
@@ -78,3 +79,11 @@ const labels = locale === "ko" ? {
     </section>
   </PageShell>
 </BaseLayout>
+<style>
+  .projects-intro { position:relative; min-height:340px; display:grid; align-items:center; isolation:isolate; }
+  .projects-intro > [data-scene-copy] { position:relative; z-index:1; max-width:54%; }
+  .projects-intro:has([data-renderer="fallback"]) { min-height:0; }
+  .projects-intro:has([data-renderer="fallback"]) > [data-scene-copy] { max-width:none; }
+  @media(scripting:none) { .projects-intro { min-height:0; } .projects-intro > [data-scene-copy] { max-width:none; } }
+  @media(max-width:767px) { .projects-intro { min-height:460px; align-items:start; } .projects-intro > [data-scene-copy] { max-width:none; } }
+</style>

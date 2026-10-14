@@ -25,6 +25,7 @@ export function mountResearchExplorer(root:HTMLElement):void {
     const nextIndex = Math.max(0,Math.min(topics.length-1,index));
     if(nextIndex !== selected)root.querySelectorAll<HTMLDialogElement>("dialog[open]").forEach(dialog=>dialog.close());
     selected = nextIndex;
+    window.dispatchEvent(new CustomEvent("gnaroshi:research-topic",{detail:{index:selected}}));
     root.dataset.selectedTopic = String(selected); root.dataset.mode = mode;
     topics.forEach((topic,i) => {topic.hidden=mode === "focus" && i !== selected;topic.inert=topic.hidden;topic.dataset.selected=String(i === selected);});
     headings.forEach((heading,i) => {heading.hidden=mode === "focus" && i !== selected;});
@@ -50,7 +51,7 @@ export function mountResearchExplorer(root:HTMLElement):void {
       headings.forEach(heading=>headingHost.append(heading));figures.forEach(figure=>track.append(figure));
       headingHost.hidden=false;gallery.hidden=false;synchronize(selected);mountCarousel();
     } else {
-      topics.forEach((topic,i)=>{topic.querySelector(".research-theme__copy")!.prepend(headings[i]!);topic.append(figures[i]!);});
+      topics.forEach((topic,i)=>{topic.prepend(headings[i]!);topic.append(figures[i]!);});
       headingHost.hidden=true;gallery.hidden=true;synchronize(selected);
     }
     modeButton.querySelector("[data-research-view-label]")!.textContent=mode === "focus"?labels.all:labels.explore;

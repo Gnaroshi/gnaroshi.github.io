@@ -9,6 +9,7 @@ import remarkMath from "remark-math";
 export default defineConfig({
   site: "https://gnaroshi.dev",
   output: "static",
+  devToolbar: { enabled: false },
   prefetch: { prefetchAll:false, defaultStrategy:"hover" },
   i18n: {
     locales: ["en", "ko"],
