@@ -128,7 +128,7 @@ All 31 checked live HTML documents matched the validated production bytes: the f
 
 The first cold AVIF full-page capture had a loaded-but-not-yet-decoded blank image. `complete` and `naturalWidth` alone were insufficient capture readiness. The final live captures explicitly awaited `image.decode()`; the selected research image then painted correctly. The existing full visual-v3 suite already awaits decode. This was a capture-readiness correction, not a fabricated replacement screenshot or an unverified image-file repair.
 
-Repository Actions remained `enabled: false` before/after publication. Pages remains `legacy`, `gh-pages:/`, domain `gnaroshi.dev`, HTTPS enforced, approved certificate. Later documentation commits record this release but are not substituted for its built website source SHA. Owned test browsers/previews and temporary checkouts are closed/removed after preserving ignored QA evidence; the owner's localhost server remains available.
+Repository Actions remained `enabled: false` before/after publication. Pages remains `legacy`, `gh-pages:/`, domain `gnaroshi.dev`, HTTPS enforced, approved certificate. Later documentation commits record this release but are not substituted for its built website source SHA. Owned test browsers/previews are closed and ignored QA evidence is preserved; the owner's localhost server remains available. The shell rejected force-style temporary-directory deletion, so the four owned temporary checkouts were moved to recoverable macOS Trash instead. No owner application or source repository was removed.
 
 ## Reference Review
 
