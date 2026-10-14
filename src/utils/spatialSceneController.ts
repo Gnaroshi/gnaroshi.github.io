@@ -9,7 +9,7 @@ export function mountSpatialScene(root: HTMLElement): void {
   const reduced=matchMedia("(prefers-reduced-motion:reduce)");
   let renderer:SpatialRenderer | null=null,disposed=false,paused=root.dataset.paused==="true",expanded=unfold?.getAttribute("aria-pressed")==="true";
   try{paused=localStorage.getItem("spatial-motion-paused")==="true";}catch{ /* Storage is optional. */ }
-  let loading=false,request=0,down:{x:number;y:number;id:number}|null=null;
+  let loading=false,request=0,down:{x:number;y:number;lastX:number;lastY:number;id:number}|null=null;
   const events=new AbortController();
   const visible=()=>{const rect=root.getBoundingClientRect();return rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<innerHeight;};
   const toggle=()=>{
@@ -46,12 +46,13 @@ export function mountSpatialScene(root: HTMLElement): void {
     request=requestAnimationFrame(()=>{request=0;renderer?.point(x,y);});
   };
   document.addEventListener("pointermove",onPointer,{passive:true,signal:events.signal});
-  host.addEventListener("pointerdown",event=>{if(event.button===0){down={x:event.clientX,y:event.clientY,id:event.pointerId};host.setPointerCapture(event.pointerId);}},{signal:events.signal});
+  host.addEventListener("pointerdown",event=>{if(event.button===0){down={x:event.clientX,y:event.clientY,lastX:event.clientX,lastY:event.clientY,id:event.pointerId};host.setPointerCapture(event.pointerId);}},{signal:events.signal});
   host.addEventListener("pointermove",event=>{
     if(!down||down.id!==event.pointerId)return;
     const dx=event.clientX-down.x,dy=event.clientY-down.y;
     if(event.pointerType==="touch"&&Math.abs(dy)>Math.abs(dx))return;
-    if(Math.abs(dx)>6)renderer?.drag(dx/host.clientWidth,dy/host.clientHeight);
+    if(Math.abs(dx)>6)renderer?.drag((event.clientX-down.lastX)/host.clientWidth,(event.clientY-down.lastY)/host.clientHeight);
+    down.lastX=event.clientX;down.lastY=event.clientY;
   },{passive:true,signal:events.signal});
   host.addEventListener("pointerup",event=>{
     if(down&&Math.hypot(event.clientX-down.x,event.clientY-down.y)<8)toggle();

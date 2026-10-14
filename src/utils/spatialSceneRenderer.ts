@@ -131,8 +131,9 @@ export function createSpatialRenderer(host:HTMLElement,variant:string,initialRed
   const change=()=>{deadline=Math.max(deadline,performance.now()+1600);if(reduced||paused){update(0);draw();}else start();};
   return {
     point(px,py){targetX=Math.max(-1,Math.min(1,px));targetY=Math.max(-1,Math.min(1,py));change();},
-    drag(dx,dy){if(variant==="identity")targetX=Math.max(-1,Math.min(1,dx*2));else dragAngle=dx*2.6;targetY=Math.max(-1,Math.min(1,dy*2));change();},
+    drag(dx,dy){if(paused||reduced){targetX=x;targetY=y;}if(variant==="identity")targetX=Math.max(-1,Math.min(1,targetX+dx*2));else dragAngle+=dx*2.6;targetY=Math.max(-1,Math.min(1,targetY+dy*2));change();},
     nudge(key){
+      if(paused||reduced){targetX=x;targetY=y;}
       // The contour-only scene needs a camera nudge, not rotation of an empty object group.
       if(key==="ArrowLeft"){if(variant==="identity")targetX-=.2;else dragAngle-=.25;}
       if(key==="ArrowRight"){if(variant==="identity")targetX+=.2;else dragAngle+=.25;}
