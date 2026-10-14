@@ -109,7 +109,7 @@ export function createSpatialRenderer(host:HTMLElement,variant:string,initialRed
   const stop=()=>{cancelAnimationFrame(frame);frame=0;};
   const resize=()=>{
     const rect=host.getBoundingClientRect();if(!rect.width||!rect.height||(rect.width===width&&rect.height===height))return;
-    width=rect.width;height=rect.height;mobile=width<768;
+    width=rect.width;height=rect.height;mobile=matchMedia("(max-width:767px)").matches;
     renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1:1.25));renderer.setSize(width,height,false);
     const aspect=width/height;camera.left=-3*aspect;camera.right=3*aspect;camera.updateProjectionMatrix();
     const copy=host.closest("[data-scene-surface]")?.querySelector<HTMLElement>("[data-scene-copy]");
@@ -132,7 +132,7 @@ export function createSpatialRenderer(host:HTMLElement,variant:string,initialRed
   return {
     point(px,py){targetX=Math.max(-1,Math.min(1,px));targetY=Math.max(-1,Math.min(1,py));change();},
     drag(dx,dy){dragAngle=dx*2.6;targetY=Math.max(-1,Math.min(1,dy*2));change();},
-    nudge(key){if(key==="ArrowLeft")dragAngle-=.25;if(key==="ArrowRight")dragAngle+=.25;if(key==="ArrowUp")targetY-=.2;if(key==="ArrowDown")targetY+=.2;change();},
+    nudge(key){if(key==="ArrowLeft")dragAngle-=.25;if(key==="ArrowRight")dragAngle+=.25;if(key==="ArrowUp")targetY-=.2;if(key==="ArrowDown")targetY+=.2;targetY=Math.max(-1,Math.min(1,targetY));change();},
     unfold(value){targetSpread=value?1:0;change();},reset(){targetX=targetY=dragAngle=targetSpread=0;change();},
     topic(index){topicIndex=index;targetSpread=index*.35;targetX=(index-1)*.45;change();},
     setPaused(value){paused=value;stop();if(!value){deadline=performance.now()+8000;start();}},setReduced(value){reduced=value;stop();update(0);draw();if(!value){deadline=performance.now()+8000;start();}},
