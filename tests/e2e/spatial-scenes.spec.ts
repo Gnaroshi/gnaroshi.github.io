@@ -107,7 +107,11 @@ for(const width of [1843,1440,1024,768,430,390,360,320])for(const locale of ["en
       const left=route==="/about/"||width<768?0:Math.min(Math.floor(canvasBounds.width)-1,Math.ceil(copyBounds.x+copyBounds.width-canvasBounds.x+20));
       const top=route==="/about/"?Math.max(0,Math.floor(canvasBounds.height)-60):width<768?Math.ceil(copyBounds.y+copyBounds.height-canvasBounds.y+16):0;
       const region={left,top,width:Math.max(1,Math.floor(canvasBounds.width)-left),height:Math.max(1,Math.floor(canvasBounds.height)-top-62)};
-      if(route==="/about/"){region.top=Math.max(0,Math.floor(canvasBounds.height)-100);region.height=38;region.width=Math.max(1,region.width-110);}
+      if(route==="/about/"){
+        const identity=(await page.locator(".interactive-identity").boundingBox())!;
+        region.top=Math.min(Math.floor(canvasBounds.height)-1,Math.ceil(Math.max(copyBounds.y+copyBounds.height,identity.y+identity.height)-canvasBounds.y+16));
+        region.height=Math.max(1,Math.floor(canvasBounds.height)-region.top);region.width=Math.max(1,region.width-110);
+      }
       const pixels=await sharp(image).extract(region).stats();
       expect(Math.max(...pixels.channels.slice(0,3).map(channel=>channel.stdev))).toBeGreaterThan(route==="/about/"?2:15);
       await page.screenshot({path:`${directory}/${width}-${locale}-${theme}-${name}-initial.png`,fullPage:true});
