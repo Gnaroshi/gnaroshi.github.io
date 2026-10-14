@@ -18,11 +18,11 @@ export function mountSpatialScene(root: HTMLElement): void {
   };
   const reset=()=>{expanded=false;unfold?.setAttribute("aria-pressed","false");renderer?.reset();root.querySelector<HTMLElement>("[data-scene-status]")!.textContent=labels.resetDone;};
   const load=async()=>{
-    if(loading||renderer||disposed||!visible())return;
+    if(loading||renderer||disposed||document.hidden||!visible())return;
     loading=true;
     try {
       const {createSpatialRenderer}=await import("./spatialSceneRenderer");
-      if(disposed)return;
+      if(disposed||document.hidden||!visible())return;
       renderer=createSpatialRenderer(host,root.dataset.variant!,reduced.matches);
       root.dataset.renderer="webgl";controls.hidden=false;host.tabIndex=0;
       root.removeAttribute("aria-hidden");
@@ -33,6 +33,7 @@ export function mountSpatialScene(root: HTMLElement): void {
       root.dataset.paused=String(paused);pause.setAttribute("aria-label",paused?labels.play:labels.pause);pause.title=paused?labels.play:labels.pause;
       root.querySelector("[data-pause-icon]")!.toggleAttribute("hidden",paused);root.querySelector("[data-play-icon]")!.toggleAttribute("hidden",!paused);
     } catch (error) {
+      if(disposed)return;
       if(import.meta.env.DEV)console.warn("[spatial-scene]",error);
       root.dataset.renderer="fallback";controls.hidden=true;host.tabIndex=-1;
       root.setAttribute("aria-hidden","true");
@@ -45,7 +46,7 @@ export function mountSpatialScene(root: HTMLElement): void {
     request=requestAnimationFrame(()=>{request=0;renderer?.point(x,y);});
   };
   document.addEventListener("pointermove",onPointer,{passive:true,signal:events.signal});
-  host.addEventListener("pointerdown",event=>{if(event.button===0)down={x:event.clientX,y:event.clientY,id:event.pointerId};},{signal:events.signal});
+  host.addEventListener("pointerdown",event=>{if(event.button===0){down={x:event.clientX,y:event.clientY,id:event.pointerId};host.setPointerCapture(event.pointerId);}},{signal:events.signal});
   host.addEventListener("pointermove",event=>{
     if(!down||down.id!==event.pointerId)return;
     const dx=event.clientX-down.x,dy=event.clientY-down.y;
@@ -57,6 +58,7 @@ export function mountSpatialScene(root: HTMLElement): void {
     down=null;
   },{signal:events.signal});
   host.addEventListener("pointercancel",()=>{down=null;},{signal:events.signal});
+  host.addEventListener("lostpointercapture",()=>{down=null;},{signal:events.signal});
   host.addEventListener("keydown",event=>{
     if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(event.key)){event.preventDefault();renderer?.nudge(event.key);}
     else if(event.key==="Enter"||event.key===" "){event.preventDefault();toggle();}
@@ -75,8 +77,8 @@ export function mountSpatialScene(root: HTMLElement): void {
   host.addEventListener("spatial:fallback",()=>{controls.hidden=true;host.tabIndex=-1;root.setAttribute("aria-hidden","true");renderer?.dispose();renderer=null;},{signal:events.signal});
   window.addEventListener("gnaroshi:research-topic",event=>renderer?.topic((event as CustomEvent<{index:number}>).detail.index),{signal:events.signal});
   reduced.addEventListener("change",()=>renderer?.setReduced(reduced.matches),{signal:events.signal});
-  document.addEventListener("visibilitychange",()=>renderer?.setVisible(!document.hidden&&visible()),{signal:events.signal});
-  const observer=new IntersectionObserver(()=>{renderer?.setVisible(visible());void load();},{rootMargin:"100px"});observer.observe(root);
+  document.addEventListener("visibilitychange",()=>{renderer?.setVisible(!document.hidden&&visible());if(!document.hidden)void load();},{signal:events.signal});
+  const observer=new IntersectionObserver(()=>{renderer?.setVisible(visible());void load();},{threshold:.01});observer.observe(root);
   window.addEventListener("pagehide",()=>{
     disposed=true;observer.disconnect();events.abort();cancelAnimationFrame(request);renderer?.dispose();renderer=null;
     controls.hidden=true;host.tabIndex=-1;delete root.dataset.renderer;

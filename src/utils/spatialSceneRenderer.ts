@@ -73,7 +73,7 @@ export function createSpatialRenderer(host:HTMLElement,variant:string,initialRed
     renderer.setScissor(mobile?0:protectedRight,0,mobile?width:Math.max(0,width-protectedRight),mobile?Math.max(0,height-protectedBottom):height);
     renderer.render(scene,camera);renderer.setScissorTest(false);
     host.dataset.frame=String(++serial);host.dataset.drawCalls=String(renderer.info.render.calls);
-    host.dataset.rotation=String(group.rotation.y);host.dataset.expansion=String(spread);host.dataset.topic=String(topicIndex);
+    host.dataset.rotation=String(variant==="identity"?camera.rotation.y:group.rotation.y);host.dataset.expansion=String(spread);host.dataset.topic=String(topicIndex);
   }
   function update(delta:number) {
     const ease=reduced||paused?1:1-Math.exp(-delta/100);
@@ -128,15 +128,21 @@ export function createSpatialRenderer(host:HTMLElement,variant:string,initialRed
   const contextLost=(event:Event)=>{event.preventDefault();stop();host.closest<HTMLElement>("[data-spatial-scene]")!.dataset.renderer="fallback";host.dispatchEvent(new Event("spatial:fallback",{bubbles:true}));};
   renderer.domElement.addEventListener("webglcontextlost",contextLost);
   resize();theme();start();
-  const change=()=>{deadline=performance.now()+1600;if(reduced||paused){update(0);draw();}else start();};
+  const change=()=>{deadline=Math.max(deadline,performance.now()+1600);if(reduced||paused){update(0);draw();}else start();};
   return {
     point(px,py){targetX=Math.max(-1,Math.min(1,px));targetY=Math.max(-1,Math.min(1,py));change();},
-    drag(dx,dy){dragAngle=dx*2.6;targetY=Math.max(-1,Math.min(1,dy*2));change();},
-    nudge(key){if(key==="ArrowLeft")dragAngle-=.25;if(key==="ArrowRight")dragAngle+=.25;if(key==="ArrowUp")targetY-=.2;if(key==="ArrowDown")targetY+=.2;targetY=Math.max(-1,Math.min(1,targetY));change();},
+    drag(dx,dy){if(variant==="identity")targetX=Math.max(-1,Math.min(1,dx*2));else dragAngle=dx*2.6;targetY=Math.max(-1,Math.min(1,dy*2));change();},
+    nudge(key){
+      // The contour-only scene needs a camera nudge, not rotation of an empty object group.
+      if(key==="ArrowLeft"){if(variant==="identity")targetX-=.2;else dragAngle-=.25;}
+      if(key==="ArrowRight"){if(variant==="identity")targetX+=.2;else dragAngle+=.25;}
+      if(key==="ArrowUp")targetY-=.2;if(key==="ArrowDown")targetY+=.2;
+      targetX=Math.max(-1,Math.min(1,targetX));targetY=Math.max(-1,Math.min(1,targetY));change();
+    },
     unfold(value){targetSpread=value?1:0;change();},reset(){targetX=targetY=dragAngle=targetSpread=0;change();},
     topic(index){topicIndex=index;targetSpread=index*.35;targetX=(index-1)*.45;change();},
-    setPaused(value){paused=value;stop();if(!value){deadline=performance.now()+8000;start();}},setReduced(value){reduced=value;stop();update(0);draw();if(!value){deadline=performance.now()+8000;start();}},
-    setVisible(value){visible=value;stop();if(value){deadline=performance.now()+8000;start();}},
+    setPaused(value){if(paused===value)return;paused=value;stop();if(!value){deadline=performance.now()+8000;start();}},setReduced(value){reduced=value;stop();update(0);draw();if(!value){deadline=performance.now()+8000;start();}},
+    setVisible(value){if(visible===value)return;visible=value;stop();if(value){deadline=performance.now()+8000;start();}},
     dispose(){if(disposed)return;disposed=true;stop();resizeObserver.disconnect();themeObserver.disconnect();renderer.domElement.removeEventListener("webglcontextlost",contextLost);resources.forEach(resource=>resource.dispose());renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove();}
   };
 }
