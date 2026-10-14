@@ -21,7 +21,7 @@ export default defineConfig({
   markdown: {
     processor: unified({
       remarkPlugins: [remarkMath],
-      rehypePlugins: [rehypeKatex]
+      rehypePlugins: [[rehypeKatex, { trust: false }]]
     }),
     syntaxHighlight: "shiki"
   }
