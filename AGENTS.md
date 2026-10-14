@@ -147,12 +147,12 @@ The public writing destination is named Blog, not Writing. When there are no pub
 
 ## Design And Accessibility
 
-- Maintain readable academic/editorial content, but follow the owner's interaction intent rather than treating visual defaults as blanket bans. About identity, Home project desk, and the Research image explorer are approved, bounded direct-manipulation surfaces with complete keyboard/reduced-motion fallbacks.
+- Maintain readable academic/editorial content, but follow the owner's interaction intent rather than treating visual defaults as blanket bans. The four core introductions now have visibly interactive, route-owned WebGL illustrations. Preserve protected HTML text regions, keyboard controls, visible/persistent pause, reduced-motion/no-GPU fallbacks, and bounded rendering. About identity, Home project desk, and the Research image explorer remain separate approved direct-manipulation surfaces.
 - Keep site navigation and site-owned breadcrumb labels English in both locales; preserve Korean article content and natural Korean task copy. Do not stack language badges, estimated reading time, or a duplicate content-type eyebrow before article titles.
 - Keep application mode limited to public paper workflows and Activity views.
 - Use semantic landmarks and heading order.
 - Preserve visible focus states, keyboard navigation, contrast, and mobile overflow protection.
-- Keep motion tied to navigation, progress, or state; prefer progressive native CSS and preserve the complete reduced-motion experience.
+- Native CSS remains preferred for ordinary motion. Explicit immersive scenes may use Three.js; cap FPS/DPR/draw calls, stop after bounded motion and offscreen, dispose on navigation, and verify real painted pixels rather than counting loaders or a canvas element. Read `docs/interaction-motion.md` before changing their budgets.
 - Keep graph list fallback and heatmap labels accessible.
 - Do not expose developer or authoring instructions on public pages.
 - Apply the two-second semantic test to every large image: its broad subject must be clear before adjacent copy is read.

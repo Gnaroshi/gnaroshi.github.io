@@ -97,7 +97,7 @@ export const ko = {
   "priority.urgent": "긴급",
   "home.seoTitle": "Gnaroshi",
   "home.seoDescription": "AI 시스템과 연구 도구를 공부하고 만들며, 프로젝트와 글, 논문 기록을 정리합니다.",
-  "home.readWriting": "글 보기",
+  "home.readWriting": "블로그",
   "home.viewResearch": "연구 보기",
   "home.currentFocus": "요즘 하는 일",
   "home.researchQuestions": "연구",

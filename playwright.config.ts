@@ -5,9 +5,11 @@ const port = 4324;
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: false,
+  // Multi-route/viewport scenarios include real GPU setup; performance budgets remain separate.
+  timeout: 90_000,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   reporter: [["list"], ["html", { open: "never" }]],
   outputDir: process.env.PLAYWRIGHT_OUTPUT_DIR ?? "test-results",
   use: {

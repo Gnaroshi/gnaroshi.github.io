@@ -5,6 +5,7 @@ import PageHeader from "../components/layout/PageHeader.astro";
 import PageShell from "../components/layout/PageShell.astro";
 import InteractiveIdentity from "../components/identity/InteractiveIdentity.astro";
 import ToolConnections from "../components/about/ToolConnections.astro";
+import SpatialScene from "../components/scene/SpatialScene.astro";
 import { getLocalizedData } from "../data/locales";
 import { profile } from "../data/profile";
 import type { Locale } from "../i18n/types";
@@ -17,7 +18,7 @@ const links = [{ label: "GitHub", href: profile.links.github }, profile.links.em
 
 <BaseLayout locale={locale} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} width="wide">
   <PageShell class="about-page">
-    <div class="about-introduction"><div class="about-introduction__copy"><PageHeader eyebrow={profile.displayName} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} /><div class="prose-stack">{data.profile.bio.map((paragraph) => <p>{paragraph}</p>)}</div></div><InteractiveIdentity locale={locale} /></div>
+    <div class="about-introduction" data-scene-surface><SpatialScene variant="identity" locale={locale} /><div class="about-introduction__copy" data-scene-copy><PageHeader eyebrow={profile.displayName} title={translate(locale, "about.title")} description={data.profile.aboutIntroduction} /><div class="prose-stack">{data.profile.bio.map((paragraph) => <p>{paragraph}</p>)}</div></div><InteractiveIdentity locale={locale} /></div>
     <ToolConnections locale={locale} />
     <section class="section" aria-labelledby="about-values"><h2 id="about-values">{translate(locale, "about.values")}</h2><ul>{data.profile.researcherValues.map((value) => <li>{value}</li>)}</ul></section>
     {links.length > 0 && <section class="section" aria-labelledby="about-links"><h2 id="about-links">{translate(locale, "about.links")}</h2><div class="link-row">{links.map((link) => <ExternalLink href={link.href}>{link.label}</ExternalLink>)}</div></section>}
@@ -25,8 +26,11 @@ const links = [{ label: "GitHub", href: profile.links.github }, profile.links.em
 </BaseLayout>
 
 <style>
-  .about-introduction { display:grid; gap:var(--space-5); align-items:start; }
-  .about-introduction__copy { display:grid; gap:var(--space-5); }
+  .about-introduction { position:relative; display:grid; gap:var(--space-5); align-items:start; isolation:isolate; }
+  .about-introduction__copy { position:relative; z-index:1; display:grid; gap:var(--space-5); }
+  .about-introduction :global(.interactive-identity) { position:relative; z-index:1; }
+  .about-introduction :global(.spatial-scene__controls) { bottom:0; right:0; }
+  .about-introduction { padding-bottom:60px; }
   .about-introduction :global(.page-header) { margin:0; }
   .about-page .prose-stack { max-width:720px; }
   .about-page .section > ul { display:grid; gap:var(--space-3); margin:0; padding-inline-start:1.2rem; color:var(--color-text-secondary); }

@@ -1,13 +1,12 @@
 ---
 import HeroShell from "../layout/HeroShell.astro";
-import ResponsiveImage from "../media/ResponsiveImage.astro";
-import { approvedMedia } from "../../data/approvedMedia";
 import { profile } from "../../data/profile";
 import { getLocalizedData } from "../../data/locales";
 import type { Locale } from "../../i18n/types";
 import { getLocalePath, translate } from "../../i18n/utils";
 import { formatLocalizedDate } from "../../i18n/date";
 import { getPublicCapabilities } from "../../utils/publicCapabilities";
+import SpatialScene from "../scene/SpatialScene.astro";
 interface Props { locale: Locale; currentFocus?: string; currentFocusUpdated?: string }
 const { locale, currentFocus, currentFocusUpdated } = Astro.props;
 const data = getLocalizedData(locale);
@@ -15,10 +14,7 @@ const capabilities = getPublicCapabilities();
 ---
 
 <HeroShell class="identity-hero" labelledby="home-title">
-  <div class="identity-hero__media">
-    <ResponsiveImage asset={approvedMedia.homeHero} locale={locale} sizes="(min-width: 1200px) 1040px, 100vw" loading="eager" fetchpriority="high" />
-  </div>
-  <div class="identity-hero__copy">
+  <div class="identity-hero__copy" data-scene-copy>
     <h1 id="home-title">{profile.displayName}</h1>
     <p class="identity-hero__headline">{data.profile.headline.split("\n").map((line) => <span>{line}</span>)}</p>
     <p class="identity-hero__bio">{data.profile.shortBio}</p>
@@ -33,4 +29,5 @@ const capabilities = getPublicCapabilities();
       </a>
     )}
   </div>
+  <SpatialScene variant="fold" locale={locale} />
 </HeroShell>

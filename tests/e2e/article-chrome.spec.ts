@@ -31,7 +31,7 @@ test.describe("published article reading surface", () => {
         await expect(article.locator(".prose")).toContainText("개인적인 정리와 해석");
         await expect(article.locator(".prose").getByRole("link", { name: "논문 원문", exact: true })).toBeVisible();
         await expect(article.locator(".breadcrumbs").getByRole("link", { name: "Home", exact: true })).toHaveAttribute("href", "/ko/");
-        await expect(article.locator(".breadcrumbs").getByRole("link", { name: "Writing", exact: true })).toHaveAttribute("href", "/ko/blog/");
+        await expect(article.locator(".breadcrumbs").getByRole("link", { name: "Blog", exact: true })).toHaveAttribute("href", "/ko/blog/");
         await expect(article.locator(".post-nav")).toHaveCount(0);
 
         const prose = await article.locator(".prose").boundingBox();

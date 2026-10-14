@@ -2,4 +2,4 @@
 interface Props { class?: string; labelledby?: string }
 const { class: className, labelledby } = Astro.props;
 ---
-<section class:list={["hero-shell", className]} aria-labelledby={labelledby}><slot /></section>
+<section class:list={["hero-shell", className]} aria-labelledby={labelledby} data-scene-surface><slot /></section>

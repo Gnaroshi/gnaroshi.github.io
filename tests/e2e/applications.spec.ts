@@ -91,7 +91,12 @@ test.describe("verified Gnaroshi applications", () => {
         await expect(page.locator(".primary-evidence figcaption")).toHaveCount(1);
         await expect(page.locator(".scenario picture img")).toHaveCount(2);
         await expect(page.locator(".scenario figcaption")).toHaveCount(2);
-        const imageSources = await page.locator(".primary-evidence img,.scenario img").evaluateAll((images) => images.map((image) => (image as HTMLImageElement).currentSrc));
+        const evidenceImages=page.locator(".primary-evidence img,.scenario img");
+        for(const image of await evidenceImages.all()){
+          await image.scrollIntoViewIfNeeded();
+          await expect.poll(()=>image.evaluate((node:HTMLImageElement)=>node.complete&&node.naturalWidth>0&&node.currentSrc!=="")).toBe(true);
+        }
+        const imageSources = await evidenceImages.evaluateAll((images) => images.map((image) => (image as HTMLImageElement).currentSrc));
         expect(new Set(imageSources).size).toBe(imageSources.length);
         for (const figure of await page.locator(".primary-evidence,.scenario figure").all()) {
           const containment = await figure.evaluate((element) => {

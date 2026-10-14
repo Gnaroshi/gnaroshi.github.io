@@ -49,11 +49,11 @@ const en = {
     heroSummary:"Private authoring stays outside the website. The static Astro site validates and renders only the public projection, then records exactly what was deployed.",
     overview:"The system separates private paper and writing sources, local publishing tools, a sanitized public feed, and the replaceable presentation site.", audience:"Readers of the public site and the person maintaining it", primaryUse:"Publish reviewed public material without moving private drafts into the website repository.",
     keyFeatures:["English and Korean routes","Public-feed validation","Evidence-gated navigation and metrics","Exact GitHub Pages build provenance"],
-    privacySummary:"The website workflow never checks out private paper or writing repositories and receives no cross-repository secret.", currentState:"The site builds from the public content feed, deploys through GitHub Actions, and verifies the live website and feed commits.",
-    currentLimitations:["Public writing and reading sections stay intentionally sparse until reviewed records are published."], nextMilestones:["Publish the first reviewed writing and paper-reading note.","Keep public navigation useful as the feed grows."],
+    privacySummary:"The website workflow never checks out private paper or writing repositories and receives no cross-repository secret.", currentState:"The site builds locally from the public content feed, publishes validated static files to GitHub Pages, and verifies the live website and feed commits.",
+    currentLimitations:["Public writing and reading sections stay intentionally sparse until reviewed records are published."], nextMilestones:["Publish more reviewed writing and the first public paper note.","Keep public navigation useful as the feed grows."],
     technicalNotes:["Astro produces a static site with minimal client islands.","Playwright, link, localization, media, and feed-contract checks gate deployment."], studioRelationship:"Studio prepares and publishes the feed; it does not write the website repository.",
     scenario:{title:"Example publication flow",context:"Follow one reviewed record from private editing to the verified public build.",demoDisclosure:"The workflow uses illustrative repository states and does not expose private content.",steps:[{id:"write-private",title:"Write privately",description:"Edit the canonical record in its private source repository."},{id:"preview-fields",title:"Preview public fields",description:"Select and review only the fields intended for the public feed."},{id:"publish-feed",title:"Publish the feed",description:"Build, validate, diff, and push the sanitized public projection."},{id:"verify-deploy",title:"Verify the site",description:"Confirm build-info.json matches the expected website and feed commits."}]},
-    detail:{problem:"A public website should not become the storage location for unfinished research notes and drafts.",publicWorkflow:["Private sources are checkpointed separately.","The publisher creates a deterministic public feed.","The website validates, builds, deploys, and verifies the exact feed commit."],repositoryBoundaries:["Paper Lab and Writing own private source files.","Studio owns authoring and publishing.","Content Feed owns generated public records.","gnaroshi.dev owns presentation only."],deploymentVerification:["GitHub Actions builds the static artifact.","The deployed build-info record is compared with the expected commits."]}, linkLabels:{repository:"Repository","live-site":"Live site"}
+    detail:{problem:"A public website should not become the storage location for unfinished research notes and drafts.",publicWorkflow:["Private sources are checkpointed separately.","The publisher creates a deterministic public feed.","The website validates, builds, deploys, and verifies the exact feed commit."],repositoryBoundaries:["Paper Lab and Writing own private source files.","Studio owns authoring and publishing.","Content Feed owns generated public records.","gnaroshi.dev owns presentation only."],deploymentVerification:["A locally validated static artifact is published to GitHub Pages.","The deployed build-info record is compared with the expected commits."]}, linkLabels:{repository:"Repository","live-site":"Live site"}
   },
   "gnaroshi-studio": {
     title:"Gnaroshi Studio", cardSummary:"A local macOS workspace for research authoring, Git checkpoints, public previews, and explicit publishing.",
@@ -162,9 +162,9 @@ const ko: Record<keyof typeof en, ProjectStory> = {
     primaryUse: "비공개 초안을 웹사이트 저장소로 옮기지 않고 검토한 내용만 공개합니다.",
     keyFeatures: ["영문·국문 경로", "공개 피드 검증", "근거가 있을 때만 보이는 탐색과 지표", "GitHub Pages 배포 출처 기록"],
     privacySummary: "웹사이트 빌드는 비공개 논문·글 저장소를 체크아웃하지 않으며 저장소 간 비밀 정보도 받지 않습니다.",
-    currentState: "공개 콘텐츠 피드로 빌드하고 GitHub Actions로 배포하며 실제 웹사이트와 피드 커밋을 확인합니다.",
+    currentState: "공개 콘텐츠 피드로 로컬에서 빌드하고 검증한 정적 파일을 GitHub Pages에 게시한 뒤 실제 웹사이트와 피드 커밋을 확인합니다.",
     currentLimitations: ["검토한 기록이 공개되기 전까지 글과 논문 읽기 영역은 의도적으로 작게 유지됩니다."],
-    nextMilestones: ["검토한 첫 글과 논문 읽기 기록을 공개합니다.", "공개 자료가 늘어도 탐색을 단순하게 유지합니다."],
+    nextMilestones: ["검토한 글을 더 공개하고 첫 공개 논문 읽기 기록을 남깁니다.", "공개 자료가 늘어도 탐색을 단순하게 유지합니다."],
     technicalNotes: ["Astro가 클라이언트 자바스크립트를 최소화한 정적 사이트를 만듭니다.", "Playwright, 링크, 번역, 미디어, 피드 계약 검사가 배포 전에 실행됩니다."],
     studioRelationship: "Studio가 공개 피드를 준비하고 발행하지만 웹사이트 저장소를 직접 쓰지는 않습니다.",
     scenario: { title: "공개까지의 흐름", context: "검토한 기록 하나가 비공개 작성에서 배포 확인까지 가는 과정을 봅니다.", demoDisclosure: "설명용 저장소 상태를 사용하며 비공개 내용은 노출하지 않습니다.", steps: [
@@ -173,7 +173,7 @@ const ko: Record<keyof typeof en, ProjectStory> = {
       { id: "publish-feed", title: "피드 발행", description: "정제한 공개 자료를 만들고 검증한 뒤 차이를 확인해 푸시합니다." },
       { id: "verify-deploy", title: "사이트 확인", description: "build-info.json의 웹사이트와 피드 커밋이 예상값과 같은지 확인합니다." }
     ] },
-    detail: { problem: "공개 웹사이트가 미완성 기록과 초안의 저장소가 되어서는 안 됩니다.", publicWorkflow: ["비공개 원본 저장소를 따로 체크포인트합니다.", "발행 도구가 같은 입력에서 같은 공개 피드를 만듭니다.", "웹사이트가 피드를 검증하고 빌드한 뒤 배포 결과를 확인합니다."], repositoryBoundaries: ["Paper Lab과 Writing이 비공개 원본을 소유합니다.", "Studio가 작성과 발행을 맡습니다.", "Content Feed가 생성된 공개 기록을 소유합니다.", "gnaroshi.dev는 표시만 맡습니다."], deploymentVerification: ["GitHub Actions가 정적 결과물을 만듭니다.", "배포된 build-info와 예상 커밋을 비교합니다."] },
+    detail: { problem: "공개 웹사이트가 미완성 기록과 초안의 저장소가 되어서는 안 됩니다.", publicWorkflow: ["비공개 원본 저장소를 따로 체크포인트합니다.", "발행 도구가 같은 입력에서 같은 공개 피드를 만듭니다.", "웹사이트가 피드를 검증하고 빌드한 뒤 배포 결과를 확인합니다."], repositoryBoundaries: ["Paper Lab과 Writing이 비공개 원본을 소유합니다.", "Studio가 작성과 발행을 맡습니다.", "Content Feed가 생성된 공개 기록을 소유합니다.", "gnaroshi.dev는 표시만 맡습니다."], deploymentVerification: ["로컬에서 검증한 정적 결과물을 GitHub Pages에 게시합니다.", "배포된 build-info와 예상 커밋을 비교합니다."] },
     linkLabels: { repository: "저장소", "live-site": "사이트" }
   },
   "gnaroshi-studio": {

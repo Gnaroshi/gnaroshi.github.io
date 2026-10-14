@@ -35,7 +35,7 @@ const tagLabels = Object.fromEntries(tags.map((tag) => [tag, getLocalizedTagLabe
   <StructuredData data={{
     "@context": "https://schema.org",
     "@type": "Blog",
-    name: locale === "ko" ? "Gnaroshi 글" : "Gnaroshi Writing",
+    name: locale === "ko" ? "Gnaroshi 블로그" : "Gnaroshi Blog",
     description: translate(locale, "writing.intro"),
     url: new URL(getLocalePath(locale, "/blog/"), profile.domain).toString(),
     inLanguage: locale === "ko" ? "ko-KR" : "en-US",

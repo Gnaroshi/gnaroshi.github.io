@@ -36,16 +36,15 @@ test.describe("approved public media", () => {
   });
 
   for (const route of ["/", "/ko/"]) {
-    test(`${route} renders a loaded Hero and project evidence image`, async ({ page }) => {
+    test(`${route} renders a spatial Hero and real project evidence`, async ({ page }) => {
       await page.goto(route);
-      await expect(page.locator(".identity-hero picture img")).toHaveCount(1);
-      await expect(page.locator(".identity-hero__media[aria-hidden]")).toHaveCount(0);
-      await expect(page.locator(".identity-hero picture img")).not.toHaveAttribute("alt", "");
+      await expect(page.locator('.identity-hero [data-spatial-scene]')).toHaveAttribute("data-renderer","webgl");
+      await expect(page.locator(".identity-hero picture img")).toHaveCount(0);
       await expect(page.locator(".home-desk picture img")).toHaveCount(3);
       await expect(page.locator('[data-desk-sheet="0"] [data-desk-front]')).toHaveAttribute("aria-hidden", "false");
       await expect(page.locator(".home-desk__media-caption")).toContainText(/demonstration data|데모 자료/);
       const images = page.locator("main picture img");
-      await expect(images).toHaveCount(4);
+      await expect(images).toHaveCount(3);
       for (let index = 0; index < await images.count(); index += 1) {
         const image = images.nth(index);
         await expect(image).toHaveAttribute("width", /\d+/);

@@ -76,7 +76,7 @@ const blogPosting = {
   <article class="blog-post">
     <Breadcrumbs showCurrent={false} label={locale === "ko" ? "현재 위치" : "Breadcrumb"} items={[
       { name: "Home", href: locale === "ko" ? "/ko/" : "/", lang: "en" },
-      { name: "Writing", href: locale === "ko" ? "/ko/blog/" : "/blog/", lang: "en" },
+      { name: "Blog", href: locale === "ko" ? "/ko/blog/" : "/blog/", lang: "en" },
       { name: post.data.title, href: canonicalPath }
     ]} />
     <StructuredData data={blogPosting} />
@@ -95,7 +95,7 @@ const blogPosting = {
       </div>
     </div>
 
-    {(previous || next) && <nav class="post-nav" aria-label="Writing">
+    {(previous || next) && <nav class="post-nav" aria-label={locale === "ko" ? "블로그 글 탐색" : "Blog posts"}>
       <div>
         {previous && (
           <>

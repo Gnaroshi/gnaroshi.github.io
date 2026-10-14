@@ -30,7 +30,8 @@ for (const width of [1440, 1024, 768, 390, 360]) {
         const nav = page.locator(".section-nav");
         const firstSection = page.locator(".research-theme, .project-section").first();
         const rhythm = await page.evaluate(() => {
-          const header = document.querySelector(".page-header")!.getBoundingClientRect();
+          const pageHeader = document.querySelector(".page-header")!;
+          const header = (pageHeader.closest("[data-scene-surface]") ?? pageHeader).getBoundingClientRect();
           const nav = document.querySelector(".section-nav")!.getBoundingClientRect();
           const heading = document.querySelector(".research-heading h2, .project-section h2")!.getBoundingClientRect();
           const controls = document.querySelector("[data-research-controls]")?.getBoundingClientRect();
