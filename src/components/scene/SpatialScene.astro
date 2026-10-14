@@ -4,10 +4,10 @@ import type { Locale } from "../../i18n/types";
 interface Props { variant: "fold" | "terrain" | "assembly" | "identity"; locale: Locale }
 const { variant, locale } = Astro.props;
 const labels = locale === "ko" ? {
-  name:"입체 일러스트", pause:"움직임 정지", play:"움직임 재개", reset:"처음 모습으로", unfold:"구조 펼치기",
+  name:"입체 일러스트", pause:"움직임 정지", play:"움직임 재개", reset:"처음 모습으로", resetDone:"처음 시점으로 돌아왔습니다.", unfold:"구조 펼치기",
   help:"드래그하거나 방향키로 시점을 바꿉니다. Enter 또는 Space로 구조를 펼칩니다. Escape로 초기화합니다. 연구 데이터가 아닌 입체 일러스트입니다."
 } : {
-  name:"Spatial illustration", pause:"Pause motion", play:"Resume motion", reset:"Reset view", unfold:"Unfold structure",
+  name:"Spatial illustration", pause:"Pause motion", play:"Resume motion", reset:"Reset view", resetDone:"View reset.", unfold:"Unfold structure",
   help:"Drag or use the arrow keys to change the view. Enter or Space unfolds the structure. Escape resets it. This is an illustration, not research data."
 };
 if(variant==="terrain")labels.unfold=locale==="ko"?"입체 지형 평평하게":"Flatten landscape";
@@ -18,6 +18,7 @@ const id=`spatial-${variant}`;
 <div class="spatial-scene" data-spatial-scene data-variant={variant} data-scene-labels={JSON.stringify(labels)} aria-hidden="true">
   <div class="spatial-scene__canvas" data-scene-canvas tabindex="-1" role="group" aria-label={labels.name} aria-describedby={`${id}-help`}></div>
   <p class="sr-only" id={`${id}-help`}>{labels.help}</p>
+  <p class="sr-only" role="status" aria-live="polite" data-scene-status></p>
   <div class="spatial-scene__controls" hidden data-scene-controls>
     {variant!=="identity"&&<button type="button" data-scene-unfold aria-label={labels.unfold} title={labels.unfold} aria-pressed="false"><Layers3 size={18} aria-hidden="true" /></button>}
     <button type="button" data-scene-pause aria-label={labels.pause} title={labels.pause}><span data-pause-icon><Pause size={18} aria-hidden="true" /></span><span data-play-icon hidden><Play size={18} aria-hidden="true" /></span></button>

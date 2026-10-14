@@ -5,7 +5,7 @@ export function mountSpatialScene(root: HTMLElement): void {
   const controls=root.querySelector<HTMLElement>("[data-scene-controls]")!;
   const pause=root.querySelector<HTMLButtonElement>("[data-scene-pause]")!;
   const unfold=root.querySelector<HTMLButtonElement>("[data-scene-unfold]");
-  const labels=JSON.parse(root.dataset.sceneLabels!) as {pause:string;play:string};
+  const labels=JSON.parse(root.dataset.sceneLabels!) as {pause:string;play:string;resetDone:string};
   const reduced=matchMedia("(prefers-reduced-motion:reduce)");
   let renderer:SpatialRenderer | null=null,disposed=false,paused=root.dataset.paused==="true",expanded=unfold?.getAttribute("aria-pressed")==="true";
   try{paused=localStorage.getItem("spatial-motion-paused")==="true";}catch{ /* Storage is optional. */ }
@@ -16,7 +16,7 @@ export function mountSpatialScene(root: HTMLElement): void {
     if(!renderer||!unfold)return;
     expanded=!expanded;unfold.setAttribute("aria-pressed",String(expanded));renderer.unfold(expanded);
   };
-  const reset=()=>{expanded=false;unfold?.setAttribute("aria-pressed","false");renderer?.reset();};
+  const reset=()=>{expanded=false;unfold?.setAttribute("aria-pressed","false");renderer?.reset();root.querySelector<HTMLElement>("[data-scene-status]")!.textContent=labels.resetDone;};
   const load=async()=>{
     if(loading||renderer||disposed||!visible())return;
     loading=true;
