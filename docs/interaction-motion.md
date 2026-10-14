@@ -1,8 +1,18 @@
 # Interaction And Motion
 
-This site uses motion to explain navigation, reading progress, and available actions. Motion is progressive enhancement: content, routes, and controls remain complete when a browser does not support a feature or when the visitor requests reduced motion.
+This site uses motion for navigation and direct manipulation, and uses owner-requested spatial illustrations to give the four core editorial introductions a perceptible, personal interactive identity. Motion is progressive enhancement: content, routes, and controls remain complete when a browser does not support a feature or when the visitor requests reduced motion.
 
 ## Current Approach
+
+### First-viewport spatial scenes
+
+Home, Research, Projects, and About have unframed Three.js WebGL scenes, not repeated card flips or hover-only transformations. Home has an original folded-strip sculpture that unfolds into layers. Research has a deformable landscape linked to the selected real question, with a flatten action. Projects has separable construction layers. About uses a contour field behind the existing approved full-face identity; it does not substitute a new logo or claim research evidence.
+
+Mouse/pen position anywhere in the page changes the view and deforms the contour field. Horizontal touch dragging and arrow keys change the scene; vertical touch movement remains native scrolling. Enter/Space or the layers button changes the sculpture's state, Escape/reset restores it. Pause is visible and its choice persists across pages. The scene is described as an illustration for assistive technology. Required copy and links remain real HTML outside the canvas, with scissored render areas that prevent either the field or object from painting over text. Control dimensions and scene geometry are reserved before loading.
+
+The renderer loads only for a visible route-owned scene, at no more than 24 FPS desktop / 20 FPS mobile and DPR 1.25 / 1. It uses at most seven draw calls, no postprocessing, remote textures, HDR environment, shader framework, or continuous background loop. Initial/resumed motion lasts eight seconds; input extends it by 1.6 seconds. Offscreen, hidden-document, paused, and expired motion stops. Page exit aborts listeners and releases geometries, materials, renderer, and WebGL context; history restoration reconstructs them. Reduced motion retains a static scene and immediate explicit controls but removes ambient and passive pointer motion. No-JavaScript or unavailable WebGL leaves complete compact editorial content without empty controls.
+
+This explicitly replaces the earlier blanket no-parallax/default-micro-interaction rule, following the owner's request for visibly immersive 3D. Long-form articles and evidence viewers remain text-first. No custom cursor, scroll hijacking, snapshot transitions, invented activity, or generated application screenshot is added.
 
 ### Document navigation without snapshot ghosts
 
@@ -60,7 +70,7 @@ About renders the existing approved full-face logo, not a replacement asset or p
 
 After 3D activation, mouse/pen position anywhere in the page changes the relief angle, normalized around the logo and clamped to the existing bounded tilt. The logo never follows the pointer by moving its layout position. Input is coalesced to one update per frame; touch scrolling does not drive tilt. Enter/Space activate the same click sequence, and arrow keys change the angle. On the focused logo, Escape resets/disposes and P pauses/resumes. The visible identity caption, click indicators, and control row are removed at the owner's request; an offscreen localized status and accessible keyboard shortcuts remain. Reduced-motion disables passive pointer tracking while preserving explicit state changes and keyboard input. Failed WebGL/import leaves the approved original visible with an honest accessible unavailable state.
 
-The engine is dynamically imported only on click three, never on Home, Research, Projects, or initial About. One instanced draw call uses a 64×64 raster grid. Pixel ratio is capped at 1.5; rendering stops after an interaction settles, while paused, offscreen, or in a hidden document. Fresh viewport geometry, rather than a stale observer sample, governs resumed input. A resized backing buffer receives one static repaint even when offscreen; there is no offscreen animation loop. Frame deltas are clamped to 0–50ms so queued timestamps cannot create negative interpolation. Page exit releases geometry/material/WebGL resources; history restoration safely reconstructs the view. No React island or external texture request is introduced.
+The identity-specific relief engine is dynamically imported only on click three; the separate introductory scenes may already have cached the shared Three.js core. This does not activate the logo relief early. One instanced draw call uses a 64×64 raster grid. Pixel ratio is capped at 1.5; rendering stops after an interaction settles, while paused, offscreen, or in a hidden document. Fresh viewport geometry, rather than a stale observer sample, governs resumed input. A resized backing buffer receives one static repaint even when offscreen; there is no offscreen animation loop. Frame deltas are clamped to 0–50ms so queued timestamps cannot create negative interpolation. Page exit releases geometry/material/WebGL resources; history restoration safely reconstructs the view. No React island or external texture request is introduced.
 
 ### Content-led About, Research, and Projects
 
@@ -77,8 +87,8 @@ QA measures adjacent block gaps in a single browser frame, checks focused-contro
 ## Constraints
 
 - No custom cursor.
-- No automatic looping animation.
-- No parallax or decorative scroll choreography.
+- No unbounded automatic animation; introductory spatial motion must settle within eight seconds.
+- Pointer parallax is limited to the explicit spatial scenes; no decorative scroll choreography.
 - No animation that hides required content before JavaScript runs.
 - No transform that changes layout dimensions.
 - No scroll transform that creates visual gaps between otherwise adjacent content.
@@ -89,9 +99,13 @@ QA measures adjacent block gaps in a single browser frame, checks focused-contro
 
 ## Browser Strategy
 
-Scroll-driven progress, `@starting-style`, and intrinsic-size disclosure transitions are progressive enhancements. Unsupported browsers keep normal navigation, a static header, and immediate state changes. Three.js is route-owned: Home uses its DOM renderer for project exploration, while About loads the WebGL identity only on the third click. Ordinary navigation and reading interaction need no animation library.
+Scroll-driven progress, `@starting-style`, and intrinsic-size disclosure transitions are progressive enhancements. Unsupported browsers keep normal navigation, a static header, and immediate state changes. Three.js is route-owned: the four core introductions load spatial illustrations when visible; Home additionally uses its DOM renderer for project exploration, while About loads the identity-specific relief only on the third click. Ordinary navigation and reading interaction need no animation library.
 
 References:
+
+- [Arnaud Rocca](https://arnaudrocca.fr) and [the author's implementation case study](https://tympanus.net/codrops/2026/03/31/arnaud-roccas-portfolio-from-a-gsap-powered-motion-system-to-fluid-webgl/): reviewed the loaded full-bleed scene after the initial loader; informed directly manipulable surfaces, not copied assets or code.
+- [Bruno Simon](https://bruno-simon.com) and [Lusion](https://lusion.co): reviewed as references, but the captured sessions remained at splash/loading screens. Those captures are not proof that the full experiences were tested. No third-party graphics were imported.
+- [Swiss-inspired WebGL portfolio case study](https://tympanus.net/codrops/2026/03/05/inside-corentin-bernadous-portfolio-swiss-inspired-layouts-webgl-geometry-and-thoughtful-motion/): editorial hierarchy paired with expressive geometry, rather than adding the same effect to every article.
 
 - [Codrops: interactive stamp collection, June 2026](https://tympanus.net/codrops/2026/06/09/building-an-interactive-digital-stamp-collection-with-shaders-postcards-and-playful-inspection/): inspiration for direct manipulation of meaningful artifacts, not copied artwork, shaders, or a repeated card flip.
 - [Embla Carousel source](https://github.com/davidjerleke/embla-carousel): the bounded drag/snap engine; exact 8.6.0 MIT attribution is bundled at `public/licenses/embla-carousel.txt`.

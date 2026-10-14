@@ -42,10 +42,10 @@ Use a restrained academic interface:
 - Strong typography over decoration.
 - Thin dividers and whitespace instead of heavy cards.
 - Subtle code and math styling.
-- No heavy animation.
+- Bounded, owner-requested immersive scenes on core introductions; quiet motion on long-form reading.
 - No decorative gradient blobs, oversized hero art, or corporate landing-page sections.
 
-The homepage may have personality, but it should remain text-forward and direct.
+The homepage may be spatial and playful, but identity and real work must remain clear. The owner's requested interactive direction is not satisfied by imperceptible hover effects alone. Core introductions use unframed, manipulable 3D while long-form reading remains text-forward. Render illustrations outside protected text areas; do not disguise them as experiment evidence or replace approved application media.
 
 ### Pixel identity layer
 
@@ -215,7 +215,7 @@ Motion must explain destination, progress, or state. The site uses progressive n
 - current-section movement in compact local navigation;
 - small focus, hover, pressed, theme, menu, and dialog transitions.
 
-Do not add automatic loops, custom cursors, decorative parallax, motion-only feedback, or effects that hide content before JavaScript runs. Motion must not change layout dimensions. Unsupported browsers keep a complete static interface, and `prefers-reduced-motion` removes every nonessential transition.
+Do not add unbounded automatic loops, custom cursors, scroll hijacking, motion-only feedback, or effects that hide content before JavaScript runs. Explicit spatial illustrations may use bounded pointer parallax and an eight-second introduction. Motion must not change layout dimensions. Unsupported browsers keep a complete static interface, and `prefers-reduced-motion` removes ambient motion while retaining immediate explicit controls.
 
 The owner-requested About identity, Home project desk, and Research image explorer are intentional exceptions to purely utilitarian micro-interaction. These defaults are not blanket bans on visual expression: preserve their intent (truthful content, readable hierarchy, bounded motion) while giving the visitor something meaningful to manipulate. About provides opt-in relief and foil while preserving the approved full-face raster. Home selects and turns existing project evidence. Research couples physical image dragging, keyboard arrows, and question selection to the actual question, explanation, and provenance caption. Keep reading routes static and text-forward. Reserve control geometry, avoid idle rendering, and retain complete flat/reduced-motion fallbacks.
 
