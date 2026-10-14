@@ -101,6 +101,13 @@ test("mobile scene accepts horizontal touch without capturing vertical scrolling
       await session.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[{x:end,y}]});
       await session.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
       await expect.poll(()=>host.getAttribute("data-rotation")).not.toBe(before);
+      if(route==="/"){
+        const first=Number(await host.getAttribute("data-rotation"));
+        await session.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[{x:start,y}]});
+        await session.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[{x:end,y}]});
+        await session.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
+        expect(Number(await host.getAttribute("data-rotation"))-first).toBeGreaterThan(.3);
+      }
       expect(await host.evaluate(node=>getComputedStyle(node).touchAction)).toContain("pan-y");
     }
   }finally{await session.detach();}
@@ -117,6 +124,8 @@ for(const width of [1843,1440,1024,768,430,390,360,320])for(const locale of ["en
       await page.waitForFunction(()=>[...document.querySelector("h1")!.getAnimations()].every(animation=>["finished","idle"].includes(animation.playState)));
       await root.locator("[data-scene-pause]").click();
       const name=route==="/"?"home":route.replaceAll("/","");
+      await page.screenshot({path:`${directory}/${width}-${locale}-${theme}-${name}-initial.png`,fullPage:true});
+      await host.focus();
       const image=await host.locator("canvas").screenshot();
       const canvasBounds=(await host.boundingBox())!,copyBounds=(await page.locator("[data-scene-copy]").boundingBox())!;
       // Measure painted geometry, excluding HTML copy and the control row.
@@ -131,10 +140,10 @@ for(const width of [1843,1440,1024,768,430,390,360,320])for(const locale of ["en
       const paintedBefore=await sharp(image).extract(region).removeAlpha().raw().toBuffer();
       const pixels=await sharp(image).extract(region).stats();
       expect(Math.max(...pixels.channels.slice(0,3).map(channel=>channel.stdev))).toBeGreaterThan(route==="/about/"?2:15);
-      await page.screenshot({path:`${directory}/${width}-${locale}-${theme}-${name}-initial.png`,fullPage:true});
       const headingGeometry=()=>page.locator("h1").evaluate(element=>{const r=element.getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height};});
-      const original=await headingGeometry();await host.focus();await page.keyboard.press("ArrowRight");
+      const original=await headingGeometry();await page.keyboard.press("ArrowLeft");
       if(await root.locator("[data-scene-unfold]").count())await root.locator("[data-scene-unfold]").click();
+      await host.focus();
       const paintedAfter=await sharp(await host.locator("canvas").screenshot()).extract(region).removeAlpha().raw().toBuffer();
       const change=paintedAfter.reduce((sum,value,index)=>sum+Math.abs(value-paintedBefore[index]!),0)/paintedAfter.length;
       expect(change,"explicit input must change painted geometry, not only diagnostic attributes").toBeGreaterThan(.15);
