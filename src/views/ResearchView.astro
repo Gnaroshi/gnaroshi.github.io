@@ -81,7 +81,7 @@ const labels = locale === "ko"
   for(const root of document.querySelectorAll<HTMLElement>("[data-research-explorer]"))mountResearchExplorer(root);
 </script>
 <style>
-  .research-intro { position:relative; min-height:400px; display:grid; align-items:center; isolation:isolate; }
+  .research-intro { position:relative; min-height:400px; display:grid; align-items:start; isolation:isolate; }
   .research-intro > [data-scene-copy] { position:relative; z-index:1; max-width:55%; }
   .research-intro:has([data-renderer="fallback"]) { min-height:0; padding-bottom:0; }
   .research-intro:has([data-renderer="fallback"]) > [data-scene-copy] { max-width:none; }
