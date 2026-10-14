@@ -151,14 +151,15 @@ test("header switches before navigation can wrap", async ({ page }) => {
   }
 });
 
-test("approved Hero and evidence media stay measurable", async ({ page }) => {
+test("spatial Hero and approved evidence media stay measurable", async ({ page }) => {
   for (const locale of ["/", "/ko/"]) {
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
       await page.setViewportSize(viewport);
       await page.goto(locale);
       const copy = await page.locator(".identity-hero__copy").boundingBox();
       expect(copy).not.toBeNull();
-      await expect(page.locator(".identity-hero__media picture img")).toBeVisible();
+      await expect(page.locator('.identity-hero [data-spatial-scene]')).toHaveAttribute("data-renderer","webgl");
+      await expect(page.locator('.identity-hero [data-scene-canvas] canvas')).toBeVisible();
       expect(copy!.x + copy!.width).toBeLessThanOrEqual(viewport.width);
       const writingAvailable = await page.locator('.desktop-nav [data-nav-href$="/blog"], .desktop-nav [data-nav-href$="/blog/"]').count();
       await expect(page.locator(".identity-hero__actions .button")).toHaveCount(1 + writingAvailable);

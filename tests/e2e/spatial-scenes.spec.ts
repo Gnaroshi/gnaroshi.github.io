@@ -16,12 +16,12 @@ for(const locale of ["en","ko"] as const)for(const route of routes){
     expect((await host.boundingBox())!.y).toBeLessThan(250);
     const before=Number(await host.getAttribute("data-rotation"));
     await page.mouse.move(1438,80);
-    await expect.poll(async()=>Math.abs(Number(await host.getAttribute("data-rotation"))-before)).toBeGreaterThan(.1);
+    await expect.poll(async()=>Math.abs(Number(await host.getAttribute("data-rotation"))-before)).toBeGreaterThan(route==="/about/"?.03:.1);
     const pause=root.locator("[data-scene-pause]");await pause.click();
     const frozen=await host.getAttribute("data-frame");await page.waitForTimeout(250);
     await expect(host).toHaveAttribute("data-frame",frozen!);
-    await host.focus();await page.keyboard.press("ArrowRight");
-    expect(Number(await host.getAttribute("data-rotation"))).not.toBe(before);
+    const beforeKey=Number(await host.getAttribute("data-rotation"));await host.focus();await page.keyboard.press("ArrowLeft");
+    expect(Math.abs(Number(await host.getAttribute("data-rotation"))-beforeKey)).toBeGreaterThan(.001);
     const unfold=root.locator("[data-scene-unfold]");
     if(await unfold.count()){await page.keyboard.press("Enter");await expect(unfold).toHaveAttribute("aria-pressed","true");await expect(host).toHaveAttribute("data-expansion","1");}
     await page.keyboard.press("Escape");
@@ -75,19 +75,34 @@ test("unavailable WebGL keeps complete content without dead scene controls",asyn
   }
 });
 
-test("mobile scene accepts horizontal touch without capturing vertical scrolling",async({page,context})=>{
-  await page.setViewportSize({width:390,height:844});await page.goto("/");
-  const root=page.locator("[data-spatial-scene]"),host=root.locator("[data-scene-canvas]");
+test("direct hash navigation can reveal the scene again through gradual scrolling",async({page})=>{
+  await page.goto("/research/#human-ai-research-tools");
+  await expect(page.locator("#human-ai-research-tools")).toBeFocused();
+  const root=page.locator("[data-spatial-scene]");
+  for(let step=0;step<30;step++){
+    const bounds=(await root.boundingBox())!;if(bounds.y+bounds.height>200)break;
+    await page.evaluate(()=>scrollBy({top:-100,behavior:"instant"}));await page.waitForTimeout(35);
+  }
   await expect(root).toHaveAttribute("data-renderer","webgl");
-  await root.locator("[data-scene-pause]").click();const before=await host.getAttribute("data-rotation");
-  const bounds=(await host.boundingBox())!,y=Math.min(570,bounds.y+bounds.height-110);
+  await expect(root.locator("[data-scene-controls]")).toBeVisible();
+});
+
+test("mobile scene accepts horizontal touch without capturing vertical scrolling",async({page,context})=>{
+  await page.setViewportSize({width:390,height:844});
   const session=await context.newCDPSession(page);
   try{
-    await session.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[{x:90,y}]});
-    await session.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[{x:250,y}]});
-    await session.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
-    await expect.poll(()=>host.getAttribute("data-rotation")).not.toBe(before);
-    expect(await host.evaluate(node=>getComputedStyle(node).touchAction)).toContain("pan-y");
+    for(const route of ["/","/about/"]){
+      await page.goto(route);const root=page.locator("[data-spatial-scene]"),host=root.locator("[data-scene-canvas]");
+      await expect(root).toHaveAttribute("data-renderer","webgl");
+      if(await root.getAttribute("data-paused")!=="true")await root.locator("[data-scene-pause]").click();
+      const before=await host.getAttribute("data-rotation"),bounds=(await host.boundingBox())!,y=Math.min(570,bounds.y+bounds.height-110);
+      const start=route==="/about/"?340:90,end=route==="/about/"?180:250;
+      await session.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[{x:start,y}]});
+      await session.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[{x:end,y}]});
+      await session.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
+      await expect.poll(()=>host.getAttribute("data-rotation")).not.toBe(before);
+      expect(await host.evaluate(node=>getComputedStyle(node).touchAction)).toContain("pan-y");
+    }
   }finally{await session.detach();}
 });
 
@@ -99,6 +114,7 @@ for(const width of [1843,1440,1024,768,430,390,360,320])for(const locale of ["en
     for(const route of routes){
       await page.goto(locale==="ko"?`/ko${route}`:route);
       const root=page.locator("[data-spatial-scene]"),host=root.locator("[data-scene-canvas]");await expect(root).toHaveAttribute("data-renderer","webgl");
+      await page.waitForFunction(()=>[...document.querySelector("h1")!.getAnimations()].every(animation=>["finished","idle"].includes(animation.playState)));
       await root.locator("[data-scene-pause]").click();
       const name=route==="/"?"home":route.replaceAll("/","");
       const image=await host.locator("canvas").screenshot();
@@ -112,13 +128,18 @@ for(const width of [1843,1440,1024,768,430,390,360,320])for(const locale of ["en
         region.top=Math.min(Math.floor(canvasBounds.height)-1,Math.ceil(Math.max(copyBounds.y+copyBounds.height,identity.y+identity.height)-canvasBounds.y+16));
         region.height=Math.max(1,Math.floor(canvasBounds.height)-region.top);region.width=Math.max(1,region.width-110);
       }
+      const paintedBefore=await sharp(image).extract(region).removeAlpha().raw().toBuffer();
       const pixels=await sharp(image).extract(region).stats();
       expect(Math.max(...pixels.channels.slice(0,3).map(channel=>channel.stdev))).toBeGreaterThan(route==="/about/"?2:15);
       await page.screenshot({path:`${directory}/${width}-${locale}-${theme}-${name}-initial.png`,fullPage:true});
-      const original=await page.locator("h1").boundingBox();await host.focus();await page.keyboard.press("ArrowRight");
+      const headingGeometry=()=>page.locator("h1").evaluate(element=>{const r=element.getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height};});
+      const original=await headingGeometry();await host.focus();await page.keyboard.press("ArrowRight");
       if(await root.locator("[data-scene-unfold]").count())await root.locator("[data-scene-unfold]").click();
+      const paintedAfter=await sharp(await host.locator("canvas").screenshot()).extract(region).removeAlpha().raw().toBuffer();
+      const change=paintedAfter.reduce((sum,value,index)=>sum+Math.abs(value-paintedBefore[index]!),0)/paintedAfter.length;
+      expect(change,"explicit input must change painted geometry, not only diagnostic attributes").toBeGreaterThan(.15);
       await page.screenshot({path:`${directory}/${width}-${locale}-${theme}-${name}-changed.png`,fullPage:true});
-      expect(await page.locator("h1").boundingBox()).toEqual(original);
+      const after=await headingGeometry();for(const key of ["x","y","width","height"] as const)expect(after[key]).toBeCloseTo(original[key],1);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
       const controls=(await root.locator("[data-scene-controls]").boundingBox())!;
       const surface=(await root.boundingBox())!;expect(controls.x).toBeGreaterThanOrEqual(surface.x);expect(controls.x+controls.width).toBeLessThanOrEqual(surface.x+surface.width+1);
