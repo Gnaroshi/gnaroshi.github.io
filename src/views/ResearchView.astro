@@ -83,7 +83,7 @@ const labels = locale === "ko"
 <style>
   .research-intro { position:relative; min-height:400px; display:grid; align-items:center; isolation:isolate; }
   .research-intro > [data-scene-copy] { position:relative; z-index:1; max-width:55%; }
-  .research-intro:has([data-renderer="fallback"]) { min-height:0; }
+  .research-intro:has([data-renderer="fallback"]) { min-height:0; padding-bottom:0; }
   .research-intro:has([data-renderer="fallback"]) > [data-scene-copy] { max-width:none; }
   @media(scripting:none) { .research-intro { min-height:0; } .research-intro > [data-scene-copy] { max-width:none; } }
   .research-explorer { display:grid; gap:var(--space-5); min-width:0; }
@@ -130,4 +130,6 @@ const labels = locale === "ko"
   @media(scripting:enabled) { .research-explorer:not([data-enhanced]) [data-research-topic]:not(:first-child) { display:none; } .research-explorer:not([data-enhanced]) .research-theme__media { padding-bottom:56px; } }
   @media(min-width:1024px) { .research-theme { grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:var(--space-5) var(--space-7); } .research-theme__copy { grid-row:2; grid-column:1; } .research-theme__media { grid-row:2; grid-column:2; } [data-mode="focus"] .research-theme { display:block; } [data-mode="focus"] .research-spread { grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:var(--space-7); align-items:start; } [data-mode="focus"] .research-gallery { grid-row:1; grid-column:2; } [data-mode="focus"] .research-themes { grid-row:1; } }
   @media(max-width:767px) { .research-intro { min-height:520px; align-items:start; } .research-intro > [data-scene-copy] { max-width:none; } .research-overview a { grid-template-columns:1fr; align-content:start; gap:var(--space-2); padding:var(--space-2) var(--space-1); font-size:var(--text-xs); } .research-overview img { width:100%; height:auto; aspect-ratio:4/3; } .research-overview ol { gap:var(--space-2); } .research-theme__header h2 { font-size:var(--text-lg); } }
+  @media(max-width:767px) and (scripting:enabled) { .research-intro { padding-bottom:260px; } }
+  @media(scripting:none) { .research-intro { min-height:0; padding-bottom:0; } }
 </style>

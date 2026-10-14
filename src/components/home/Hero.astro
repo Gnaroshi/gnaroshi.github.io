@@ -1,7 +1,5 @@
 ---
 import HeroShell from "../layout/HeroShell.astro";
-import ResponsiveImage from "../media/ResponsiveImage.astro";
-import { approvedMedia } from "../../data/approvedMedia";
 import { profile } from "../../data/profile";
 import { getLocalizedData } from "../../data/locales";
 import type { Locale } from "../../i18n/types";
@@ -16,10 +14,6 @@ const capabilities = getPublicCapabilities();
 ---
 
 <HeroShell class="identity-hero" labelledby="home-title">
-  <div class="identity-hero__media">
-    <ResponsiveImage asset={approvedMedia.homeHero} locale={locale} sizes="(min-width: 1200px) 1040px, 100vw" loading="eager" fetchpriority="high" />
-  </div>
-  <SpatialScene variant="fold" locale={locale} />
   <div class="identity-hero__copy" data-scene-copy>
     <h1 id="home-title">{profile.displayName}</h1>
     <p class="identity-hero__headline">{data.profile.headline.split("\n").map((line) => <span>{line}</span>)}</p>
@@ -35,4 +29,5 @@ const capabilities = getPublicCapabilities();
       </a>
     )}
   </div>
+  <SpatialScene variant="fold" locale={locale} />
 </HeroShell>
