@@ -102,7 +102,7 @@ for(const width of [1440,1024,768,430,390,360])for(const locale of ["en","ko"] a
     for(const route of routes){
       await page.goto(locale==="ko"?`/ko${route}`:route);
       // Paint each lazy region in its real viewport before a full-page capture.
-      for(const image of await page.locator('main img').all())if(await image.isVisible()){await image.scrollIntoViewIfNeeded();await image.evaluate((img:HTMLImageElement)=>img.decode());}
+      for(const image of await page.locator('main img').all())if(await image.isVisible()&&!await image.evaluate(img=>Boolean(img.closest('[inert],[aria-hidden="true"]')))){await image.scrollIntoViewIfNeeded();await image.evaluate((img:HTMLImageElement)=>img.decode());}
       await page.evaluate(()=>scrollTo({top:0,behavior:"instant"}));
       await page.screenshot({path:`${directory}/${route.replaceAll("/","")||"home"}.png`,fullPage:true});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
