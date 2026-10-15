@@ -1,6 +1,28 @@
-import {expect,test} from "@playwright/test";
+import {expect,test,type Locator} from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import sharp from "sharp";
+
+async function expectEvidencePainted(image:Locator) {
+  await image.evaluate((image:HTMLImageElement)=>image.decode());
+  const expected=await image.evaluate((image:HTMLImageElement)=>{
+    const rect=image.getBoundingClientRect(),canvas=document.createElement("canvas");
+    canvas.width=Math.round(rect.width);canvas.height=Math.round(rect.height);
+    const context=canvas.getContext("2d")!;
+    context.fillStyle=getComputedStyle(image.closest("[data-desk-front]")!).backgroundColor;
+    context.fillRect(0,0,canvas.width,canvas.height);
+    const scale=Math.min(canvas.width/image.naturalWidth,canvas.height/image.naturalHeight);
+    const width=image.naturalWidth*scale,height=image.naturalHeight*scale;
+    context.drawImage(image,(canvas.width-width)/2,(canvas.height-height)/2,width,height);
+    return canvas.toDataURL("image/png").split(",")[1]!;
+  });
+  const screenshot=await image.screenshot({scale:"css"});
+  const metadata=await sharp(screenshot).metadata();
+  const actual=await sharp(screenshot).removeAlpha().raw().toBuffer();
+  const reference=await sharp(Buffer.from(expected,"base64")).resize(metadata.width!,metadata.height!).removeAlpha().raw().toBuffer();
+  const error=actual.reduce((sum,value,index)=>sum+Math.abs(value-reference[index]!),0)/actual.length;
+  // A real dark application screen can have low variance; compare the actual asset.
+  expect(error,"painted evidence must match the decoded approved screenshot").toBeLessThan(8);
+}
 
 for(const locale of ["","/ko"]) {
   test(`project desk changes evidence and workflow, not just hover ${locale||"en"}`,async ({page})=>{
@@ -112,7 +134,7 @@ for(const width of [1440,1024,768,430,390,360,320])for(const locale of ["","/ko"
     await desk.locator(`[data-desk-select="${index}"]`).click();await page.waitForTimeout(950);
     await expect(desk.locator(`[data-desk-sheet="${index}"] img`)).toHaveCSS("object-fit","contain");
     await desk.screenshot({path:`artifacts/project-desk/${locale?"ko":"en"}-${width}-${theme}-${index}-front.png`,scale:"css",style:".site-header { visibility: hidden !important; }"});
-    const pixels=await sharp(await stage.screenshot({scale:"css"})).stats();expect(pixels.channels[0].stdev).toBeGreaterThan(20);
+    await expectEvidencePainted(desk.locator(`[data-desk-sheet="${index}"] img`));
     await desk.locator("[data-desk-flip]").click();await page.waitForTimeout(950);
     if(width===320) {
       const list=desk.locator(`[data-desk-story="${index}"] [data-desk-workflow] ol`);
