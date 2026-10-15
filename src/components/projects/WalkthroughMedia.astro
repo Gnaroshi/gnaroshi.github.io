@@ -52,6 +52,7 @@ const sizes=lead?"(min-width:1100px) 42vw, 100vw":"(min-width:1100px) 38vw, 100v
   .walkthrough__notes { gap:var(--space-3); }
   .walkthrough__note { display:grid; align-content:start; gap:var(--space-2); }
   .walkthrough__step-title { margin:0; font-size:var(--text-base); color:var(--color-text); }
+  [data-enhanced] .walkthrough__step-title { display:none; }
   .walkthrough__note > p { color:var(--color-text-secondary); font-size:var(--text-sm); line-height:1.6; }
   .walkthrough__caption { color:var(--color-text-muted); font-size:var(--text-xs); line-height:1.5; }
   .walkthrough__screen,.walkthrough__note { grid-area:1/1; }

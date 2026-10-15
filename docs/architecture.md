@@ -28,7 +28,7 @@ The website never checks out or imports private authoring repositories.
 
 ## Public System Workflow
 
-Home and the `gnaroshi.dev` project detail explain the stable roles of the two private source repositories, Studio, the optional API, the public content feed, and the website. This model is website-owned and renders even when the feed is empty. It is presentation architecture, not a live operations dashboard.
+The `gnaroshi.dev` project detail explains the stable repository roles and publishing boundaries. Home does not repeat this architecture. The model is website-owned and renders even when the feed is empty; it is not a live operations dashboard.
 
 The directed layout is calculated by Dagre during the Astro build. The browser receives static SVG plus an ordered text fallback, with no graph runtime or GitHub API client.
 

@@ -28,13 +28,6 @@ const labels = getProjectUi(locale);
 
 <ProjectTechStack ids={project.techStack} locale={locale}/>
 
-{story.studioRelationship && (
-  <section class="prose-section">
-    <h2 id="studio-relationship">{labels.relationship}</h2>
-    <p>{story.studioRelationship}</p>
-  </section>
-)}
-
 <section class="split-section">
   <div>
     <h2 id="current-state">{labels.state}</h2>
@@ -45,8 +38,12 @@ const labels = getProjectUi(locale);
     <ul>{story.currentLimitations.map((item) => <li>{item}</li>)}</ul>
   </div>
 </section>
-
-<section class="split-section">
+<details class="project-technical-details">
+  <summary>{locale === "ko" ? "기술 세부사항" : "Technical details"}</summary>
+  <div class="project-technical-details__body">
+    <slot name="technical" />
+    {story.studioRelationship && <section class="prose-section"><h2 id="studio-relationship">{labels.relationship}</h2><p>{story.studioRelationship}</p></section>}
+    <section class="split-section">
   <div>
     <h2 id="technical-notes">{labels.notes}</h2>
     <ul>{story.technicalNotes.map((item) => <li>{item}</li>)}</ul>
@@ -56,3 +53,5 @@ const labels = getProjectUi(locale);
     <ul>{story.nextMilestones.map((item) => <li>{item}</li>)}</ul>
   </div>
 </section>
+  </div>
+</details>

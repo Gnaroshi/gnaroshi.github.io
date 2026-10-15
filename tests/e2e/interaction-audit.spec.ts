@@ -194,6 +194,8 @@ test("project kind and product status are visible while Studio integration stays
     await page.goto(route);
     await expect(page.locator("[data-product-status]")).toBeVisible();
     const integration = page.locator("[data-studio-integration-status]");
+    await expect(integration).toBeHidden();
+    await page.locator(".project-technical-details > summary").click();
     await expect(integration).toBeVisible();
     const productText = await page.locator("[data-product-status]").innerText();
     const integrationText = await integration.innerText();
@@ -288,6 +290,11 @@ test("Research navigation and diagram zoom preserve focus and scroll state", asy
       await expect(page.locator("body")).toHaveClass(/media-dialog-open/);
       await page.keyboard.press("Tab");
       await expect(dialog.locator(":focus")).toHaveCount(1);
+      await expect(dialog.locator("footer a")).toBeFocused();
+      await page.keyboard.press("Tab");
+      await expect(dialog.locator("[data-media-zoom-close]")).toBeFocused();
+      await page.keyboard.press("Shift+Tab");
+      await expect(dialog.locator("footer a")).toBeFocused();
       await page.keyboard.press("Escape");
       await expect(dialog).toBeHidden();
       await expect(page.locator("body")).not.toHaveClass(/media-dialog-open/);

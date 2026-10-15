@@ -92,9 +92,9 @@ test("locale shells and dates remain consistent", async ({ page }) => {
 
 test("homepage, blog, evidence gates, and empty tools remain truthful", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator(".home-editorial > .content-section")).toHaveCount(2);
+  await expect(page.locator(".home-research, [data-system-workflow]")).toHaveCount(0);
   await expect(page.locator(".home-editorial > .home-desk")).toHaveCount(1);
-  expect(await page.locator(".home-editorial > section").count()).toBeLessThanOrEqual(5);
+  expect(await page.locator(".home-editorial > section").count()).toBeLessThanOrEqual(3);
   await expect(page.locator(".home-editorial > .identity-hero")).toHaveCount(1);
   await expect(page.locator(".paper-stat-card")).toHaveCount(0);
 
@@ -110,7 +110,7 @@ test("homepage, blog, evidence gates, and empty tools remain truthful", async ({
 
   await page.goto("/growth");
   await expect(page.locator(".momentum-score__value")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "There is not enough activity to show a meaningful overview yet." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Not enough public activity yet." })).toBeVisible();
 
   for (const route of ["/queue", "/reviews", "/formula", "/questions", "/implementations", "/graph"]) {
     await page.goto(route);

@@ -25,16 +25,14 @@ export function mountProjectDesk(root:HTMLElement) {
       setExposure(sheet,index===selected);
       setExposure(sheet.querySelector<HTMLElement>("[data-desk-front]")!,index===selected&&!flipped);
       sheet.querySelector("img")!.alt=index===selected&&!flipped?sheet.dataset.deskAlt!:"";
-      // The readable workflow lives below the scene, not twice in the AT tree.
       const back=sheet.querySelector<HTMLElement>("[data-desk-back]")!;
-      back.setAttribute("aria-hidden","true");back.inert=index!==selected;
+      setExposure(back,index===selected&&flipped);
     });
     stories.forEach((story,index)=>{
       story.dataset.active=String(index===selected);setExposure(story,index===selected);
-      setExposure(story.querySelector<HTMLElement>("[data-desk-summary]")!,index===selected&&!flipped);
-      setExposure(story.querySelector<HTMLElement>("[data-desk-workflow]")!,index===selected&&flipped);
     });
-    flip.querySelector("span")!.textContent=flipped?labels.evidence:labels.workflow;
+    flip.setAttribute("aria-label",flipped?labels.evidence:labels.workflow);
+    flip.title=flipped?labels.evidence:labels.workflow;
     reset.disabled=selected===0&&!flipped;
     scene?.select(selected,flipped);
   };

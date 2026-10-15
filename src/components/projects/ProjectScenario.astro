@@ -9,7 +9,7 @@ const media = withMedia ? getProjectShowcases(projectId).filter((asset) => asset
 const mediaByStep = new Map(media.map((asset) => [asset.stepId, asset]));
 ---
 <section class="scenario" aria-labelledby="scenario-heading">
-  <header><p class="eyebrow">{locale === "ko" ? "사용 흐름" : "Example workflow"}</p><h2 id="scenario-heading">{scenario.title}</h2><p>{scenario.context}</p></header>
+  <header><h2 id="scenario-heading">{scenario.title}</h2></header>
   <ol>
     {scenario.steps.map((step, index) => { const asset = mediaByStep.get(step.id); return <li>
       <div class="scenario__step"><span aria-hidden="true">{index + 1}</span><div><h3>{step.title}</h3><p>{step.description}</p></div></div>

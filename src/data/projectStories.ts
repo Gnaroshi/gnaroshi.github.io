@@ -34,7 +34,7 @@ export const productStatusLabels: Readonly<Record<Locale, Record<ProductStatus, 
 
 const en = {
   "gnaroshi-vla": {
-    title:"gnaroshi_vla", cardSummary:"A shared experiment workspace for configuring, checking, and comparing different VLA model integrations.",
+    title:"gnaroshi_vla", cardSummary:"Shared experiments for configuring and comparing VLA models.",
     heroSummary:"This workspace separates model adapters, methods, environments, and result locations so a VLA run can be inspected later.",
     overview:"The project explores how much experiment structure can be shared across VLA implementations without hiding model-specific behavior.", audience:"Researchers comparing VLA implementations", primaryUse:"Configure a model and method combination, run a small check, and preserve the run context.",
     keyFeatures:["Separate model, method, environment, and experiment configuration","Small adapter boundary for Seer and SimVLA","Run manifests and environment snapshots","Explicit result directories"],
@@ -45,7 +45,7 @@ const en = {
     detail:{researchQuestion:"Which parts of a VLA experiment can be shared without erasing differences that matter?",approach:["Keep model-specific behavior behind explicit adapters.","Separate reusable methods from environment and launch details."],verifiedArtifact:"The public evidence shows repository structure, a real configuration, a generated run manifest, and a redacted sanity-run result.",reproducibility:["Composed configuration records every selected layer.","Run manifests and environment snapshots preserve context."],currentEvidence:"The current evidence establishes the experiment structure and a lightweight execution check only.",unknowns:["Whether the same adapter boundary remains useful across more VLA families.","Which efficiency comparisons remain fair across implementations."]}, linkLabels:{repository:"Repository"}
   },
   "gnaroshi-dev": {
-    title:"gnaroshi.dev", cardSummary:"A bilingual personal research site that publishes selected writing and paper-reading notes from a separate public feed.",
+    title:"gnaroshi.dev", cardSummary:"Selected research notes and writing, published in English and Korean.",
     heroSummary:"Private authoring stays outside the website. The static Astro site validates and renders only the public projection, then records exactly what was deployed.",
     overview:"The system separates private paper and writing sources, local publishing tools, a sanitized public feed, and the replaceable presentation site.", audience:"Readers of the public site and the person maintaining it", primaryUse:"Publish reviewed public material without moving private drafts into the website repository.",
     keyFeatures:["English and Korean routes","Public-feed validation","Evidence-gated navigation and metrics","Exact GitHub Pages build provenance"],
@@ -56,7 +56,7 @@ const en = {
     detail:{problem:"A public website should not become the storage location for unfinished research notes and drafts.",publicWorkflow:["Private sources are checkpointed separately.","The publisher creates a deterministic public feed.","The website validates, builds, deploys, and verifies the exact feed commit."],repositoryBoundaries:["Paper Lab and Writing own private source files.","Studio owns authoring and publishing.","Content Feed owns generated public records.","gnaroshi.dev owns presentation only."],deploymentVerification:["A locally validated static artifact is published to GitHub Pages.","The deployed build-info record is compared with the expected commits."]}, linkLabels:{repository:"Repository","live-site":"Live site"}
   },
   "gnaroshi-studio": {
-    title:"Gnaroshi Studio", cardSummary:"A local macOS workspace for research authoring, Git checkpoints, public previews, and explicit publishing.",
+    title:"Gnaroshi Studio", cardSummary:"Write research notes, review changes, and publish selected work.",
     heroSummary:"Studio keeps paper notes and writing in their owning repositories while coordinating review, checkpoint, and publish steps from one local app.",
     overview:"The app combines a Tauri desktop interface and shared CLI packages around the same contracts. Saving, committing, and publishing remain separate actions.", audience:"A local research and writing workflow", primaryUse:"Review work, checkpoint source repositories, preview the public diff, and publish only after confirmation.",
     keyFeatures:["Local paper and writing editors","Managed Apps availability and health checks","Separate Git checkpoints","Preview-first public feed publishing","Deployment monitoring and provenance verification"],
@@ -67,7 +67,7 @@ const en = {
     detail:{}, linkLabels:{}
   },
   paperflow: {
-    title:"PaperFlow", cardSummary:"A macOS app and Python CLI for scanning Zotero read-only and reviewing organization plans before apply.",
+    title:"PaperFlow", cardSummary:"Review Zotero organization plans before applying changes.",
     heroSummary:"PaperFlow separates library inspection and planning from the explicit write boundary, so proposed collection and duplicate changes can be reviewed first.",
     overview:"The CLI owns Zotero parsing and safety rules. The SwiftUI app presents scan, plan, report, import, and review workflows without rewriting those rules.", audience:"People maintaining a local Zotero paper library", primaryUse:"Scan, generate an organization plan, inspect every proposed change, and decide whether to apply it.",
     keyFeatures:["Read-only Zotero Local API scan","Organization and duplicate plans","Dry-run reports","Explicit confirmation before supported writes","Local PDF vault workflows"],
@@ -77,7 +77,7 @@ const en = {
     scenario:{title:"Example workflow",context:"Plan a deterministic synthetic library reorganization without writing to Zotero.",demoDisclosure:"The library counts and proposed changes are example data; no real Zotero library is opened.",steps:[{id:"scan-library",title:"Scan read-only",description:"Inspect a synthetic library through the same read-only workflow."},{id:"generate-plan",title:"Generate a plan",description:"Prepare collection moves and duplicate groups without applying them."},{id:"review-changes",title:"Review each proposal",description:"Check scope and records before any write-capable action."},{id:"stop-before-apply",title:"Stop at apply",description:"Keep the apply control disabled in showcase mode and preserve the explicit boundary."}]}, detail:{}, linkLabels:{repository:"Repository"}
   },
   "arxiv-discovery": {
-    title:"Arxiv Discovery", cardSummary:"A local Flask and CLI tool for reviewing recent paper candidates without downloading PDFs by default.",
+    title:"Arxiv Discovery", cardSummary:"Review recent arXiv candidates without automatically downloading PDFs.",
     heroSummary:"Arxiv Discovery separates finding papers from downloading or handing them to another tool, making the candidate review step visible.",
     overview:"The current public baseline provides a local Flask review surface and command workflow. A broader package refactor is still being prepared separately.", audience:"People reviewing recent arXiv candidates", primaryUse:"Find a small set of papers, inspect one candidate, and preview a PaperFlow handoff without downloading a PDF.",
     keyFeatures:["Recent candidate list","No-download showcase path","Candidate detail review","Public-metadata-only handoff preview"],
@@ -87,7 +87,7 @@ const en = {
     scenario:{title:"Example workflow",context:"Review deterministic VLA candidates and stop before any PDF download or write.",demoDisclosure:"Titles, authors, dates, and summaries are synthetic example metadata.",steps:[{id:"discover",title:"Discover candidates",description:"Open a deterministic recent-paper list in no-download mode."},{id:"filter",title:"Narrow the list",description:"Review only the candidates relevant to the current question."},{id:"inspect-candidate",title:"Inspect one paper",description:"Read the selected metadata while PDF download remains disabled."},{id:"preview-handoff",title:"Preview the handoff",description:"Confirm that only public metadata would be sent to PaperFlow."}]}, detail:{}, linkLabels:{repository:"Repository"}
   },
   runshelf: {
-    title:"RunShelf", cardSummary:"A local experiment ledger for finding runs, inspecting failures, and keeping large artifacts at their source.",
+    title:"RunShelf", cardSummary:"Find experiment runs and inspect failures without copying large artifacts.",
     heroSummary:"RunShelf brings configuration, source context, selected metrics, and artifact references together without copying checkpoints into another service.",
     overview:"The macOS app and Python package treat files as the source of truth. Run records remain inspectable without requiring a cloud backend.", audience:"Researchers revisiting local and remote experiment records", primaryUse:"Find a failed run, inspect its context, and follow references back to the original artifacts.",
     keyFeatures:["Completed, running, and failed run states","Configuration and source context","Selected metric summaries","External artifact references","Local file-backed records"],
@@ -97,7 +97,7 @@ const en = {
     scenario:{title:"Example workflow",context:"Use an example workspace to inspect one failed run without exposing remote infrastructure.",demoDisclosure:"Run names, commits, metrics, and reference URIs are deterministic example data.",steps:[{id:"open-runs",title:"Open the run list",description:"Compare completed, running, and failed example records."},{id:"filter-failed",title:"Choose the failure",description:"Focus on one failed run that needs inspection."},{id:"inspect-context",title:"Review run context",description:"Check configuration, example source commit, and selected metrics."},{id:"review-references",title:"Follow references",description:"Inspect privacy-safe artifact references without copying a checkpoint."}]}, detail:{}, linkLabels:{}
   },
   "tr-gpu-monitor": {
-    title:"TR GPU Monitor", cardSummary:"A macOS monitor for comparing remote NVIDIA GPU hosts while keeping SSH details inside the app.",
+    title:"TR GPU Monitor", cardSummary:"Compare remote NVIDIA GPU hosts from macOS.",
     heroSummary:"The monitor makes availability, memory pressure, stale data, and detailed GPU state visible without exposing host credentials to another application.",
     overview:"The SwiftUI app polls configured hosts, owns notifications and persistence, and can provide a sanitized summary to Studio after compatibility review.", audience:"People checking remote GPU capacity before starting a run", primaryUse:"Compare hosts, identify memory pressure, and open detailed state before training.",
     keyFeatures:["Multi-host availability overview","GPU utilization and memory detail","Stale and unreachable states","Local notifications","Sanitized summary boundary"],
@@ -107,7 +107,7 @@ const en = {
     scenario:{title:"Example workflow",context:"Compare three synthetic hosts before choosing capacity for a training run.",demoDisclosure:"All host names, GPU values, and warning timestamps are deterministic example data.",steps:[{id:"check-hosts",title:"Check the overview",description:"See one available host, one high-memory host, and one stale host."},{id:"spot-pressure",title:"Find memory pressure",description:"Identify demo-gpu-02 before starting another workload."},{id:"compare-hosts",title:"Compare details",description:"Review utilization and memory for two synthetic A100 hosts."},{id:"review-warning",title:"Inspect the stale state",description:"Confirm the unreachable warning without attempting a real connection."}]}, detail:{}, linkLabels:{}
   },
   "codex-unlock-stale": {
-    title:"codex-unlock-stale", cardSummary:"A Linux CLI that identifies stale Codex extension hosts after Remote SSH reconnects and releases their writer locks safely.",
+    title:"codex-unlock-stale", cardSummary:"Safely release stale Codex writer locks after Remote SSH reconnects.",
     heroSummary:"The utility keeps the newest recognized VS Code Remote extension host and terminates only older duplicates that can retain a Codex conversation writer lock.",
     overview:"Laptop sleep and network changes can leave an older Remote SSH extension host running beside the current one. This narrow Bash utility makes that duplicate visible and provides a guarded cleanup path.", audience:"People using Codex through VS Code Remote SSH on a Linux host", primaryUse:"Inspect duplicate Codex app servers and release a stale conversation writer lock without editing session files.",
     keyFeatures:["Dry-run process inspection","Newest-host preservation","Active-child safety stop","SIGTERM-first cleanup","No conversation-file access"],
@@ -117,7 +117,7 @@ const en = {
     scenario:{title:"Example recovery",context:"Inspect two synthetic extension hosts, preserve possible active work, and release only the stale lock.",demoDisclosure:"Process IDs, ages, and child commands are synthetic example data; no conversation data is read.",steps:[{id:"inspect",title:"Inspect first",description:"Run the dry-run path and confirm which extension host would be kept."},{id:"protect-active-work",title:"Protect active work",description:"Stop automatically when the stale host still has a non-helper command child."},{id:"release-lock",title:"Release the lock",description:"After the child is gone, terminate only the stale extension host and verify one current app server remains."}]}, detail:{}, linkLabels:{repository:"Repository"}
   },
   contentdeck: {
-    title:"ContentDeck", cardSummary:"A web and Electron player for subtitle-based practice with full or selected-segment repeat.",
+    title:"ContentDeck", cardSummary:"Practice with subtitles and repeat a whole clip or selected segment.",
     heroSummary:"ContentDeck keeps provider detection, subtitles, segment boundaries, and repeat state in one focused playback workspace.",
     overview:"The React interface supports web and Electron execution. A local service handles bounded media resolution while remote pages stay outside Node and shell access.", audience:"People practicing short passages from supported media", primaryUse:"Open rights-safe media, confirm subtitles, select a short segment, and repeat it.",
     keyFeatures:["Provider detection","Subtitle display","Full and segment repeat","Saved segment context","Web and Electron modes"],
@@ -132,7 +132,7 @@ const ko: Record<keyof typeof en, ProjectStory> = {
   "gnaroshi-vla": {
     ...en["gnaroshi-vla"],
     title: "gnaroshi_vla",
-    cardSummary: "서로 다른 VLA 모델을 한 실험 구조에서 설정하고 점검하며 비교하기 위한 작업 공간입니다.",
+    cardSummary: "VLA 모델을 같은 실험 구조에서 설정하고 비교합니다.",
     heroSummary: "모델 어댑터와 방법, 환경, 결과 위치를 나눠 VLA 실행 맥락을 나중에도 다시 확인할 수 있게 합니다.",
     overview: "모델마다 다른 동작을 감추지 않으면서 VLA 실험 구조를 어디까지 함께 쓸 수 있는지 살펴보는 프로젝트입니다.",
     audience: "VLA 구현을 비교하는 연구자",
@@ -155,7 +155,7 @@ const ko: Record<keyof typeof en, ProjectStory> = {
   "gnaroshi-dev": {
     ...en["gnaroshi-dev"],
     title: "gnaroshi.dev",
-    cardSummary: "선택한 글과 논문 읽기 기록만 별도 공개 피드에서 가져오는 한·영 개인 연구 사이트입니다.",
+    cardSummary: "연구 기록과 글을 한국어와 영어로 공개하는 개인 사이트입니다.",
     heroSummary: "비공개 작성 자료는 웹사이트 밖에 둡니다. Astro 사이트는 공개용 자료만 검증해 표시하고 실제 배포 상태를 기록합니다.",
     overview: "비공개 논문·글 저장소, 로컬 발행 도구, 정제된 공개 피드, 표시 계층을 역할별로 나눈 구조입니다.",
     audience: "공개 사이트 독자와 사이트를 관리하는 사람",
@@ -178,7 +178,7 @@ const ko: Record<keyof typeof en, ProjectStory> = {
   },
   "gnaroshi-studio": {
     ...en["gnaroshi-studio"],
-    cardSummary: "연구 기록 작성과 Git 체크포인트, 공개 미리보기, 명시적 발행을 한곳에서 다루는 로컬 macOS 작업 공간입니다.",
+    cardSummary: "연구 기록을 작성하고 변경사항을 검토해 선택한 내용만 발행합니다.",
     heroSummary: "논문 기록과 글은 역할에 맞는 저장소에 둔 채, 검토와 체크포인트, 발행 단계를 하나의 로컬 앱에서 조정합니다.",
     overview: "Tauri 데스크톱 UI와 CLI 패키지가 같은 계약을 사용합니다. 저장, 커밋, 발행은 서로 다른 동작으로 유지됩니다.",
     audience: "로컬 연구·글쓰기 작업 흐름을 관리하는 사람",
@@ -201,7 +201,7 @@ const ko: Record<keyof typeof en, ProjectStory> = {
   },
   paperflow: {
     ...en.paperflow,
-    cardSummary: "Zotero를 읽기 전용으로 살피고 적용 전에 정리 계획을 검토하는 macOS 앱과 Python CLI입니다.",
+    cardSummary: "Zotero 정리 계획을 적용 전에 검토합니다.",
     heroSummary: "라이브러리 확인과 계획을 실제 쓰기 단계에서 분리해 컬렉션 이동과 중복 제안을 먼저 검토할 수 있게 합니다.",
     overview: "CLI가 Zotero 분석과 안전 규칙을 담당하고 SwiftUI 앱이 스캔, 계획, 보고서, 가져오기 검토 흐름을 보여 줍니다.",
     audience: "로컬 Zotero 논문 라이브러리를 관리하는 사람",
@@ -224,7 +224,7 @@ const ko: Record<keyof typeof en, ProjectStory> = {
   },
   "arxiv-discovery": {
     ...en["arxiv-discovery"],
-    cardSummary: "기본적으로 PDF를 받지 않고 최근 논문 후보를 검토하는 로컬 Flask·CLI 도구입니다.",
+    cardSummary: "PDF 자동 다운로드 없이 최근 arXiv 논문 후보를 검토합니다.",
     heroSummary: "논문을 찾는 일과 다운로드·전달을 분리해 후보를 확인하는 단계를 눈에 보이게 합니다.",
     overview: "현재 공개 기준은 로컬 Flask 검토 화면과 명령 흐름을 제공합니다. 더 큰 패키지 개편은 별도 작업으로 준비 중입니다.",
     audience: "최근 arXiv 후보를 검토하는 사람",
@@ -247,7 +247,7 @@ const ko: Record<keyof typeof en, ProjectStory> = {
   },
   runshelf: {
     ...en.runshelf,
-    cardSummary: "실험 기록을 찾고 실패 원인을 살피며 큰 결과물은 원래 위치에 두는 로컬 실험 원장입니다.",
+    cardSummary: "큰 결과물을 복사하지 않고 실험 기록과 실패 원인을 살핍니다.",
     heroSummary: "체크포인트를 다른 서비스로 복사하지 않고 설정과 소스 맥락, 일부 지표, 결과물 참조를 함께 보여 줍니다.",
     overview: "macOS 앱과 Python 패키지가 파일을 원본으로 사용합니다. 클라우드 백엔드 없이도 실행 기록을 살펴볼 수 있습니다.",
     audience: "로컬·원격 실험 기록을 다시 살펴보는 연구자",
@@ -270,7 +270,7 @@ const ko: Record<keyof typeof en, ProjectStory> = {
   },
   "tr-gpu-monitor": {
     ...en["tr-gpu-monitor"],
-    cardSummary: "SSH 세부 정보는 앱 안에 둔 채 원격 NVIDIA GPU 호스트를 비교하는 macOS 모니터입니다.",
+    cardSummary: "macOS에서 원격 NVIDIA GPU 호스트를 비교합니다.",
     heroSummary: "다른 앱에 호스트 인증 정보를 넘기지 않고 사용 가능 상태와 메모리 압박, 오래된 데이터, GPU 상세를 확인합니다.",
     overview: "SwiftUI 앱이 설정한 호스트를 주기적으로 확인하고 알림과 상태 저장을 맡습니다. 호환성 확인 뒤 Studio에는 정제된 요약만 전달할 수 있습니다.",
     audience: "학습 전에 원격 GPU 여유를 확인하는 사람",
@@ -293,7 +293,7 @@ const ko: Record<keyof typeof en, ProjectStory> = {
   },
   "codex-unlock-stale": {
     ...en["codex-unlock-stale"],
-    cardSummary: "Remote SSH 재연결 뒤 남은 Codex 확장 호스트를 찾아 작성 잠금을 안전하게 해제하는 Linux CLI입니다.",
+    cardSummary: "Remote SSH 재연결 뒤 남은 Codex 작성 잠금을 안전하게 해제합니다.",
     heroSummary: "현재 VS Code Remote 확장 호스트는 남기고, Codex 대화 작성 잠금을 쥔 오래된 중복 호스트만 종료합니다.",
     overview: "노트북 절전이나 네트워크 변경 뒤 이전 Remote SSH 확장 호스트와 현재 호스트가 함께 남을 수 있습니다. 이 Bash 도구는 중복 상태를 보여 주고 안전장치가 있는 정리 경로를 제공합니다.",
     audience: "Linux 호스트에서 VS Code Remote SSH로 Codex를 사용하는 사람",
@@ -315,7 +315,7 @@ const ko: Record<keyof typeof en, ProjectStory> = {
   },
   contentdeck: {
     ...en.contentdeck,
-    cardSummary: "전체 또는 선택 구간을 반복하며 자막으로 연습하는 웹·Electron 재생기입니다.",
+    cardSummary: "자막을 보며 전체 영상이나 선택 구간을 반복해 연습합니다.",
     heroSummary: "미디어 유형 확인과 자막, 구간 경계, 반복 상태를 하나의 집중된 재생 공간에 모읍니다.",
     overview: "React 인터페이스가 웹과 Electron에서 작동합니다. 제한된 로컬 서비스가 미디어 해석을 맡고 원격 페이지는 Node와 셸에 접근하지 못합니다.",
     audience: "지원 미디어의 짧은 구간을 연습하는 사람",

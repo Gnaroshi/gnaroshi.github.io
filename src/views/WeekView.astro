@@ -17,9 +17,8 @@ const hasPapers = (await getPublishedPapers(locale)).length > 0;
 
 <BaseLayout locale={locale} title={translate(locale, "paperLab.weeklyReviews")} description={translate(locale, "week.subtitle")} width="wide" mode="application">
   <header class="page-header">
-    <p class="eyebrow">{translate(locale, "paperLab.weeklyReviews")}</p>
     <h1>{translate(locale, "week.title")}</h1>
-    <p class="lede">{translate(locale, "week.subtitle")}</p>
+    {reviews.length > 0 && <p class="lede">{translate(locale, "week.subtitle")}</p>}
   </header>
 
   {current?.state === "in-progress" && (
@@ -32,16 +31,14 @@ const hasPapers = (await getPublishedPapers(locale)).length > 0;
   )}
 
   <section class="section" aria-labelledby="week-archive">
-    <h2 id="week-archive">{translate(locale, "week.archive")}</h2>
-    <p>{translate(locale, "week.archiveDescription")}</p>
+    {complete.length > 0 && <h2 id="week-archive">{translate(locale, "week.archive")}</h2>}
     {complete.length ? (
       <div class="weekly-review-list">
         {complete.map((review) => <article class="weekly-review-card"><h3><a href={getLocalePath(locale, `/week/${review.weekId}/`)}>{review.weekId}</a></h3></article>)}
       </div>
     ) : (
       <div class="app-empty-state">
-        <h2>{translate(locale, "week.empty")}</h2>
-        <p>{translate(locale, "week.emptyBody")}</p>
+        <h2 id="week-archive">{translate(locale, "week.empty")}</h2>
         <a class="button button--primary" href={getLocalePath(locale, hasPapers ? "/papers/#reading-method" : "/research/")}>{translate(locale, hasPapers ? "week.action" : "nav.research")}</a>
       </div>
     )}

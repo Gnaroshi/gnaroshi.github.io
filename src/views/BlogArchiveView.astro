@@ -15,9 +15,7 @@ const groups = getArchiveGroups(posts, locale);
 
 <BaseLayout locale={locale} title={translate(locale, "writing.archive")} description={translate(locale, "writing.archiveIntro")} width="wide" robots={posts.length > 0 ? "index, follow" : "noindex, follow"}>
   <header class="page-header">
-    <p class="eyebrow">{translate(locale, "writing.eyebrow")}</p>
     <h1>{translate(locale, "writing.archive")}</h1>
-    <p class="lede">{translate(locale, "writing.archiveIntro")}</p>
   </header>
   <section class="section" aria-labelledby="archive-heading">
     <SectionHeader id="archive-heading" title={translate(locale, "writing.all")} description={translate(locale, "common.items", { count: posts.length })} />

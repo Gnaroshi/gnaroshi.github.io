@@ -78,7 +78,8 @@ test("public content never inherits undefined legacy typography tokens", async (
   await page.goto("/projects/");
   await expect(page.locator(".tech-stack li").first()).toHaveCSS("font-size", "14px");
   await page.goto("/");
-  await expect(page.locator('[data-desk-story="0"] .home-desk__open ul')).toHaveCSS("list-style-type", "disc");
+  await page.locator("[data-desk-flip]").click();
+  await expect(page.locator('[data-desk-sheet="0"] [data-desk-back] ol')).toHaveCSS("list-style-type", "decimal");
 });
 
 test("workflow motion traces the selected public path without moving content", async ({ page }) => {
