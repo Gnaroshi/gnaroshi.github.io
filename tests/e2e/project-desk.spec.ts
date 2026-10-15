@@ -16,12 +16,20 @@ async function expectEvidencePainted(image:Locator) {
     return canvas.toDataURL("image/png").split(",")[1]!;
   });
   const screenshot=await image.screenshot({scale:"css"});
-  const metadata=await sharp(screenshot).metadata();
-  const actual=await sharp(screenshot).removeAlpha().raw().toBuffer();
-  const reference=await sharp(Buffer.from(expected,"base64")).resize(metadata.width!,metadata.height!).removeAlpha().raw().toBuffer();
+  const actual=await sharp(screenshot).resize(64,64,{fit:"fill"}).removeAlpha().raw().toBuffer();
+  const reference=await sharp(Buffer.from(expected,"base64")).resize(64,64,{fit:"fill"}).removeAlpha().raw().toBuffer();
   const error=actual.reduce((sum,value,index)=>sum+Math.abs(value-reference[index]!),0)/actual.length;
-  // A real dark application screen can have low variance; compare the actual asset.
+  const meanA=actual.reduce((sum,value)=>sum+value,0)/actual.length;
+  const meanB=reference.reduce((sum,value)=>sum+value,0)/reference.length;
+  let covariance=0,varianceA=0,varianceB=0;
+  for(let index=0;index<actual.length;index++){
+    const a=actual[index]!-meanA,b=reference[index]!-meanB;
+    covariance+=a*b;varianceA+=a*a;varianceB+=b*b;
+  }
+  const correlation=covariance/Math.max(1,Math.sqrt(varianceA*varianceB));
+  // Normalize compositor subpixel resampling, but reject missing structure or colors.
   expect(error,"painted evidence must match the decoded approved screenshot").toBeLessThan(8);
+  expect(correlation,"painted evidence must retain the source image structure").toBeGreaterThan(.95);
 }
 
 for(const locale of ["","/ko"]) {
