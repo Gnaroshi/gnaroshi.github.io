@@ -25,7 +25,7 @@ const choices=locale==="ko"?[["all","전체",LayoutGrid],["experiments","실험"
       for(const section of document.querySelectorAll<HTMLElement>(".project-section")){
         section.hidden=![...section.querySelectorAll<HTMLElement>("[data-project-id]")].some(item=>!item.hidden);
         const link=document.querySelector<HTMLAnchorElement>(`.projects-overview a[href$="#${section.id}"]`);
-        if(link){link.hidden=section.hidden;if(section.hidden)link.removeAttribute("aria-current");}
+        if(link){link.hidden=section.hidden;const item=link.closest("li");if(item)item.hidden=section.hidden;if(section.hidden)link.removeAttribute("aria-current");}
       }
       for(const pair of document.querySelectorAll<HTMLElement>(".featured-app-pair"))pair.hidden=![...pair.querySelectorAll<HTMLElement>("[data-project-id]")].some(item=>!item.hidden);
       root.dataset.selected=key;
