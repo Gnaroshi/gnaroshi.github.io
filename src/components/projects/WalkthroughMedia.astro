@@ -6,57 +6,46 @@ import type { ApplicationProjectFacts } from "../../data/facts/projects";
 import type { ProjectStory } from "../../data/projectStories";
 import type { Locale } from "../../i18n/types";
 interface Props { project:ApplicationProjectFacts; story:ProjectStory; locale:Locale; lead:boolean }
-const { project,story,locale,lead } = Astro.props;
-const entries = getProjectShowcases(project.id).filter(asset => project.scenario.mediaIds.includes(asset.id)).map(asset => ({asset,step:story.scenario.steps.find(step => step.id === asset.stepId)!}));
-const initial = Math.max(0,entries.findIndex(entry => entry.asset.id === project.primaryShowcaseId));
-const labels = locale === "ko" ? { steps:"시연 화면", previous:"이전 화면", next:"다음 화면", enlarge:"화면 크게 보기" } : { steps:"Demo screens", previous:"Previous screen", next:"Next screen", enlarge:"Enlarge screen" };
-const original = (asset:typeof entries[number]["asset"]) => `/media/approved/${asset.id}-${asset.widths.at(-1)}.webp`;
+const { project,story,locale,lead }=Astro.props;
+const entries=getProjectShowcases(project.id).filter(asset=>project.scenario.mediaIds.includes(asset.id)).map(asset=>({asset,step:story.scenario.steps.find(step=>step.id===asset.stepId)!}));
+const initial=Math.max(0,entries.findIndex(entry=>entry.asset.id===project.primaryShowcaseId));
+const labels=locale==="ko"?{steps:"시연 화면",previous:"이전 화면",next:"다음 화면",enlarge:"화면 크게 보기",loading:"화면 불러오는 중",error:"화면을 불러오지 못했습니다. 다시 선택해 주세요."}:{steps:"Demo screens",previous:"Previous screen",next:"Next screen",enlarge:"Enlarge screen",loading:"Loading screen",error:"This screen could not load. Select it again to retry."};
+const original=(asset:typeof entries[number]["asset"])=>`/media/approved/${asset.id}-${asset.widths.at(-1)}.webp`;
+const sizes=lead?"(min-width:1100px) 42vw, 100vw":"(min-width:1100px) 38vw, 100vw";
 ---
-<figure class="featured-app__figure walkthrough" data-walkthrough data-step={initial} data-initial={initial}>
+<figure class="featured-app__figure walkthrough" data-walkthrough data-step={initial} data-initial={initial} data-walkthrough-labels={JSON.stringify(labels)}>
+  <div class="walkthrough__steps" hidden data-walkthrough-steps role="group" aria-label={`${story.title}: ${labels.steps}`}>
+    {entries.map(({step},index)=><button type="button" data-walkthrough-select={index} aria-pressed={index===initial}><span aria-hidden="true">{index+1}</span>{step.title}</button>)}
+  </div>
   <div class="walkthrough__screens" data-card-part="media">
-    {entries.map(({asset},index) => <div class="featured-app__media walkthrough__screen" data-walkthrough-screen={index} data-active={index === initial} data-walkthrough-alt={asset.alt[locale]} data-walkthrough-original={original(asset)} aria-hidden={index !== initial ? "true" : undefined} inert={index !== initial} style={`--source-media-ratio:${asset.width}/${asset.height}`}>
-      <ResponsiveImage asset={index === initial ? asset : {...asset,alt:{en:"",ko:""}}} locale={locale} sizes={lead ? "(min-width:1100px) 42vw, 100vw" : "(min-width:1100px) 38vw, 100vw"} fit="contain" />
+    {entries.map(({asset},index)=><div class="featured-app__media walkthrough__screen" data-walkthrough-screen={index} data-active={index===initial} data-walkthrough-alt={asset.alt[locale]} data-walkthrough-original={original(asset)} aria-hidden={index!==initial?"true":undefined} inert={index!==initial} style={`--source-media-ratio:${asset.width}/${asset.height}`}>
+      {index===initial?<ResponsiveImage asset={asset} locale={locale} sizes={sizes} fit="contain"/>:<template data-walkthrough-template><ResponsiveImage asset={{...asset,alt:{en:"",ko:""}}} locale={locale} loading="eager" sizes={sizes} fit="contain"/></template>}
     </div>)}
   </div>
   <div class="walkthrough__controls" hidden data-walkthrough-controls>
-    <button type="button" data-walkthrough-previous aria-label={labels.previous} title={labels.previous}><ArrowLeft size={18} aria-hidden="true" /></button>
-    <label><span class="sr-only">{`${story.title}: ${labels.steps}`}</span><input type="range" min="0" max={entries.length - 1} value={initial} step="1" data-walkthrough-range /><output data-walkthrough-counter>{initial + 1} / {entries.length}</output></label>
-    <button type="button" data-walkthrough-next aria-label={labels.next} title={labels.next}><ArrowRight size={18} aria-hidden="true" /></button>
-    <a class="walkthrough__open" href={original(entries[initial]!.asset)} target="_blank" rel="noopener noreferrer" data-walkthrough-open aria-label={`${story.title}: ${labels.enlarge}`} title={labels.enlarge}><Maximize2 size={18} aria-hidden="true" /></a>
+    <button type="button" data-walkthrough-previous aria-label={labels.previous} title={labels.previous}><ArrowLeft size={18} aria-hidden="true"/></button>
+    <label><span class="sr-only">{`${story.title}: ${labels.steps}`}</span><input type="range" min="0" max={entries.length-1} value={initial} step="1" data-walkthrough-range/><output data-walkthrough-counter>{initial+1} / {entries.length}</output></label>
+    <button type="button" data-walkthrough-next aria-label={labels.next} title={labels.next}><ArrowRight size={18} aria-hidden="true"/></button>
+    <a class="walkthrough__open" href={original(entries[initial]!.asset)} target="_blank" rel="noopener noreferrer" data-walkthrough-open aria-label={`${story.title}: ${labels.enlarge}`} title={labels.enlarge}><Maximize2 size={18} aria-hidden="true"/></a>
   </div>
+  <p class="walkthrough__feedback" role="status" hidden data-walkthrough-feedback></p>
   <figcaption class="walkthrough__notes" aria-live="polite" aria-atomic="true">
-    {entries.map(({asset,step},index) => <div class="walkthrough__note" data-walkthrough-note={index} data-active={index === initial} aria-hidden={index !== initial ? "true" : undefined} inert={index !== initial}>
-      <p class="walkthrough__step-title" data-walkthrough-title><strong>{step.title}</strong></p><p>{step.description}</p>
-      <p class="walkthrough__caption">{asset.demoDisclosure[locale]}</p>
+    {entries.map(({asset,step},index)=><div class="walkthrough__note" data-walkthrough-note={index} data-active={index===initial} aria-hidden={index!==initial?"true":undefined} inert={index!==initial}>
+      <p class="walkthrough__step-title" data-walkthrough-title><strong>{step.title}</strong></p><p>{step.description}</p><p class="walkthrough__caption">{asset.demoDisclosure[locale]}</p>
     </div>)}
   </figcaption>
 </figure>
 <script>
-  for (const root of document.querySelectorAll<HTMLElement>("[data-walkthrough]")) {
-    const screens = [...root.querySelectorAll<HTMLElement>("[data-walkthrough-screen]")];
-    const notes = [...root.querySelectorAll<HTMLElement>("[data-walkthrough-note]")];
-    const range = root.querySelector<HTMLInputElement>("[data-walkthrough-range]")!;
-    const previous = root.querySelector<HTMLButtonElement>("[data-walkthrough-previous]")!;
-    const next = root.querySelector<HTMLButtonElement>("[data-walkthrough-next]")!;
-    const select = (index:number) => {
-      root.dataset.step = String(index); range.value = String(index);
-      screens.forEach((screen,i) => {screen.dataset.active = String(i === index);screen.inert = i !== index;screen.setAttribute("aria-hidden",String(i !== index));screen.querySelector("img")!.alt = i === index ? screen.dataset.walkthroughAlt! : "";});
-      notes.forEach((note,i) => {note.dataset.active = String(i === index);note.inert = i !== index;note.setAttribute("aria-hidden",String(i !== index));});
-      range.setAttribute("aria-valuetext",`${index+1}: ${notes[index]!.querySelector("[data-walkthrough-title]")!.textContent}`);
-      root.querySelector("[data-walkthrough-counter]")!.textContent = `${index+1} / ${screens.length}`;
-      root.querySelector<HTMLAnchorElement>("[data-walkthrough-open]")!.href = screens[index]!.dataset.walkthroughOriginal!;
-      previous.disabled = index === 0;next.disabled = index === screens.length-1;
-    };
-    range.addEventListener("input",() => select(Number(range.value)));
-    previous.addEventListener("click",() => select(Math.max(0,Number(range.value)-1)));
-    next.addEventListener("click",() => select(Math.min(screens.length-1,Number(range.value)+1)));
-    for (const control of [range,previous,next]) control.addEventListener("focus",() => control.scrollIntoView({block:"nearest",behavior:"instant"}));
-    root.querySelector<HTMLElement>("[data-walkthrough-controls]")!.hidden = false;
-    root.dataset.enhanced = "true";select(Number(root.dataset.initial));
-  }
+  import {mountWalkthrough} from "../../utils/walkthrough";
+  for(const root of document.querySelectorAll<HTMLElement>("[data-walkthrough]"))mountWalkthrough(root);
 </script>
 <style>
   .walkthrough { min-width:0; gap:var(--space-3); }
+  .walkthrough__steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); min-height:88px; gap:var(--space-2); }
+  .walkthrough__steps[hidden],.walkthrough__feedback[hidden] { display:none; }
+  .walkthrough__steps button { display:grid; grid-template-columns:20px minmax(0,1fr); gap:var(--space-2); text-align:start; align-content:start; align-items:start; padding:var(--space-2); border:0; border-bottom:3px solid var(--color-border); background:none; color:var(--color-text-secondary); font:inherit; font-size:var(--text-xs); line-height:1.5; }
+  .walkthrough__steps button[aria-pressed="true"] { border-color:var(--app-key,var(--color-accent)); background:var(--color-surface-muted); color:var(--color-text); }
+  .walkthrough__steps button span { display:grid; place-items:center; width:20px; height:20px; background:var(--color-surface-muted); font-family:var(--font-mono); }
   .walkthrough__screens,.walkthrough__notes { display:grid; min-width:0; }
   .walkthrough__screen { min-width:0; }
   .walkthrough__screen :global(.responsive-media) { width:100%; height:100%; }
@@ -64,7 +53,7 @@ const original = (asset:typeof entries[number]["asset"]) => `/media/approved/${a
   .walkthrough__note { display:grid; align-content:start; gap:var(--space-2); }
   .walkthrough__step-title { margin:0; font-size:var(--text-base); color:var(--color-text); }
   .walkthrough__note > p { color:var(--color-text-secondary); font-size:var(--text-sm); line-height:1.6; }
-  .walkthrough__caption { display:grid; gap:var(--space-1); color:var(--color-text-muted); font-size:var(--text-xs); line-height:1.5; }
+  .walkthrough__caption { color:var(--color-text-muted); font-size:var(--text-xs); line-height:1.5; }
   .walkthrough__screen,.walkthrough__note { grid-area:1/1; }
   .walkthrough [data-active="false"] { visibility:hidden; pointer-events:none; }
   .walkthrough__controls { display:grid; grid-template-columns:44px minmax(0,1fr) 44px 44px; gap:var(--space-2); align-items:center; }
@@ -75,6 +64,6 @@ const original = (asset:typeof entries[number]["asset"]) => `/media/approved/${a
   input { width:100%; min-width:0; height:44px; accent-color:var(--color-accent); cursor:ew-resize; }
   input,button { scroll-margin-block:calc(var(--header-height) + var(--section-nav-height) + var(--space-2)) var(--space-4); }
   output { font-family:var(--font-mono); font-size:var(--text-xs); text-align:end; }
-  .walkthrough__detail { font-size:var(--text-sm); justify-self:start; }
-  @media(prefers-reduced-motion:no-preference) { [data-enhanced] .walkthrough__screen[data-active="true"] { animation:walkthrough-reveal 300ms ease-out; } @keyframes walkthrough-reveal { from { clip-path:inset(0 100% 0 0); } to { clip-path:inset(0); } } }
+  .walkthrough__feedback { color:var(--color-text-secondary); font-size:var(--text-sm); }
+  @media(prefers-reduced-motion:no-preference) { [data-enhanced] .walkthrough__screen[data-active="true"] { animation:walkthrough-reveal 220ms ease-out; } @keyframes walkthrough-reveal { from { clip-path:inset(0 100% 0 0); } to { clip-path:inset(0); } } }
 </style>

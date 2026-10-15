@@ -5,8 +5,8 @@ import PageHeader from "../components/layout/PageHeader.astro";
 import PageShell from "../components/layout/PageShell.astro";
 import ResponsiveImage from "../components/media/ResponsiveImage.astro";
 import MediaZoomDialog from "../components/common/MediaZoomDialog.astro";
+import EvidenceInspector from "../components/media/EvidenceInspector.astro";
 import ResearchLens from "../components/research/ResearchLens.astro";
-import SpatialScene from "../components/scene/SpatialScene.astro";
 import { getResearchMedia } from "../data/approvedMedia";
 import { getLocalizedData } from "../data/locales";
 import { getPublicCapabilities } from "../utils/publicCapabilities";
@@ -22,7 +22,7 @@ const labels = locale === "ko"
 ---
 <BaseLayout locale={locale} title={translate(locale,"nav.research")} description={translate(locale,"research.intro")} width="wide" pageProgress>
   <PageShell class="research-page">
-    <div class="research-intro" data-scene-surface><SpatialScene variant="terrain" locale={locale} /><div data-scene-copy><PageHeader eyebrow={translate(locale,"research.eyebrow")} title={translate(locale,"research.title")} description={translate(locale,"research.intro")} /></div></div>
+    <div class="research-intro"><PageHeader eyebrow={translate(locale,"research.eyebrow")} title={translate(locale,"research.title")} description={translate(locale,"research.intro")} /></div>
     <div class="research-explorer" data-research-explorer data-explorer-labels={JSON.stringify({all:labels.all,explore:labels.explore})}>
       <nav class="section-nav research-overview" aria-label={labels.navigation} data-in-page-navigation data-scroll-spy>
         <ol data-in-page-scroller>
@@ -53,7 +53,7 @@ const labels = locale === "ko"
                 <div class="link-row">{related.map(link => <a href={link.href}>{link.label}</a>)}</div>
               </div>
               <figure class="research-theme__media" data-research-figure aria-labelledby={`${area.slug}-title`}>
-                <ResponsiveImage asset={media} locale={locale} sizes="(min-width:1024px) 50vw, 100vw" fit="contain" />
+                <EvidenceInspector locale={locale} id={media.id}><ResponsiveImage asset={media} locale={locale} sizes="(min-width:1024px) 50vw, 100vw" fit="contain" /></EvidenceInspector>
                 <figcaption><strong>{caption}</strong><span>{detail}</span></figcaption>
                 <MediaZoomDialog asset={media} locale={locale} title={area.question} caption={`${caption}. ${detail}`} mediaKind={index === 0 ? "concept" : "diagram"} />
               </figure>
@@ -81,11 +81,8 @@ const labels = locale === "ko"
   for(const root of document.querySelectorAll<HTMLElement>("[data-research-explorer]"))mountResearchExplorer(root);
 </script>
 <style>
-  .research-intro { position:relative; min-height:400px; display:grid; align-items:start; isolation:isolate; }
-  .research-intro > [data-scene-copy] { position:relative; z-index:1; max-width:55%; }
-  .research-intro:has([data-renderer="fallback"]) { min-height:0; padding-bottom:0; }
-  .research-intro:has([data-renderer="fallback"]) > [data-scene-copy] { max-width:none; }
-  @media(scripting:none) { .research-intro { min-height:0; } .research-intro > [data-scene-copy] { max-width:none; } }
+  .research-intro { max-width:820px; }
+  .research-intro :global(.page-header) { margin-bottom:0; }
   .research-explorer { display:grid; gap:var(--space-5); min-width:0; }
   .research-overview { position:sticky; top:var(--header-height); z-index:12; background:var(--color-bg); padding-block:var(--space-2); }
   .research-overview ol { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--space-3); margin:0; padding:0; list-style:none; }
@@ -129,7 +126,5 @@ const labels = locale === "ko"
   [data-mode="focus"] .research-themes { grid-row:2; grid-column:1; }
   @media(scripting:enabled) { .research-explorer:not([data-enhanced]) [data-research-topic]:not(:first-child) { display:none; } .research-explorer:not([data-enhanced]) .research-theme__media { padding-bottom:56px; } }
   @media(min-width:1024px) { .research-theme { grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:var(--space-5) var(--space-7); } .research-theme__copy { grid-row:2; grid-column:1; } .research-theme__media { grid-row:2; grid-column:2; } [data-mode="focus"] .research-theme { display:block; } [data-mode="focus"] .research-spread { grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:var(--space-7); align-items:start; } [data-mode="focus"] .research-gallery { grid-row:1; grid-column:2; } [data-mode="focus"] .research-themes { grid-row:1; } }
-  @media(max-width:767px) { .research-intro { min-height:520px; align-items:start; } .research-intro > [data-scene-copy] { max-width:none; } .research-overview a { grid-template-columns:1fr; align-content:start; gap:var(--space-2); padding:var(--space-2) var(--space-1); font-size:var(--text-xs); } .research-overview img { width:100%; height:auto; aspect-ratio:4/3; } .research-overview ol { gap:var(--space-2); } .research-theme__header h2 { font-size:var(--text-lg); } }
-  @media(max-width:767px) and (scripting:enabled) { .research-intro { padding-bottom:260px; } }
-  @media(scripting:none) { .research-intro { min-height:0; padding-bottom:0; } }
+  @media(max-width:767px) { .research-overview a { grid-template-columns:1fr; align-content:start; gap:var(--space-2); padding:var(--space-2) var(--space-1); font-size:var(--text-xs); } .research-overview img { width:100%; height:auto; aspect-ratio:4/3; } .research-overview ol { gap:var(--space-2); } .research-theme__header h2 { font-size:var(--text-lg); } }
 </style>

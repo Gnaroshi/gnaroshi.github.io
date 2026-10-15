@@ -13,6 +13,7 @@ import { getBlogPostHref, getPublishedBlogPosts } from "../utils/content";
 import { getPublishedPapers } from "../utils/papers";
 import { getCurrentFocusFreshness } from "../utils/currentFocus";
 import { profile } from "../data/profile";
+import { ArrowUpRight } from "lucide-react";
 import "../styles/home.css";
 
 interface Props { locale: Locale }
@@ -68,7 +69,7 @@ if (!focusFreshness.isFresh && import.meta.env.DEV) {
 
     <Section class="home-research" labelledby="research-questions-heading">
       <div class="home-section-heading"><p class="eyebrow">{translate(locale, "home.researchQuestions")}</p><h2 id="research-questions-heading">{translate(locale, "home.researchQuestionsTitle")}</h2></div>
-      <ol class="home-research-list">{data.researchAreas.map((area, index) => <li><a href={getLocalePath(locale, `/research/#${area.slug}`)} data-motion-surface><span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span><strong>{area.question}</strong></a></li>)}</ol>
+      <ul class="home-research-list">{data.researchAreas.map(area => <li><a href={getLocalePath(locale, `/research/#${area.slug}`)}><strong>{area.question}</strong><ArrowUpRight size={20} aria-hidden="true"/></a></li>)}</ul>
       <a class="text-link" href={getLocalePath(locale, "/research/")}>{translate(locale, "home.viewAllResearch")}</a>
     </Section>
 

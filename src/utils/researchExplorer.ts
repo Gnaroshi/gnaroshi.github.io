@@ -17,6 +17,16 @@ export function mountResearchExplorer(root:HTMLElement):void {
   const reduced = matchMedia("(prefers-reduced-motion:reduce)");
   let mode = "focus", selected = 0;
   let carousel:EmblaCarouselType | null = null;
+  let sizeFrame=0;
+  const fitSelectedFigure=()=>{
+    cancelAnimationFrame(sizeFrame);
+    sizeFrame=requestAnimationFrame(()=>{
+      sizeFrame=0;
+      if(mode==="focus")viewport.style.height=`${Math.ceil(figures[selected]!.getBoundingClientRect().height)}px`;
+    });
+  };
+  const figureSizes=new ResizeObserver(fitSelectedFigure);
+  figures.forEach(figure=>figureSizes.observe(figure));
   const indexForHash = (hash:string) => {
     try { return headings.findIndex(heading => heading.id === decodeURIComponent(hash.slice(1))); }
     catch { return -1; }
@@ -33,6 +43,7 @@ export function mountResearchExplorer(root:HTMLElement):void {
     imageAlts.forEach((images,i)=>images.forEach(({image,alt})=>{image.alt=mode === "focus" && i !== selected?"":alt;}));
     links.forEach((link,i) => {if(i === selected)link.setAttribute("aria-current","location");else link.removeAttribute("aria-current");});
     previous.disabled=selected === 0;next.disabled=selected === topics.length-1;
+    fitSelectedFigure();
   };
   const onSlide = () => {
     if(!carousel)return;
@@ -42,7 +53,7 @@ export function mountResearchExplorer(root:HTMLElement):void {
   };
   const mountCarousel = () => {
     carousel?.destroy();
-    carousel=EmblaCarousel(viewport,{align:"start",loop:false,containScroll:"trimSnaps",startIndex:selected,duration:reduced.matches?0:30,watchFocus:false,watchDrag:(_api,event)=>!(event.target as Element).closest("a,button,input")});
+    carousel=EmblaCarousel(viewport,{align:"start",loop:false,containScroll:"trimSnaps",startIndex:selected,duration:reduced.matches?0:30,watchFocus:false,watchDrag:(_api,event)=>!(event.target as Element).closest('a,button,input,[data-zoomed="true"]')});
     carousel.on("select",onSlide);
   };
   const setMode = (value:string) => {
@@ -80,8 +91,8 @@ export function mountResearchExplorer(root:HTMLElement):void {
   window.addEventListener("popstate",()=>reveal(location.hash));
   window.addEventListener("hashchange",()=>reveal(location.hash));
   reduced.addEventListener("change",()=>carousel?.reInit({duration:reduced.matches?0:30}));
-  window.addEventListener("pagehide",()=>{carousel?.destroy();carousel=null;});
-  window.addEventListener("pageshow",event=>{if(event.persisted && mode === "focus")mountCarousel();});
+  window.addEventListener("pagehide",()=>{carousel?.destroy();carousel=null;figureSizes.disconnect();cancelAnimationFrame(sizeFrame);sizeFrame=0;});
+  window.addEventListener("pageshow",event=>{if(event.persisted){figures.forEach(figure=>figureSizes.observe(figure));if(mode === "focus")mountCarousel();fitSelectedFigure();}});
   selected=Math.max(0,indexForHash(location.hash));
   root.dataset.enhanced="true";setMode("focus");modeButton.hidden=false;
   // Moving an already-focused hash heading between hosts can drop browser focus.
