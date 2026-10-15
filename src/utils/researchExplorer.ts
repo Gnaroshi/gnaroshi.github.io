@@ -5,7 +5,6 @@ export function mountResearchExplorer(root:HTMLElement):void {
   const headings = topics.map(topic => topic.querySelector<HTMLElement>("[data-research-topic-heading]")!);
   const figures = topics.map(topic => topic.querySelector<HTMLElement>("[data-research-figure]")!);
   const imageAlts = figures.map(figure => [...figure.querySelectorAll<HTMLImageElement>("img")].map(image => ({image,alt:image.alt})));
-  const headingHost = root.querySelector<HTMLElement>("[data-research-heading]")!;
   const gallery = root.querySelector<HTMLElement>("[data-research-gallery]")!;
   const viewport = root.querySelector<HTMLElement>("[data-research-viewport]")!;
   const track = root.querySelector<HTMLElement>("[data-research-track]")!;
@@ -59,11 +58,11 @@ export function mountResearchExplorer(root:HTMLElement):void {
   const setMode = (value:string) => {
     mode=value;carousel?.destroy();carousel=null;
     if(mode === "focus") {
-      headings.forEach(heading=>headingHost.append(heading));figures.forEach(figure=>track.append(figure));
-      headingHost.hidden=false;gallery.hidden=false;synchronize(selected);mountCarousel();
+      figures.forEach(figure=>track.append(figure));
+      gallery.hidden=false;synchronize(selected);mountCarousel();
     } else {
-      topics.forEach((topic,i)=>{topic.prepend(headings[i]!);topic.append(figures[i]!);});
-      headingHost.hidden=true;gallery.hidden=true;synchronize(selected);
+      topics.forEach((topic,i)=>topic.append(figures[i]!));
+      gallery.hidden=true;synchronize(selected);
     }
     modeButton.querySelector("[data-research-view-label]")!.textContent=mode === "focus"?labels.all:labels.explore;
     root.querySelector("[data-research-list-icon]")!.toggleAttribute("hidden",mode !== "focus");
@@ -95,7 +94,7 @@ export function mountResearchExplorer(root:HTMLElement):void {
   window.addEventListener("pageshow",event=>{if(event.persisted){figures.forEach(figure=>figureSizes.observe(figure));if(mode === "focus")mountCarousel();fitSelectedFigure();}});
   selected=Math.max(0,indexForHash(location.hash));
   root.dataset.enhanced="true";setMode("focus");modeButton.hidden=false;
-  // Moving an already-focused hash heading between hosts can drop browser focus.
+  // Restore direct-hash focus after the selected figure has been exposed.
   if(indexForHash(location.hash) >= 0)requestAnimationFrame(()=>{
     headings[selected]!.focus({preventScroll:true});
     headings[selected]!.scrollIntoView({block:"start",behavior:"instant"});
