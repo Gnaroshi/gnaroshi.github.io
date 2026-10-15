@@ -1,4 +1,14 @@
 import { expect, test } from "@playwright/test";
+
+test("sticky header stays opaque over scrolled content in both locales and themes",async({page})=>{
+  for(const locale of ["","/ko"])for(const theme of ["light","dark"]){
+    await page.goto(`${locale}/`);
+    await page.evaluate(theme=>{document.documentElement.dataset.theme=theme;scrollTo({top:250,behavior:"instant"});},theme);
+    const background=await page.locator("body").evaluate(element=>getComputedStyle(element).backgroundColor);
+    await expect(page.locator(".site-header")).toHaveCSS("background-color",background);
+    await expect(page.locator(".site-header")).toBeInViewport();
+  }
+});
 import { getPaperLabNavigation, getPrimaryNavigation, getUtilityNavigation } from "../../src/i18n/routes";
 
 const primaryNavigation = getPrimaryNavigation("en");
