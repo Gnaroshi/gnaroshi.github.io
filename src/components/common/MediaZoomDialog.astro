@@ -63,12 +63,13 @@ const originalLabel = locale === "ko" ? "원본 파일 열기" : "Open original 
         'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
       )].filter((element) => !element.hidden && element.getClientRects().length > 0);
       if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable.at(-1)!;
-      if (focusable.length === 1 || (event.shiftKey && document.activeElement === first) || (!event.shiftKey && document.activeElement === last)) {
-        event.preventDefault();
-        (event.shiftKey ? last : first).focus();
-      }
+      // macOS may skip links in native Tab order; keep every dialog action reachable.
+      const current = focusable.indexOf(document.activeElement as HTMLElement);
+      const next = current < 0
+        ? (event.shiftKey ? focusable.length - 1 : 0)
+        : (current + (event.shiftKey ? -1 : 1) + focusable.length) % focusable.length;
+      event.preventDefault();
+      focusable[next]!.focus();
     });
     dialog.addEventListener("close", () => {
       document.body.classList.remove("media-dialog-open");

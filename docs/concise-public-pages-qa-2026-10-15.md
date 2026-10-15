@@ -35,7 +35,7 @@ Node 24; isolated source and public-feed checkouts. The owner's localhost server
 - Type checking: 312 files, no errors, warnings, or hints.
 - Production build: 59 pages; public copy, tone, i18n, readiness, media, launch-content, and built-link checks passed.
 - Full Chromium E2E: 262 passed, 15 public-data-dependent skips. Populated Reading navigation was separately exercised by feed fixtures.
-- Accessibility: 68 axe/keyboard/selected-state tests passed.
+- Accessibility: final re-run passed 70 axe/keyboard/selected-state tests, including the open media dialog in both locales and themes.
 - Feed contract: 11 valid builds and six expected rejection fixtures passed.
 - Additional no-JavaScript media and genuine offscreen-rendering checks: four passed.
 - Scoped visual checks: four all-route matrices (56 routes each, EN/KO, 1440/360, light/dark), 20 four-core-page matrices (1440/1024/768/390/360, EN/KO, light/dark), and 12 three-project front/back matrices (1440/360/320, EN/KO, light/dark) passed. These are 376 captured states, not a claim that the entire unfiltered visual suite ran.
@@ -68,6 +68,15 @@ npx playwright test tests/e2e/interactive-identity.spec.ts tests/e2e/media.spec.
 
 The first E2E run failed four obsolete assertions: the removed Home section count, two generic-caption selectors, and a compact-only diagram selector after its test moved to the full project diagram. They now assert the revised structure, per-record disclosure, and actual ordered repository names. No acceptance threshold was relaxed. The second full run passed.
 
-The final divider/padding adjustment is a paint/layout-only follow-up; its focused verification and release provenance are recorded below after publication. Physical devices, VoiceOver, and field INP were not tested. Empty paper collection and the lazy opt-in Three.js chunk-size warning remain; no initial 3D runtime was added. Missing personal contact fields remain hidden, and the old focus remains dated rather than described as current.
+The divider/padding follow-up passed 31 focused Chromium tests. A later seven-test WebKit run found that native macOS Tab navigation could skip the newly moved original-file link. The dialog now cycles its complete focusable-action list explicitly. The strengthened forward/reverse Tab checks passed all seven WebKit cases on re-run. No failure was dismissed as a browser exception.
+
+Physical devices, VoiceOver, and field INP were not tested. Empty paper collection and the lazy opt-in Three.js chunk-size warning remain; no initial 3D runtime was added. Missing personal contact fields remain hidden, and the old focus remains dated rather than described as current.
 
 Local screenshots and measurement data are under ignored `artifacts/concise-pages-2026-10-15/` and the isolated QA artifact directory. No screenshots of private records were captured.
+
+Additional commands:
+
+```sh
+npx playwright test tests/e2e/concise-pages.spec.ts tests/e2e/production-smoke.spec.ts tests/e2e/layout-rhythm.spec.ts tests/e2e/project-desk.spec.ts --grep-invert '@a11y|@visual'
+PLAYWRIGHT_BROWSER=webkit npx playwright test tests/e2e/concise-pages.spec.ts tests/e2e/project-desk.spec.ts tests/e2e/interaction-audit.spec.ts --grep 'concise|empty tools|project desk changes|Research navigation and diagram zoom'
+```

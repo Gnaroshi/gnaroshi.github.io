@@ -1,6 +1,23 @@
 import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 for (const prefix of ["", "/ko"]) {
+  test(`expanded media remains accessible ${prefix || "en"}`, { tag: "@a11y" }, async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    for (const theme of ["light", "dark"]) {
+      await page.goto(`${prefix}/research/`);
+      await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme);
+      await page.locator('[data-research-figure]:not([aria-hidden]) [data-media-zoom-open]').click();
+      const dialog = page.getByRole("dialog");
+      await expect(dialog.locator("[data-media-zoom-close]")).toBeFocused();
+      await page.keyboard.press("Tab");
+      await expect(dialog.locator("footer a")).toBeFocused();
+      expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+      await page.keyboard.press("Escape");
+      await expect(dialog).toBeHidden();
+    }
+  });
+
   test(`concise core pages preserve useful content ${prefix || "en"}`, async ({ page }) => {
     await page.goto(`${prefix}/`);
     await expect(page.locator(".identity-hero__headline")).toBeVisible();

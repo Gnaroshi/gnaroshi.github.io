@@ -290,6 +290,11 @@ test("Research navigation and diagram zoom preserve focus and scroll state", asy
       await expect(page.locator("body")).toHaveClass(/media-dialog-open/);
       await page.keyboard.press("Tab");
       await expect(dialog.locator(":focus")).toHaveCount(1);
+      await expect(dialog.locator("footer a")).toBeFocused();
+      await page.keyboard.press("Tab");
+      await expect(dialog.locator("[data-media-zoom-close]")).toBeFocused();
+      await page.keyboard.press("Shift+Tab");
+      await expect(dialog.locator("footer a")).toBeFocused();
       await page.keyboard.press("Escape");
       await expect(dialog).toBeHidden();
       await expect(page.locator("body")).not.toHaveClass(/media-dialog-open/);
