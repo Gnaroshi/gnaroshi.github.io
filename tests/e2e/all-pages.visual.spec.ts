@@ -24,9 +24,19 @@ test.describe("all public page visual checklist", { tag: "@visual-v3" }, () => {
 
         for (const route of qaRoutes) {
           await page.goto(route);
-          await page.waitForLoadState("networkidle");
-          await page.evaluate(() => window.scrollTo(0, 0));
-          await page.waitForTimeout(30);
+          // Empty Reading is an intentional document redirect, not a renderable page.
+          if(/^\/(?:ko\/)?papers\/?$/.test(route))await page.waitForLoadState("networkidle");
+          await page.evaluate(async () => {
+            window.scrollTo({top:0,behavior:"instant"});
+            await document.fonts.ready;
+            const visible=[...document.images].filter(image=>{
+              if(image.closest('[inert],[hidden],[aria-hidden="true"],dialog:not([open])'))return false;
+              const box=image.getBoundingClientRect();
+              return box.width>0&&box.height>0&&box.top<innerHeight&&box.bottom>0;
+            });
+            await Promise.all(visible.map(image=>image.decode().catch(()=>undefined)));
+            await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));
+          });
           const metrics = await page.evaluate(() => ({
             overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
             images: document.querySelectorAll("main img").length,

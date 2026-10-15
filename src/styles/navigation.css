@@ -373,7 +373,7 @@ body.mobile-nav-open { overflow: hidden; }
 }
 
 @media (max-width: 479px) {
-  .site-header__inner { gap: var(--space-1); }
+  .site-header__inner { grid-template-columns:minmax(0,1fr) 44px 44px; gap: var(--space-1); }
   .language-switcher { gap: 0.2rem; }
   .language-switcher a,
   .language-switcher__current { min-width: 22px; justify-content: center; }

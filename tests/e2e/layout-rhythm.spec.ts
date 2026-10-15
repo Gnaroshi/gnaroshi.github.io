@@ -33,12 +33,14 @@ for (const width of [1440, 1024, 768, 390, 360]) {
           const pageHeader = document.querySelector(".page-header")!;
           const header = (pageHeader.closest("[data-scene-surface]") ?? pageHeader).getBoundingClientRect();
           const nav = document.querySelector(".section-nav")!.getBoundingClientRect();
-          const heading = document.querySelector(".research-heading h2, .project-section h2")!.getBoundingClientRect();
+          const heading = document.querySelector(".research-theme:not([hidden]) h2, .project-section h2")!.getBoundingClientRect();
           const controls = document.querySelector("[data-research-controls]")?.getBoundingClientRect();
-          return { headerToNav: (controls?.top ?? nav.top) - header.bottom, controlsToNav: controls ? nav.top - controls.bottom : 0, navToContent: heading.top - nav.bottom };
+          const filters=document.querySelector("[data-project-filters]")?.getBoundingClientRect();
+          return { headerToNav: (filters?.top ?? controls?.top ?? nav.top) - header.bottom, filtersToNav:filters?nav.top-filters.bottom:null, controlsToNav: controls ? nav.top - controls.bottom : 0, navToContent: heading.top - nav.bottom };
         });
         expect(rhythm.headerToNav).toBeGreaterThanOrEqual(16);
         expect(rhythm.headerToNav).toBeLessThanOrEqual(33);
+        if(rhythm.filtersToNav!==null){expect(rhythm.filtersToNav).toBeGreaterThanOrEqual(16);expect(rhythm.filtersToNav).toBeLessThanOrEqual(33);}
         if(route === "/research/")expect(rhythm.controlsToNav).toBeLessThanOrEqual(24);
         expect(rhythm.navToContent).toBeGreaterThanOrEqual(16);
         expect(rhythm.navToContent).toBeLessThanOrEqual(75);

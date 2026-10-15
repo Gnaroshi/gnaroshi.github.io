@@ -3,28 +3,13 @@
  * this file is progressive enhancement; the site remains complete without it.
  */
 
-/* Animate only the new document, never overlapping old/new text snapshots. */
-.site-main {
-  animation:site-page-in 280ms var(--ease-emphasized);
-}
-
-@keyframes site-page-in {
-  from {
-    clip-path: inset(0 0 100% 0);
-  }
-  to { clip-path: inset(0); }
-}
+/* Required content is never clipped or delayed by a document-wide transition. */
+.site-main { animation:none; }
 
 @keyframes site-hero-image-enter {
   from {
     opacity: .55;
     transform: scale(1.035);
-  }
-}
-
-@keyframes site-hero-copy-enter {
-  from {
-    transform: translateX(-12px);
   }
 }
 
@@ -47,15 +32,7 @@
   animation: site-hero-image-enter 1000ms var(--ease-emphasized) both;
 }
 
-.identity-hero__copy > * {
-  animation: site-hero-copy-enter 640ms var(--ease-emphasized) both;
-}
-
-.identity-hero__copy > :nth-child(1) { animation-delay: 100ms; }
-.identity-hero__copy > :nth-child(2) { animation-delay: 180ms; }
-.identity-hero__copy > :nth-child(3) { animation-delay: 260ms; }
-.identity-hero__copy > :nth-child(4) { animation-delay: 340ms; }
-.identity-hero__copy > :nth-child(n + 5) { animation-delay: 420ms; }
+.identity-hero__copy > * { animation:none; }
 
 .site-header__progress {
   position: absolute;

@@ -15,6 +15,8 @@ export function mountProjectDesk(root:HTMLElement) {
   const zoomed=()=>Math.abs((window.visualViewport?.scale??1)-1)>.01 || Math.abs(window.devicePixelRatio-initialPixelRatio)>.01;
   let scene:ProjectDeskScene|undefined, selected=0, flipped=false, generation=0, loading=false, parked=false, inView=false;
   let gesture:{id:number;x:number;y:number;dx:number;horizontal:boolean}|undefined;
+  let dragFrame=0,dragAmount=0;
+  const cancelDrag=()=>{cancelAnimationFrame(dragFrame);dragFrame=0;};
   const setExposure=(element:HTMLElement,active:boolean) => {element.inert=!active;element.setAttribute("aria-hidden",String(!active));};
   const update=() => {
     root.dataset.selected=String(selected);root.dataset.side=flipped?"workflow":"evidence";
@@ -62,11 +64,12 @@ export function mountProjectDesk(root:HTMLElement) {
       if(Math.abs(dx)<12)return;
       gesture.horizontal=true;stage.setPointerCapture(event.pointerId);stage.focus({preventScroll:true});root.dataset.dragging="true";
     }
-    gesture.dx=dx;scene?.drag(dx/Math.max(stage.clientWidth*.35,100));
+    gesture.dx=dx;dragAmount=dx/Math.max(stage.clientWidth*.35,100);
+    if(!dragFrame)dragFrame=requestAnimationFrame(()=>{dragFrame=0;scene?.drag(dragAmount);});
   });
   const end=(event:PointerEvent,cancelled=false)=>{
     if(!gesture || gesture.id!==event.pointerId)return;
-    const completed=gesture;gesture=undefined;delete root.dataset.dragging;
+    const completed=gesture;gesture=undefined;cancelDrag();delete root.dataset.dragging;
     if(stage.hasPointerCapture(event.pointerId))stage.releasePointerCapture(event.pointerId);
     if(!cancelled && completed.horizontal && Math.abs(completed.dx)>55)select(selected+(completed.dx<0?1:-1));
     else if(!cancelled && !completed.horizontal){
@@ -80,7 +83,7 @@ export function mountProjectDesk(root:HTMLElement) {
   // Touch first captures the inner image; transferring that capture is not cancel.
   stage.addEventListener("lostpointercapture",event=>{if(event.target===stage&&gesture)end(event,true);});
   const unload=()=>{
-    generation++;scene?.dispose();scene=undefined;sheets.forEach(sheet=>original.append(sheet));delete root.dataset.renderer;
+    generation++;cancelDrag();scene?.dispose();scene=undefined;sheets.forEach(sheet=>original.append(sheet));delete root.dataset.renderer;
   };
   const load=async()=>{
     if(scene || loading || reduced.matches || parked || zoomed())return;

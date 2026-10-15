@@ -1,6 +1,48 @@
-import {expect,test} from "@playwright/test";
+import {expect,test,type Locator} from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import sharp from "sharp";
+
+async function expectEvidencePainted(image:Locator) {
+  await image.evaluate(element=>element.scrollIntoView({block:"center",behavior:"instant"}));
+  await image.evaluate((image:HTMLImageElement)=>image.decode());
+  const expected=await image.evaluate((image:HTMLImageElement)=>{
+    const rect=image.getBoundingClientRect(),canvas=document.createElement("canvas");
+    // Element screenshots include the enclosing device-pixel bounds, not rounded CSS dimensions.
+    const offsetX=rect.left-Math.floor(rect.left),offsetY=rect.top-Math.floor(rect.top);
+    canvas.width=Math.ceil(rect.right)-Math.floor(rect.left);
+    canvas.height=Math.ceil(rect.bottom)-Math.floor(rect.top);
+    const context=canvas.getContext("2d")!;
+    context.fillStyle=getComputedStyle(image.closest("[data-desk-front]")!).backgroundColor;
+    context.fillRect(0,0,canvas.width,canvas.height);
+    const scale=Math.min(rect.width/image.naturalWidth,rect.height/image.naturalHeight);
+    const width=image.naturalWidth*scale,height=image.naturalHeight*scale;
+    context.drawImage(image,offsetX+(rect.width-width)/2,offsetY+(rect.height-height)/2,width,height);
+    return canvas.toDataURL("image/png").split(",")[1]!;
+  });
+  const screenshot=await image.screenshot({scale:"css"});
+  const referenceImage=Buffer.from(expected,"base64");
+  const actualSize=await sharp(screenshot).metadata(),referenceSize=await sharp(referenceImage).metadata();
+  // Fractional CSS edges have compositor coverage pixels; compare the actual image interior.
+  const region={left:2,top:2,width:Math.min(actualSize.width!,referenceSize.width!)-4,height:Math.min(actualSize.height!,referenceSize.height!)-4};
+  const actual=await sharp(screenshot).extract(region).resize(64,64,{fit:"fill"}).removeAlpha().raw().toBuffer();
+  const reference=await sharp(referenceImage).extract(region).resize(64,64,{fit:"fill"}).removeAlpha().raw().toBuffer();
+  const error=actual.reduce((sum,value,index)=>sum+Math.abs(value-reference[index]!),0)/actual.length;
+  const meanA=actual.reduce((sum,value)=>sum+value,0)/actual.length;
+  const meanB=reference.reduce((sum,value)=>sum+value,0)/reference.length;
+  let covariance=0,varianceA=0,varianceB=0;
+  for(let index=0;index<actual.length;index++){
+    const a=actual[index]!-meanA,b=reference[index]!-meanB;
+    covariance+=a*b;varianceA+=a*a;varianceB+=b*b;
+  }
+  const correlation=covariance/Math.max(1,Math.sqrt(varianceA*varianceB));
+  if(error>=8||correlation<=.95){
+    await test.info().attach("painted-evidence",{body:screenshot,contentType:"image/png"});
+    await test.info().attach("decoded-source-reference",{body:Buffer.from(expected,"base64"),contentType:"image/png"});
+  }
+  // Normalize compositor subpixel resampling, but reject missing structure or colors.
+  expect(error,"painted evidence must match the decoded approved screenshot").toBeLessThan(8);
+  expect(correlation,"painted evidence must retain the source image structure").toBeGreaterThan(.95);
+}
 
 for(const locale of ["","/ko"]) {
   test(`project desk changes evidence and workflow, not just hover ${locale||"en"}`,async ({page})=>{
@@ -13,6 +55,9 @@ for(const locale of ["","/ko"]) {
     const first=await stage.screenshot();
     const firstPixels=await sharp(first).stats();
     expect(firstPixels.channels[0].stdev).toBeGreaterThan(25);
+    const viewport=(await stage.boundingBox())!,imageBounds=(await desk.locator('[data-desk-sheet="0"] img').boundingBox())!;
+    expect(imageBounds.y).toBeGreaterThanOrEqual(viewport.y);
+    expect(imageBounds.y+imageBounds.height).toBeLessThanOrEqual(viewport.y+viewport.height);
     await desk.locator('[data-desk-select="1"]').click();
     await expect(desk).toHaveAttribute("data-selected","1");
     await expect(desk.locator('[data-desk-select][aria-pressed="true"]')).toHaveCount(1);
@@ -20,12 +65,14 @@ for(const locale of ["","/ko"]) {
     await expect(desk.locator('[data-desk-story="0"]')).toHaveAttribute("inert","");
     await page.waitForTimeout(1000);
     expect((await stage.screenshot()).equals(first)).toBe(false);
-    const height=await desk.evaluate(e=>e.getBoundingClientRect().height);
+    const geometry=await stage.boundingBox();
     await desk.locator("[data-desk-flip]").click();await expect(desk).toHaveAttribute("data-side","workflow");
     await page.waitForTimeout(1000);
     await expect(desk.locator('[data-desk-story="1"] [data-desk-workflow]')).toBeVisible();
     await expect(desk.locator('[data-desk-story="1"] [data-desk-summary]')).toBeHidden();
-    expect(await desk.evaluate(e=>e.getBoundingClientRect().height)).toBeCloseTo(height,0);
+    const changed=await stage.boundingBox();
+    expect(changed!.width).toBeCloseTo(geometry!.width,0);
+    expect(changed!.height).toBeCloseTo(geometry!.height,0);
     await desk.locator("[data-desk-reset]").click();await expect(desk).toHaveAttribute("data-selected","0");await expect(desk).toHaveAttribute("data-side","evidence");
     await stage.focus();await stage.press("ArrowRight");await expect(desk).toHaveAttribute("data-selected","1");
     await stage.press("Space");await expect(desk).toHaveAttribute("data-side","workflow");await stage.press("Escape");await expect(desk).toHaveAttribute("data-side","evidence");
@@ -107,7 +154,7 @@ for(const width of [1440,1024,768,430,390,360,320])for(const locale of ["","/ko"
     await desk.locator(`[data-desk-select="${index}"]`).click();await page.waitForTimeout(950);
     await expect(desk.locator(`[data-desk-sheet="${index}"] img`)).toHaveCSS("object-fit","contain");
     await desk.screenshot({path:`artifacts/project-desk/${locale?"ko":"en"}-${width}-${theme}-${index}-front.png`,scale:"css",style:".site-header { visibility: hidden !important; }"});
-    const pixels=await sharp(await stage.screenshot({scale:"css"})).stats();expect(pixels.channels[0].stdev).toBeGreaterThan(20);
+    await expectEvidencePainted(desk.locator(`[data-desk-sheet="${index}"] img`));
     await desk.locator("[data-desk-flip]").click();await page.waitForTimeout(950);
     if(width===320) {
       const list=desk.locator(`[data-desk-story="${index}"] [data-desk-workflow] ol`);

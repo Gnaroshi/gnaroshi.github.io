@@ -42,10 +42,10 @@ Use a restrained academic interface:
 - Strong typography over decoration.
 - Thin dividers and whitespace instead of heavy cards.
 - Subtle code and math styling.
-- Bounded, owner-requested immersive scenes on core introductions; quiet motion on long-form reading.
+- Direct manipulation of real project/research material; quiet motion on long-form reading.
 - No decorative gradient blobs, oversized hero art, or corporate landing-page sections.
 
-The homepage may be spatial and playful, but identity and real work must remain clear. The owner's requested interactive direction is not satisfied by imperceptible hover effects alone. Core introductions use unframed, manipulable 3D while long-form reading remains text-forward. Render illustrations outside protected text areas; do not disguise them as experiment evidence or replace approved application media.
+The homepage may be spatial and playful, but identity and real work must remain clear. Imperceptible hover effects alone do not satisfy the interactive direction. Home uses native perspective on real evidence; Research supports question-linked figure inspection; Projects exposes named captured workflows and purpose filtering. About's approved identity has an opt-in relief. Do not repeat unrelated 3D objects across introductions, disguise illustrations as evidence, or replace approved application media.
 
 ### Pixel identity layer
 
@@ -210,12 +210,12 @@ Minimum requirements:
 
 Motion must explain destination, progress, or state. The site uses progressive native CSS rather than a general animation framework:
 
-- short incoming-document reveals without overlapping outgoing snapshots;
+- immediate document text without overlapping snapshots or body-wide clipping;
 - a scroll-linked reading-progress marker on long editorial pages;
 - current-section movement in compact local navigation;
 - small focus, hover, pressed, theme, menu, and dialog transitions.
 
-Do not add unbounded automatic loops, custom cursors, scroll hijacking, motion-only feedback, or effects that hide content before JavaScript runs. Explicit spatial illustrations may use bounded pointer parallax and an eight-second introduction. Motion must not change layout dimensions. Unsupported browsers keep a complete static interface, and `prefers-reduced-motion` removes ambient motion while retaining immediate explicit controls.
+Do not add automatic render loops, custom cursors, scroll hijacking, motion-only feedback, or effects that hide content before JavaScript runs. Pointer tracking is limited to the explicitly activated identity. Preserve control geometry; explicit content selection may change the following document height rather than reserve large empty areas. Unsupported browsers keep a complete static interface, and reduced motion retains immediate explicit controls.
 
 The owner-requested About identity, Home project desk, and Research image explorer are intentional exceptions to purely utilitarian micro-interaction. These defaults are not blanket bans on visual expression: preserve their intent (truthful content, readable hierarchy, bounded motion) while giving the visitor something meaningful to manipulate. About provides opt-in relief and foil while preserving the approved full-face raster. Home selects and turns existing project evidence. Research couples physical image dragging, keyboard arrows, and question selection to the actual question, explanation, and provenance caption. Keep reading routes static and text-forward. Reserve control geometry, avoid idle rendering, and retain complete flat/reduced-motion fallbacks.
 

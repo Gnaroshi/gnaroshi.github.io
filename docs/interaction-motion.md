@@ -1,24 +1,24 @@
 # Interaction And Motion
 
-This site uses motion for navigation and direct manipulation, and uses owner-requested spatial illustrations to give the four core editorial introductions a perceptible, personal interactive identity. Motion is progressive enhancement: content, routes, and controls remain complete when a browser does not support a feature or when the visitor requests reduced motion.
+This site uses motion to manipulate real project evidence, research figures, and the approved personal identity. Content, routes, and controls remain complete without motion or JavaScript. The owner rejected the repeated abstract introductory scenes on 2026-10-15 because they were unrelated to the content and expensive during ordinary pointer input. Their older QA records are historical, not current acceptance.
 
 ## Current Approach
 
-### First-viewport spatial scenes
+### Content before effects
 
-Home, Research, Projects, and About have unframed Three.js WebGL scenes, not repeated card flips or hover-only transformations. Home has an original folded-strip sculpture that unfolds into layers. Research has a deformable landscape linked to the selected real question, with a flatten action. Projects has separable construction layers. About uses a contour field behind the existing approved full-face identity; it does not substitute a new logo or claim research evidence.
+The four core pages do not mount WebGL on entry. Compact introductions lead directly to their actual material: project evidence on Home, question-linked figures on Research, purpose-filtered projects and named demo stages on Projects, and the approved logo on About. No blank scene reservation, contour backdrop, or generic construction geometry remains.
 
-Mouse/pen position anywhere in the page changes the view and deforms the contour field. Horizontal touch dragging and arrow keys change the scene; vertical touch movement remains native scrolling. Enter/Space or the layers button changes the sculpture's state, Escape/reset restores it. Pause is visible and its choice persists across pages. The scene is described as an illustration for assistive technology. Required copy and links remain real HTML outside the canvas, with scissored render areas that prevent either the field or object from painting over text. Control dimensions and scene geometry are reserved before loading.
+Each direct manipulation changes existing content or its inspection state. Keyboard alternatives, static HTML, reduced-motion behavior, meaningful image alternatives, and visible provenance are required. About's personal relief is an explicit opt-in exception; its approved identity is not substituted with new artwork.
 
-The renderer loads only for a visible route-owned scene, at no more than 24 FPS desktop / 20 FPS mobile and DPR 1.25 / 1. It uses at most seven draw calls, no postprocessing, remote textures, HDR environment, shader framework, or continuous background loop. Initial/resumed motion lasts eight seconds; input extends it by 1.6 seconds. Offscreen, hidden-document, paused, and expired motion stops. Page exit aborts listeners and releases geometries, materials, renderer, and WebGL context; history restoration reconstructs them. Reduced motion retains a static scene and immediate explicit controls but removes ambient and passive pointer motion. No-JavaScript or unavailable WebGL leaves complete compact editorial content without empty controls.
+Startup bytes and main-thread work during identical throttled input are measured before and after changes in both development and production. FPS caps and bounded timers do not by themselves prove responsiveness. See the current content-led QA record for conditions, actual results, and limitations.
 
-This explicitly replaces the earlier blanket no-parallax/default-micro-interaction rule, following the owner's request for visibly immersive 3D. Long-form articles and evidence viewers remain text-first. No custom cursor, scroll hijacking, snapshot transitions, invented activity, or generated application screenshot is added.
+The request for a creative interactive site is not reduced to hover styling: evidence selection, direct dragging, zoom/pan, purpose filtering, captured workflow steps, and the opt-in relief have distinct outcomes. No custom cursor, scroll hijacking, snapshot transitions, invented activity, or generated application screenshot is added.
 
 ### Document navigation without snapshot ghosts
 
 Pages use ordinary Astro multi-page navigation. Cross-document bitmap transitions are explicitly disabled: the previous implementation left outgoing text at 35% opacity, while incoming text and the browser's root transition were also visible. A revised snapshot wipe also blocked rapid navigation into scroll-animated pages in browser testing. It was rejected rather than shipped.
 
-Only the incoming `main` receives a 280ms clip reveal. The header remains outside that animation, no outgoing snapshot exists, and the clip is removed when the animation ends. Content remains at full contrast, geometry never moves, and the next navigation remains operable. Reduced-motion makes entry immediate.
+Neither outgoing nor incoming content receives a document-wide transition. The former 280ms root clip hid lower sections on long pages, and staggered horizontal text entry briefly clipped leading characters. Both are removed. Required text is readable in its final position from first paint, while explicit artifact interactions retain their own bounded transitions.
 
 Locale changes, direct loads, history, and rapid repeated navigation follow the same complete document lifecycle. No client router or animation runtime intercepts route changes.
 
@@ -26,7 +26,7 @@ Astro's built-in intent prefetch warms only marked public navigation/hero destin
 
 ### Page and section entry
 
-Page headers draw their identity rail without moving the heading. Home uses one-time, 12px staggered copy entry and a contained 3.5% image entry. Text remains at full contrast. Editorial sections and sticky indexes never translate during scrolling: their spacing is identical with ordinary and reduced motion. There are no blank heading spacer rows.
+Page headers draw their identity rail without moving the heading. Home text does not stagger, translate or wait behind a reveal. Editorial sections and sticky indexes never translate during scrolling: spacing is identical with ordinary and reduced motion. There are no blank heading spacer rows or body-wide clipping layers.
 
 ### Long-page progress
 
@@ -58,11 +58,11 @@ Home now places a three-project desk immediately after the compact personal intr
 
 The sources are the already-approved VLA repository evidence, Studio managed-app screen, and PaperFlow plan-review screen. No replacement screenshot or new achievement is generated. Demo disclosure stays visible, and the selected image receives its localized alternative. Inactive sheets are decorative previews with empty alt; their story and focus targets are inert. The readable workflow is outside the perspective scene, so its text is never available only as a rotated visual.
 
-Three.js `CSS3DRenderer` supplies actual perspective to ordinary DOM evidence. It needs no WebGL canvas, texture copies, continuously running GPU renderer, or React hydration. The engine loads when the desk approaches the viewport; it is not globally loaded. Motion settles after 850ms, stops offscreen/background, and tears down on page exit. Reduced-motion avoids the engine and keeps the same selection/workflow controls with immediate flat views. Without JavaScript, the first approved evidence and case-study link remain readable. A failed engine import keeps every ordinary selection available.
+Native CSS perspective and transforms supply depth to ordinary DOM evidence. The small controller changes CSS variables only after selection or coalesced drag input; it has no render loop, WebGL context, texture copies, engine, or React hydration. Reduced-motion keeps selection/workflow controls with immediate flat views. Without JavaScript, the first approved evidence and case-study link remain readable.
 
-The desk reserves its story geometry across selection and turning. The front uses that space for existing limitations rather than leaving a hidden-workflow-sized blank. Mobile choices use three stable columns, and dragging never captures a vertical scrolling gesture. DOM screenshot pixel checks, input/state tests, and the complete EN/KO light/dark viewport matrix verify the scene; canvas pixel checks still apply separately to About's WebGL identity.
+The evidence stage and controls retain fixed geometry across selection and turning. Only the chosen story participates in layout; inactive workflows no longer reserve a large blank below short summaries. Explicit selection can change the following document height, without moving the controls. Mobile choices use three stable columns, and dragging never captures a vertical scrolling gesture. DOM screenshot pixel checks and input/state tests verify the scene; canvas pixel checks apply separately to About's WebGL identity.
 
-`CSS3DRenderer` documents a 100% zoom limit. Detected pinch zoom or a pixel-ratio change therefore restores the flat DOM view, preserving the selected story, and restores perspective when the zoom returns. Lucide controls are server-rendered SVGs with local ISC/Feather MIT attribution; no icon client runtime is hydrated.
+Detected pinch zoom or pixel-ratio changes restore the flat DOM view, preserving the selected story. Lucide controls are server-rendered SVGs with local ISC/Feather MIT attribution; no icon client runtime is hydrated.
 
 ### Opt-in identity interaction
 
@@ -70,14 +70,14 @@ About renders the existing approved full-face logo, not a replacement asset or p
 
 After 3D activation, mouse/pen position anywhere in the page changes the relief angle, normalized around the logo and clamped to the existing bounded tilt. The logo never follows the pointer by moving its layout position. Input is coalesced to one update per frame; touch scrolling does not drive tilt. Enter/Space activate the same click sequence, and arrow keys change the angle. On the focused logo, Escape resets/disposes and P pauses/resumes. The visible identity caption, click indicators, and control row are removed at the owner's request; an offscreen localized status and accessible keyboard shortcuts remain. Reduced-motion disables passive pointer tracking while preserving explicit state changes and keyboard input. Failed WebGL/import leaves the approved original visible with an honest accessible unavailable state.
 
-The identity-specific relief engine is dynamically imported only on click three; the separate introductory scenes may already have cached the shared Three.js core. This does not activate the logo relief early. One instanced draw call uses a 64×64 raster grid. Pixel ratio is capped at 1.5; rendering stops after an interaction settles, while paused, offscreen, or in a hidden document. Fresh viewport geometry, rather than a stale observer sample, governs resumed input. A resized backing buffer receives one static repaint even when offscreen; there is no offscreen animation loop. Frame deltas are clamped to 0–50ms so queued timestamps cannot create negative interpolation. Page exit releases geometry/material/WebGL resources; history restoration safely reconstructs the view. No React island or external texture request is introduced.
+The identity-specific relief engine and Three.js core are dynamically imported only on click three. One instanced draw call uses a 64×64 raster grid. Pixel ratio is capped at 1.5; rendering stops after an interaction settles, while paused, offscreen, or in a hidden document. Fresh viewport geometry governs resumed input. A resized backing buffer receives one static repaint; there is no offscreen animation loop. Page exit releases geometry/material/WebGL resources; history restoration reconstructs the view. No React island or external texture request is introduced.
 
 ### Content-led About, Research, and Projects
 
 The three editorial routes do not repeat the Home flip interaction:
 
 - About connects a selected technology to the public projects whose verified `techStack` includes it. Desktop draws only those relationships in the reserved column gutter; mobile shows the matching project links without connectors. Arrow keys and ordinary buttons use the same selection. This is a view of project technologies, not a skill score or a claim of mastery. The introduction and existing biography share one column beside the approved identity. The owner removed the generic Skills and tools lists and the map's redundant count/explanatory copy; the verified connection map remains a compact independent section.
-- Research offers a directly draggable image explorer, not a framed card with hover effects. Embla 8.6.0 (MIT, bundled locally) provides bounded drag/snap physics without a React wrapper or autoplay plugin. Dragging an existing image changes its question, explanation, selected thumbnail, provenance caption, and hash together. Arrow buttons and Arrow/Home/End keys provide equivalent input. The question precedes the reading spread; mobile puts the viewer above longer copy. Inactive slides are inert and have empty image alternatives; the active image remains meaningful. The library's standard overflow-hidden viewport preserves reliable image compositing; native focus-scroll offsets are reset without changing engine position. The existing question links reveal the target before focus; moving headings preserves direct-hash focus. All questions restores the complete static articles; its changing-label view command is not mislabeled as a pressed toggle. No-JavaScript retains all three questions and both positions. Reduced motion snaps immediately, and no idle animation runs. The shared lens still compares hypothesis and uncertainty without moving a pointer hit target during focus.
+- Research offers a directly draggable image explorer, not a framed card with hover effects. Embla 8.6.0 (MIT, bundled locally) provides bounded drag/snap physics without a React wrapper or autoplay plugin. Dragging an existing image changes its question, explanation, selected thumbnail, provenance caption, and hash together. Arrow buttons and Arrow/Home/End keys provide equivalent input. The question stays in its original article; nested CSS subgrids align the separate figure without moving the heading after first paint. Mobile places the viewer above longer copy. Inactive slides are inert and have empty image alternatives; the active image remains meaningful. Native focus-scroll offsets are reset without changing engine position. Existing question links reveal the target before focus. All questions restores complete static articles. No-JavaScript retains all three questions and both positions. Reduced motion snaps immediately, and no idle animation runs. The lens compares hypothesis and uncertainty without moving a pointer hit target during focus. Explicit zoom/pan inspects the actual figure and cannot trigger slide dragging.
 - Projects lets visitors scrub three approved demo captures for each featured application. A native range, previous/next controls, and the matching scenario description change together. The expand link opens the selected approved original for reading small application text. Only captured steps appear; missing captures are not fabricated or inferred. Product status, source provenance, and demo disclosure are unchanged. App identity and summary precede the viewer on narrow/paired layouts. Without JavaScript the approved primary screen and ordinary detail link remain useful.
 
 Selection changes use bounded, input-driven motion, not idle loops. Content uses static Astro and route-local DOM controllers without React hydration. Research's small drag/snap engine is the only new dependency in this revision, loaded only on Research. Focus on reading lenses and app controls stays visible after state changes. Scroll margins reserve the actual header/local-navigation boundary. Reduced-motion retains every state without the trace.
@@ -87,8 +87,8 @@ QA measures adjacent block gaps in a single browser frame, checks focused-contro
 ## Constraints
 
 - No custom cursor.
-- No unbounded automatic animation; introductory spatial motion must settle within eight seconds.
-- Pointer parallax is limited to the explicit spatial scenes; no decorative scroll choreography.
+- No automatic introductory render loop.
+- Passive pointer tracking is limited to the explicitly activated About identity.
 - No animation that hides required content before JavaScript runs.
 - No transform that changes layout dimensions.
 - No scroll transform that creates visual gaps between otherwise adjacent content.
@@ -99,7 +99,7 @@ QA measures adjacent block gaps in a single browser frame, checks focused-contro
 
 ## Browser Strategy
 
-Scroll-driven progress, `@starting-style`, and intrinsic-size disclosure transitions are progressive enhancements. Unsupported browsers keep normal navigation, a static header, and immediate state changes. Three.js is route-owned: the four core introductions load spatial illustrations when visible; Home additionally uses its DOM renderer for project exploration, while About loads the identity-specific relief only on the third click. Ordinary navigation and reading interaction need no animation library.
+Scroll-driven progress, `@starting-style`, and intrinsic-size disclosure transitions are progressive enhancements. Unsupported browsers keep normal navigation and immediate state changes. Three.js is exclusive to the opt-in About relief. Home uses native CSS. Research retains its small bounded Embla controller. Ordinary navigation and reading need no animation library. The current research and self-applied prompt are in [content-led-interaction-brief.md](content-led-interaction-brief.md).
 
 References:
 

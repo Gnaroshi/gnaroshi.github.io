@@ -147,12 +147,12 @@ The public writing destination is named Blog, not Writing. When there are no pub
 
 ## Design And Accessibility
 
-- Maintain readable academic/editorial content, but follow the owner's interaction intent rather than treating visual defaults as blanket bans. The four core introductions now have visibly interactive, route-owned WebGL illustrations. Preserve protected HTML text regions, keyboard controls, visible/persistent pause, reduced-motion/no-GPU fallbacks, and bounded rendering. About identity, Home project desk, and the Research image explorer remain separate approved direct-manipulation surfaces.
+- Maintain readable academic/editorial content and directly manipulable real materials. Home uses native CSS perspective on approved project evidence; Research uses question-linked image exploration and zoom/pan; Projects uses purpose filters and on-demand captured scenarios; About retains the opt-in approved identity. Do not restore unrelated introductory WebGL sculptures. Read `docs/content-led-interaction-brief.md` for the owner's latest correction and researched implementation brief.
 - Keep site navigation and site-owned breadcrumb labels English in both locales; preserve Korean article content and natural Korean task copy. Do not stack language badges, estimated reading time, or a duplicate content-type eyebrow before article titles.
 - Keep application mode limited to public paper workflows and Activity views.
 - Use semantic landmarks and heading order.
 - Preserve visible focus states, keyboard navigation, contrast, and mobile overflow protection.
-- Native CSS remains preferred for ordinary motion. Explicit immersive scenes may use Three.js; cap FPS/DPR/draw calls, stop after bounded motion and offscreen, dispose on navigation, and verify real painted pixels rather than counting loaders or a canvas element. Read `docs/interaction-motion.md` before changing their budgets.
+- Native CSS remains preferred for ordinary motion. Three.js loads only after the third About identity click. Verify real input, painted output, reduced-motion/no-GPU fallbacks, and teardown. Measure development and production startup/input/idle work separately; renderer caps alone do not demonstrate optimization. Read `docs/interaction-motion.md` before changing their budgets.
 - Keep graph list fallback and heatmap labels accessible.
 - Do not expose developer or authoring instructions on public pages.
 - Apply the two-second semantic test to every large image: its broad subject must be clear before adjacent copy is read.
