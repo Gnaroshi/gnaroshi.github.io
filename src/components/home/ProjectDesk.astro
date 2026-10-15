@@ -28,7 +28,7 @@ const entries = (["gnaroshi-vla", "gnaroshi-studio", "paperflow"] as const).map(
 <section class="home-desk" id="project-desk" aria-labelledby="project-desk-heading" data-project-desk data-selected="0" data-side="evidence" data-labels={JSON.stringify(labels)}>
   <header class="home-desk__heading"><h2 id="project-desk-heading">{labels.title}</h2><a href={getLocalePath(locale,"/projects/")}>{labels.all}</a></header>
   <div class="home-desk__choices" role="group" aria-label={labels.selection}>
-    {entries.map(({story},index) => <button type="button" data-desk-select={index} aria-pressed={index === 0 ? "true" : "false"} disabled><span aria-hidden="true">{String(index+1).padStart(2,"0")}</span>{story.title}</button>)}
+    {entries.map(({story},index) => <button type="button" data-desk-select={index} aria-pressed={index === 0 ? "true" : "false"} disabled>{story.title}</button>)}
   </div>
   <p id="project-desk-instructions" class="sr-only">{labels.instruction}</p>
   <div class="home-desk__stage" tabindex="0" role="group" aria-label={labels.scene} aria-describedby="project-desk-instructions" data-desk-stage>
@@ -38,7 +38,7 @@ const entries = (["gnaroshi-vla", "gnaroshi-studio", "paperflow"] as const).map(
           <ResponsiveImage asset={index === 0 ? media : {...media,alt:{en:"",ko:""}}} locale={locale} sizes="(min-width:768px) 640px, 88vw" fit="contain" />
         </div>
         <div class="home-desk__face home-desk__back" data-desk-back aria-hidden="true" inert>
-          <p>{story.title}</p>
+          <p>{labels.workflowLabel}</p>
           <ol>{story.scenario.steps.map((step) => <li>{step.title}</li>)}</ol>
         </div>
       </div>)}
@@ -51,16 +51,14 @@ const entries = (["gnaroshi-vla", "gnaroshi-studio", "paperflow"] as const).map(
       <button type="button" data-desk-previous aria-label={labels.previous} title={labels.previous} disabled><ArrowLeft size={20} aria-hidden="true" /></button>
       <button type="button" data-desk-next aria-label={labels.next} title={labels.next} disabled><ArrowRight size={20} aria-hidden="true" /></button>
     </div>
-    <button type="button" class="home-desk__flip" data-desk-flip disabled><FlipHorizontal2 size={18} aria-hidden="true" /><span>{labels.workflow}</span></button>
+    <button type="button" class="home-desk__flip" data-desk-flip aria-label={labels.workflow} title={labels.workflow} disabled><FlipHorizontal2 size={18} aria-hidden="true" /></button>
     <button type="button" data-desk-reset aria-label={labels.reset} title={labels.reset} disabled><RotateCcw size={18} aria-hidden="true" /></button>
   </div>
-  <p class="home-desk__media-caption">{labels.disclosure}</p>
   <div class="home-desk__stories" aria-live="polite" aria-atomic="true" data-content-group>
     {entries.map(({project,story,disclosure},index) => <article class="home-desk__story" data-desk-story={index} data-active={index === 0} aria-hidden={index > 0 ? "true" : undefined} inert={index > 0}>
-      <div class="home-desk__facts"><h3>{story.title}</h3><span>{productStatusLabels[locale][project.productStatus]}</span><a href={getLocalePath(locale,`/projects/${project.slug}/`)}>{labels.detail}</a></div>
+      <div class="home-desk__facts"><h3 class="sr-only">{story.title}</h3><span>{productStatusLabels[locale][project.productStatus]}</span><a href={getLocalePath(locale,`/projects/${project.slug}/`)}>{labels.detail}</a></div>
       <div class="home-desk__body">
-        <div class="home-desk__summary" data-desk-summary><p>{story.cardSummary}</p><div class="home-desk__open"><h4>{labels.open}</h4><ul>{story.currentLimitations.slice(0,2).map((limitation)=><li>{limitation}</li>)}</ul></div><p class="home-desk__disclosure"><strong>{labels.image}.</strong> {disclosure}</p></div>
-        <div class="home-desk__workflow" data-desk-workflow aria-hidden="true" inert><p class="eyebrow">{labels.workflowLabel}</p><ol>{story.scenario.steps.map((step) => <li><strong>{step.title}</strong><span>{step.description}</span></li>)}</ol><p class="home-desk__disclosure">{disclosure}</p></div>
+        <div class="home-desk__summary"><p>{story.cardSummary}</p><p class="home-desk__disclosure">{disclosure}</p></div>
       </div>
     </article>)}
   </div>
