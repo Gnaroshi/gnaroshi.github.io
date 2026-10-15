@@ -16,7 +16,6 @@ const capabilities = getPublicCapabilities();
   <div class="identity-hero__copy">
     <h1 id="home-title">{profile.displayName}</h1>
     <p class="identity-hero__headline">{data.profile.headline.split("\n").map((line) => <span>{line}</span>)}</p>
-    <p class="identity-hero__bio">{data.profile.shortBio}</p>
     <div class="identity-hero__actions">
       <a class="button button--primary" href={getLocalePath(locale, "/research/")} data-astro-prefetch>{translate(locale, "home.viewResearch")}</a>
       {capabilities.hasWriting && <a class="button" href={getLocalePath(locale, "/blog/")} data-astro-prefetch>{translate(locale, "home.readWriting")}</a>}

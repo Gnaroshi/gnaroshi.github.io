@@ -7,13 +7,10 @@ export const enCopy = {
     shortBio: "Right now, I’m interested in experiment infrastructure for vision-language-action models and better ways to read, revisit, and connect papers.",
     aboutIntroduction: "I have a software background, and I’m learning about AI by building experiments and research tools.",
     bio: [
-      "I’m interested not only in models, but also in the process around them: setting up experiments, checking results, and preserving enough context to revisit the work later.",
-      "I use this site to organize projects, notes, and papers that are ready to be shared publicly."
+      "I care about repeatable experiments and notes I can return to."
     ],
     researcherValues: [
-      "I leave a clear note when I do not understand something yet.",
       "I record experiment settings together with their results.",
-      "I keep failed attempts when the reason is useful.",
       "I check automated results myself."
     ]
   },
@@ -119,25 +116,25 @@ export const enCopy = {
   researchAreas: {
     "practical-vla-systems": {
       shortTitle: "Comparable VLA experiments",
-      question: "What kind of experiment structure makes different VLA models comparable on common ground?",
-      motivation: "Different VLA repositories organize models, environments, and results in different ways. That makes the same experiment difficult to run and inspect across models.",
-      hypothesis: "I’m testing whether a shared run structure can make comparisons clearer while small adapters keep model-specific behavior visible.",
+      question: "How can different VLA models be compared fairly?",
+      motivation: "Different repository structures make the same experiment hard to run across models.",
+      hypothesis: "A shared run structure with small, model-specific adapters.",
       uncertainty: "The shared structure still needs to preserve details that affect correctness.",
       relatedLabels: ["gnaroshi_vla"]
     },
     "efficient-model-execution": {
       shortTitle: "Efficient model execution",
-      question: "How can computation be reduced without hiding changes in model behavior?",
-      motivation: "Saving computation matters only when the resulting behavior can still be checked. Reused state and approximations need clear boundaries.",
-      hypothesis: "I’m looking at explicit reuse and update paths that can be measured across experiments.",
+      question: "Can less computation preserve model behavior?",
+      motivation: "State reuse and approximations need checks for changed behavior.",
+      hypothesis: "Measure explicit reuse and update paths across experiments.",
       uncertainty: "The useful boundary may change with the model, observation history, and action decoder.",
       relatedLabels: ["Experiment setup"]
     },
     "human-ai-research-tools": {
       shortTitle: "Research judgment with AI",
-      question: "How can AI tools support research without replacing the researcher’s judgment?",
-      motivation: "Generated summaries and scores can save time, but they can also hide uncertainty. The original question and the researcher’s own check still need to remain visible.",
-      hypothesis: "I’m exploring tools that help organize notes, suggest questions, and make revisiting easier without deciding what is true on the researcher’s behalf.",
+      question: "Where should AI help and human judgment remain?",
+      motivation: "Generated summaries can hide uncertainty as easily as they save time.",
+      hypothesis: "Tools for organizing notes, finding questions, and revisiting—not deciding what is true.",
       uncertainty: "The right amount of structure will only become clear through repeated use.",
       relatedLabels: ["Blog", "Reading"]
     }

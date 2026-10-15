@@ -22,7 +22,7 @@ const components = Object.entries(snapshot?.components ?? {}).filter((entry): en
 
 <BaseLayout locale={locale} title={translate(locale, "growth.title")} description={translate(locale, "growth.intro")} width="dashboard" mode="application">
   <AppShell class="momentum-page">
-    <PageHeader eyebrow={translate(locale, "growth.eyebrow")} title={translate(locale, "growth.title")} description={translate(locale, "growth.intro")} />
+    <PageHeader title={translate(locale, "growth.title")} description={eligible ? translate(locale, "growth.intro") : undefined} />
 
     {eligible && snapshot ? (
       <>
@@ -31,7 +31,7 @@ const components = Object.entries(snapshot?.components ?? {}).filter((entry): en
         <details class="momentum-methodology"><summary>{locale === "ko" ? "기술 정보" : "Technical details"}</summary><p>{locale === "ko" ? "이 페이지는 공개하기로 한 활동 기록의 합계와 구성 요소를 그대로 표시합니다." : "This page displays the published activity totals and score components without recalculating them in the browser."}</p></details>
       </>
     ) : (
-      <section class="growth-onboarding" aria-labelledby="growth-collecting-heading"><div class="app-empty-state"><ActivityIcon class="empty-state-icon" /><p class="eyebrow">{translate(locale, "growth.eyebrow")}</p><h2 id="growth-collecting-heading">{locale === "ko" ? "아직 보여 줄 활동 기록이 충분하지 않습니다." : "There is not enough activity to show a meaningful overview yet."}</h2><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div></section>
+      <section class="growth-onboarding" aria-labelledby="growth-collecting-heading"><div class="app-empty-state"><ActivityIcon class="empty-state-icon" /><h2 id="growth-collecting-heading">{locale === "ko" ? "아직 공개 활동 기록이 부족합니다." : "Not enough public activity yet."}</h2><a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "nav.research")}</a></div></section>
     )}
   </AppShell>
 </BaseLayout>

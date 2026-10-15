@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ReadingNextAction from "../components/papers/ReadingNextAction.astro";
 import type { Locale } from "../i18n/types";
-import { getLocalePath, translate } from "../i18n/utils";
+import { translate } from "../i18n/utils";
 import { getPublishedPapers, getTodayKey } from "../utils/papers";
 import { getDueReviews, toReviewDueRecord } from "../utils/reviewDue";
 import "../styles/application.css";
@@ -15,7 +16,7 @@ const empty = dueOnly ? translate(locale, "reviews.todayEmpty") : translate(loca
 const subtitle = dueOnly ? translate(locale, "reviews.todaySubtitle") : translate(locale, "reviews.subtitle");
 ---
 <BaseLayout locale={locale} title={title} description={subtitle} width="dashboard" mode="application">
-  <div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><p class="eyebrow">{translate(locale, "paperLab.reviewsDue")}</p><h1>{title}</h1><p class="lede">{subtitle}</p></div></header>
-    {due.length > 0 ? <section class="paper-note-list" aria-label={title}>{due.map((paper) => <article><h2><a href={paper.href}>{paper.title}</a></h2><p>{paper.oneLineSummary}</p><p class="metadata">{paper.nextReviewDate} · {paper.isOverdue ? (locale === "ko" ? "기한 지남" : "Overdue") : (locale === "ko" ? "복습 예정" : "Review due")}</p></article>)}</section> : <section class="app-empty-state" aria-labelledby="reviews-empty"><h2 id="reviews-empty">{empty}</h2><p>{translate(locale, "reviews.emptyBody")}</p><a class="button button--primary" href={getLocalePath(locale, "/papers/")}>{translate(locale, "reviews.action")}</a></section>}
+  <div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><h1>{title}</h1>{due.length > 0 && <p class="lede">{subtitle}</p>}</div></header>
+    {due.length > 0 ? <section class="paper-note-list" aria-label={title}>{due.map((paper) => <article><h2><a href={paper.href}>{paper.title}</a></h2><p>{paper.oneLineSummary}</p><p class="metadata">{paper.nextReviewDate} · {paper.isOverdue ? (locale === "ko" ? "기한 지남" : "Overdue") : (locale === "ko" ? "복습 예정" : "Review due")}</p></article>)}</section> : <section class="app-empty-state" aria-labelledby="reviews-empty"><h2 id="reviews-empty">{empty}</h2><ReadingNextAction locale={locale} /></section>}
   </div>
 </BaseLayout>

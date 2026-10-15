@@ -97,7 +97,6 @@ body[data-page-progress="true"] .site-header__progress {
   clip-path: polygon(0 0, 35% 0, 35% 8%, 8% 8%, 8% 35%, 0 35%, 0 0, 100% 0, 100% 35%, 92% 35%, 92% 8%, 65% 8%, 65% 0, 100% 0, 100% 100%, 65% 100%, 65% 92%, 92% 92%, 92% 65%, 100% 65%, 100% 100%, 0 100%, 0 65%, 8% 65%, 8% 92%, 35% 92%, 35% 100%, 0 100%);
 }
 
-.home-research-list a:where(:hover,:focus-visible) > span { background:var(--color-accent); color:var(--color-bg); }
 .featured-app:where(:hover,:focus-within) .role-icon,
 .supporting-app:where(:hover,:focus-within) .role-icon { transform:rotate(-5deg); }
 .role-icon { transition:transform 280ms var(--ease-emphasized); }

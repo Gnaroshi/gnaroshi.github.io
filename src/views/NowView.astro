@@ -16,14 +16,12 @@ const description = freshness.isFresh ? data.now.currentlyBuilding[0] : translat
 ---
 <BaseLayout locale={locale} title={pageTitle} description={description}>
   <header class="page-header" data-current-focus-state={freshness.status}>
-    <p class="eyebrow">{translate(locale, freshness.isFresh ? "now.eyebrow" : "now.staleEyebrow")}</p>
     <h1>{pageTitle}</h1>
     <p class="metadata">{translate(locale, "now.updated")} {formatLocalizedDate(data.now.lastUpdated, locale)}</p>
   </header>
   {!freshness.isFresh && (
     <aside class="now-freshness-notice" aria-labelledby="now-freshness-heading">
-      <h2 id="now-freshness-heading">{translate(locale, "now.staleStatus")}</h2>
-      <p>{translate(locale, "now.staleNotice")}</p>
+      <p id="now-freshness-heading">{translate(locale, "now.staleStatus")}</p>
       <a class="text-link" href={getLocalePath(locale, "/research/")}>{translate(locale, "now.staleNext")}</a>
     </aside>
   )}
