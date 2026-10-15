@@ -23,7 +23,7 @@ for (const [route, routeBudget] of Object.entries(budget.routes)) {
   const { document } = parseHTML(readFileSync(htmlPath, "utf8"));
   const styles = [...document.querySelectorAll('link[rel="stylesheet"]')].map((element) => element.getAttribute("href")).filter(Boolean);
   const scripts = [...document.querySelectorAll('script[src], link[rel="modulepreload"]')].map((element) => element.getAttribute("src") ?? element.getAttribute("href")).filter(Boolean);
-  const eagerImages = [...document.querySelectorAll("img[src]")].filter((image) => image.getAttribute("loading") !== "lazy").map((image) => image.getAttribute("src")).filter(Boolean);
+  const eagerImages = [...document.querySelectorAll("img[src]")].filter((image) => !image.closest("template") && image.getAttribute("loading") !== "lazy").map((image) => image.getAttribute("src")).filter(Boolean);
   const cssBytes = compressedLocalBytes(styles);
   const jsBytes = compressedLocalBytes(scripts);
   const imageBytes = rawLocalBytes(eagerImages);
