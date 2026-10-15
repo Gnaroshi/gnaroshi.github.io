@@ -3,21 +3,29 @@ import AxeBuilder from "@axe-core/playwright";
 import sharp from "sharp";
 
 async function expectEvidencePainted(image:Locator) {
+  await image.evaluate(element=>element.scrollIntoView({block:"center",behavior:"instant"}));
   await image.evaluate((image:HTMLImageElement)=>image.decode());
   const expected=await image.evaluate((image:HTMLImageElement)=>{
     const rect=image.getBoundingClientRect(),canvas=document.createElement("canvas");
-    canvas.width=Math.round(rect.width);canvas.height=Math.round(rect.height);
+    // Element screenshots include the enclosing device-pixel bounds, not rounded CSS dimensions.
+    const offsetX=rect.left-Math.floor(rect.left),offsetY=rect.top-Math.floor(rect.top);
+    canvas.width=Math.ceil(rect.right)-Math.floor(rect.left);
+    canvas.height=Math.ceil(rect.bottom)-Math.floor(rect.top);
     const context=canvas.getContext("2d")!;
     context.fillStyle=getComputedStyle(image.closest("[data-desk-front]")!).backgroundColor;
     context.fillRect(0,0,canvas.width,canvas.height);
-    const scale=Math.min(canvas.width/image.naturalWidth,canvas.height/image.naturalHeight);
+    const scale=Math.min(rect.width/image.naturalWidth,rect.height/image.naturalHeight);
     const width=image.naturalWidth*scale,height=image.naturalHeight*scale;
-    context.drawImage(image,(canvas.width-width)/2,(canvas.height-height)/2,width,height);
+    context.drawImage(image,offsetX+(rect.width-width)/2,offsetY+(rect.height-height)/2,width,height);
     return canvas.toDataURL("image/png").split(",")[1]!;
   });
   const screenshot=await image.screenshot({scale:"css"});
-  const actual=await sharp(screenshot).resize(64,64,{fit:"fill"}).removeAlpha().raw().toBuffer();
-  const reference=await sharp(Buffer.from(expected,"base64")).resize(64,64,{fit:"fill"}).removeAlpha().raw().toBuffer();
+  const referenceImage=Buffer.from(expected,"base64");
+  const actualSize=await sharp(screenshot).metadata(),referenceSize=await sharp(referenceImage).metadata();
+  // Fractional CSS edges have compositor coverage pixels; compare the actual image interior.
+  const region={left:2,top:2,width:Math.min(actualSize.width!,referenceSize.width!)-4,height:Math.min(actualSize.height!,referenceSize.height!)-4};
+  const actual=await sharp(screenshot).extract(region).resize(64,64,{fit:"fill"}).removeAlpha().raw().toBuffer();
+  const reference=await sharp(referenceImage).extract(region).resize(64,64,{fit:"fill"}).removeAlpha().raw().toBuffer();
   const error=actual.reduce((sum,value,index)=>sum+Math.abs(value-reference[index]!),0)/actual.length;
   const meanA=actual.reduce((sum,value)=>sum+value,0)/actual.length;
   const meanB=reference.reduce((sum,value)=>sum+value,0)/reference.length;
@@ -27,6 +35,10 @@ async function expectEvidencePainted(image:Locator) {
     covariance+=a*b;varianceA+=a*a;varianceB+=b*b;
   }
   const correlation=covariance/Math.max(1,Math.sqrt(varianceA*varianceB));
+  if(error>=8||correlation<=.95){
+    await test.info().attach("painted-evidence",{body:screenshot,contentType:"image/png"});
+    await test.info().attach("decoded-source-reference",{body:Buffer.from(expected,"base64"),contentType:"image/png"});
+  }
   // Normalize compositor subpixel resampling, but reject missing structure or colors.
   expect(error,"painted evidence must match the decoded approved screenshot").toBeLessThan(8);
   expect(correlation,"painted evidence must retain the source image structure").toBeGreaterThan(.95);
