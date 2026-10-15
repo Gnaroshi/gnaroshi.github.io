@@ -175,7 +175,8 @@ test("document navigation never blends old and new text",async ({page}) => {
   for(const destination of ["/research/","/projects/","/about/"]) {
     await page.locator(`.desktop-nav a[href="${destination}"]`).click();await page.waitForURL(`**${destination}`);
     expect(await page.locator("#cross-document-view-transition").evaluate(element=>element.textContent)).toContain("navigation: none");
-    await expect(page.locator(".site-main")).toHaveCSS("animation-name","site-page-in");
+    await expect(page.locator(".site-main")).toHaveCSS("animation-name","none");
+    await expect(page.locator(".site-main")).toHaveCSS("clip-path","none");
     await expect(page.locator("h1")).toHaveCount(1);
   }
 });

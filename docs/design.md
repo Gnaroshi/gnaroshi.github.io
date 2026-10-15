@@ -210,7 +210,7 @@ Minimum requirements:
 
 Motion must explain destination, progress, or state. The site uses progressive native CSS rather than a general animation framework:
 
-- short incoming-document reveals without overlapping outgoing snapshots;
+- immediate document text without overlapping snapshots or body-wide clipping;
 - a scroll-linked reading-progress marker on long editorial pages;
 - current-section movement in compact local navigation;
 - small focus, hover, pressed, theme, menu, and dialog transitions.

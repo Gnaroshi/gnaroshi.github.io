@@ -361,12 +361,9 @@ test("signature motion is perceptible and remains optional", async ({ page }) =>
   await page.goto("/");
 
   const heroTitle = page.locator(".identity-hero h1");
-  await expect(heroTitle).toHaveCSS("animation-name", "site-hero-copy-enter");
-  const heroDuration = await heroTitle.evaluate((element) => {
-    const value = getComputedStyle(element).animationDuration.split(",")[0]!.trim();
-    return value.endsWith("ms") ? Number.parseFloat(value) : Number.parseFloat(value) * 1000;
-  });
-  expect(heroDuration).toBeGreaterThanOrEqual(600);
+  await expect(heroTitle).toHaveCSS("animation-name", "none");
+  await expect(heroTitle).toHaveCSS("transform", "none");
+  await expect(page.locator(".site-main")).toHaveCSS("clip-path","none");
 
   await page.goto("/about/");
   const pageHeader = page.locator(".page-header");

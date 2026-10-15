@@ -18,7 +18,7 @@ The request for a creative interactive site is not reduced to hover styling: evi
 
 Pages use ordinary Astro multi-page navigation. Cross-document bitmap transitions are explicitly disabled: the previous implementation left outgoing text at 35% opacity, while incoming text and the browser's root transition were also visible. A revised snapshot wipe also blocked rapid navigation into scroll-animated pages in browser testing. It was rejected rather than shipped.
 
-Only the incoming `main` receives a 280ms clip reveal. The header remains outside that animation, no outgoing snapshot exists, and the clip is removed when the animation ends. Content remains at full contrast, geometry never moves, and the next navigation remains operable. Reduced-motion makes entry immediate.
+Neither outgoing nor incoming content receives a document-wide transition. The former 280ms root clip hid lower sections on long pages, and staggered horizontal text entry briefly clipped leading characters. Both are removed. Required text is readable in its final position from first paint, while explicit artifact interactions retain their own bounded transitions.
 
 Locale changes, direct loads, history, and rapid repeated navigation follow the same complete document lifecycle. No client router or animation runtime intercepts route changes.
 
@@ -26,7 +26,7 @@ Astro's built-in intent prefetch warms only marked public navigation/hero destin
 
 ### Page and section entry
 
-Page headers draw their identity rail without moving the heading. Home uses one-time, 12px staggered copy entry and a contained 3.5% image entry. Text remains at full contrast. Editorial sections and sticky indexes never translate during scrolling: their spacing is identical with ordinary and reduced motion. There are no blank heading spacer rows.
+Page headers draw their identity rail without moving the heading. Home text does not stagger, translate or wait behind a reveal. Editorial sections and sticky indexes never translate during scrolling: spacing is identical with ordinary and reduced motion. There are no blank heading spacer rows or body-wide clipping layers.
 
 ### Long-page progress
 
