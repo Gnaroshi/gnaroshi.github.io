@@ -24,6 +24,8 @@ test.describe("all public page visual checklist", { tag: "@visual-v3" }, () => {
 
         for (const route of qaRoutes) {
           await page.goto(route);
+          // Empty Reading is an intentional document redirect, not a renderable page.
+          if(/^\/(?:ko\/)?papers\/?$/.test(route))await page.waitForLoadState("networkidle");
           await page.evaluate(async () => {
             window.scrollTo({top:0,behavior:"instant"});
             await document.fonts.ready;
