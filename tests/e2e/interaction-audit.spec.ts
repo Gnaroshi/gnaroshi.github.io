@@ -136,8 +136,10 @@ test("every visible button has an observable action", async ({ page }) => {
       const button = page.locator(actionable).nth(index);
       const before = await controlState(page, button);
       await button.click();
+      const walkthrough=button.locator('xpath=ancestor::*[@data-walkthrough][1]');
+      if(await walkthrough.count())await expect(walkthrough).not.toHaveAttribute("aria-busy","true");
       const after = await controlState(page, button);
-      if (await button.evaluate((element) => element.matches('[data-desk-select][aria-pressed="true"], [data-tool-choice][aria-pressed="true"], [data-research-mode][aria-pressed="true"]')) && before.pressed === "true") {
+      if (await button.evaluate((element) => element.matches('[data-desk-select][aria-pressed="true"], [data-tool-choice][aria-pressed="true"], [data-research-mode][aria-pressed="true"], [data-project-filter][aria-pressed="true"], [data-walkthrough-select][aria-pressed="true"]')) && before.pressed === "true") {
         expect(after, `${route}: current selection is stable`).toEqual(before);
         const group=button.locator('xpath=ancestor::*[@role="group"][1]');
         await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);

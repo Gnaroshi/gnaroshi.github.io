@@ -36,9 +36,9 @@ test.describe("approved public media", () => {
   });
 
   for (const route of ["/", "/ko/"]) {
-    test(`${route} renders a spatial Hero and real project evidence`, async ({ page }) => {
+    test(`${route} renders a compact introduction and real project evidence`, async ({ page }) => {
       await page.goto(route);
-      await expect(page.locator('.identity-hero [data-spatial-scene]')).toHaveAttribute("data-renderer","webgl");
+      await expect(page.locator('main canvas')).toHaveCount(0);
       await expect(page.locator(".identity-hero picture img")).toHaveCount(0);
       await expect(page.locator(".home-desk picture img")).toHaveCount(3);
       await expect(page.locator('[data-desk-sheet="0"] [data-desk-front]')).toHaveAttribute("aria-hidden", "false");
@@ -57,10 +57,10 @@ test.describe("approved public media", () => {
   for (const [route, localeSuffix] of [["/research/", "-en"], ["/ko/research/", "-ko"]] as const) {
     test(`${route} renders one concrete scene and two locale-matched diagrams`, async ({ page }) => {
       await page.goto(route);
-      await expect(page.locator(".research-theme__media > picture > img")).toHaveCount(3);
-      await expect(page.locator('.research-theme__media > picture source[srcset*="research-vla-task"]')).toHaveCount(2);
-      await expect(page.locator(`.research-theme__media > picture source[srcset*="efficient-execution${localeSuffix}"]`)).toHaveCount(2);
-      await expect(page.locator(`.research-theme__media > picture source[srcset*="research-workflow${localeSuffix}"]`)).toHaveCount(2);
+      await expect(page.locator(".research-theme__media .evidence-inspector picture > img")).toHaveCount(3);
+      await expect(page.locator('.evidence-inspector picture source[srcset*="research-vla-task"]')).toHaveCount(2);
+      await expect(page.locator(`.evidence-inspector picture source[srcset*="efficient-execution${localeSuffix}"]`)).toHaveCount(2);
+      await expect(page.locator(`.evidence-inspector picture source[srcset*="research-workflow${localeSuffix}"]`)).toHaveCount(2);
       await expect(page.locator(".research-theme__media figcaption")).toHaveCount(3);
       await expect(page.locator(".research-theme__media figcaption").first()).toContainText(route.startsWith("/ko/") ? "생성한 개념 장면" : "Generated concept scene");
       await expect(page.locator(".research-theme__media figcaption").nth(1)).toContainText(route.startsWith("/ko/") ? "기술 도식" : "Technical diagram");
@@ -71,7 +71,8 @@ test.describe("approved public media", () => {
     test(`${route} renders selected evidence and approved featured-app screenshots`, async ({ page }) => {
       await page.goto(route);
       await expect(page.locator(".selected-project picture img")).toHaveCount(2);
-      await expect(page.locator(".featured-app picture img")).toHaveCount(9);
+      await expect(page.locator(".featured-app picture img")).toHaveCount(3);
+      await expect(page.locator(".featured-app template")).toHaveCount(6);
       await expect(page.locator('.featured-app [data-walkthrough-screen][data-active="true"] picture img')).toHaveCount(3);
       for(const screen of await page.locator('.featured-app [data-walkthrough-screen][data-active="true"]').all())await expect(screen).toHaveAttribute("aria-hidden", "false");
       await expect(page.locator(".selected-project__media[aria-hidden]")).toHaveCount(0);

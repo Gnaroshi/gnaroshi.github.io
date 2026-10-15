@@ -20,12 +20,14 @@ for(const locale of ["","/ko"]) {
     await expect(desk.locator('[data-desk-story="0"]')).toHaveAttribute("inert","");
     await page.waitForTimeout(1000);
     expect((await stage.screenshot()).equals(first)).toBe(false);
-    const height=await desk.evaluate(e=>e.getBoundingClientRect().height);
+    const geometry=await stage.boundingBox();
     await desk.locator("[data-desk-flip]").click();await expect(desk).toHaveAttribute("data-side","workflow");
     await page.waitForTimeout(1000);
     await expect(desk.locator('[data-desk-story="1"] [data-desk-workflow]')).toBeVisible();
     await expect(desk.locator('[data-desk-story="1"] [data-desk-summary]')).toBeHidden();
-    expect(await desk.evaluate(e=>e.getBoundingClientRect().height)).toBeCloseTo(height,0);
+    const changed=await stage.boundingBox();
+    expect(changed!.width).toBeCloseTo(geometry!.width,0);
+    expect(changed!.height).toBeCloseTo(geometry!.height,0);
     await desk.locator("[data-desk-reset]").click();await expect(desk).toHaveAttribute("data-selected","0");await expect(desk).toHaveAttribute("data-side","evidence");
     await stage.focus();await stage.press("ArrowRight");await expect(desk).toHaveAttribute("data-selected","1");
     await stage.press("Space");await expect(desk).toHaveAttribute("data-side","workflow");await stage.press("Escape");await expect(desk).toHaveAttribute("data-side","evidence");

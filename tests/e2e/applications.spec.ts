@@ -23,7 +23,8 @@ test.describe("verified Gnaroshi applications", () => {
       await expect(page.locator('.supporting-app[data-application-group="research-workflow"]')).toHaveCount(1);
       await expect(page.locator('.supporting-app[data-application-group="system-utilities"]')).toHaveCount(2);
       await expect(page.locator('.supporting-app[data-application-group="learning-tools"]')).toHaveCount(1);
-      await expect(page.locator(".featured-app picture img")).toHaveCount(9);
+      await expect(page.locator(".featured-app picture img")).toHaveCount(3);
+      await expect(page.locator(".featured-app template")).toHaveCount(6);
       await expect(page.locator('.featured-app [data-walkthrough-screen][data-active="true"] picture img')).toHaveCount(3);
       await expect(page.locator(".supporting-app picture")).toHaveCount(0);
       for (const slug of applicationSlugs) {
