@@ -9,8 +9,6 @@ const viewports = [
 ] as const;
 
 const routes = [
-  { name: "en-home", route: "/", variant: "compact" },
-  { name: "ko-home", route: "/ko/", variant: "compact" },
   { name: "en-project", route: "/projects/gnaroshi-dev/", variant: "full" },
   { name: "ko-project", route: "/ko/projects/gnaroshi-dev/", variant: "full" }
 ] as const;

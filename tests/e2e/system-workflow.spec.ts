@@ -16,20 +16,13 @@ const publicRepositories = new Map([
 
 test.describe("public system workflow", () => {
   for (const route of ["/", "/ko/"] as const) {
-    test(`${route} renders one compact static flow diagram`, async ({ page }) => {
+    test(`${route} keeps architecture out of the personal introduction`, async ({ page }) => {
       await page.goto(route);
       const workflow = page.locator('[data-system-workflow="compact"]');
-      await expect(workflow).toHaveCount(1);
-      await expect(workflow.locator(".system-diagram")).toBeVisible();
-      await expect(workflow.locator("astro-island")).toHaveCount(0);
-      await expect(workflow.locator(".system-repository")).toHaveCount(0);
-      await expect(workflow.locator("[data-system-explorer]")).toHaveCount(0);
+      await expect(workflow).toHaveCount(0);
+      await expect(page.locator(".home-research, .identity-hero__bio")).toHaveCount(0);
       await expect(page.locator(".home-loop, #research-loop-heading")).toHaveCount(0);
-
-      for (const repositoryName of repositoryNames) {
-        await expect(workflow.locator("svg").first().getByText(repositoryName, { exact: true })).toHaveCount(1);
-      }
-      await expect(workflow.locator('[data-connection-type="optional-service"]').first()).toHaveClass(/system-diagram__edge--optional/);
+      await expect(page.locator("[data-project-desk]")).toBeVisible();
     });
   }
 
@@ -189,13 +182,15 @@ test.describe("public system workflow", () => {
 
   test("mobile diagram preserves source-to-site order without page overflow", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 });
-    await page.goto("/ko/");
+    await page.goto("/ko/projects/gnaroshi-dev/");
     const stages = page.locator(".system-diagram__fallback [data-flow-stage]");
     await expect(stages).toHaveCount(4);
     expect(await stages.evaluateAll((items) => items.map((item) => item.getAttribute("data-flow-stage")))).toEqual(["1", "2", "3", "4"]);
     for (const stage of await stages.all()) {
-      await expect(stage.locator("strong")).not.toHaveText("");
-      await expect(stage.locator("div > span")).not.toHaveText("");
+      await expect(stage.locator(":scope > div > strong")).not.toHaveText("");
+      const names = await stage.locator(".system-diagram__fallback-repositories strong").allTextContents();
+      expect(names.length).toBeGreaterThan(0);
+      expect(names.every(name => name.trim().length > 0)).toBe(true);
     }
     const positions = await stages.evaluateAll((items) => items.map((item) => item.getBoundingClientRect().top));
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
@@ -237,7 +232,7 @@ test.describe("public system workflow", () => {
       if (request.url().startsWith("https://api.github.com/")) githubApiRequests.push(request.url());
     });
     await page.goto("/");
-    await expect(page.locator('[data-system-workflow="compact"]')).toBeVisible();
+    await expect(page.locator('[data-system-workflow="compact"]')).toHaveCount(0);
     await expect(page.locator(".home-notes")).toHaveCount(0);
     expect(githubApiRequests).toEqual([]);
   });

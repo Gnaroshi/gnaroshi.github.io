@@ -68,8 +68,11 @@ for(const locale of ["","/ko"]) {
     const geometry=await stage.boundingBox();
     await desk.locator("[data-desk-flip]").click();await expect(desk).toHaveAttribute("data-side","workflow");
     await page.waitForTimeout(1000);
-    await expect(desk.locator('[data-desk-story="1"] [data-desk-workflow]')).toBeVisible();
-    await expect(desk.locator('[data-desk-story="1"] [data-desk-summary]')).toBeHidden();
+    await expect(desk.locator('[data-desk-sheet="1"] [data-desk-back]')).toHaveAttribute("aria-hidden","false");
+    await expect(desk.locator('[data-desk-sheet="1"] [data-desk-front]')).toHaveAttribute("inert","");
+    await expect(desk.locator('[data-desk-story="1"] .home-desk__summary')).toBeVisible();
+    await expect(desk.getByRole("list")).toHaveCount(1);
+    await expect(desk.locator("[data-desk-workflow], .home-desk__open")).toHaveCount(0);
     const changed=await stage.boundingBox();
     expect(changed!.width).toBeCloseTo(geometry!.width,0);
     expect(changed!.height).toBeCloseTo(geometry!.height,0);
@@ -107,7 +110,7 @@ test("project desk stays useful with no JavaScript or a failed scene import",asy
   await page.route("**/*projectDeskScene*.js",route=>route.abort());await page.goto("/");
   const desk=page.locator("[data-project-desk]");await desk.locator("[data-desk-stage]").scrollIntoViewIfNeeded();await expect(desk).toHaveAttribute("data-renderer","flat");
   await desk.locator('[data-desk-select="1"]').click();await expect(desk.locator('[data-desk-sheet="1"] img')).toBeVisible();
-  await desk.locator("[data-desk-flip]").click();await expect(desk.locator('[data-desk-story="1"] [data-desk-workflow]')).toBeVisible();
+  await desk.locator("[data-desk-flip]").click();await expect(desk.locator('[data-desk-sheet="1"] [data-desk-back]')).toHaveAttribute("aria-hidden","false");
 });
 
 test("project desk touch gestures preserve ordinary vertical scrolling",async ({browser,baseURL,browserName})=>{
@@ -157,7 +160,7 @@ for(const width of [1440,1024,768,430,390,360,320])for(const locale of ["","/ko"
     await expectEvidencePainted(desk.locator(`[data-desk-sheet="${index}"] img`));
     await desk.locator("[data-desk-flip]").click();await page.waitForTimeout(950);
     if(width===320) {
-      const list=desk.locator(`[data-desk-story="${index}"] [data-desk-workflow] ol`);
+      const list=desk.locator(`[data-desk-sheet="${index}"] [data-desk-back] ol`);
       const starts=await list.locator("li").evaluateAll(items=>items.map(item=>Math.round(item.getBoundingClientRect().left)));
       expect(new Set(starts).size).toBe(1);
     }

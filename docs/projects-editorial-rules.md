@@ -4,7 +4,7 @@
 
 - Use one sentence for `cardSummary`.
 - Describe what the project lets a person do; omit architecture and internal integration detail.
-- Aim for 90-160 English characters and 45-90 Korean characters where natural.
+- Prefer at most 100 English characters or 60 Korean characters. Do not pad a clear sentence to meet a minimum length; platforms and status already have their own fields.
 - Show product status, never Studio integration state, as the primary status.
 - Do not show a routine updated date on application cards.
 - Show at most four verified technologies on selected and featured cards, and three on supporting cards.

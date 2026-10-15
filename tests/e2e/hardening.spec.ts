@@ -87,9 +87,8 @@ test("About and current-focus surfaces keep truthful semantics", async ({ page }
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("About");
   await expect(page.locator(".about-monogram")).toHaveCount(0);
   await expect(page.locator(".about-skill-list, #about-skills")).toHaveCount(0);
-  const projectList = page.locator(".tool-connections__results ul");
-  await expect(projectList).toHaveJSProperty("tagName","UL");
-  await expect(projectList.getByRole("listitem")).toHaveCount(9);
+  await expect(page.locator("[data-tool-connections]")).toHaveCount(0);
+  await expect(page.locator(".about-introduction__copy .link-row a")).toHaveAttribute("href", "https://github.com/Gnaroshi");
 
   await page.goto("/now/");
   const state = await page.locator("[data-current-focus-state]").getAttribute("data-current-focus-state");

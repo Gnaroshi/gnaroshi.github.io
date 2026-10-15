@@ -69,7 +69,10 @@ test("3D rendering stops at rest, on pause, and offscreen",async ({page}) => {
   await page.waitForTimeout(250);expect(await host.getAttribute("data-frame")).toBe(settled);
   await stage.press("p");await expect(identity).toHaveAttribute("data-paused","true");
   const stopped=await host.getAttribute("data-frame");await stage.hover();await page.waitForTimeout(200);expect(await host.getAttribute("data-frame")).toBe(stopped);
-  await stage.press("p");await page.evaluate(()=>scrollTo(0,document.documentElement.scrollHeight));await page.waitForTimeout(200);
+  await stage.press("p");
+  // Short biographies may fit the viewport; ensure this really tests offscreen teardown.
+  await page.evaluate(()=>{const spacer=document.createElement("div");spacer.style.height="150vh";document.body.append(spacer);scrollTo(0,document.documentElement.scrollHeight);});
+  await expect(identity).not.toBeInViewport();await page.waitForTimeout(200);
   const hidden=await host.getAttribute("data-frame");await page.waitForTimeout(250);expect(await host.getAttribute("data-frame")).toBe(hidden);
 });
 

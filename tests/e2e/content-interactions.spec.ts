@@ -1,6 +1,5 @@
 import {expect,test,type Locator,type Page} from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import {projectFacts} from "../../src/data/facts/projects";
 
 async function ordered(first:Locator,second:Locator,gap=0) {
   const a=await first.elementHandle(),b=await second.elementHandle();
@@ -24,7 +23,6 @@ async function checkGeometry(page:Page) {
     await expect(root.locator('[data-walkthrough-screen][data-active="true"]')).toHaveCount(1);
     await expect(root.locator('[data-walkthrough-note][data-active="true"]')).toHaveCount(1);
   }
-  if(await page.locator(".about-introduction").count())await ordered(page.locator(".about-introduction"),page.locator("[data-tool-connections]"),16);
   if(await page.locator("[data-research-explorer]").count()) {
     await ordered(page.locator(".research-overview"),page.locator("[data-research-topic-heading]:visible").first(),8);
     for(const topic of await page.locator(".research-theme:visible").all()) {
@@ -63,22 +61,13 @@ async function loadVisibleMedia(page:Page) {
 }
 
 for(const locale of ["","/ko"]) {
-  test(`tool connections reflect verified project stacks ${locale||"en"}`,async({page})=>{
-    await page.goto(`${locale}/about/`);const root=page.locator("[data-tool-connections]");
-    await expect(root).toHaveAttribute("data-enhanced","true");
-    await expect(page.locator("#about-skills, .about-skill-list, [data-tool-result]")).toHaveCount(0);
-    await expect(root.getByRole("heading")).toHaveAttribute("id","about-tools");
-    await expect(root.getByRole("heading")).toHaveJSProperty("tagName","H2");
-    for(const tool of ["python","typescript","swift","react","shell"]) {
-      await root.locator(`[data-tool-choice="${tool}"]`).click();
-      await expect(root.locator('[aria-pressed="true"]')).toHaveCount(1);
-      const expected=projectFacts.filter(project=>(project.techStack as readonly string[]).includes(tool)).map(project=>project.id);
-      const actual=await root.locator('[data-connected="true"] a').evaluateAll(links=>links.map(link=>link.getAttribute("href")!.split("/").filter(Boolean).at(-1)));
-      expect(actual).toEqual(expected);
-    }
-    const current=root.locator('[data-tool-choice="shell"]');await current.press("ArrowDown");
-    await expect(root.locator('[data-tool-choice="python"]')).toBeFocused();
-    await expect(root.locator('[data-tool-choice="python"]')).toHaveAttribute("aria-pressed","true");
+  test(`About keeps identity without the redundant skills or project map ${locale||"en"}`,async({page})=>{
+    await page.goto(`${locale}/about/`);
+    await expect(page.locator("#about-skills, .about-skill-list, [data-tool-connections], [data-tool-result]")).toHaveCount(0);
+    await expect(page.locator(".interactive-identity")).toBeVisible();
+    await expect(page.locator(".interactive-identity figcaption")).toHaveCount(0);
+    await expect(page.locator(".prose-stack p")).toHaveCount(1);
+    await expect(page.locator("#about-values, #about-tools, #about-links")).toHaveCount(0);
   });
 
   for(const width of [1440,768,390,320])test(`research focus, comparison and history ${locale||"en"} ${width}`,async({page})=>{
@@ -133,8 +122,10 @@ for(const locale of ["","/ko"]) {
 test("new interactions retain static reading without JavaScript",async({browser,baseURL})=>{
   const context=await browser.newContext({baseURL,javaScriptEnabled:false});const page=await context.newPage();
   try {
-    await page.goto("/about/");await expect(page.locator("[data-tool-project]:visible")).toHaveCount(9);
+    await page.goto("/about/");await expect(page.locator(".about-introduction")).toBeVisible();await expect(page.locator("[data-tool-project]")).toHaveCount(0);
     await page.goto("/research/");await expect(page.locator("[data-research-topic]:visible")).toHaveCount(3);await expect(page.locator("[data-research-mode]")).toBeHidden();
+    await expect(page.locator(".media-zoom__actions noscript a")).toHaveCount(3);
+    await expect(page.locator(".media-zoom__actions noscript a").first()).toBeVisible();
     await page.goto("/projects/");await expect(page.locator(".walkthrough img:visible")).toHaveCount(3);await expect(page.locator(".walkthrough__controls:visible")).toHaveCount(0);
   }finally{await context.close();}
 });
@@ -143,7 +134,6 @@ for(const locale of ["","/ko"])for(const theme of ["light","dark"])test(`content
   await page.setViewportSize({width:390,height:844});
   for(const route of ["about","research","projects"]) {
     await page.goto(`${locale}/${route}/`);await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
-    if(route==="about")await page.locator('[data-tool-choice="swift"]').click();
     if(route==="research"){await page.locator(".research-overview a").last().click();await page.locator(".research-theme:visible [role=tab]").last().click();}
     if(route==="projects")for(const range of await page.locator("[data-walkthrough-range]").all()){await range.focus();await range.press("End");}
     expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
@@ -158,7 +148,6 @@ for(const width of [1440,1024,768,430,390,360,320])for(const locale of ["","/ko"
     await checkGeometry(page);
     await loadVisibleMedia(page);
     await page.screenshot({path:`artifacts/content-interactions/${route}-${locale?"ko":"en"}-${width}-${theme}-initial.png`,fullPage:true,scale:"css"});
-    if(route==="about")await page.locator('[data-tool-choice="swift"]').click();
     if(route==="research"){await page.locator(".research-overview a").last().click();await page.locator(".research-theme:visible [role=tab]").last().click();}
     if(route==="projects")for(const range of await page.locator("[data-walkthrough-range]").all()){await range.focus();await range.press("End");}
     await page.waitForTimeout(350);await checkActiveControl(page);

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The website explains how private work becomes public without exposing the current state of private repositories. Home shows a compact, stable description of repository roles. The `gnaroshi.dev` project detail shows the complete public architecture.
+The `gnaroshi.dev` project detail explains how private work becomes public without exposing private repository state. Home no longer repeats the architecture.
 
 Gnaroshi Studio owns operational status such as uncommitted changes, source diffs, validation failures, publish confirmation, and deployment monitoring. Those details change frequently and can include private information, so they do not belong on the public website.
 
@@ -29,7 +29,7 @@ Localized titles, descriptions, responsibilities, and exclusions live in `src/da
 
 `SystemWorkflow.astro` renders both variants from the same facts and localized copy. `SystemFlowDiagram.astro` uses `@dagrejs/dagre` at build time to place the directed graph and emits static SVG only:
 
-- `compact`: replaces the former Home Research Loop section. It shows one directed graph and one link to the full architecture.
+- `compact`: retained component variant, not mounted on Home. It is not part of the current public introduction.
 - `full`: appears at `/projects/gnaroshi-dev/#repository-workflow` and its Korean counterpart. The directed graph remains primary; repository responsibilities, exclusions, and public links are in one collapsed secondary section, followed by optional public build provenance.
 
 The graph uses localized SVG titles/descriptions and a screen-reader-only ordered text fallback. Connectors are decorative. Step numbers use explicit center coordinates, `text-anchor="middle"`, and `dominant-baseline="central"`.

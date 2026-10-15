@@ -26,8 +26,8 @@ for (const project of projectFacts) {
     if (story.scenario.steps.map((step) => step.id).join("|") !== project.scenario.stepIds.join("|")) failures.push(`${prefix}: localized scenario step IDs drifted from shared facts`);
     if (!present(story.overview) || !present(story.primaryUse) || story.keyFeatures.length === 0) failures.push(`${prefix}: public copy cannot contain only architecture or integration detail`);
     const length = [...story.cardSummary].length;
-    if (locale === "en" && (length < 90 || length > 160)) warnings.push(`${prefix}: English cardSummary is ${length} characters; practical target is 90-160`);
-    if (locale === "ko" && (length < 45 || length > 90)) warnings.push(`${prefix}: Korean cardSummary is ${length} characters; practical target is 45-90`);
+    if (locale === "en" && length > 100) warnings.push(`${prefix}: English cardSummary is ${length} characters; prefer at most 100`);
+    if (locale === "ko" && length > 60) warnings.push(`${prefix}: Korean cardSummary is ${length} characters; prefer at most 60`);
   }
 }
 

@@ -194,6 +194,8 @@ test("project kind and product status are visible while Studio integration stays
     await page.goto(route);
     await expect(page.locator("[data-product-status]")).toBeVisible();
     const integration = page.locator("[data-studio-integration-status]");
+    await expect(integration).toBeHidden();
+    await page.locator(".project-technical-details > summary").click();
     await expect(integration).toBeVisible();
     const productText = await page.locator("[data-product-status]").innerText();
     const integrationText = await integration.innerText();

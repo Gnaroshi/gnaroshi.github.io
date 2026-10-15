@@ -1,5 +1,7 @@
 # Content-Led Interaction Brief
 
+Latest owner correction: reduce public copy, not touch targets or useful manipulation. Home keeps the person, project evidence, and actual recent notes. Do not restore repeated research questions, a repository diagram, the About skills/map, or duplicate workflow lists. Project limitations and privacy remain visible; optional technical facts start collapsed.
+
 Owner feedback on 2026-10-15 supersedes the abstract spatial-introduction direction. This is the implementation brief applied in this revision, not a request for the owner to write another prompt.
 
 ## Applied Prompt

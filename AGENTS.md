@@ -163,7 +163,7 @@ The public writing destination is named Blog, not Writing. When there are no pub
 - Publish only IDs recorded in `approvedMediaCandidateIds`; regenerate responsive production variants with `npm run media:publish`.
 - Write public copy in the modest, activity-based voice defined in `docs/public-voice.md`.
 - Keep the brand name-only. Do not infer or display a professional title, affiliation, degree, laboratory, award, or location.
-- Home may show the compact, stable repository-role workflow defined in `docs/public-system-workflow.md`. Keep live operational state in Studio and detailed publishing architecture on the `gnaroshi.dev` project detail; keep it out of About, Research, and Writing introductions.
+- Keep Home to the personal introduction, project evidence, and actual recent notes. Do not restore repeated research questions, repository diagrams, or the About technology map. Explain each fact once; put optional technical facts behind a disclosure. Keep public limitations and privacy summaries visible. Detailed publishing architecture belongs on the `gnaroshi.dev` project detail, not page introductions.
 
 ## Prohibited Changes
 

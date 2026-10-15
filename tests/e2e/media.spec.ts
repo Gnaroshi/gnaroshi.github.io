@@ -42,7 +42,8 @@ test.describe("approved public media", () => {
       await expect(page.locator(".identity-hero picture img")).toHaveCount(0);
       await expect(page.locator(".home-desk picture img")).toHaveCount(3);
       await expect(page.locator('[data-desk-sheet="0"] [data-desk-front]')).toHaveAttribute("aria-hidden", "false");
-      await expect(page.locator(".home-desk__media-caption")).toContainText(/demonstration data|데모 자료/);
+      await expect(page.locator('.home-desk__story[data-active="true"] .home-desk__disclosure')).toContainText(/not a benchmark|벤치마크 결과가 아닙니다/);
+      await expect(page.locator(".home-desk__media-caption")).toHaveCount(0);
       const images = page.locator("main picture img");
       await expect(images).toHaveCount(3);
       for (let index = 0; index < await images.count(); index += 1) {
@@ -64,6 +65,8 @@ test.describe("approved public media", () => {
       await expect(page.locator(".research-theme__media figcaption")).toHaveCount(3);
       await expect(page.locator(".research-theme__media figcaption").first()).toContainText(route.startsWith("/ko/") ? "생성한 개념 장면" : "Generated concept scene");
       await expect(page.locator(".research-theme__media figcaption").nth(1)).toContainText(route.startsWith("/ko/") ? "기술 도식" : "Technical diagram");
+      await expect(page.locator(".media-zoom__actions > a")).toHaveCount(0);
+      await expect(page.locator(".media-zoom__dialog footer a")).toHaveCount(3);
     });
   }
 
