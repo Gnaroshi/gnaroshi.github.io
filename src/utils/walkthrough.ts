@@ -17,6 +17,8 @@ export function mountWalkthrough(root:HTMLElement):void {
     root.querySelector("[data-walkthrough-counter]")!.textContent=`${index+1} / ${screens.length}`;
     root.querySelector<HTMLAnchorElement>("[data-walkthrough-open]")!.href=screens[index]!.dataset.walkthroughOriginal!;
     previous.disabled=index===0;next.disabled=index===screens.length-1;
+    const focused=document.activeElement;
+    if(focused instanceof HTMLElement&&root.contains(focused))focused.scrollIntoView({block:"nearest",inline:"nearest",behavior:"instant"});
   };
   const select=async(index:number)=>{
     const token=++request,screen=screens[index]!;
