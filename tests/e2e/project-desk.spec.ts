@@ -13,6 +13,9 @@ for(const locale of ["","/ko"]) {
     const first=await stage.screenshot();
     const firstPixels=await sharp(first).stats();
     expect(firstPixels.channels[0].stdev).toBeGreaterThan(25);
+    const viewport=(await stage.boundingBox())!,imageBounds=(await desk.locator('[data-desk-sheet="0"] img').boundingBox())!;
+    expect(imageBounds.y).toBeGreaterThanOrEqual(viewport.y);
+    expect(imageBounds.y+imageBounds.height).toBeLessThanOrEqual(viewport.y+viewport.height);
     await desk.locator('[data-desk-select="1"]').click();
     await expect(desk).toHaveAttribute("data-selected","1");
     await expect(desk.locator('[data-desk-select][aria-pressed="true"]')).toHaveCount(1);

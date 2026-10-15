@@ -12,7 +12,7 @@
 .home-desk__renderer { position:absolute; inset:0; pointer-events:none; }
 .home-desk__renderer > div { pointer-events:none !important; }
 .home-desk__sheets { position:absolute; inset:0; display:grid; place-items:center; transform-style:preserve-3d; }
-.home-desk__sheet { position:absolute; width:min(88%,640px); aspect-ratio:1.6; transform-style:preserve-3d; pointer-events:auto; }
+.home-desk__sheet { position:absolute; width:min(88%,640px); height:calc(100% - 24px); max-height:400px; transform-style:preserve-3d; pointer-events:auto; }
 .home-desk__sheet:not([data-desk-sheet="0"]) { visibility:hidden; }
 [data-selected="1"] .home-desk__sheets [data-desk-sheet="0"], [data-selected="2"] .home-desk__sheets [data-desk-sheet="0"] { visibility:hidden; }
 [data-selected="1"] .home-desk__sheets [data-desk-sheet="1"], [data-selected="2"] .home-desk__sheets [data-desk-sheet="2"] { visibility:visible; }
