@@ -40,14 +40,16 @@ All four routes changed from one automatically initialized canvas to zero. The A
 
 ### Production Input Work
 
+This benchmark uses content-interaction source `6b1e3c4`; the subsequent `5424701` follow-up changes only header paint and is validated separately below.
+
 | Route | Before main-thread ms | After main-thread ms | Before script ms | After script ms |
 | --- | ---: | ---: | ---: | ---: |
-| Home | 601.5 | 86.0 | 67.4 | 2.1 |
-| Research | 505.6 | 59.7 | 67.4 | 3.0 |
-| Projects | 550.1 | 109.0 | 68.2 | 3.0 |
-| About | 477.7 | 73.6 | 57.1 | 1.9 |
+| Home | 601.5 | 82.2 | 67.4 | 2.2 |
+| Research | 505.6 | 64.8 | 67.4 | 4.5 |
+| Projects | 550.1 | 113.7 | 68.2 | 3.1 |
+| About | 477.7 | 89.5 | 57.1 | 2.6 |
 
-This sample reduced pointer/scroll main-thread work by about 80-88%, without an initial canvas on any core page. Post-change observed script bodies were Home 13,217B, Research 28,778B, Projects 6,728B, About 11,660B. These include observed script requests during this experiment, not every possible later interaction; activating the About relief intentionally requests a separate engine. Long tasks were not eliminated: the after sample still recorded 1-2 during startup/input, totaling 55-135ms per route. No claim of universally zero lag or measured field INP is made.
+The after column is the final immutable-release rerun, with no other owned test browser running. It reduced pointer/scroll main-thread work by about 79-87%, without an initial canvas on any core page. Post-change observed script bodies were Home 13,217B, Research 28,665B, Projects 6,728B, About 11,660B. These include observed script requests during this experiment, not every possible later interaction; activating the About relief intentionally requests a separate engine. Long tasks were not eliminated: the final sample still recorded 1-2 during startup/input, totaling 56-116ms per route. An earlier after sample was 86.0/59.7/109.0/73.6ms; it is retained locally but not substituted for this final result. No claim of universally zero lag or measured field INP is made.
 
 ## Failures Found And Corrected
 
@@ -104,3 +106,67 @@ Local ignored evidence is under `artifacts/content-led-2026-10-15/`, including b
 ## Limitations
 
 The feed has no public paper notes; populated paper workflows are exercised through feed fixtures, not fabricated live history. No email, portrait or Scholar URL was invented. Stale focus data remains hidden on Home. The opt-in Three.js relief still has a large lazy engine chunk; its startup is excluded from ordinary page entry and separately tested after activation. No new animation framework, remote font, chart library, screenshot or unsupported achievement was added.
+
+## Immutable Release Validation
+
+PR [#51](https://github.com/Gnaroshi/gnaroshi.github.io/pull/51) preserved the purpose-specific commits and was merged as `6b1e3c439e7a46123583e04c30685912b4a3d8b9`. A fresh isolated checkout built that exact source with public feed `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb`, fixed build time `2026-10-15T07:59:10Z`, and local/0/production provenance. The owner's port 4321 server and ignored feed were not used as release inputs or rebuilt underneath browser validation.
+
+Final checks on that unchanged artifact:
+
+- `npm run check`: 311 files, zero diagnostic errors/warnings/hints.
+- `npm run build`: 59 static pages; 25 noindex/redirect routes pruned from sitemap.
+- `npm run check:i18n`: exact 261 page-key / 341 island-key parity.
+- `npm run check:launch-content`: passed with the explicitly missing profile/paper/stale-focus notices above.
+- `npm run media:check`: 24 review outputs, 208 approved outputs passed.
+- `npm run check:project-readiness`: nine projects / 28 approved screenshots passed.
+- `npm run check:links`: 2,113 internal targets across 59 HTML files passed.
+- `node scripts/check-public-tone.mjs` and `node scripts/check-public-copy.mjs`: passed. Their npm wrappers were also exercised during earlier QA before final browser runs; the final scripts inspect the exact immutable output without rebuilding it during navigation.
+- `PLAYWRIGHT_USE_EXISTING_BUILD=1 npm run test:e2e`: 257 passed / 15 conditional skips, 4.2 minutes. Includes production smoke checks.
+- `PLAYWRIGHT_USE_EXISTING_BUILD=1 npm run test:a11y`: 68 passed, 53.5 seconds.
+- `PLAYWRIGHT_USE_EXISTING_BUILD=1 npm run test:visual`: the entire final 132-case command passed in 12.5 minutes, without a build or artifact replacement during navigation. All 14 final all-route contact sheets were regenerated and reviewed; selected enlarged states supplement the overview review.
+- `PLAYWRIGHT_USE_EXISTING_BUILD=1 npm run test:smoke`: five passed, 3.2 seconds, including exact source/feed provenance.
+- `PLAYWRIGHT_USE_EXISTING_BUILD=1 npm run test:performance`: all seven route budgets and browser samples passed, 8.4 seconds. CLS was 0 on six routes and 0.068 on Projects in this run, below the unchanged 0.1 budget. Earlier zero-shift samples are not substituted for this actual result.
+- WebKit focused content/project-desk/research regression: 27 passed / two Chromium-CDP-only skips. This was run on the same rendered application code with the initial byte-identical-content feed, before the final manifest metadata pin. It is headless WebKit coverage, not a physical Safari/iOS certification.
+
+Final production gzip CSS / initial JS: Home 11.0/4.3KB; About 7.7/4.1KB; Research 8.9/11.0KB; Projects 8.4/2.7KB; Blog 6.3/2.7KB. All seven measured routes have zero React islands in this feed state. No performance budget was increased. Initial build warnings remain for the explicitly lazy Three.js chunk and the correctly empty paper collection; neither is reported as absent.
+
+Physical-device testing, manual VoiceOver and field INP are not completed in this task. Keyboard, pointer/touch emulation, no-JavaScript, failed import, failed/late media, reduced-motion and opt-in identity checks are automated; contact-sheet review and the owner's in-app browser are supplementary manual visual evidence.
+
+## Live Inspection And Header Follow-Up
+
+The first public artifact was `f82b25caba229583d6d9dc44f82f4fbdaed69962`, built from `6b1e3c4`. Exact schema-v1 live verification passed, all 59 live HTML files matched local bytes, and the live four-page EN/KO light/dark 1440/390 matrix passed 32 conditions. A first inspection helper used a nonexistent Research selector; that helper failure was corrected and the matrix rerun. Early selected-state captures also caught the intentional 220ms scenario wipe in progress; subsequent captures await finite document-timeline animations and actual compositor paint without disabling the interaction.
+
+Enlarged live inspection revealed a separate paint issue: the 97%-opaque sticky header allowed faint scrolled text to show through. Commit `542470103c08ab7cfd6a20db373d8fc43fa2af65` changes that single background property to the existing solid theme token and adds an explicit EN/KO, light/dark scrolled-header regression. There are no layout, content, dependency or interaction-controller changes in this follow-up.
+
+The follow-up was built in the same clean isolated checkout with the same feed, fixed build time `2026-10-15T08:28:40Z`, and its own exact source provenance. Type checking, static build, i18n, public copy/tone and 2,113 generated-link checks passed again. The focused navigation/production-smoke/all-route visual command passed 24 cases with one empty-paper conditional skip (59.2 seconds), including all 14 route-capture combinations and the new opacity regression. The full 257-E2E/132-visual results above describe the content-interaction release; they are not falsely relabeled as an additional full-suite execution after this paint-only change.
+
+```bash
+PLAYWRIGHT_USE_EXISTING_BUILD=1 npx playwright test \
+  tests/e2e/navigation.spec.ts \
+  tests/e2e/production-smoke.spec.ts \
+  tests/e2e/all-pages.visual.spec.ts
+```
+
+The full follow-up axe rerun passed 68 tests in 51.4 seconds. Its performance rerun passed all seven routes in 9.9 seconds, with the same 0-0.068 CLS range and unchanged budgets. The one-line paint change does not silently inherit a fabricated fresh benchmark: the measured input-work table identifies its actual source revision above.
+
+## Final Publication
+
+- Deployed website source: `542470103c08ab7cfd6a20db373d8fc43fa2af65`.
+- Public feed: `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb`.
+- Deployment artifact: `a3733931f15ecbd871289dd27b8d73a747a9f9fc`, a normal fast-forward from the independently verified `f82b25c` artifact.
+- Content hash and schema remain the values listed at the start of this report; local/0/production provenance is exact.
+- The deployment verifier passed. All 59 live HTML files matched the validated follow-up output byte for byte.
+- The live four-core-route matrix passed all 32 EN/KO, light/dark, 1440/390 conditions again, with initial and selected captures, no overflow, duplicate H1, page exceptions or console errors. Scrolled Home screenshots confirm the header no longer shows underlying text. The actual in-app browser also exercised live project selection.
+- Actions remained disabled before/after both publication pushes. Only repository permission settings were read; no workflow/run/check/log query, dispatch or workflow modification was used. Pages remains `legacy` / `gh-pages:/`, custom domain and HTTPS unchanged. One explicit Pages build request was made for the first artifact; its queued response was not treated as deployment verification. The follow-up published from its branch push without another explicit build request.
+- Owned headless contexts close in `finally` blocks. Owned preview ports 4324/4325 have no listener. The owner's original port 4321 development server remains available.
+
+```bash
+node scripts/verify-deployment.mjs --base-url https://gnaroshi.dev \
+  --website-commit 542470103c08ab7cfd6a20db373d8fc43fa2af65 \
+  --feed-commit 1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb \
+  --content-hash c9a73861cd05863e59caee1bfb115bd979f2b59f25d5e72dbb8307179b5462ee \
+  --feed-schema-version 1 --workflow-run-id local \
+  --workflow-run-attempt 0 --environment production
+```
+
+The later documentation-only commit records these outcomes; it is not mislabeled as a different deployed application source. Ignored screenshots, profiler JSON and final release captures remain in `artifacts/content-led-2026-10-15/`; disposable isolated checkouts are archived recoverably, not left running or deleted irreversibly.

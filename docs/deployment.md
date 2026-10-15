@@ -96,3 +96,14 @@ See [release integrity](release-integrity.md) for provenance and historical evid
 Website source `bcae578471b0c737b31751d73cde603af617e999` and public feed `3b7e1fd92c5a6d3ef7a1298c3592b498da172d41` were built in isolated clean checkouts with Node 24. Validated public output was published as `ba4b44bf1a7961b9e38f2c45790a9ccaa569a17c` on `gh-pages`, advancing normally from `1f878bb09a1891f553488eda2fac06b8ab728e49`.
 
 Exact live provenance, 31 live HTML byte comparisons, and 32 desktop/mobile EN/KO light/dark core interaction states passed. Actions stayed disabled, Pages stayed `legacy` / `gh-pages:/`, and the custom domain/HTTPS were unchanged. Full test, failure-correction, performance, capture-readiness, and release inputs are in [immersive scene QA](immersive-scenes-qa-2026-10-15.md). A documentation-only source commit after this publication is not a different deployed website revision.
+
+## Content-Led Follow-Up — 2026-10-15
+
+The later owner review rejected unrelated abstract scenes and pointer-time cost. PR [#51](https://github.com/Gnaroshi/gnaroshi.github.io/pull/51) replaces them with real project evidence, Research figure manipulation and captured application workflows. The final paint-only header correction is included in website source `542470103c08ab7cfd6a20db373d8fc43fa2af65`.
+
+- Public feed: `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb`, schema 1, unchanged content hash `c9a73861cd05863e59caee1bfb115bd979f2b59f25d5e72dbb8307179b5462ee`.
+- Active artifact: `a3733931f15ecbd871289dd27b8d73a747a9f9fc`, normally pushed after the verified intermediate artifact `f82b25caba229583d6d9dc44f82f4fbdaed69962`.
+- Exact public provenance, 59 live HTML byte comparisons and 32 live core-route interaction conditions passed for the final artifact.
+- Pages/domain/HTTPS settings were unchanged and Actions stayed disabled. No Actions run/check/log access or workflow dispatch was used.
+
+See [content-led QA](content-led-qa-2026-10-15.md) for full source/feed pins, measured cost, failed attempts and corrections, the 257 E2E/132 visual baseline, scoped paint-only follow-up validation, 68 axe passes, seven performance passes, screenshots and known limitations. A later documentation commit records this release but does not change its deployed source SHA.
