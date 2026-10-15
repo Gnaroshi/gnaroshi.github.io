@@ -95,7 +95,7 @@ for(const locale of ["en","ko"] as const){
 }
 
 for(const width of [1440,1024,768,430,390,360])for(const locale of ["en","ko"] as const)for(const theme of ["light","dark"] as const){
-  test(`content-led layout ${width} ${locale} ${theme}`,{tag:"@visual-content"},async({page})=>{
+  test(`content-led layout ${width} ${locale} ${theme}`,{tag:["@visual-content","@visual-v3"]},async({page})=>{
     await page.setViewportSize({width,height:1000});
     await page.addInitScript(theme=>localStorage.setItem("theme",theme),theme);
     const directory=`artifacts/content-led-2026-10-15/matrix/${width}-${locale}-${theme}`;await mkdir(directory,{recursive:true});

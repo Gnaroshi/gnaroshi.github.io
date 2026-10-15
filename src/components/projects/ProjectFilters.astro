@@ -18,6 +18,10 @@ const choices=locale==="ko"?[["all","전체",LayoutGrid],["experiments","실험"
       tools:["runshelf","tr-gpu-monitor","codex-unlock-stale","contentdeck"]
     };
     const buttons=[...root.querySelectorAll<HTMLButtonElement>("[data-project-filter]")];
+    const targetForHash=(hash:string)=>{
+      try{return document.getElementById(decodeURIComponent(hash.replace(/^#/,"")));}
+      catch{return null;}
+    };
     const select=(button:HTMLButtonElement)=>{
       const key=button.dataset.projectFilter!;
       buttons.forEach(item=>item.setAttribute("aria-pressed",String(item===button)));
@@ -40,11 +44,11 @@ const choices=locale==="ko"?[["all","전체",LayoutGrid],["experiments","실험"
     });
     window.addEventListener("gnaroshi:reveal-anchor",event=>{
       const hash=(event as CustomEvent<{hash:string}>).detail.hash;
-      const target=document.getElementById(decodeURIComponent(hash.replace(/^#/,"")));
+      const target=targetForHash(hash);
       if(target?.closest("[hidden]"))select(buttons[0]!);
     });
     window.addEventListener("hashchange",()=>{
-      const target=document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      const target=targetForHash(location.hash);
       if(target?.closest("[hidden]")){select(buttons[0]!);target.scrollIntoView({block:"start"});}
     });
     root.hidden=false;select(buttons[0]!);
