@@ -106,7 +106,7 @@ These names remain English across locales, including mobile, footer, and site-ow
 
 Activity is a utility destination. Now and public links belong in the homepage, About, and footer. Reading workflows stay grouped under a local Reading navigation instead of competing in the global header.
 
-Public navigation follows feed-backed capability evidence. Empty Blog, Reading, and Activity destinations are omitted. The owner retired the empty Reading landing page: its existing URLs forward to the research-tools question, and no empty local Reading navigation is rendered. A real public paper collection retains its evidence-backed index and detail URLs. Populated Reading local navigation uses scan-friendly direct links rather than independently expandable menus; review, practice, build, or insight links appear only after their corresponding public records are available.
+Public navigation follows feed-backed capability evidence. Empty Blog, Papers, and Activity destinations are omitted. Papers discovers all public note families in both interface languages: it prefers the current language when an explicit translation family has that version, otherwise links to the actual available language. Only a globally empty paper collection forwards its existing paper-index URL to the research-tools question. A populated Papers collection leads directly to actual notes and their original sources. Reading tutorials, three-pass checklists and practice entry points are retired; their former routes keep noindex compatibility redirects to the relevant paper or existing collection. Canonical records and authored note content are not deleted, translated, or duplicated into invented language routes.
 
 ### System Workflow
 
@@ -184,7 +184,7 @@ The `/papers` page grows with the record:
 - At 1-2 papers, show a compact note list and activity summary.
 - At 3+ papers, reveal the heatmap and basic filters.
 - At 2+ AI reviews, reveal review aggregates.
-- At 3+ oral exams, reveal retrieval trends.
+- Do not add oral-exam or recall-practice trends to the paper index.
 - At 4+ weeks, reveal longitudinal analysis.
 
 The dashboard can use React islands for filtering and sorting. The content source remains static MDX/Markdown.

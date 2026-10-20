@@ -134,8 +134,7 @@
 .paper-heatmap,
 .paper-filter-panel,
 .paper-review-summary,
-.learning-panel,
-.new-paper-template {
+.learning-panel {
   display: grid;
   gap: var(--space-4);
   padding: var(--space-4);
@@ -145,28 +144,13 @@
   box-shadow: var(--shadow-sm);
 }
 
-.paper-method-panel {
-  display: grid;
-  gap: var(--space-6);
-  padding-block: var(--space-4);
-  border-block: 1px solid var(--color-border);
-}
-
-#reading-method,
 #paper-notes {
   scroll-margin-top: calc(var(--paper-sticky-offset) + var(--space-4));
 }
 
-#reading-method:focus {
+#paper-notes:focus {
   outline: 2px solid var(--color-focus);
   outline-offset: var(--space-2);
-}
-
-.paper-method-panel__header {
-  display: grid;
-  gap: var(--space-2);
-  align-items: start;
-  justify-content: start;
 }
 
 .paper-heatmap__header,
@@ -248,102 +232,16 @@
   font-size: var(--text-sm);
 }
 
-.formula-term-list {
-  display: grid;
-  gap: var(--space-2);
-  margin: 0;
-}
-
-.formula-term-list div {
-  display: grid;
-  grid-template-columns: minmax(60px, 0.2fr) minmax(0, 1fr);
-  gap: var(--space-3);
-}
-
-.formula-term-list dt {
-  color: var(--color-text);
-  font-family: var(--font-mono);
-  font-weight: 700;
-}
-
-.formula-term-list dd {
-  margin: 0;
-  color: var(--color-text-secondary);
-}
-
-.paper-method-panel__passes {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.paper-method-panel__passes li {
-  display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr);
-  gap: var(--space-2);
-  align-content: start;
-  padding: 0 var(--space-5);
-  border-left: 1px solid var(--color-border);
-}
-
-.paper-method-panel__passes li:first-child {
-  padding-left: 0;
-  border-left: 0;
-}
-
-.paper-method-panel__passes li:last-child {
-  padding-right: 0;
-}
-
-.paper-method-panel__passes li > span {
-  display: inline-grid;
-  grid-row: 1 / span 2;
-  place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  border: 1px solid var(--color-accent);
-  border-radius: 50%;
-  color: var(--color-accent);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  line-height: 1;
-}
-
-.paper-method-panel__passes h3,
 .paper-card h3 {
   font-size: var(--text-lg);
 }
 
-.paper-method-panel__passes p,
-.paper-method-panel__principles,
 .paper-results__header p,
 .paper-card__summary,
 .paper-empty-state p,
-.new-paper-template p,
 .paper-detail-header__meta,
 .paper-nav__empty {
   color: var(--color-text-secondary);
-}
-
-.paper-method-panel__passes h3,
-.paper-method-panel__passes p {
-  grid-column: 2;
-}
-
-.paper-method-panel__principles {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-2) var(--space-6);
-  padding-left: 1.2rem;
-  margin: 0;
-}
-
-.paper-method-panel__principles li {
-  font-size: var(--text-sm);
 }
 
 .paper-heatmap__legend {
@@ -885,28 +783,23 @@
   background: var(--color-surface-muted);
 }
 
-.paper-status-badge--pass1,
-.paper-depth-badge--skim {
+.paper-status-badge--pass1 {
   border-color: color-mix(in srgb, var(--color-status-skim) 45%, var(--color-border));
   background: color-mix(in srgb, var(--color-status-skim) 14%, var(--color-surface));
 }
 
-.paper-status-badge--pass2,
-.paper-depth-badge--understand {
+.paper-status-badge--pass2 {
   border-color: color-mix(in srgb, var(--color-status-structured) 45%, var(--color-border));
   background: color-mix(in srgb, var(--color-status-structured) 13%, var(--color-surface));
 }
 
-.paper-status-badge--pass3,
-.paper-depth-badge--deep,
-.paper-depth-badge--reproduce {
+.paper-status-badge--pass3 {
   border-color: color-mix(in srgb, var(--color-status-deep) 45%, var(--color-border));
   background: color-mix(in srgb, var(--color-status-deep) 13%, var(--color-surface));
 }
 
 .paper-status-badge--read,
-.paper-status-badge--implemented,
-.paper-depth-badge--implement {
+.paper-status-badge--implemented {
   border-color: color-mix(in srgb, var(--color-status-implemented) 45%, var(--color-border));
   background: color-mix(in srgb, var(--color-status-implemented) 13%, var(--color-surface));
 }
@@ -923,30 +816,6 @@
   border: 1px dashed var(--color-border-strong);
   border-radius: var(--radius-md);
   background: var(--color-surface-muted);
-}
-
-.new-paper-template {
-  grid-template-columns: minmax(220px, 0.35fr) minmax(0, 1fr);
-  align-items: start;
-}
-
-.new-paper-template > div {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.new-paper-template textarea {
-  width: 100%;
-  min-height: 22rem;
-  resize: vertical;
-  padding: var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-code-bg);
-  color: var(--color-code-text);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  line-height: 1.55;
 }
 
 .paper-detail-header {
@@ -1040,34 +909,9 @@
   .paper-review-calibration-grid,
   .paper-review-two-col,
   .paper-review-breakdown,
-  .new-paper-template,
-  .formula-term-list div,
   .paper-nav,
-  .live-exam-principles,
-  .live-exam-control-grid,
-  .exam-result__dimensions,
-  .paper-method-panel__passes,
-  .paper-method-panel__principles,
   .paper-filter-grid {
     grid-template-columns: 1fr;
-  }
-
-  .paper-method-panel__passes li,
-  .paper-method-panel__passes li:first-child,
-  .paper-method-panel__passes li:last-child {
-    padding: var(--space-4) 0;
-    border-top: 1px solid var(--color-border);
-    border-left: 0;
-  }
-
-  .paper-method-panel__passes li:first-child {
-    padding-top: 0;
-    border-top: 0;
-  }
-
-  .live-exam-principles p + p {
-    border-top: 1px solid var(--color-border);
-    border-left: 0;
   }
 
   .paper-nav div:last-child {
@@ -1091,22 +935,11 @@
   .paper-review-dimension,
   .paper-review-badge,
   .paper-review-limitations,
-  .new-paper-template,
   .paper-card,
-  .paper-stat-card,
-  .live-exam-setup,
-  .text-exam,
-  .exam-transcript,
-  .exam-result,
-  .manual-exam {
+  .paper-stat-card {
     padding: var(--space-3);
   }
 
-  .text-exam > header,
-  .exam-transcript > header,
-  .exam-result > header,
-  .exam-transcript__entry,
-  .paper-method-panel__header,
   .paper-heatmap__header,
   .paper-filter-panel__header,
   .paper-review-summary__header,

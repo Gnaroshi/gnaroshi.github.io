@@ -20,7 +20,7 @@ test("desktop navigation stays concise", async ({ page }) => {
   const primary = page.getByRole("navigation", { name: "Primary navigation" });
   await expect(primary.getByRole("link")).toHaveCount(primaryNavigation.length);
   await expect(primary.getByRole("link", { name: "Blog" })).toHaveCount(primaryNavigation.some((item) => item.href === "/blog/") ? 1 : 0);
-  await expect(primary.getByRole("link", { name: "Reading" })).toHaveCount(primaryNavigation.some((item) => item.href === "/papers/") ? 1 : 0);
+  await expect(primary.getByRole("link", { name: "Papers" })).toHaveCount(primaryNavigation.some((item) => item.href === "/papers/") ? 1 : 0);
   await expect(page.locator('.utility-nav [data-nav-href="/growth/"]')).toHaveCount(utilityNavigation.some((item) => item.href === "/growth/") ? 1 : 0);
 });
 
@@ -52,7 +52,8 @@ test("Reading local navigation exposes only available destinations without expan
   await expect(localNav.getByRole("link")).toHaveCount(getPaperLabNavigation("en").length);
   await expect(localNav.getByRole("link", { name: "Overview" })).toHaveAttribute("href", "/papers/");
   await expect(localNav.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
-  await expect(localNav.getByRole("link", { name: "Reading method" })).toHaveAttribute("href", "/papers/#reading-method");
+  await expect(localNav.getByRole("link", { name: /Reading method|Practice/ })).toHaveCount(0);
+  await expect(localNav.locator('a[href$="#paper-notes"]')).toHaveAttribute("href", "/papers/#paper-notes");
   await expect(localNav.getByRole("link", { name: "Read", exact: true })).toHaveCount(0);
   await expect(localNav).not.toContainText("+");
 });

@@ -4,7 +4,7 @@ import { isReviewDue } from "./reviewDue";
 import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
 import type { Locale } from "../i18n/types";
 import { getLocalePath } from "../i18n/utils";
-import { getContentSlug } from "./localizedContent";
+import { deduplicateTranslations, getContentSlug } from "./localizedContent";
 import { getActivityCalendar, type ActivityDay } from "./feedData";
 import { getContentFeedRecordCount } from "./contentFeed";
 
@@ -26,6 +26,7 @@ export type PaperStats = {
 
 export type PaperRecord = {
   id: string;
+  locale: Locale;
   href: string;
   title: string;
   authors: string[];
@@ -84,6 +85,12 @@ export async function getAllPapers(locale: Locale = "en"): Promise<PaperEntry[]>
 export async function getPublishedPapers(locale: Locale = "en"): Promise<PaperEntry[]> {
   const papers = await getAllPapers(locale);
   return papers.filter((paper) => shouldShowInIndex(paper.data, { includeDrafts: !import.meta.env.PROD }));
+}
+
+/** Collection language is a preference; each entry keeps its real content route. */
+export async function getPaperDiscoveryEntries(preferredLocale: Locale = "en"): Promise<PaperEntry[]> {
+  const entries = [...await getPublishedPapers("en"), ...await getPublishedPapers("ko")];
+  return sortPapersByReadDate(deduplicateTranslations(entries, preferredLocale));
 }
 
 export async function getBuildablePapers(locale: Locale = "en"): Promise<PaperEntry[]> {
@@ -234,6 +241,7 @@ export function getPaperLastReviewedDate(paper: PaperEntry): string | undefined 
 export function toPaperRecord(paper: PaperEntry, review?: PaperReviewSummary, today = getTodayKey()): PaperRecord {
   return {
     id: paper.data.canonicalSlug,
+    locale: paper.data.locale,
     href: getLocalePath(paper.data.locale, `/papers/${paper.data.canonicalSlug}/`),
     title: paper.data.title,
     authors: paper.data.authors,

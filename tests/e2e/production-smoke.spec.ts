@@ -1,3 +1,4 @@
+import { gotoPublicRoute } from "./compatibilityNavigation";
 import { expect, test } from "@playwright/test";
 import { getPrimaryNavigation } from "../../src/i18n/routes";
 
@@ -31,7 +32,7 @@ test.describe("production deployment smoke", { tag: "@smoke" }, () => {
 
   for (const route of publicRoutes) {
     test(`${route} exposes the expected navigation and no scaffold copy`, async ({ page }) => {
-      const response = await page.goto(route);
+      const response = await gotoPublicRoute(page, route);
       expect(response?.status()).toBe(200);
       await expect(page.locator(".site-header")).toHaveAttribute("data-navigation-signature", navigationSignature);
       const publicText = (await page.locator("body").innerText()).toLowerCase();

@@ -1,3 +1,4 @@
+import { gotoPublicRoute } from "./compatibilityNavigation";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
@@ -55,7 +56,7 @@ for (const viewport of viewports) {
       const measurements = [];
 
       for (const route of routes) {
-        await page.goto(route);
+        await gotoPublicRoute(page, route);
         await page.waitForLoadState("networkidle");
         await page.evaluate(async () => {
           document.documentElement.style.scrollBehavior = "auto";
@@ -108,7 +109,7 @@ test("theme SVG is optically centered in both themes", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   for (const theme of ["light", "dark"] as const) {
     await page.addInitScript((selectedTheme) => localStorage.setItem("theme", selectedTheme), theme);
-    await page.goto("/");
+    await gotoPublicRoute(page, "/");
     const button = page.locator(".theme-toggle");
     const icon = button.locator(theme === "light" ? ".theme-toggle__icon--moon svg" : ".theme-toggle__icon--sun svg");
     const [buttonBox, iconBox] = await Promise.all([button.boundingBox(), icon.boundingBox()]);
@@ -126,7 +127,7 @@ test("page header starts align within each shell without blank eyebrow spacers",
   for (const routesInShell of [["/research/", "/projects/", "/blog/", "/about/"], ["/queue/", "/growth/"]]) {
     const starts = [];
     for (const route of routesInShell) {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       starts.push(Math.round((await page.locator("main .page-header, main .paper-hero").boundingBox())!.y));
     }
     expect(Math.max(...starts) - Math.min(...starts)).toBeLessThanOrEqual(4);
@@ -136,7 +137,7 @@ test("page header starts align within each shell without blank eyebrow spacers",
 test("header switches before navigation can wrap", async ({ page }) => {
   for (const width of [1440, 1280, 1024]) {
     await page.setViewportSize({ width, height: 800 });
-    await page.goto("/");
+    await gotoPublicRoute(page, "/");
     const nav = page.locator(".desktop-nav");
     await expect(nav).toBeVisible();
     const linkTops = await nav.locator("a").evaluateAll((links) => [...new Set(links.map((link) => Math.round(link.getBoundingClientRect().top)))]);
@@ -145,7 +146,7 @@ test("header switches before navigation can wrap", async ({ page }) => {
   }
   for (const width of [768, 480, 360]) {
     await page.setViewportSize({ width, height: 800 });
-    await page.goto("/");
+    await gotoPublicRoute(page, "/");
     await expect(page.locator(".desktop-nav")).toBeHidden();
     await expect(page.locator("[data-mobile-nav-trigger]")).toBeVisible();
   }
@@ -155,7 +156,7 @@ test("compact Hero and approved evidence media stay measurable", async ({ page }
   for (const locale of ["/", "/ko/"]) {
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
       await page.setViewportSize(viewport);
-      await page.goto(locale);
+      await gotoPublicRoute(page, locale);
       const copy = await page.locator(".identity-hero__copy").boundingBox();
       expect(copy).not.toBeNull();
       await expect(page.locator('main canvas')).toHaveCount(0);

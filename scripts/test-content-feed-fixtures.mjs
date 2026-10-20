@@ -1,6 +1,8 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { createBlogDiscoveryFixture } from "./lib/blog-discovery-fixture.mjs";
+import { createPaperDiscoveryFixture } from "./lib/paper-discovery-fixture.mjs";
 
 const contractRoot = resolve(process.env.CONTENT_FEED_CONTRACT_PATH || "../gnaroshi-content-feed");
 const valid = ["bootstrap-empty", "one-english-blog", "one-korean-blog", "translated-blog-pair", "partial-blog-pair", "translated-paper-pair", "one-paper-multiple-sessions", "one-simple-public-review", "one-rich-review", "one-implementation", "valid-graph"];
@@ -16,9 +18,15 @@ function run(command, args, fixture, expectSuccess, extraEnv = {}) {
 }
 
 run(process.execPath, ["--test", "scripts/lib/public-tone-structure.test.mjs"], "bootstrap-empty", true);
+run(process.execPath, ["--test", "scripts/lib/blog-discovery.test.mjs"], "bootstrap-empty", true);
+const discoveryFixture = createBlogDiscoveryFixture(contractRoot);
+const paperFixtures = [];
+try {
+paperFixtures.push(createPaperDiscoveryFixture(contractRoot, "korean-only"));
+paperFixtures.push(createPaperDiscoveryFixture(contractRoot, "mixed"));
 for (const fixture of valid) run(process.execPath, ["scripts/content-feed-check.mjs"], fixture, true);
 for (const fixture of invalid) run(process.execPath, ["scripts/content-feed-check.mjs"], fixture, false);
-for (const fixture of valid) {
+for (const fixture of [...valid, discoveryFixture.directory, ...paperFixtures.map((item) => item.directory)]) {
   run("npm", ["run", "build"], fixture, true);
   run(process.execPath, ["scripts/check-links.mjs"], fixture, true);
   if (fixture === "bootstrap-empty" || fixture === "one-korean-blog") {
@@ -57,6 +65,19 @@ for (const fixture of valid) {
     if (!existsSync("dist/blog/old-english-slug/index.html")) throw new Error("Renamed post alias redirect was not built");
     if (!readFileSync("dist/blog/old-english-slug/index.html", "utf8").includes('content="noindex, follow"')) throw new Error("Blog alias redirect is indexable");
   }
+  if (["one-english-blog", "one-korean-blog", "translated-blog-pair", "partial-blog-pair", discoveryFixture.directory].includes(fixture)) {
+    run("npx", ["playwright", "test", "tests/e2e/blog-discovery.spec.ts"], fixture, true, {
+      PLAYWRIGHT_USE_EXISTING_BUILD: "1",
+      BLOG_DISCOVERY_FIXTURE: fixture === discoveryFixture.directory ? "1" : ""
+    });
+  }
+  const paperFixture = paperFixtures.find((item) => item.directory === fixture);
+  if (paperFixture) {
+    run("npx", ["playwright", "test", "tests/e2e/paper-discovery.spec.ts"], fixture, true, {
+      PLAYWRIGHT_USE_EXISTING_BUILD: "1",
+      PAPER_DISCOVERY_FIXTURE: paperFixture.mode
+    });
+  }
   if (fixture === "one-paper-multiple-sessions") {
     if (!existsSync("dist/papers/old-paper-slug/index.html")) throw new Error("Renamed paper alias redirect was not built");
     if (!readFileSync("dist/papers/old-paper-slug/index.html", "utf8").includes('content="noindex, follow"')) throw new Error("Paper alias redirect is indexable");
@@ -65,7 +86,11 @@ for (const fixture of valid) {
     const html = readFileSync("dist/papers/paper-pair-english/index.html", "utf8");
     if (!html.includes('hreflang="ko"') || !html.includes("/ko/papers/paper-pair-korean/")) throw new Error("Translated paper pair is missing its real hreflang");
     if (!existsSync("dist/ko/papers/old-korean-paper-slug/index.html")) throw new Error("Korean paper alias redirect was not built");
-    run("npx", ["playwright", "test", "tests/e2e/interaction-audit.spec.ts", "--grep", "Reading method|Reading overview", "--workers", "1"], fixture, true, {
+    for (const legacy of ["formula", "exam/live"]) {
+      const redirect = readFileSync(`dist/papers/paper-pair-english/${legacy}/index.html`, "utf8");
+      if (!redirect.includes('content="noindex, follow"') || !redirect.includes("/papers/paper-pair-english/")) throw new Error(`Retired per-paper ${legacy} does not preserve its existing note route`);
+    }
+    run("npx", ["playwright", "test", "tests/e2e/interaction-audit.spec.ts", "--grep", "Paper collection excludes reading coaching|Paper legacy learning routes preserve notes", "--workers", "1"], fixture, true, {
       PLAYWRIGHT_USE_EXISTING_BUILD: "1"
     });
   }
@@ -74,9 +99,13 @@ for (const fixture of valid) {
       PAPER_NAV_POPULATED: "true",
       PLAYWRIGHT_USE_EXISTING_BUILD: "1"
     });
-    run("npx", ["playwright", "test", "tests/e2e/interaction-audit.spec.ts", "--grep", "Reading method|Reading overview|three-pass checklist", "--workers", "1"], fixture, true, {
+    run("npx", ["playwright", "test", "tests/e2e/interaction-audit.spec.ts", "--grep", "Paper collection excludes reading coaching|Paper legacy learning routes preserve notes", "--workers", "1"], fixture, true, {
       PLAYWRIGHT_USE_EXISTING_BUILD: "1"
     });
   }
 }
-console.log(`[content-feed] ${valid.length} valid website builds and ${invalid.length} rejection fixtures passed`);
+console.log(`[content-feed] ${valid.length + 1 + paperFixtures.length} valid website builds and ${invalid.length} rejection fixtures passed`);
+} finally {
+  discoveryFixture.dispose();
+  for (const fixture of paperFixtures) fixture.dispose();
+}

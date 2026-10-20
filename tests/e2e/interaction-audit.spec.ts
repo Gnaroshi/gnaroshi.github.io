@@ -1,12 +1,11 @@
+import { gotoPublicRoute } from "./compatibilityNavigation";
 import { expect, test, type Page } from "@playwright/test";
 import { qaRoutes } from "./qa-routes";
-import { getPublicCapabilities } from "../../src/utils/publicCapabilities";
-import {hasLocalePapers} from "./public-paper-fixture";
-const hasPublishedPapers = getPublicCapabilities().hasPapers;
+import {hasPublicPaperCollection} from "./public-paper-fixture";
 
 const readingCases = [
-  { locale: "en", route: "/papers/", nav: "Reading navigation", overview: "Overview", method: "Reading method" },
-  { locale: "ko", route: "/ko/papers/", nav: "논문 읽기 메뉴", overview: "개요", method: "읽는 방법" }
+  { locale: "en", route: "/papers/", nav: "Reading navigation", overview: "Overview" },
+  { locale: "ko", route: "/ko/papers/", nav: "논문 읽기 메뉴", overview: "개요" }
 ] as const;
 
 const readingViewports = [
@@ -19,86 +18,66 @@ const readingViewports = [
 
 for (const readingCase of readingCases) {
   for (const viewport of readingViewports) {
-    test(`${readingCase.locale} Reading method exposes and focuses its target at ${viewport.name}`, async ({ page }) => {
-      test.skip(!hasLocalePapers(readingCase.locale),"Requires public paper content in this locale; empty Reading is retired.");
+    test(`${readingCase.locale} Paper collection excludes reading coaching at ${viewport.name}`, async ({ page }) => {
       await page.setViewportSize(viewport);
-      await page.goto(readingCase.route);
-      const localNav = page.getByRole("navigation", { name: readingCase.nav });
-      const link = localNav.getByRole("link", { name: readingCase.method });
-      const overview = localNav.getByRole("link", { name: readingCase.overview, exact: true });
-      const target = page.locator("#reading-method");
-
-      await link.click();
-      await expect(page).toHaveURL(new RegExp(`${readingCase.route.replaceAll("/", "\\/")}#reading-method$`));
-      await expect(target).toBeFocused();
-      await expect(link).toHaveAttribute("aria-current", "location");
-      await expectExactlyOnePaperCurrent(localNav, readingCase.method);
-      await expect(overview).not.toHaveAttribute("aria-current");
-      await expectNotVisuallyCurrent(overview);
-      await expectTargetBelowStickyNavigation(page, target);
-
-      await overview.click();
-      await expect(page).toHaveURL(new RegExp(`${readingCase.route.replaceAll("/", "\\/")}$`));
-      await expectExactlyOnePaperCurrent(localNav, readingCase.overview);
-
-      await link.click();
-      await page.goBack();
-      await expect(page).toHaveURL(new RegExp(`${readingCase.route.replaceAll("/", "\\/")}$`));
-      await expectExactlyOnePaperCurrent(localNav, readingCase.overview);
-      await expect(link).not.toHaveAttribute("aria-current", "location");
-
-      await page.goForward();
-      await expect(page).toHaveURL(new RegExp("#reading-method$"));
-      await expect(target).toBeFocused();
-      await expectExactlyOnePaperCurrent(localNav, readingCase.method);
-      await expectTargetBelowStickyNavigation(page, target);
-
-      await page.goto(`${readingCase.route}#reading-method`);
-      await expect(target).toBeFocused();
-      await expectExactlyOnePaperCurrent(localNav, readingCase.method);
-      await expectTargetBelowStickyNavigation(page, target);
-
-      await page.goto(readingCase.route);
-      await link.focus();
+      await gotoPublicRoute(page, readingCase.route);
+      await expect(page.locator("#reading-method, [data-reading-checklist], .paper-method-panel, .paper-recall-trend")).toHaveCount(0);
+      if (!hasPublicPaperCollection()) {
+        await expect(page).toHaveURL(/\/research\/#human-ai-research-tools$/);
+        await expect(page.locator(".paper-lab-nav")).toHaveCount(0);
+        return;
+      }
+      const nav = page.getByRole("navigation", { name: readingCase.nav });
+      await expect(nav.getByRole("link", { name: /Reading method|읽는 방법|Practice|연습/ })).toHaveCount(0);
+      const notes = nav.locator('a[href$="#paper-notes"]');
+      await notes.focus();
       await page.keyboard.press("Enter");
-      await expect(page).toHaveURL(new RegExp("#reading-method$"));
-      await expect(target).toBeFocused();
-      await expectExactlyOnePaperCurrent(localNav, readingCase.method);
+      await expect(page).toHaveURL(/#paper-notes$/);
+      await expect(page.locator("#paper-notes")).toBeFocused();
+      await expectExactlyOnePaperCurrent(nav, await notes.innerText());
+      await expectTargetBelowStickyNavigation(page, page.locator("#paper-notes"));
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
     });
   }
 }
 
-test("Reading overview remains an operable link while its current state changes", async ({ page }) => {
-  test.skip(!hasPublishedPapers,"Requires public paper content; empty Reading is retired.");
-  for (const [route, navName, overview] of [
-    ["/papers/", "Reading navigation", "Overview"],
-    ["/ko/papers/", "논문 읽기 메뉴", "개요"]
-  ] as const) {
-    await page.goto(route);
-    if(!hasLocalePapers(route.startsWith("/ko/")?"ko":"en")) {
-      await expect(page).toHaveURL(/\/research\/#human-ai-research-tools$/);
-      await expect(page.locator(".paper-lab-nav")).toHaveCount(0);
-      continue;
+test("Paper legacy learning routes preserve notes", async ({ page }) => {
+  for (const locale of ["en", "ko"] as const) {
+    const prefix = locale === "ko" ? "/ko" : "";
+    const target = hasPublicPaperCollection() ? `${prefix}/papers/` : `${prefix}/research/#human-ai-research-tools`;
+    for (const retired of ["formula/", "questions/"]) {
+      const route = `${prefix}/${retired}`;
+      const response = await page.request.get(route);
+      expect(response.ok()).toBeTruthy();
+      expect(await response.text()).toContain('content="noindex, follow"');
+      await gotoPublicRoute(page, route);
+      await expect(page).toHaveURL(new URL(target, page.url()).toString());
+      await expect(page.locator("#reading-method, [data-reading-checklist], .paper-method-panel")).toHaveCount(0);
     }
-    const nav = page.getByRole("navigation", { name: navName });
-    const current = nav.getByRole("link", { name: overview, exact: true });
-    await expect(current).toHaveAttribute("aria-current", "page");
-    expect(await current.evaluate((element) => element.tagName)).toBe("A");
-    await expectExactlyOnePaperCurrent(nav, overview);
+  }
+});
 
-    await nav.getByRole("link", { name: /Reading method|읽는 방법/ }).click();
+test("Reading overview remains an operable link while its current state changes", async ({ page }) => {
+  for (const readingCase of readingCases) {
+    await gotoPublicRoute(page, readingCase.route);
+    if (!hasPublicPaperCollection()) continue;
+    const nav = page.getByRole("navigation", { name: readingCase.nav });
+    const current = nav.getByRole("link", { name: readingCase.overview, exact: true });
+    await expect(current).toHaveAttribute("aria-current", "page");
+    expect(await current.evaluate(element => element.tagName)).toBe("A");
+    await nav.locator('a[href$="#paper-notes"]').click();
     await expect(current).not.toHaveAttribute("aria-current");
     await expectNotVisuallyCurrent(current);
     await current.focus();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(new RegExp(`${route.replaceAll("/", "\\/")}$`));
-    await expectExactlyOnePaperCurrent(nav, overview);
+    await expect(page).toHaveURL(new URL(readingCase.route, page.url()).toString());
+    await expectExactlyOnePaperCurrent(nav, readingCase.overview);
   }
 });
 
 test("same-page links expose a real target and update the hash", async ({ page }) => {
   for (const route of qaRoutes) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     if(/^\/(?:ko\/)?papers\/?$/.test(route))await expect(page.locator(".site-header")).toHaveCount(1);
     const anchors = page.locator('main a[href*="#"]:visible');
     const hrefs = await anchors.evaluateAll((links) => links
@@ -110,7 +89,7 @@ test("same-page links expose a real target and update the hash", async ({ page }
         return target.origin === current.origin && target.pathname.replace(/\/$/, "") === current.pathname.replace(/\/$/, "");
       }));
     for (const href of [...new Set(hrefs)]) {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       const link = page.locator(`main a[href=${JSON.stringify(href)}]`).first();
       const targetId = new URL(href, "https://gnaroshi.dev").hash.slice(1);
       if (!targetId) continue;
@@ -128,11 +107,11 @@ test("every visible button has an observable action", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   const actionable = 'button:visible:not([disabled]):not([data-heading-link]):not([role="tab"][aria-selected="true"]):not([inert] button):not([aria-hidden="true"] button)';
   for (const route of qaRoutes) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     const buttons = page.locator(actionable);
     const count = await buttons.count();
     for (let index = 0; index < count; index += 1) {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       const button = page.locator(actionable).nth(index);
       const before = await controlState(page, button);
       await button.click();
@@ -151,7 +130,7 @@ test("every visible button has an observable action", async ({ page }) => {
 });
 
 test("theme, locale, and mobile-menu controls preserve observable state", async ({ page }) => {
-  await page.goto("/");
+  await gotoPublicRoute(page, "/");
   const theme = page.locator(".utility-nav [data-theme-toggle]");
   const beforeTheme = await page.locator("html").getAttribute("data-theme");
   const beforeMeta = await page.locator('meta[name="theme-color"]').getAttribute("content");
@@ -182,7 +161,7 @@ test("theme, locale, and mobile-menu controls preserve observable state", async 
 
 test("project kind and product status are visible while Studio integration stays secondary", async ({ page }) => {
   for (const route of ["/projects/", "/ko/projects/"]) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     for (const kind of ["research", "application", "infrastructure"]) {
       const projects = page.locator(`[data-project-kind="${kind}"]`);
       expect(await projects.count(), `${route}: ${kind}`).toBeGreaterThan(0);
@@ -191,7 +170,7 @@ test("project kind and product status are visible while Studio integration stays
   }
 
   for (const route of ["/projects/gnaroshi-studio/", "/ko/projects/gnaroshi-studio/"]) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     await expect(page.locator("[data-product-status]")).toBeVisible();
     const integration = page.locator("[data-studio-integration-status]");
     await expect(integration).toBeHidden();
@@ -206,43 +185,21 @@ test("project kind and product status are visible while Studio integration stays
 
 test("bootstrap Reading view does not expose controls without public evidence", async ({ page }) => {
   for (const route of ["/papers/", "/ko/papers/"]) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     await expect(page.locator(".paper-stats, .paper-heatmap, .paper-filter-panel, #new-paper-template, #ai-review-workflow, .paper-recall-trend")).toHaveCount(0);
-    if (!hasLocalePapers(route.startsWith("/ko/")?"ko":"en")) {await expect(page).toHaveURL(/\/research\/#human-ai-research-tools$/);await expect(page.locator("#reading-method")).toHaveCount(0);}
-    else await expect(page.locator("#reading-method")).toBeVisible();
+    if (!hasPublicPaperCollection()) {await expect(page).toHaveURL(/\/research\/#human-ai-research-tools$/);await expect(page.locator("#reading-method")).toHaveCount(0);}
+    else await expect(page.locator("#paper-notes")).toBeVisible();
   }
 });
 
-test("three-pass checklist is local-only, persistent, and resettable", async ({ page }) => {
-  test.skip(!hasLocalePapers("en"),"Requires public English paper content; empty Reading is retired.");
-  await page.goto("/papers/");
-  const checklist = page.locator("[data-reading-checklist]");
-  const inputs = checklist.getByRole("checkbox");
-  const reset = checklist.getByRole("button", { name: "Reset" });
-  const disclosure = page.locator(".reading-checklist-disclosure");
-  await expect(disclosure).not.toHaveAttribute("open");
-  await disclosure.locator("summary").click();
-  await expect(inputs).toHaveCount(3);
-  await expect(reset).toBeDisabled();
-  await inputs.first().check();
-  await expect(reset).toBeEnabled();
-  await page.reload();
-  await disclosure.locator("summary").click();
-  await expect(inputs.first()).toBeChecked();
-  await reset.click();
-  await expect(inputs.first()).not.toBeChecked();
-  await expect(reset).toBeDisabled();
-  await expect(inputs.first()).toBeFocused();
-  await expect(page.locator(".paper-stats, .paper-heatmap")).toHaveCount(0);
-});
 
 test("Projects section overview moves focus to each ordered section", async ({ page }) => {
   for (const route of ["/projects/", "/ko/projects/"]) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     const overview = page.locator(".projects-overview");
     await expect(overview.getByRole("link")).toHaveCount(3);
     for (const id of ["selected-projects", "featured-applications", "supporting-applications"]) {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       const link = overview.locator(`a[href$="#${id}"]`);
       await link.click();
       await expect(page).toHaveURL(new RegExp(`#${id}$`));
@@ -251,7 +208,7 @@ test("Projects section overview moves focus to each ordered section", async ({ p
       await expect(overview.locator('[aria-current="location"]')).toHaveCount(1);
     }
 
-    await page.goto(`${route}#featured-applications`);
+    await gotoPublicRoute(page, `${route}#featured-applications`);
     await expect(page.locator("#featured-applications")).toBeFocused();
     await expect(overview.locator('[aria-current="location"]')).toHaveAttribute("href", /#featured-applications$/);
     await overview.locator('a[href$="#supporting-applications"]').click();
@@ -273,7 +230,7 @@ test("Research navigation and diagram zoom preserve focus and scroll state", asy
   ]) {
     await page.setViewportSize(viewport);
     for (const route of ["/research/", "/ko/research/"]) {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       const navigation = page.locator(".research-overview");
       await expect(navigation).not.toContainText(/Question [123]|질문 [123]/);
       const link = navigation.getByRole("link").nth(1);
@@ -311,7 +268,7 @@ test("editorial section indexes track scroll with exactly one current item", asy
     { route: "/ko/projects/", navigationSelector: ".projects-overview", targetId: "supporting-applications" }
   ]) {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     if(route.includes("/research/"))await page.locator('[data-research-mode="all"]').click();
     const navigation = page.locator(navigationSelector);
     const scroller = navigation.locator("[data-in-page-scroller]");
@@ -344,7 +301,7 @@ test("editorial section indexes track scroll with exactly one current item", asy
 test("long editorial pages expose native scroll progress and stop motion on request", async ({ page }) => {
   for (const route of ["/research/", "/projects/", "/projects/gnaroshi-dev/"]) {
     await page.emulateMedia({ reducedMotion: "no-preference" });
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     await expect(page.locator("body")).toHaveAttribute("data-page-progress", "true");
     const progress = page.locator(".site-header__progress");
     const animationName = await progress.evaluate((element) => getComputedStyle(element).animationName);
@@ -358,21 +315,21 @@ test("long editorial pages expose native scroll progress and stop motion on requ
     await expect.poll(() => progress.evaluate((element) => getComputedStyle(element).animationName)).toBe("none");
   }
 
-  await page.goto("/");
+  await gotoPublicRoute(page, "/");
   await expect(page.locator("body")).not.toHaveAttribute("data-page-progress", "true");
 });
 
 test("signature motion is perceptible and remains optional", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.goto("/");
+  await gotoPublicRoute(page, "/");
 
   const heroTitle = page.locator(".identity-hero h1");
   await expect(heroTitle).toHaveCSS("animation-name", "none");
   await expect(heroTitle).toHaveCSS("transform", "none");
   await expect(page.locator(".site-main")).toHaveCSS("clip-path","none");
 
-  await page.goto("/about/");
+  await gotoPublicRoute(page, "/about/");
   const pageHeader = page.locator(".page-header");
   await expect(pageHeader).toHaveCSS("animation-name", "site-page-rail-enter");
   const railSizes = await pageHeader.evaluate((element) => {
@@ -388,22 +345,22 @@ test("signature motion is perceptible and remains optional", async ({ page }) =>
   expect(railSizes).not.toBeNull();
   expect(railSizes!.start).not.toBe(railSizes!.end);
 
-  await page.goto("/projects/");
+  await gotoPublicRoute(page, "/projects/");
   const evidence = page.locator("[data-motion-media]").first();
   await evidence.scrollIntoViewIfNeeded();
   await evidence.hover();
   await expect(evidence.locator("img")).toHaveCSS("transform", "none");
   await expect.poll(() => evidence.evaluate((element) => Number.parseFloat(getComputedStyle(element, "::after").opacity))).toBeGreaterThan(.8);
 
-  await page.goto("/research/");
+  await gotoPublicRoute(page, "/research/");
   await expect(page.locator(".site-header__progress")).toHaveCSS("height", "4px");
   await expect(page.locator(".research-theme").first()).toHaveCSS("animation-name", "none");
   await expect(page.locator(".research-theme").first()).toHaveCSS("transform", "none");
 
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
+  await gotoPublicRoute(page, "/");
   await expect(page.locator(".identity-hero h1")).toHaveCSS("animation-name", "none");
-  await page.goto("/projects/");
+  await gotoPublicRoute(page, "/projects/");
   const reducedEvidence = page.locator("[data-motion-media]").first();
   await reducedEvidence.scrollIntoViewIfNeeded();
   await reducedEvidence.hover();
@@ -413,13 +370,13 @@ test("signature motion is perceptible and remains optional", async ({ page }) =>
 
 test("Research navigation restores direct and history-managed locations", async ({ page }) => {
   for (const route of ["/research/", "/ko/research/"]) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     const navigation = page.locator(".research-overview");
     const links = navigation.getByRole("link");
     const secondHash = new URL((await links.nth(1).getAttribute("href"))!, "https://gnaroshi.dev").hash;
     const thirdHash = new URL((await links.nth(2).getAttribute("href"))!, "https://gnaroshi.dev").hash;
 
-    await page.goto(`${route}${secondHash}`);
+    await gotoPublicRoute(page, `${route}${secondHash}`);
     await expect(page.locator(secondHash)).toBeFocused();
     await expect(navigation.locator('[aria-current="location"]')).toHaveAttribute("href", new RegExp(`${escapeRegExp(secondHash)}$`));
     await links.nth(2).click();
@@ -433,7 +390,7 @@ test("Research navigation restores direct and history-managed locations", async 
 
 test("long project headings expose stable copy links with accessible feedback", async ({ page }) => {
   for (const route of ["/projects/gnaroshi-dev/", "/ko/projects/gnaroshi-dev/"]) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     const headings = page.locator(".project-detail h2[id]");
     expect(await headings.count()).toBeGreaterThan(8);
     await expect(page.locator("[data-heading-link]")).toHaveCount(await headings.count());
@@ -446,7 +403,7 @@ test("long project headings expose stable copy links with accessible feedback", 
 });
 
 test("project detail table of contents supports direct hash and history", async ({ page }) => {
-  await page.goto("/projects/gnaroshi-dev/#repository-boundaries");
+  await gotoPublicRoute(page, "/projects/gnaroshi-dev/#repository-boundaries");
   await expect(page.locator("#repository-boundaries")).toBeFocused();
   await page.locator(".project-section-nav a[href$='#current-state']").click();
   await expect(page.locator("#current-state")).toBeFocused();
@@ -458,7 +415,7 @@ test("project detail table of contents supports direct hash and history", async 
 async function expectTargetBelowStickyNavigation(page: Page, target: ReturnType<Page["locator"]>) {
   await expect(target).toBeInViewport();
   const geometry = await page.evaluate(() => {
-    const target = document.querySelector("#reading-method")?.getBoundingClientRect();
+    const target = document.querySelector("#paper-notes")?.getBoundingClientRect();
     const localNav = document.querySelector(".paper-lab-nav")?.getBoundingClientRect();
     return { targetTop: target?.top ?? -1, localNavBottom: localNav?.bottom ?? 0 };
   });

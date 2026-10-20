@@ -2,8 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import StructuredData from "../components/StructuredData.astro";
 import BlogSearch from "../components/blog/BlogSearch";
-import TagList from "../components/blog/TagList.astro";
-import SectionHeader from "../components/common/SectionHeader.astro";
+import BlogLanguages from "../components/blog/BlogLanguages.astro";
 import PageHeader from "../components/layout/PageHeader.astro";
 import PageShell from "../components/layout/PageShell.astro";
 import { evidenceGates } from "../config/evidenceGates";
@@ -11,13 +10,13 @@ import { formatLocalizedDate } from "../i18n/date";
 import { getLocalizedTagLabel } from "../i18n/tags";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
-import { getAllBlogTags, getBlogPostHref, getPublishedBlogPosts, toBlogPostPreview } from "../utils/content";
+import { getAllBlogTags, getBlogPostHref, getBlogPostLanguages, getDiscoverableBlogPosts, getPublishedBlogPostsAcrossLocales, toBlogPostPreview } from "../utils/content";
 import { profile } from "../data/profile";
 import "../styles/blog.css";
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
-const posts = await getPublishedBlogPosts(locale);
+const [posts, allPosts] = await Promise.all([getDiscoverableBlogPosts(locale), getPublishedBlogPostsAcrossLocales()]);
 const tags = getAllBlogTags(posts);
 const showDiscovery = posts.length >= evidenceGates.blog.discoveryToolsAt;
 const showArchive = posts.length >= evidenceGates.blog.archiveAt;
@@ -25,7 +24,8 @@ const searchMessages = {
   searchPosts: translate(locale, "writing.find"),
   filterByTag: translate(locale, "writing.tags"),
   all: translate(locale, "common.all"),
-  resultCount: translate(locale, "common.items", { count: "{count}" }),
+  resultOne: translate(locale, "writing.resultOne", { count: "{count}" }),
+  resultMany: translate(locale, "writing.resultMany", { count: "{count}" }),
   noMatch: translate(locale, "common.noResults")
 };
 const tagLabels = Object.fromEntries(tags.map((tag) => [tag, getLocalizedTagLabel(tag, locale)]));
@@ -38,24 +38,21 @@ const tagLabels = Object.fromEntries(tags.map((tag) => [tag, getLocalizedTagLabe
     name: locale === "ko" ? "Gnaroshi 블로그" : "Gnaroshi Blog",
     description: translate(locale, "writing.intro"),
     url: new URL(getLocalePath(locale, "/blog/"), profile.domain).toString(),
-    inLanguage: locale === "ko" ? "ko-KR" : "en-US",
+    inLanguage: [...new Set(allPosts.map((post) => post.data.locale === "ko" ? "ko-KR" : "en-US"))],
     author: { "@type": "Person", name: profile.publicAlias, url: profile.domain }
   }} />
   <PageShell class="writing-page">
-  <PageHeader title={translate(locale, "writing.title")} />
-  <section class:list={["writing-index", posts.length === 0 && "writing-index--empty"]} aria-labelledby="writing-index-heading">
-    <div class="writing-index__header"><h2 id="writing-index-heading">{translate(locale, "writing.all")}</h2>{showArchive && <a href={getLocalePath(locale, "/blog/archive/")}>{translate(locale, "writing.archive")}</a>}</div>
-    {posts.length === 0 ? <div class="app-empty-state"><p>{translate(locale, "writing.noPosts")}</p><a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "writing.emptyAction")}</a></div> : !showDiscovery ? <ol>{posts.map((post) => <li><div class="writing-index__meta"><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time>{post.data.featured && <span>{translate(locale, "writing.selected")}</span>}</div><h2><a href={getBlogPostHref(post)}>{post.data.title}</a></h2><p>{post.data.description}</p><div class="writing-index__tags">{post.data.tags.map((tag) => <span>{getLocalizedTagLabel(tag, locale)}</span>)}</div></li>)}</ol> : null}
+  <PageHeader title={translate(locale, "writing.title")}>
+    {showArchive && <a href={getLocalePath(locale, "/blog/archive/")}>{translate(locale, "writing.archive")}</a>}
+  </PageHeader>
+  <section class:list={["writing-index", posts.length === 0 && "writing-index--empty"]} aria-label={translate(locale, "writing.all")}>
+    {posts.length === 0 ? <div class="app-empty-state"><p>{translate(locale, "writing.noPosts")}</p><a class="button button--primary" href={getLocalePath(locale, "/research/")}>{translate(locale, "writing.emptyAction")}</a></div> : showDiscovery ? <BlogSearch client:visible posts={posts.map((post) => toBlogPostPreview(post, allPosts))} tags={tags} locale={locale} messages={searchMessages} tagLabels={tagLabels} /> : <ol>{posts.map((post) => <li><div class="writing-index__meta"><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time>{post.data.featured && <span>{translate(locale, "writing.selected")}</span>}<BlogLanguages languages={getBlogPostLanguages(allPosts, post)} selected={post.data.locale} title={post.data.title} locale={locale} /></div><h2 lang={post.data.locale}><a href={getBlogPostHref(post)}>{post.data.title}</a></h2><p lang={post.data.locale}>{post.data.description}</p><div class="writing-index__tags">{post.data.tags.map((tag) => <span>{getLocalizedTagLabel(tag, locale)}</span>)}</div></li>)}</ol>}
   </section>
-  {showDiscovery && <section class="section" aria-labelledby="writing-discovery-heading"><SectionHeader id="writing-discovery-heading" title={translate(locale, "writing.find")} description={translate(locale, "writing.findDescription")} /><div class="writing-discovery-layout"><BlogSearch client:visible posts={posts.map(toBlogPostPreview)} tags={tags} locale={locale} messages={searchMessages} tagLabels={tagLabels} /><aside aria-label={translate(locale, "writing.topics")}><h2>{translate(locale, "writing.topics")}</h2><TagList tags={tags} locale={locale} /></aside></div></section>}
   </PageShell>
 </BaseLayout>
 
 <style>
   .writing-index { display: grid; }
-  .writing-index__header { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: var(--space-4); border-bottom: 2px solid var(--color-text); }
-  .writing-index--empty { gap:var(--space-4); }
-  .writing-index--empty .writing-index__header { padding-bottom:0; border-bottom:0; }
   .writing-index--empty .app-empty-state { padding:var(--space-5); background:var(--color-surface-muted); box-shadow:inset 4px 0 0 var(--color-identity-teal); }
   .writing-index > ol { padding: 0; margin: 0; list-style: none; }
   .writing-index > ol > li { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: var(--space-2) var(--space-6); padding: var(--space-6) 0; border-bottom: 1px solid var(--color-border); }
@@ -63,6 +60,5 @@ const tagLabels = Object.fromEntries(tags.map((tag) => [tag, getLocalizedTagLabe
   .writing-index h2 a { color: var(--color-text); text-decoration: none; }
   .writing-index p { max-width: 66ch; color: var(--color-text-secondary); }
   .writing-index__tags { display: flex; flex-wrap: wrap; gap: var(--space-3); color: var(--color-text-muted); font-size: var(--text-xs); }
-  .writing-discovery-layout { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; gap: var(--space-6); }
-  @media (max-width: 767px) { .writing-index > ol > li { grid-template-columns: 1fr; } .writing-index__meta { grid-row: auto; display: flex; flex-wrap: wrap; } .writing-discovery-layout { grid-template-columns: 1fr; } }
+  @media (max-width: 767px) { .writing-index > ol > li { grid-template-columns: 1fr; } .writing-index__meta { grid-row: auto; display: flex; flex-wrap: wrap; } }
 </style>

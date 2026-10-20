@@ -1,12 +1,12 @@
 ---
 import { getPaperLabNavigation, isNavigationActive } from "../../i18n/routes";
-import { getPublishedPapers } from "../../utils/papers";
+import { getPaperDiscoveryEntries } from "../../utils/papers";
 import type { Locale } from "../../i18n/types";
 import { getLocalePath, translate } from "../../i18n/utils";
 
 interface Props { currentPath: string; locale: Locale }
 const { currentPath, locale } = Astro.props;
-const paperLabNavigation = (await getPublishedPapers(locale)).length > 0 ? getPaperLabNavigation(locale) : [];
+const paperLabNavigation = (await getPaperDiscoveryEntries(locale)).length > 0 ? getPaperLabNavigation(locale) : [];
 const cleanCurrentPath = currentPath.replace(/\/$/, "") || "/";
 const routeCandidates = paperLabNavigation.filter(({ href }) => {
   if (href.includes("#")) return false;

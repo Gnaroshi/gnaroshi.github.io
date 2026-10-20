@@ -1,7 +1,7 @@
 ---
 import PaperLabView from "../../../views/PaperLabView.astro";
-import { getPublishedPapers } from "../../../utils/papers";
+import { getPaperDiscoveryEntries } from "../../../utils/papers";
 import RedirectPage from "../../../components/RedirectPage.astro";
-const hasPapers=(await getPublishedPapers("ko")).length > 0;
+const hasPapers=(await getPaperDiscoveryEntries("ko")).length > 0;
 ---
 {hasPapers ? <PaperLabView locale="ko" /> : <RedirectPage target="/ko/research/#human-ai-research-tools" />}

@@ -10,3 +10,7 @@ export function hasLocalePapers(locale:"en"|"ko"):boolean {
     return parseFrontmatter(readFileSync(join(directory,file),"utf8")).frontmatter.visibility === "public";
   });
 }
+
+export function hasPublicPaperCollection(): boolean {
+  return hasLocalePapers("en") || hasLocalePapers("ko");
+}

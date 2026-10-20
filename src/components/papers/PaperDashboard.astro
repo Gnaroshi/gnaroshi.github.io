@@ -8,10 +8,8 @@ import PaperFilters from "./PaperFilters";
 import PaperScoreBadge from "./PaperScoreBadge.astro";
 import PaperScoreTrend from "./PaperScoreTrend.astro";
 import PaperStats from "./PaperStats.astro";
-import ReadingMethodPanel from "./ReadingMethodPanel.astro";
-import PaperIcon from "../icons/PaperIcon.astro";
 import type { Locale } from "../../i18n/types";
-import { getLocalePath, translate } from "../../i18n/utils";
+import { translate } from "../../i18n/utils";
 import { getIslandMessages } from "../../i18n/islands";
 
 interface Props {
@@ -34,12 +32,6 @@ const years = [...new Set(records.map((paper) => paper.year))].sort((a, b) => b 
 const countsRecord = Object.fromEntries(countsByDate.entries());
 const hasAdvancedNotebook = papers.length >= evidenceGates.paperLab.filtersAt;
 const hasReviewSummary = reviewStats.reviewedCount >= evidenceGates.paperLab.aiReviewSummaryAt;
-const recallPractice = papers.flatMap((paper) => (paper.data.oralExams ?? []).map((practice) => ({
-  ...practice,
-  paperTitle: paper.data.title,
-  href: getLocalePath(locale, `/papers/${paper.data.canonicalSlug}/exam/live/`)
-}))).sort((a, b) => a.date.localeCompare(b.date));
-const hasRecallTrend = recallPractice.length >= evidenceGates.paperLab.retrievalTrendAt;
 const islandMessages = getIslandMessages(locale);
 const messages = islandMessages.paper;
 ---
@@ -47,25 +39,13 @@ const messages = islandMessages.paper;
 <div class="paper-dashboard">
   <header class="paper-hero paper-hero--focused">
     <div class="paper-hero__copy">
-      <p class="eyebrow">{translate(locale, "nav.paperLab")}</p>
       <h1>{translate(locale, "papers.title")}</h1>
       <p class="lede">{translate(locale, "papers.subtitle")}</p>
     </div>
   </header>
 
   {papers.length === 0 ? (
-    <>
-      <section id="paper-notes" class="paper-onboarding" aria-labelledby="paper-onboarding-heading">
-        <div class="paper-onboarding__copy">
-          <PaperIcon class="empty-state-icon" />
-          <p class="eyebrow">{translate(locale, "papers.startSmall")}</p>
-          <h2 id="paper-onboarding-heading">{translate(locale, "papers.firstEnough")}</h2>
-          <p>{translate(locale, "papers.firstDescription")}</p>
-          <a class="button button--primary" href="#reading-method">{translate(locale, "papers.method")}</a>
-        </div>
-      </section>
-      <ReadingMethodPanel locale={locale} />
-    </>
+    <section id="paper-notes" class="app-empty-state"><h2>{locale === "ko" ? "공개한 논문 정리가 없습니다." : "No paper notes have been published yet."}</h2></section>
   ) : (
     <>
       {hasAdvancedNotebook ? <PaperStats stats={stats} messages={messages} /> : (
@@ -73,8 +53,6 @@ const messages = islandMessages.paper;
           {messages.publicNotes.replace("{count}", String(papers.length))}
         </p>
       )}
-
-      <ReadingMethodPanel locale={locale} />
 
       {hasReviewSummary && (
         <section id="ai-review-workflow" class="paper-review-summary" aria-labelledby="paper-review-summary-heading">
@@ -103,26 +81,7 @@ const messages = islandMessages.paper;
         </section>
       )}
 
-      {hasRecallTrend && (
-        <section class="paper-recall-trend" aria-labelledby="paper-recall-trend-heading">
-          <div>
-            <p class="eyebrow">{locale === "ko" ? "말로 설명해 보기" : "Recall practice"}</p>
-            <h2 id="paper-recall-trend-heading">{locale === "ko" ? "회상 연습의 변화" : "Recall practice over time"}</h2>
-            <p>{locale === "ko" ? "각 결과는 당시 연습에서 기억으로 설명한 범위만 보여 줍니다." : "Each result describes only what was explained from memory in that practice session."}</p>
-          </div>
-          <ol>
-            {recallPractice.map((practice) => (
-              <li>
-                <div><time datetime={practice.date}>{practice.date}</time><a href={practice.href}>{practice.paperTitle}</a></div>
-                <p>{practice.summary}</p>
-                <span>{locale === "ko" ? "연습 결과" : "Practice result"}: {practice.overallScore}/100 · {locale === "ko" ? "확신도" : "Confidence"} {practice.confidence}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
-
-      <section id="paper-notes" aria-label={messages.paperNotes}>
+      <section id="paper-notes" aria-label={messages.paperNotes} tabindex="-1">
         {hasAdvancedNotebook ? (
           <PaperFilters
             client:visible
@@ -138,9 +97,9 @@ const messages = islandMessages.paper;
           <div class="paper-note-list">
             {records.map((paper) => (
               <article>
-                <div><span>{messages.statuses[paper.status]}</span><span>{messages.depths[paper.depth]}</span></div>
-                <h2><a href={paper.href}>{paper.title}</a></h2>
-                {paper.oneLineSummary && <p>{paper.oneLineSummary}</p>}
+                <div><span>{messages.statuses[paper.status]}</span></div>
+                <h2 lang={paper.locale}><a href={paper.href}>{paper.title}</a></h2>
+                {paper.oneLineSummary && <p lang={paper.locale}>{paper.oneLineSummary}</p>}
                 <small>{paper.venue} · {paper.year}{paper.readDate ? ` · ${paper.readDate}` : ""}</small>
               </article>
             ))}
@@ -160,42 +119,8 @@ const messages = islandMessages.paper;
     width: fit-content;
   }
 
-  .paper-onboarding {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-6);
-    align-items: center;
-    padding: var(--space-6);
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
-  }
-
-  .paper-onboarding__copy {
-    display: grid;
-    max-width: 62ch;
-    gap: var(--space-3);
-  }
-  .empty-state-icon { color:var(--color-accent); }
-  .paper-onboarding__copy .button { width: fit-content; margin-top: var(--space-2); }
-
-  .paper-onboarding p:last-child,
-  .paper-workflow-notes p,
   .paper-note-list p {
     color: var(--color-text-secondary);
-  }
-
-  .paper-workflow-notes {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-5);
-    padding: var(--space-6) 0;
-  }
-
-  .paper-workflow-notes article {
-    display: grid;
-    gap: var(--space-2);
-    padding-top: var(--space-4);
-    border-top: 2px solid var(--color-border-strong);
   }
 
   .paper-compact-activity {
@@ -227,26 +152,4 @@ const messages = islandMessages.paper;
     color: var(--color-text-muted);
   }
 
-  .paper-recall-trend {
-    display: grid;
-    gap: var(--space-5);
-    padding-block: var(--space-6);
-    border-block: 1px solid var(--color-border);
-  }
-
-  .paper-recall-trend > div { display:grid; gap:var(--space-2); max-width:68ch; }
-  .paper-recall-trend > div p:last-child,
-  .paper-recall-trend li p,
-  .paper-recall-trend li span { color:var(--color-text-secondary); }
-  .paper-recall-trend ol { display:grid; gap:var(--space-4); padding:0; margin:0; list-style:none; }
-  .paper-recall-trend li { display:grid; gap:var(--space-2); padding-top:var(--space-4); border-top:1px solid var(--color-border); }
-  .paper-recall-trend li > div { display:flex; flex-wrap:wrap; gap:var(--space-3); align-items:baseline; }
-  .paper-recall-trend time,
-  .paper-recall-trend li span { font-size:var(--text-sm); }
-
-  @media (max-width: 767px) {
-    .paper-onboarding { grid-template-columns: 1fr; padding: var(--space-5); }
-    .paper-onboarding__copy .button { width: 100%; }
-    .paper-workflow-notes { grid-template-columns: 1fr; }
-  }
 </style>

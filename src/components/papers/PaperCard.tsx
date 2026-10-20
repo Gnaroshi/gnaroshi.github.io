@@ -19,7 +19,7 @@ export default function PaperCard({ paper, locale, messages }: Props) {
     <article className="paper-card">
       <div className="paper-card__main">
         <div className="paper-card__title-row">
-          <h3>
+          <h3 lang={paper.locale}>
             <a href={paper.href}>{paper.title}</a>
           </h3>
           {paper.review && paper.review.overallScore !== null && paper.review.scoreLevel ? (
@@ -32,7 +32,7 @@ export default function PaperCard({ paper, locale, messages }: Props) {
           {paper.draft ? <span className="paper-badge paper-badge--draft">{messages.draft}</span> : null}
           {paper.featured ? <span className="paper-badge paper-badge--featured">{messages.featured}</span> : null}
         </div>
-        {paper.oneLineSummary ? <p className="paper-card__summary">{paper.oneLineSummary}</p> : null}
+        {paper.oneLineSummary ? <p className="paper-card__summary" lang={paper.locale}>{paper.oneLineSummary}</p> : null}
         {paper.futureMeExcerpt ? <p className="metadata">{messages.futureMe}: {paper.futureMeExcerpt}</p> : null}
         <p className="metadata">
           {paper.authors.join(", ")} · {paper.venue} · {paper.year}
@@ -43,9 +43,6 @@ export default function PaperCard({ paper, locale, messages }: Props) {
       <div className="paper-card__badges" aria-label={messages.metadata} lang={locale}>
         <span className={`paper-badge paper-status-badge paper-status-badge--${paper.status}`}>
           {messages.statuses[paper.status]}
-        </span>
-        <span className={`paper-badge paper-depth-badge paper-depth-badge--${paper.depth}`}>
-          {messages.depths[paper.depth]}
         </span>
         <span className="paper-badge paper-badge--muted">{messages.priority}: {messages.priorities[paper.priority]}</span>
         <span className="paper-badge paper-badge--muted">{messages.difficulty} {paper.difficulty}/5</span>

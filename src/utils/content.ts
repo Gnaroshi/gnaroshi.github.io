@@ -3,7 +3,7 @@ import { getYearMonthKey } from "./date";
 import { formatLocalizedMonth } from "../i18n/date";
 import type { Locale } from "../i18n/types";
 import { getLocalePath } from "../i18n/utils";
-import { getTranslationEntry } from "./localizedContent";
+import { deduplicateTranslations, getTranslationEntry } from "./localizedContent";
 import { slugify } from "./slug";
 import { shouldBuildDetailPage, shouldShowInIndex } from "./visibility";
 import { getContentFeedRecordCount } from "./contentFeed";
@@ -18,7 +18,10 @@ export type BlogPostPreview = {
   tags: string[];
   series?: string;
   locale: Locale;
+  languages: BlogLanguage[];
 };
+
+export type BlogLanguage = { locale: Locale; href: string };
 
 export type ArchiveGroup = {
   key: string;
@@ -37,9 +40,21 @@ export async function getAllBlogPostsAcrossLocales(): Promise<BlogPost[]> {
   return sortBlogPosts(await getCollection("blog"));
 }
 
-export async function getPublishedBlogPosts(locale: Locale = "en"): Promise<BlogPost[]> {
-  const posts = await getAllBlogPosts(locale);
+export async function getPublishedBlogPostsAcrossLocales(): Promise<BlogPost[]> {
+  const posts = await getAllBlogPostsAcrossLocales();
   return posts.filter((post) => shouldShowInIndex(post.data, { includeDrafts: !import.meta.env.PROD }));
+}
+
+/** Collections discover each public work once; detail routes retain the content's own locale. */
+export async function getDiscoverableBlogPosts(preferredLocale: Locale = "en"): Promise<BlogPost[]> {
+  return sortBlogPosts(deduplicateTranslations(await getPublishedBlogPostsAcrossLocales(), preferredLocale));
+}
+
+export function getBlogPostLanguages(posts: BlogPost[], post: BlogPost): BlogLanguage[] {
+  return (["en", "ko"] as const).flatMap((locale) => {
+    const version = getTranslationEntry(posts, post, locale);
+    return version ? [{ locale, href: getBlogPostHref(version) }] : [];
+  });
 }
 
 export async function getBuildableBlogPosts(locale: Locale = "en"): Promise<BlogPost[]> {
@@ -103,7 +118,7 @@ export function getAdjacentPosts(posts: BlogPost[], currentPost: BlogPost) {
   };
 }
 
-export function toBlogPostPreview(post: BlogPost): BlogPostPreview {
+export function toBlogPostPreview(post: BlogPost, allPosts: BlogPost[] = []): BlogPostPreview {
   return {
     slug: post.data.canonicalSlug,
     title: post.data.title,
@@ -111,7 +126,8 @@ export function toBlogPostPreview(post: BlogPost): BlogPostPreview {
     pubDate: post.data.pubDate.toISOString(),
     tags: post.data.tags,
     series: post.data.series,
-    locale: post.data.locale
+    locale: post.data.locale,
+    languages: getBlogPostLanguages(allPosts, post)
   };
 }
 

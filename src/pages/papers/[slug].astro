@@ -96,23 +96,11 @@ const techArticle = {
   <article class="paper-detail">
     <Breadcrumbs items={[
       { name: "Home", href: "/" },
-      { name: "Reading", href: "/papers/" },
+      { name: "Papers", href: "/papers/" },
       { name: paper.data.title, href: canonicalPath }
     ]} />
     <StructuredData data={techArticle} />
-    {!korean && <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Korean translation unavailable</p>}
     <PaperDetailHeader paper={paper} locale="en" />
-
-    {(paper.data.oralExams?.length ?? 0) > 0 && <section class="learning-panel learning-panel--accent" aria-labelledby="oral-exam-heading">
-      <div>
-        <p class="eyebrow">Recall practice</p>
-        <h2 id="oral-exam-heading">Explain this paper aloud</h2>
-        <p>Use live voice when the optional API is available, or continue with text and manual practice.</p>
-      </div>
-      <div class="paper-card__links">
-        <a href={`/papers/${slug}/exam/live/`}>View recall-practice record</a>
-      </div>
-    </section>}
 
     {review && <PaperReviewCard review={review} />}
 

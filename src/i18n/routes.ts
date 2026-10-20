@@ -38,7 +38,6 @@ export function getPaperLabNavigation(locale: Locale, capabilities: PublicCapabi
   const path = (value: string) => getLocalePath(locale, value);
   return [
     { href: path("/papers/"), label: translate(locale, "paperLab.overview") },
-    { href: path("/papers/#reading-method"), label: translate(locale, "papers.method") },
     ...(capabilities.hasPapers
       ? [{ href: path("/papers/#paper-notes"), label: translate(locale, "paperLab.paperNotes") }]
       : []),
@@ -47,9 +46,6 @@ export function getPaperLabNavigation(locale: Locale, capabilities: PublicCapabi
           { href: path("/reviews/"), label: translate(locale, "paperLab.aiReview") },
           { href: path("/reviews/due/"), label: translate(locale, "paperLab.reviewsDue") }
         ]
-      : []),
-    ...(capabilities.hasOralExams || capabilities.hasFormulaRecall
-      ? [{ href: capabilities.hasFormulaRecall ? path("/formula/") : path("/papers/#paper-notes"), label: translate(locale, "paperLab.practice") }]
       : []),
     ...(capabilities.hasImplementations
       ? [{ href: path("/implementations/"), label: translate(locale, "paperLab.build") }]

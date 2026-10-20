@@ -1,3 +1,4 @@
+import { gotoPublicRoute } from "./compatibilityNavigation";
 import { expect, test } from "@playwright/test";
 
 const routes = ["/ko/", "/ko/research/", "/ko/projects/", "/ko/blog/", "/ko/papers/", "/ko/growth/"];
@@ -11,7 +12,7 @@ for (const viewport of viewports) {
   test(`Korean core pages do not overflow at ${viewport.width}px`, async ({ page }) => {
     await page.setViewportSize(viewport);
     for (const route of routes) {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       await expect(page.locator(".site-header")).toHaveCount(1);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, `${route} overflows horizontally`).toBeLessThanOrEqual(1);
@@ -22,7 +23,7 @@ for (const viewport of viewports) {
 
 test("Korean mobile navigation fits in the menu", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/ko/");
+  await gotoPublicRoute(page, "/ko/");
   const trigger = page.getByRole("button", { name: "메뉴" });
   await trigger.click();
   const panel = page.locator("[data-mobile-nav-panel]");
@@ -34,7 +35,7 @@ test("Korean mobile navigation fits in the menu", async ({ page }) => {
 
 test("Korean growth empty state keeps a readable text column on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/ko/growth/");
+  await gotoPublicRoute(page, "/ko/growth/");
   const width = await page.locator(".app-empty-state").evaluate((item) => item.getBoundingClientRect().width);
   expect(width).toBeGreaterThan(240);
 });

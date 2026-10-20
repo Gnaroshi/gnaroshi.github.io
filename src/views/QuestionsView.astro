@@ -1,17 +1,11 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import ReadingNextAction from "../components/papers/ReadingNextAction.astro";
+import RedirectPage from "../components/RedirectPage.astro";
 import type { Locale } from "../i18n/types";
-import { getLocalePath, translate } from "../i18n/utils";
-import { getActiveQuestions } from "../utils/questionBank";
-import "../styles/application.css";
-import "../styles/papers.css";
+import { getLocalePath } from "../i18n/utils";
+import { getPaperDiscoveryEntries } from "../utils/papers";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
-const questions = getActiveQuestions().filter((question) => (question as { locale?: Locale }).locale ? (question as { locale?: Locale }).locale === locale : locale === "en");
+const hasPapers = (await getPaperDiscoveryEntries(locale)).length > 0;
+const target = getLocalePath(locale, hasPapers ? "/papers/" : "/research/#human-ai-research-tools");
 ---
-<BaseLayout locale={locale} title={translate(locale, "paperLab.questionBank")} description={translate(locale, "questions.subtitle")} width="dashboard" mode="application">
-  <div class="paper-dashboard"><header class="paper-hero"><div class="paper-hero__copy"><h1>{translate(locale, "questions.title")}</h1>{questions.length > 0 && <p class="lede">{translate(locale, "questions.subtitle")}</p>}</div></header>
-    {questions.length > 0 ? <section class="paper-note-list" aria-label={translate(locale, "paperLab.questionBank")}>{questions.map((question) => <article><p class="eyebrow">{question.type}</p><h2><a href={getLocalePath(locale, `/questions/${question.id}/`)}>{question.question}</a></h2><p class="metadata">{locale === "ko" ? "난이도" : "Difficulty"} {question.difficulty}/5</p></article>)}</section> : <section class="app-empty-state" aria-labelledby="questions-empty"><h2 id="questions-empty">{translate(locale, "questions.empty")}</h2><ReadingNextAction locale={locale} /></section>}
-  </div>
-</BaseLayout>
+<RedirectPage target={target} />

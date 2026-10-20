@@ -25,11 +25,14 @@ export function getTranslationEntry<T extends { data: LocalizedContentData }>(
   );
 }
 
-export function deduplicateTranslations<T extends { data: LocalizedContentData }>(entries: T[]): T[] {
+export function deduplicateTranslations<T extends { data: LocalizedContentData }>(
+  entries: T[],
+  preferredLocale: Locale = "en"
+): T[] {
   const byKey = new Map<string, T>();
   for (const entry of entries) {
     const current = byKey.get(entry.data.translationKey);
-    if (!current || (current.data.locale !== "en" && entry.data.locale === "en")) {
+    if (!current || (current.data.locale !== preferredLocale && entry.data.locale === preferredLocale)) {
       byKey.set(entry.data.translationKey, entry);
     }
   }

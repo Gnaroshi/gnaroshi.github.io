@@ -8,6 +8,7 @@ type PostPreview = {
   tags: string[];
   series?: string;
   locale: "en" | "ko";
+  languages: { locale: "en" | "ko"; href: string }[];
 };
 
 type Props = {
@@ -18,7 +19,8 @@ type Props = {
     searchPosts: string;
     filterByTag: string;
     all: string;
-    resultCount: string;
+    resultOne: string;
+    resultMany: string;
     noMatch: string;
   };
   tagLabels: Record<string, string>;
@@ -56,19 +58,21 @@ export default function BlogSearch({ posts, tags, locale, messages, tagLabels }:
   return (
     <div className="blog-search">
       <div className="blog-search__controls">
-        <label>
-          <span>{messages.searchPosts}</span>
+        <div className="blog-search__field">
+          <div className="blog-search__field-heading"><label htmlFor="blog-search-query">{messages.searchPosts}</label>{(query.trim() || activeTag) && <p className="metadata" role="status">{(filteredPosts.length === 1 ? messages.resultOne : messages.resultMany).replace("{count}", String(filteredPosts.length))}</p>}</div>
           <input
+            id="blog-search-query"
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
-        </label>
+        </div>
 
-        <div className="blog-search__tags" aria-label={messages.filterByTag}>
+        <div className="blog-search__tags" role="group" aria-label={messages.filterByTag}>
           <button
             type="button"
             className={!activeTag ? "is-active" : ""}
+            aria-pressed={!activeTag}
             onClick={() => setActiveTag("")}
           >
             {messages.all}
@@ -78,6 +82,7 @@ export default function BlogSearch({ posts, tags, locale, messages, tagLabels }:
               key={tag}
               type="button"
               className={activeTag === tag ? "is-active" : ""}
+              aria-pressed={activeTag === tag}
               onClick={() => setActiveTag(tag)}
             >
               {tagLabels[tag] ?? tag}
@@ -86,17 +91,21 @@ export default function BlogSearch({ posts, tags, locale, messages, tagLabels }:
         </div>
       </div>
 
-      <div className="blog-search__results" aria-live="polite">
-        <p className="metadata">{messages.resultCount.replace("{count}", String(filteredPosts.length))}</p>
+      <div className="blog-search__results">
         {filteredPosts.length > 0 ? (
           <ul className="list">
             {filteredPosts.map((post) => (
-              <li className="list-item" key={post.slug}>
-                <h3><a href={`${locale === "ko" ? "/ko" : ""}/blog/${post.slug}/`}>{post.title}</a></h3>
-                <p>{post.description}</p>
-                <p className="metadata">
+              <li className="list-item" key={`${post.locale}/${post.slug}`}>
+                <h2 lang={post.locale}><a href={`${post.locale === "ko" ? "/ko" : ""}/blog/${post.slug}/`}>{post.title}</a></h2>
+                <p lang={post.locale}>{post.description}</p>
+                <div className="blog-card__metadata"><p className="metadata">
                   {formatDate(post.pubDate, locale)}{post.tags.length > 0 && ` · ${post.tags.map((tag) => tagLabels[tag] ?? tag).join(", ")}`}
                 </p>
+                {post.languages.length > 1 && <span className="blog-languages" role="group" aria-label={locale === "ko" ? `${post.title} 언어 선택` : `Languages for ${post.title}`}>
+                  {post.languages.map((version) => version.locale === post.locale
+                    ? <span key={version.locale} lang={version.locale} aria-label={locale === "ko" ? `${version.locale === "ko" ? "한국어" : "English"}로 표시 중` : `Shown in ${version.locale === "ko" ? "Korean" : "English"}`}>{version.locale === "ko" ? "한국어" : "EN"}</span>
+                    : <a key={version.locale} href={version.href} lang={version.locale} hrefLang={version.locale}>{version.locale === "ko" ? "한국어" : "EN"}</a>)}
+                </span>}</div>
               </li>
             ))}
           </ul>
