@@ -212,6 +212,6 @@ export const ko = {
   "links.body": "코드와 공개한 글을 볼 수 있는 곳입니다.",
   "notFound.eyebrow": "404 · 찾을 수 없음",
   "notFound.title": "페이지를 찾을 수 없습니다",
-  "notFound.body": "주소가 바뀌었거나 페이지가 더 이상 없을 수 있습니다. 홈, 프로젝트, 논문 읽기에서 계속 둘러볼 수 있습니다.",
+  "notFound.body": "주소가 바뀌었거나 페이지가 더 이상 없을 수 있습니다. Home, Projects, Papers에서 계속 둘러볼 수 있습니다.",
   "notFound.links": "둘러볼 곳"
 } satisfies Dictionary;

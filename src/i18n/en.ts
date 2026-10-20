@@ -210,7 +210,7 @@ export const en = {
   "links.body": "Places where you can find my code and published notes.",
   "notFound.eyebrow": "404 · Not found",
   "notFound.title": "Page not found",
-  "notFound.body": "The address may have changed or the page may no longer exist. Continue with Home, Projects, or Reading.",
+  "notFound.body": "The address may have changed or the page may no longer exist. Continue with Home, Projects, or Papers.",
   "notFound.links": "Useful links"
 } as const;
 

@@ -42,7 +42,6 @@ for(const width of [1843,1440,1024,768,430,390,360,320])for(const locale of ["en
       await expect(root).toHaveAttribute("data-selected-topic",String(index));
       const active=root.locator('[data-research-figure]:not([aria-hidden])');
       await active.locator("picture > img").first().evaluate(async(image:HTMLImageElement)=>{image.loading="eager";await image.decode();});
-      await page.waitForTimeout(500);
       await page.evaluate(()=>scrollTo({top:0,behavior:"instant"}));
       await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(0);
       expect(await root.locator("[data-research-viewport]").evaluate(element=>element.scrollLeft)).toBe(0);
@@ -51,6 +50,14 @@ for(const width of [1843,1440,1024,768,430,390,360,320])for(const locale of ["en
       const image=(await active.locator("picture > img").first().boundingBox())!;
       const viewport=(await root.locator("[data-research-viewport]").boundingBox())!;
       expect(image.x).toBeGreaterThanOrEqual(viewport.x-1);expect(image.x+image.width).toBeLessThanOrEqual(viewport.x+viewport.width+1);
+      // Decoding does not prove that a moved gallery layer reached the compositor.
+      // Inspect the actual captured pixels before writing the final evidence image.
+      await expect.poll(async()=>{
+        const frame=await page.screenshot({fullPage:true});
+        const current=(await active.locator("picture > img").first().boundingBox())!;
+        const crop=await sharp(frame).extract({left:Math.round(current.x)+4,top:Math.round(current.y)+4,width:Math.floor(current.width)-8,height:Math.floor(current.height)-8}).removeAlpha().stats();
+        return Math.max(...crop.channels.slice(0,3).map(channel=>channel.stdev));
+      },{timeout:5000,intervals:[100,250,500],message:`Research ${index} must reach a visibly painted frame`}).toBeGreaterThan(20);
       const painted=await page.screenshot({path:`${directory}/${stem}-research-${index}.png`,fullPage:true});
       const crop=await sharp(painted).extract({left:Math.round(image.x)+4,top:Math.round(image.y)+4,width:Math.floor(image.width)-8,height:Math.floor(image.height)-8}).removeAlpha().toBuffer();
       const pixels=await sharp(crop).stats();
