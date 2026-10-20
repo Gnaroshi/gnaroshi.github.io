@@ -5,19 +5,21 @@ import SectionHeader from "../components/common/SectionHeader.astro";
 import { getLocalizedTagLabel } from "../i18n/tags";
 import type { Locale } from "../i18n/types";
 import { translate } from "../i18n/utils";
-import { getPublishedBlogPosts, type BlogPost } from "../utils/content";
+import { getDiscoverableBlogPosts, getPublishedBlogPostsAcrossLocales, type BlogPost } from "../utils/content";
 import { slugify } from "../utils/slug";
 import "../styles/blog.css";
 
 interface Props { locale: Locale; tag: string; posts: BlogPost[] }
 const { locale, tag, posts } = Astro.props;
 const label = getLocalizedTagLabel(tag, locale);
+const tagSlug = slugify(tag);
 const otherLocale = locale === "en" ? "ko" : "en";
-const counterpartExists = (await getPublishedBlogPosts(otherLocale)).some((post) => post.data.tags.some((value) => slugify(value) === tag));
+const counterpartExists = (await getDiscoverableBlogPosts(otherLocale)).some((post) => post.data.tags.some((value) => slugify(value) === tagSlug));
+const allPosts = await getPublishedBlogPostsAcrossLocales();
 const alternateUrls = {
-  en: locale === "en" ? `/blog/tags/${tag}/` : counterpartExists ? `/blog/tags/${tag}/` : "/blog/",
-  ko: locale === "ko" ? `/ko/blog/tags/${tag}/` : counterpartExists ? `/ko/blog/tags/${tag}/` : "/ko/blog/",
-  xDefault: locale === "en" || counterpartExists ? `/blog/tags/${tag}/` : "/blog/",
+  en: locale === "en" ? `/blog/tags/${tagSlug}/` : counterpartExists ? `/blog/tags/${tagSlug}/` : "/blog/",
+  ko: locale === "ko" ? `/ko/blog/tags/${tagSlug}/` : counterpartExists ? `/ko/blog/tags/${tagSlug}/` : "/ko/blog/",
+  xDefault: locale === "en" || counterpartExists ? `/blog/tags/${tagSlug}/` : "/blog/",
   translationAvailable: counterpartExists
 };
 ---
@@ -30,6 +32,6 @@ const alternateUrls = {
   </header>
   <section class="section" aria-labelledby="tag-posts-heading">
     <SectionHeader id="tag-posts-heading" title={translate(locale, "writing.all")} description={translate(locale, "writing.findDescription")} />
-    <div class="card-list">{posts.map((post) => <BlogCard post={post} locale={locale} />)}</div>
+    <div class="card-list">{posts.map((post) => <BlogCard post={post} locale={locale} allPosts={allPosts} />)}</div>
   </section>
 </BaseLayout>

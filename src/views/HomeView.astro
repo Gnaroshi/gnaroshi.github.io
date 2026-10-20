@@ -8,8 +8,8 @@ import { getLocalizedData } from "../data/locales";
 import { formatLocalizedDate } from "../i18n/date";
 import type { Locale } from "../i18n/types";
 import { getLocalePath, translate } from "../i18n/utils";
-import { getBlogPostHref, getPublishedBlogPosts } from "../utils/content";
-import { getPublishedPapers } from "../utils/papers";
+import { getBlogPostHref, getDiscoverableBlogPosts } from "../utils/content";
+import { getPaperDiscoveryEntries } from "../utils/papers";
 import { getCurrentFocusFreshness } from "../utils/currentFocus";
 import { profile } from "../data/profile";
 import "../styles/home.css";
@@ -17,7 +17,7 @@ import "../styles/home.css";
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const data = getLocalizedData(locale);
-const [papers, posts] = await Promise.all([getPublishedPapers(locale), getPublishedBlogPosts(locale)]);
+const [papers, posts] = await Promise.all([getPaperDiscoveryEntries(locale), getDiscoverableBlogPosts(locale)]);
 const recentPosts = posts.filter((post) => post.data.contentStage === "substantive" && post.data.category !== "build-note").slice(0, 3);
 const recentPapers = papers.filter((paper) => paper.data.contentStage === "substantive").slice(0, 3);
 const focusFreshness = getCurrentFocusFreshness(data.now.lastUpdated);
@@ -68,8 +68,8 @@ if (!focusFreshness.isFresh && import.meta.env.DEV) {
     {(recentPosts.length > 0 || recentPapers.length > 0) && <Section class="home-notes" labelledby="latest-notes-heading" contentGroup>
       <div class="home-section-heading"><h2 id="latest-notes-heading">{translate(locale, "home.writingAndPapers")}</h2></div>
       <div class="home-notes__columns">
-        {recentPosts.length > 0 && <div><div class="home-list-heading"><h3>{translate(locale, "nav.writing")}</h3><a href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.allWriting")}</a></div><ol class="editorial-record-list">{recentPosts.map((post) => <li><a href={getBlogPostHref(post)}>{post.data.title}</a><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time></li>)}</ol></div>}
-        {recentPapers.length > 0 && <div><div class="home-list-heading"><h3>{translate(locale, "home.paperNotes")}</h3><a href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div><ol class="editorial-record-list">{recentPapers.map((paper) => <li><a href={getLocalePath(locale, `/papers/${paper.data.canonicalSlug}/`)}>{paper.data.title}</a><span>{translate(locale, `status.${paper.data.status}`)}</span></li>)}</ol></div>}
+        {recentPosts.length > 0 && <div><div class="home-list-heading"><h3>{translate(locale, "nav.writing")}</h3><a href={getLocalePath(locale, "/blog/")}>{translate(locale, "home.allWriting")}</a></div><ol class="editorial-record-list">{recentPosts.map((post) => <li><a lang={post.data.locale} href={getBlogPostHref(post)}>{post.data.title}</a><time datetime={post.data.pubDate.toISOString()}>{formatLocalizedDate(post.data.pubDate, locale)}</time></li>)}</ol></div>}
+        {recentPapers.length > 0 && <div><div class="home-list-heading"><h3>{translate(locale, "home.paperNotes")}</h3><a href={getLocalePath(locale, "/papers/")}>{translate(locale, "nav.paperLab")}</a></div><ol class="editorial-record-list">{recentPapers.map((paper) => <li><a lang={paper.data.locale} href={getLocalePath(paper.data.locale, `/papers/${paper.data.canonicalSlug}/`)}>{paper.data.title}</a><span>{translate(locale, `status.${paper.data.status}`)}</span></li>)}</ol></div>}
       </div>
     </Section>}
 

@@ -21,12 +21,12 @@ const graph = {
 const fixtures: Array<{ name: string; evidence: PublicCapabilityEvidence; localCount: number; writing: boolean; growth: boolean }> = [
   { name: "bootstrap empty", evidence: emptyEvidence, localCount: 0, writing: false, growth: false },
   { name: "writing only", evidence: { ...emptyEvidence, counts: { blogPosts: 1 } }, localCount: 0, writing: true, growth: false },
-  { name: "one paper", evidence: { ...emptyEvidence, counts: { papers: 1 } }, localCount: 3, writing: false, growth: false },
-  { name: "paper and review", evidence: { ...emptyEvidence, counts: { papers: 1, reviews: 1 } }, localCount: 5, writing: false, growth: false },
-  { name: "paper and oral exam", evidence: { ...emptyEvidence, counts: { papers: 1, oralExams: 1 } }, localCount: 4, writing: false, growth: false },
-  { name: "paper and implementation", evidence: { ...emptyEvidence, counts: { papers: 1, implementations: 1 } }, localCount: 4, writing: false, growth: false },
-  { name: "eligible growth", evidence: { ...emptyEvidence, counts: { papers: 1, readingSessions: 4 }, metricEligible: true, growthScore: 61 }, localCount: 4, writing: false, growth: true },
-  { name: "eligible graph", evidence: { ...emptyEvidence, counts: { papers: 1, graphNodes: 2, graphEdges: 1 }, graphEligible: true, graph }, localCount: 4, writing: false, growth: false },
+  { name: "one paper", evidence: { ...emptyEvidence, counts: { papers: 1 } }, localCount: 2, writing: false, growth: false },
+  { name: "paper and review", evidence: { ...emptyEvidence, counts: { papers: 1, reviews: 1 } }, localCount: 4, writing: false, growth: false },
+  { name: "paper and oral exam", evidence: { ...emptyEvidence, counts: { papers: 1, oralExams: 1 } }, localCount: 2, writing: false, growth: false },
+  { name: "paper and implementation", evidence: { ...emptyEvidence, counts: { papers: 1, implementations: 1 } }, localCount: 3, writing: false, growth: false },
+  { name: "eligible growth", evidence: { ...emptyEvidence, counts: { papers: 1, readingSessions: 4 }, metricEligible: true, growthScore: 61 }, localCount: 3, writing: false, growth: true },
+  { name: "eligible graph", evidence: { ...emptyEvidence, counts: { papers: 1, graphNodes: 2, graphEdges: 1 }, graphEligible: true, graph }, localCount: 3, writing: false, growth: false },
   {
     name: "full public system",
     evidence: {
@@ -37,7 +37,7 @@ const fixtures: Array<{ name: string; evidence: PublicCapabilityEvidence; localC
       growthScore: 72,
       graph
     },
-    localCount: 8,
+    localCount: 6,
     writing: true,
     growth: true
   }

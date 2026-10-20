@@ -1,8 +1,8 @@
 ---
 import BlogTagView from "../../../../views/BlogTagView.astro";
-import { getAllBlogTags, getPostsByTag, getPublishedBlogPosts, type BlogPost } from "../../../../utils/content";
+import { getAllBlogTags, getPostsByTag, getDiscoverableBlogPosts, type BlogPost } from "../../../../utils/content";
 import { slugify } from "../../../../utils/slug";
-export async function getStaticPaths() { const posts = await getPublishedBlogPosts("ko"); return getAllBlogTags(posts).map((tag) => ({ params: { tag: slugify(tag) }, props: { tag, posts: getPostsByTag(posts, slugify(tag)) } })); }
+export async function getStaticPaths() { const posts = await getDiscoverableBlogPosts("ko"); return getAllBlogTags(posts).map((tag) => ({ params: { tag: slugify(tag) }, props: { tag, posts: getPostsByTag(posts, slugify(tag)) } })); }
 interface Props { tag: string; posts: BlogPost[] }
 const { tag, posts } = Astro.props;
 ---

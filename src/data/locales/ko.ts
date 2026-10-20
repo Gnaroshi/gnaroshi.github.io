@@ -34,8 +34,8 @@ export const koCopy = {
       "paper-lab": {
         title: "논문 기록",
         role: "비공개 논문 작업 공간",
-        description: "논문 노트와 읽기 세션, 복습과 말로 설명해 본 기록을 보관합니다.",
-        responsibilities: ["논문 노트", "읽기 세션", "노트 검토", "말로 설명해 본 원본", "구현 시도"],
+        description: "논문 메모와 읽기 세션, 저장된 검토 기록을 보관합니다.",
+        responsibilities: ["논문 메모", "읽기 세션", "저장된 검토", "구현 시도"],
         exclusions: ["웹사이트 UI", "글 초안", "공개 배포"]
       },
       writing: {
@@ -55,8 +55,8 @@ export const koCopy = {
       api: {
         title: "AI 기능",
         role: "선택형 AI 요청 서비스",
-        description: "논문 노트 검토와 말로 설명해 보는 연습에 필요한 AI 요청을 선택적으로 처리합니다.",
-        responsibilities: ["AI 요청 처리", "세션 생성", "점수 계산", "요청 제한", "CORS"],
+        description: "사용자가 요청한 논문 메모 검토를 선택적으로 처리합니다.",
+        responsibilities: ["AI 요청 처리", "메모 검토 응답", "요청 제한", "CORS"],
         exclusions: ["원본 콘텐츠", "웹사이트 렌더링", "발행"]
       },
       "content-feed": {

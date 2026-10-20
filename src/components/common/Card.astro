@@ -5,20 +5,21 @@ interface Props {
   href?: string;
   eyebrow?: string;
   description?: string;
+  contentLang?: string;
 }
 
-const { id, title, href, eyebrow, description } = Astro.props;
+const { id, title, href, eyebrow, description, contentLang } = Astro.props;
 const TitleTag = href ? "a" : "span";
 ---
 
 <article id={id} class="card">
   {eyebrow && <p class="card__eyebrow">{eyebrow}</p>}
   {title && (
-    <h3 class="card__title">
+    <h3 class="card__title" lang={contentLang}>
       <TitleTag href={href}>{title}</TitleTag>
     </h3>
   )}
-  {description && <p class="card__description">{description}</p>}
+  {description && <p class="card__description" lang={contentLang}>{description}</p>}
   <slot />
 </article>
 

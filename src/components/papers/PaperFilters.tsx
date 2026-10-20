@@ -15,15 +15,7 @@ interface Props {
   messages: IslandMessages["paper"];
 }
 
-const statuses: Array<PaperRecord["status"]> = ["planned", "pass1", "pass2", "pass3", "read", "implemented", "abandoned"];
-const depths: Array<PaperRecord["depth"]> = ["skim", "understand", "deep", "reproduce", "implement"];
-const depthRank: Record<PaperRecord["depth"], number> = {
-  skim: 1,
-  understand: 2,
-  deep: 3,
-  reproduce: 4,
-  implement: 5
-};
+const statuses = ["planned", "reading", "read", "implemented", "abandoned"] as const;
 
 function includesSearch(paper: PaperRecord, query: string): boolean {
   if (!query) return true;
@@ -50,7 +42,6 @@ function sortPapers(papers: PaperRecord[], sortBy: string): PaperRecord[] {
     if (sortBy === "title") return a.title.localeCompare(b.title);
     if (sortBy === "difficulty") return b.difficulty - a.difficulty || a.title.localeCompare(b.title);
     if (sortBy === "reading-time") return (b.readingTimeMinutes ?? 0) - (a.readingTimeMinutes ?? 0) || a.title.localeCompare(b.title);
-    if (sortBy === "depth") return depthRank[b.depth] - depthRank[a.depth] || a.title.localeCompare(b.title);
 
     const aDate = a.readDate ?? "0000-00-00";
     const bDate = b.readDate ?? "0000-00-00";
@@ -61,7 +52,6 @@ function sortPapers(papers: PaperRecord[], sortBy: string): PaperRecord[] {
 export default function PaperFilters({ papers, countsByDate, tags, years, today, locale, messages }: Props) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");
-  const [depth, setDepth] = useState("");
   const [tag, setTag] = useState("");
   const [year, setYear] = useState("");
   const [difficulty, setDifficulty] = useState("");
@@ -73,8 +63,7 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today,
   const filteredPapers = useMemo(() => {
     const filtered = papers.filter((paper) => {
       if (!includesSearch(paper, normalizedQuery)) return false;
-      if (status && paper.status !== status) return false;
-      if (depth && paper.depth !== depth) return false;
+      if (status === "reading" ? !["pass1", "pass2", "pass3"].includes(paper.status) : status && paper.status !== status) return false;
       if (tag && !paper.tags.map((paperTag) => paperTag.toLowerCase()).includes(tag)) return false;
       if (year && String(paper.year) !== year) return false;
       if (difficulty && String(paper.difficulty) !== difficulty) return false;
@@ -84,16 +73,15 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today,
     });
 
     return sortPapers(filtered, sortBy);
-  }, [papers, normalizedQuery, status, depth, tag, year, difficulty, featuredOnly, selectedDate, sortBy]);
+  }, [papers, normalizedQuery, status, tag, year, difficulty, featuredOnly, selectedDate, sortBy]);
 
   const hasFilters = Boolean(
-    normalizedQuery || status || depth || tag || year || difficulty || featuredOnly || selectedDate || sortBy !== "latest"
+    normalizedQuery || status || tag || year || difficulty || featuredOnly || selectedDate || sortBy !== "latest"
   );
 
   function resetFilters() {
     setQuery("");
     setStatus("");
-    setDepth("");
     setTag("");
     setYear("");
     setDifficulty("");
@@ -135,19 +123,7 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today,
               <option value="">{messages.allStatuses}</option>
               {statuses.map((item) => (
                 <option value={item} key={item}>
-                  {messages.statuses[item]}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="paper-field">
-            <span>{messages.depth}</span>
-            <select value={depth} onChange={(event) => setDepth(event.target.value)}>
-              <option value="">{messages.allDepths}</option>
-              {depths.map((item) => (
-                <option value={item} key={item}>
-                  {messages.depths[item]}
+                  {messages.statuses[item === "reading" ? "pass1" : item]}
                 </option>
               ))}
             </select>
@@ -196,7 +172,6 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today,
               <option value="title">{messages.title}</option>
               <option value="difficulty">{messages.difficulty}</option>
               <option value="reading-time">{messages.readingTime}</option>
-              <option value="depth">{messages.depth}</option>
             </select>
           </label>
 
@@ -232,7 +207,7 @@ export default function PaperFilters({ papers, countsByDate, tags, years, today,
         ) : filteredPapers.length > 0 ? (
           <div className="paper-card-list">
             {filteredPapers.map((paper) => (
-              <PaperCard paper={paper} key={paper.id} locale={locale} messages={messages} />
+              <PaperCard paper={paper} key={paper.href} locale={locale} messages={messages} />
             ))}
           </div>
         ) : (

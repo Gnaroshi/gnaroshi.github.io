@@ -1,8 +1,9 @@
+import { gotoPublicRoute } from "./compatibilityNavigation";
 import { expect, test } from "@playwright/test";
 
 test.describe("approved public media", () => {
   test("primary site identity keeps the full mascot face", async ({ page }) => {
-    await page.goto("/");
+    await gotoPublicRoute(page, "/");
     const mark = page.locator(".site-header__mark");
     await expect(mark).toHaveAttribute("src", "/media/identity/gnaroshi-site-mark-64.png");
     expect(await mark.evaluate((image: HTMLImageElement) => ({
@@ -37,7 +38,7 @@ test.describe("approved public media", () => {
 
   for (const route of ["/", "/ko/"]) {
     test(`${route} renders a compact introduction and real project evidence`, async ({ page }) => {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       await expect(page.locator('main canvas')).toHaveCount(0);
       await expect(page.locator(".identity-hero picture img")).toHaveCount(0);
       await expect(page.locator(".home-desk picture img")).toHaveCount(3);
@@ -57,7 +58,7 @@ test.describe("approved public media", () => {
 
   for (const [route, localeSuffix] of [["/research/", "-en"], ["/ko/research/", "-ko"]] as const) {
     test(`${route} renders one concrete scene and two locale-matched diagrams`, async ({ page }) => {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       await expect(page.locator(".research-theme__media .evidence-inspector picture > img")).toHaveCount(3);
       await expect(page.locator('.evidence-inspector picture source[srcset*="research-vla-task"]')).toHaveCount(2);
       await expect(page.locator(`.evidence-inspector picture source[srcset*="efficient-execution${localeSuffix}"]`)).toHaveCount(2);
@@ -72,7 +73,7 @@ test.describe("approved public media", () => {
 
   for (const route of ["/projects/", "/ko/projects/"]) {
     test(`${route} renders selected evidence and approved featured-app screenshots`, async ({ page }) => {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       await expect(page.locator(".selected-project picture img")).toHaveCount(2);
       await expect(page.locator(".featured-app picture img")).toHaveCount(3);
       await expect(page.locator(".featured-app template")).toHaveCount(6);
@@ -86,21 +87,21 @@ test.describe("approved public media", () => {
 
   for (const route of ["/projects/gnaroshi-vla/", "/projects/gnaroshi-dev/", "/ko/projects/gnaroshi-vla/", "/ko/projects/gnaroshi-dev/"]) {
     test(`${route} renders project-specific evidence`, async ({ page }) => {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       await expect(page.locator(".primary-evidence picture img")).toHaveCount(1);
     });
   }
 
   test("empty evidence-gated routes do not gain decorative media", async ({ page }) => {
-    for (const route of ["/blog/", "/growth/", "/queue/", "/reviews/", "/formula/", "/questions/", "/implementations/", "/graph/", "/week/"]) {
-      await page.goto(route);
+    for (const route of ["/blog/", "/growth/", "/queue/", "/reviews/", "/implementations/", "/graph/", "/week/"]) {
+      await gotoPublicRoute(page, route);
       await expect(page.locator("main picture, main img"), route).toHaveCount(0);
     }
   });
 
   test("aria-hidden containers never retain meaningful image alternatives", async ({ page }) => {
     for (const route of ["/", "/research/", "/projects/", "/ko/", "/ko/research/", "/ko/projects/"]) {
-      await page.goto(route);
+      await gotoPublicRoute(page, route);
       const contradictions = await page.locator('[aria-hidden="true"] img').evaluateAll((images) => images.filter((image) => Boolean(image.getAttribute("alt")?.trim())).length);
       expect(contradictions, route).toBe(0);
     }

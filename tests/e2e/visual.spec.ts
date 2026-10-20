@@ -1,3 +1,4 @@
+import { gotoPublicRoute } from "./compatibilityNavigation";
 import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { test } from "@playwright/test";
@@ -21,7 +22,7 @@ for (const viewport of qaViewports) {
       await mkdir(directory, { recursive: true });
 
       for (const route of qaRoutes) {
-        await page.goto(route);
+        await gotoPublicRoute(page, route);
         await page.waitForLoadState("networkidle");
         const filename = route === "/" ? "en-home" : route === "/ko/" ? "ko-home" : route.replace(/^\//, "").replaceAll("/", "-");
         await page.screenshot({ path: path.join(directory, `${filename}.png`), fullPage: true });

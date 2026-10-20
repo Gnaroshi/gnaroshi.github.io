@@ -1,3 +1,4 @@
+import { gotoPublicRoute } from "./compatibilityNavigation";
 import { expect, test } from "@playwright/test";
 import { englishQaRoutes, koreanQaRoutes } from "./qa-routes";
 import { getPrimaryNavigation, getUtilityNavigation } from "../../src/i18n/routes";
@@ -7,7 +8,7 @@ test("primary and utility navigation capability snapshots are stable across ever
     .map((item) => item.href.replace(/\/$/, "") || "/");
   for (const [locale, routes] of [["en", englishQaRoutes], ["ko", koreanQaRoutes]] as const) {
     for (const route of routes) {
-      await page.goto(route === "/404" ? "/404.html" : route);
+      await gotoPublicRoute(page, route === "/404" ? "/404.html" : route);
       if (route === "/404") {
         // GitHub Pages serves one locale-detecting 404 document for every unknown path.
         // It intentionally uses minimal chrome so a Korean unknown URL never shows English navigation.

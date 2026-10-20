@@ -34,8 +34,8 @@ export const enCopy = {
       "paper-lab": {
         title: "Paper notes",
         role: "Private paper workspace",
-        description: "Stores paper notes, reading sessions, reviews, and oral practice.",
-        responsibilities: ["Paper notes", "Reading sessions", "Reviews", "Oral-practice source", "Implementation attempts"],
+        description: "Stores paper notes, reading sessions, and saved review records.",
+        responsibilities: ["Paper notes", "Reading sessions", "Saved reviews", "Implementation attempts"],
         exclusions: ["Website UI", "Blog drafts", "Public deployment"]
       },
       writing: {
@@ -55,8 +55,8 @@ export const enCopy = {
       api: {
         title: "AI service",
         role: "Optional AI request service",
-        description: "Optionally handles paper review and oral-practice requests.",
-        responsibilities: ["AI request handling", "Session generation", "Scoring", "Rate limits", "CORS"],
+        description: "Optionally handles requested paper-note reviews.",
+        responsibilities: ["AI request handling", "Note-review responses", "Rate limits", "CORS"],
         exclusions: ["Canonical content", "Website rendering", "Publishing"]
       },
       "content-feed": {

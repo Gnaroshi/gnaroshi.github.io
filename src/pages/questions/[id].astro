@@ -20,10 +20,10 @@ const alternateUrls = { en: `/questions/${question.id}/`, ko: "/ko/questions/", 
 
 <BaseLayout title="Question" description={question.question} canonical={`/questions/${question.id}/`} alternateUrls={alternateUrls} mode="application">
   <article class="paper-detail">
-    <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Questions", href: "/questions/" }, { name: question.question, href: `/questions/${question.id}/` }]} />
+    <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Papers", href: "/papers/" }, { name: question.question, href: `/questions/${question.id}/` }]} />
     <p class="content-language-badge"><span class="paper-badge paper-badge--muted">English content</span> Translation unavailable</p>
     <header class="paper-detail-header">
-      <a class="paper-detail-header__back" href="/questions">Back to questions</a>
+      <a class="paper-detail-header__back" href="/papers/">Back to papers</a>
       <div class="paper-detail-header__title">
         <p class="eyebrow">Question</p>
         <h1>{question.question}</h1>
@@ -39,7 +39,7 @@ const alternateUrls = { en: `/questions/${question.id}/`, ko: "/ko/questions/", 
     </header>
 
     <section class="section" aria-labelledby="signals-heading">
-      <SectionHeader id="signals-heading" title="Expected signals" description="Use these only after answering from memory." />
+      <SectionHeader id="signals-heading" title="Saved reference points" />
       {question.expectedSignals.length > 0 ? (
         <ul class="list">
           {question.expectedSignals.map((signal) => (

@@ -1,0 +1,13 @@
+---
+import type { BlogLanguage } from "../../utils/content";
+import type { Locale } from "../../i18n/types";
+
+interface Props { languages: BlogLanguage[]; selected: Locale; title: string; locale: Locale }
+const { languages, selected, title, locale } = Astro.props;
+---
+
+{languages.length > 1 && <span class="blog-languages" role="group" aria-label={locale === "ko" ? `${title} 언어 선택` : `Languages for ${title}`}>
+  {languages.map((version) => version.locale === selected
+    ? <span lang={version.locale} aria-label={locale === "ko" ? `${version.locale === "ko" ? "한국어" : "English"}로 표시 중` : `Shown in ${version.locale === "ko" ? "Korean" : "English"}`}>{version.locale === "ko" ? "한국어" : "EN"}</span>
+    : <a href={version.href} lang={version.locale} hreflang={version.locale}>{version.locale === "ko" ? "한국어" : "EN"}</a>)}
+</span>}

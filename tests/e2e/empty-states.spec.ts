@@ -1,24 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
-import { contentFeedRoot } from "../../src/utils/contentFeed";
-
-function publicBlogSlugs(locale: "en" | "ko") {
-  const directory = join(contentFeedRoot, "blog", locale);
-  if (!existsSync(directory)) return [];
-  return readdirSync(directory, { recursive: true })
-    .filter((file): file is string => typeof file === "string" && /\.mdx?$/.test(file))
-    .flatMap((file) => {
-      const source = readFileSync(join(directory, file), "utf8");
-      const metadata = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1] ?? "";
-      if (!/^visibility:\s*(['"]?)public\1\s*$/m.test(metadata)) return [];
-      const slug = metadata.match(/^canonicalSlug:\s*(['"]?)([^\s'"]+)\1\s*$/m)?.[2];
-      if (!slug) throw new Error(`Validated public blog record is missing canonicalSlug: ${file}`);
-      return [slug];
-    });
-}
+import { preferredPublicBlogRecords } from "../helpers/publicBlogInventory";
+import { hasPublicPaperCollection } from "./public-paper-fixture";
 
 test("retired empty Reading page forwards to an existing research question", async ({ page }) => {
+  test.skip(hasPublicPaperCollection(), "The selected feed has public paper notes.");
   await page.goto("/papers");
   await expect(page).toHaveURL(/\/research\/#human-ai-research-tools$/);
   await expect(page.locator("#human-ai-research-tools")).toBeFocused();
@@ -38,22 +23,22 @@ test("Activity stays non-numeric before enough records exist", async ({ page }) 
   await expect(page.getByText(/public feed|eligibility|evidence gate/i)).toHaveCount(0);
 });
 
-test("Blog and archive indexing follow actual public content in each locale", async ({ page, request }) => {
+test("Blog and archive indexing follow public work across both languages", async ({ page, request }) => {
   const sitemap = await (await request.get("/sitemap-0.xml")).text();
   for (const locale of ["en", "ko"] as const) {
     const prefix = locale === "ko" ? "/ko" : "";
-    const slugs = publicBlogSlugs(locale);
+    const posts = preferredPublicBlogRecords(locale);
     for (const route of [`${prefix}/blog/`, `${prefix}/blog/archive/`]) {
       await page.goto(route);
-      await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", slugs.length > 0 ? "index, follow" : "noindex, follow");
-      if (slugs.length === 0) {
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", posts.length > 0 ? "index, follow" : "noindex, follow");
+      if (posts.length === 0) {
         await expect(page.locator(".app-empty-state .button")).toHaveCount(1);
         await expect(page.locator(".app-empty-state .button")).toHaveAttribute("href", `${prefix}/research/`);
         expect(sitemap).not.toContain(`https://gnaroshi.dev${route}`);
       } else {
         await expect(page.locator(".app-empty-state")).toHaveCount(0);
-        for (const slug of slugs) {
-          await expect(page.locator(`main a[href="${prefix}/blog/${slug}/"]`)).toHaveCount(1);
+        for (const post of posts) {
+          await expect(page.locator(`main a[href="${post.href}"]`)).toHaveCount(1);
         }
         expect(sitemap).toContain(`https://gnaroshi.dev${route}`);
       }
@@ -72,8 +57,6 @@ test("Blog and archive indexing follow actual public content in each locale", as
 const emptyTools = [
   ["/queue", "No papers are waiting."],
   ["/reviews", "Nothing needs another look yet."],
-  ["/formula", "No formula is ready to revisit."],
-  ["/questions", "No questions have been saved yet."],
   ["/implementations", "No implementation note has been published yet."],
   ["/graph", "There are not enough connections to show yet."]
 ] as const;
@@ -86,3 +69,16 @@ for (const [route, heading] of emptyTools) {
     await expect(page.locator(".paper-stat-card")).toHaveCount(0);
   });
 }
+
+test("retired learning tools keep the actual paper collection reachable", async ({ page }) => {
+  for (const locale of ["en", "ko"]) {
+    const prefix = locale === "ko" ? "/ko" : "";
+    for (const route of ["formula", "questions"]) {
+      await page.goto(`${prefix}/${route}/`);
+      if (hasPublicPaperCollection()) {
+        await expect(page).toHaveURL(new RegExp(`${prefix}/papers/$`));
+        await expect(page.locator("#reading-method, .reading-method, [data-reading-checklist]")).toHaveCount(0);
+      } else await expect(page).toHaveURL(new RegExp(`${prefix}/research/#human-ai-research-tools$`));
+    }
+  }
+});

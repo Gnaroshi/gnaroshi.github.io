@@ -1,3 +1,4 @@
+import { gotoPublicRoute } from "./compatibilityNavigation";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
@@ -23,9 +24,7 @@ test.describe("all public page visual checklist", { tag: "@visual-v3" }, () => {
         const report = [];
 
         for (const route of qaRoutes) {
-          await page.goto(route);
-          // Empty Reading is an intentional document redirect, not a renderable page.
-          if(/^\/(?:ko\/)?papers\/?$/.test(route))await page.waitForLoadState("networkidle");
+          await gotoPublicRoute(page, route);
           await page.evaluate(async () => {
             window.scrollTo({top:0,behavior:"instant"});
             await document.fonts.ready;

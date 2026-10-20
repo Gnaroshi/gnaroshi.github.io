@@ -1,3 +1,4 @@
+import { gotoPublicRoute } from "./compatibilityNavigation";
 import { expect, test } from "@playwright/test";
 import { englishQaRoutes, koreanQaRoutes, qaRoutes, qaViewports } from "./qa-routes";
 
@@ -15,7 +16,7 @@ for (const viewport of qaViewports) {
       page.on("console", onConsole);
       page.on("pageerror", onPageError);
 
-      const response = await page.goto(route);
+      const response = await gotoPublicRoute(page, route);
       if (route.endsWith("/404") || route === "/404") expect([200, 404]).toContain(response?.status());
       else expect(response?.status(), route).toBe(200);
       await expect(page.locator("main#content"), route).toBeVisible();
@@ -45,7 +46,7 @@ for (const [locale, route, navName, menuName] of [
 ] as const) {
   test(`${locale} navigation, theme, language, and mobile drawer controls remain stable`, async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     const nav = page.getByRole("navigation", { name: navName });
     await expect(nav).toBeVisible();
     const navLines = await nav.getByRole("link").evaluateAll((links) => [...new Set(links.map((link) => Math.round(link.getBoundingClientRect().top)))]);
@@ -81,39 +82,39 @@ for (const [locale, route, navName, menuName] of [
 
 test("locale shells and dates remain consistent", async ({ page }) => {
   for (const route of englishQaRoutes) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
   }
   for (const route of koreanQaRoutes) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     await expect(page.locator("html")).toHaveAttribute("lang", "ko");
   }
 });
 
 test("homepage, blog, evidence gates, and empty tools remain truthful", async ({ page }) => {
-  await page.goto("/");
+  await gotoPublicRoute(page, "/");
   await expect(page.locator(".home-research, [data-system-workflow]")).toHaveCount(0);
   await expect(page.locator(".home-editorial > .home-desk")).toHaveCount(1);
   expect(await page.locator(".home-editorial > section").count()).toBeLessThanOrEqual(3);
   await expect(page.locator(".home-editorial > .identity-hero")).toHaveCount(1);
   await expect(page.locator(".paper-stat-card")).toHaveCount(0);
 
-  await page.goto("/blog");
+  await gotoPublicRoute(page, "/blog");
   await expect(page.locator(".blog-search")).toHaveCount(0);
   const featuredHrefs = await page.locator("[data-featured-posts] a[href]").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
   const recentHrefs = await page.locator("[data-recent-posts] a[href]").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
   expect(featuredHrefs.filter((href) => recentHrefs.includes(href))).toEqual([]);
 
-  await page.goto("/papers");
+  await gotoPublicRoute(page, "/papers");
   await expect(page.locator(".paper-stats, .paper-heatmap, .paper-filter-panel, astro-island")).toHaveCount(0);
   await expect(page.locator("#new-paper-template")).toHaveCount(0);
 
-  await page.goto("/growth");
+  await gotoPublicRoute(page, "/growth");
   await expect(page.locator(".momentum-score__value")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Not enough public activity yet." })).toBeVisible();
 
-  for (const route of ["/queue", "/reviews", "/formula", "/questions", "/implementations", "/graph"]) {
-    await page.goto(route);
+  for (const route of ["/queue", "/reviews", "/implementations", "/graph"]) {
+    await gotoPublicRoute(page, route);
     await expect(page.locator("astro-island"), route).toHaveCount(0);
     await expect(page.locator(".paper-stat-card"), route).toHaveCount(0);
     await expect(page.locator("main .button--primary"), `${route} primary actions`).toHaveCount(1);
@@ -123,12 +124,12 @@ test("homepage, blog, evidence gates, and empty tools remain truthful", async ({
 test("technical prose and reduced-motion behavior remain contained", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 });
   for (const route of ["/research/", "/ko/research/", "/blog/", "/ko/blog/"]) {
-    await page.goto(route);
+    await gotoPublicRoute(page, route);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow, `${route} technical content overflow`).toBeLessThanOrEqual(1);
   }
 
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
+  await gotoPublicRoute(page, "/");
   await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
 });

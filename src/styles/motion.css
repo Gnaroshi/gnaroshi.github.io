@@ -163,17 +163,6 @@ body[data-page-progress="true"] .site-header__progress {
   box-shadow: none;
 }
 
-/* Disclosure content is the only layout-changing motion: it follows a request. */
-@supports (interpolate-size: allow-keywords) {
-  .reading-checklist-disclosure { interpolate-size: allow-keywords; }
-  .reading-checklist-disclosure::details-content {
-    block-size: 0;
-    overflow: clip;
-    transition: block-size var(--duration-state) var(--ease-emphasized), content-visibility var(--duration-state) allow-discrete;
-  }
-  .reading-checklist-disclosure[open]::details-content { block-size: auto; }
-}
-
 .mobile-nav__panel:not([hidden]) {
   opacity: 1;
   transform: translateY(0);
@@ -262,5 +251,4 @@ body[data-page-progress="true"] .site-header__progress {
     transform: none !important;
   }
 
-  .reading-checklist-disclosure::details-content { transition: none; }
 }

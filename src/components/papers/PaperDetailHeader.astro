@@ -2,7 +2,6 @@
 import type { PaperEntry } from "../../utils/papers";
 import { getPaperActivityDate, getPaperLastReviewedDate } from "../../utils/papers";
 import ExternalLink from "../common/ExternalLink.astro";
-import PaperDepthBadge from "./PaperDepthBadge.astro";
 import PaperStatusBadge from "./PaperStatusBadge.astro";
 import type { Locale } from "../../i18n/types";
 import { getLocalePath, translate } from "../../i18n/utils";
@@ -25,7 +24,6 @@ const links = [
 <header class="paper-detail-header">
   <a class="paper-detail-header__back" href={getLocalePath(locale, "/papers/")}>{locale === "ko" ? "읽기 기록으로 돌아가기" : "Back to reading notes"}</a>
   <div class="paper-detail-header__title">
-    <p class="eyebrow">{translate(locale, "papers.singular")}</p>
     <h1>{paper.data.title}</h1>
     {paper.data.oneLineSummary && <p class="lede">{paper.data.oneLineSummary}</p>}
   </div>
@@ -41,7 +39,6 @@ const links = [
 
   <div class="paper-detail-header__badges">
     <PaperStatusBadge status={paper.data.status} locale={locale} />
-    <PaperDepthBadge depth={paper.data.depth} locale={locale} />
     <span class="paper-badge paper-badge--muted">{locale === "ko" ? "우선순위" : "Priority"}: {translate(locale, `priority.${paper.data.priority}`)}</span>
     <span class="paper-badge paper-badge--muted">{locale === "ko" ? "난이도" : "Difficulty"} {paper.data.difficulty}/5</span>
     {paper.data.readingTimeMinutes !== undefined && <span class="paper-badge paper-badge--muted">{paper.data.readingTimeMinutes}{locale === "ko" ? "분" : " min"}</span>}

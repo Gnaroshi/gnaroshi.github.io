@@ -46,7 +46,7 @@ Research, Projects, and the long `gnaroshi.dev` case study use compact sticky in
 
 Actions change color and shadow without lifting their hit targets. Linked evidence images retain their readable size and crop; a bottom rail identifies the destination on hover or focus. Section indexes animate their current underline. Theme state, mobile menus, and media dialogs retain native state transitions.
 
-The optional personal reading checklist starts collapsed. Browsers supporting `interpolate-size` animate its requested disclosure; others open it immediately. The system explorer traces downstream connections once after a selection. It does not simulate live publishing or run a loop. Mobile workflow controls reserve the same border width in every state.
+The system explorer traces downstream connections once after a selection. It does not simulate live publishing or run a loop. Mobile workflow controls reserve the same border width in every state. The former personal reading checklist and its disclosure animation are removed with the retired reading lessons.
 
 Pointer presses on commands and project links produce a short pixel-corner pulse without moving the target. Application role icons respond to hover/focus; evidence screenshots remain unscaled. Research question lenses switch between the existing hypothesis and uncertainty, with one selected tab, arrow-key navigation, stable panel height, and a no-JavaScript reading fallback.
 
