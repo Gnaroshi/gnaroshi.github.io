@@ -60,3 +60,13 @@ The immutable production build used website source `918fdc2a6c3a56876572773a94b4
 - Actions remained disabled before and after publication. Pages stayed `legacy`, `gh-pages:/`, `gnaroshi.dev`, with HTTPS enforced. All owned local QA listeners were stopped.
 
 This documentation-only commit records publication; the built source remains `918fdc2a6c3a56876572773a94b4bb734c868fde`. Rollback restores the previous verified public artifact through a new normal deployment commit, preserving the source repositories and private visitor state.
+
+## CoRL utility view revision — 2026-10-30
+
+Baseline: website `main` at `1cfe084a507926a5209efaec325eb3dac9f35acd`, verified deployment `37de066d1be8725ef486e645458084222c1ffc30`. The owner requested compact task views in place of the long scrolling guide. Reviewed producer `0068e96a0447a4aaea23366b54247535e09053d8` supplies the same three public assets and version-1 export provenance. The website only imports them and adds its normal build metadata. Homepage, bilingual routes, public feed, import validator, hosting and disabled Actions are unchanged.
+
+Schedule, destinations, preparation, budget and reference views share the same stable utility route. JavaScript manages view/hash history, dialogs and browser-local actions; the public document retains a readable no-JavaScript fallback. Asset URLs use content-hash query versions so previously cached JavaScript/CSS cannot be paired with the new document. The private source URL, workbook and individual travel/payment records are absent from the public interface.
+
+Storage compatibility preserves `travel:corl2026:v1` for existing `checks`, `saved` and `budget` fields. A separate `travel:corl2026:planner:v1` stores the new visit plan and theme. The old page can still read its existing fields, and an old writer does not erase the companion plan. Unknown/corrupt values are sanitized; denied storage leaves current-session actions usable. Visitor state is never sent to the website or copied into the export.
+
+Validation reuses the unchanged site's earlier full feed-contract, E2E and accessibility evidence. The affected consumer checks cover content/schema and Astro validation, static build, localization, public copy, links/assets/fragments/privacy and production smoke. Producer review covers the new view interactions, existing-state migration, rollback writer, storage failure, mobile layout and actual map rendering. Exact export hashes and the deployment metadata-only HTML transformation are checked again in the isolated final build. The existing provider-first local release and normal `gh-pages` rollback remain in force; publication and live verification are recorded separately after completion.
