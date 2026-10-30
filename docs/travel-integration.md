@@ -49,4 +49,14 @@ The unchanged public feed is pinned to `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb
 - The imported website build, dictionary parity, public tone, launch-content, and link/metadata/fragment/asset/privacy checks passed (62 HTML files, 2,026 internal targets). Existing warnings for absent optional public identity data and stale Home focus remain unchanged.
 - Imported website production smoke passed all five cases. Deployment provenance is added to the travel document without changing its content or runtime assets.
 
-These checks establish local readiness. The final production build must use the committed website source and the exact public feed above in isolated clean checkouts. Publication and exact live verification remain separate release steps; this record does not claim the page is already live.
+## Verified publication — 2026-10-30
+
+The immutable production build used website source `918fdc2a6c3a56876572773a94b4bb734c868fde`, the exact public feed above, and travel producer `ba389a4f5e4eaae9fe268ebb1adbe859365eafb6`. A clean isolated build produced 413 public files with `production`, `local`, `0` provenance and build time `2026-10-30T06:05:19Z`.
+
+- Publication advanced `gh-pages` normally from `85e59a755ba47685ec6af057beaeb695ded7a4eb` to `37de066d1be8725ef486e645458084222c1ffc30` after rechecking the remote release guard.
+- The existing live verifier matched the exact website/feed SHAs, content hash, schema and local production provenance, plus the existing core routes and navigation.
+- `/travel/corl2026/` and its JavaScript, CSS and export provenance returned HTTP 200 with byte-for-byte matches to the validated artifact. The live mobile page showed 23 destinations, 30 checklist items, blank initial personal budget and no horizontal overflow.
+- Focused travel accessibility checks at 390px and 1440px found zero axe violations and zero overflow. Producer browser review covered 320px, 390px, 768px and 1440px, keyboard/hash navigation, filtering/saving, painted maps, checklist undo/persistence, budget arithmetic and invalid input. Storage denial, session operation and corrupt-state fallback also passed a DOM integration check.
+- Actions remained disabled before and after publication. Pages stayed `legacy`, `gh-pages:/`, `gnaroshi.dev`, with HTTPS enforced. All owned local QA listeners were stopped.
+
+This documentation-only commit records publication; the built source remains `918fdc2a6c3a56876572773a94b4bb734c868fde`. Rollback restores the previous verified public artifact through a new normal deployment commit, preserving the source repositories and private visitor state.
