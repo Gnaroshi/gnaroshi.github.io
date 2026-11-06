@@ -190,7 +190,12 @@
  $$('[data-event]').forEach(b=>b.addEventListener('click',()=>{
   const [date,index]=b.dataset.event.split('/');const day=trip.schedule.find(d=>d.date===date);const item=day?.items[Number(index)];if(!item)return;
   $('#detail-title').textContent=day.label;delete $('#detail-body').dataset.mounted;
-  $('#detail-body').innerHTML=`<span class="event-modal-time">${e(item.time)}</span><h3 class="event-modal-title">${e(item.title)}</h3>${item.venue?`<button class="button" data-event-venue="${e(item.venue)}">${e(allPlaces.get(item.venue)?.shortName||allPlaces.get(item.venue)?.name)}</button>`:''}<p class="event-modal-note">${e(item.note)}</p>${item.url?`<a class="text-link" href="${e(item.url)}" target="_blank" rel="noopener noreferrer">공식 일정 ↗</a>`:''}`;
+  const place=allPlaces.get(item.venue);
+  const location=item.location||place?.shortName||place?.name;
+  const locationMarkup=place
+   ? `<button class="button" data-event-venue="${e(place.id)}">${e(location)}</button>`
+   : location ? `<p class="muted">${e(location)}</p>` : '';
+  $('#detail-body').innerHTML=`<span class="event-modal-time">${e(item.time)}</span><h3 class="event-modal-title">${e(item.title)}</h3>${locationMarkup}<p class="event-modal-note">${e(item.note)}</p>${item.url?`<a class="text-link" href="${e(item.url)}" target="_blank" rel="noopener noreferrer">${e(item.linkLabel||'공식 일정')} <span aria-hidden="true">↗</span></a>`:''}`;
   const venue=$('[data-event-venue]',$('#detail-body'));if(venue)venue.addEventListener('click',()=>{mountPlace(venue.dataset.eventVenue,$('#detail-body'));$('#detail-title').textContent='행사장';});
   showDialog($('#detail-dialog'),b);
  }));
