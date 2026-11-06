@@ -36,6 +36,7 @@
  } catch { storageUnavailable=true;storageWarning('저장이 차단되어 있습니다. 입력은 현재 화면에서만 유지됩니다.'); }
  function persist() { try { localStorage.setItem(storageKey,JSON.stringify({checks:state.checks,saved:state.saved,budget:state.budget}));localStorage.setItem(plannerKey,JSON.stringify({plan:state.plan,theme:state.theme})); } catch { storageUnavailable=true;storageWarning('저장이 차단되어 있습니다. 입력은 현재 화면에서만 유지됩니다.'); } }
  const ui={view:'schedule',day:days.has(trip.start)?trip.start:trip.schedule[0]?.date,agenda:'conference',category:'all',query:'',savedOnly:false,place:trip.places.find(p=>p.status!=='closed')?.id,placeOpen:false,detailPushed:false,placeMode:'list',group:$('#check-group').value,checkFilter:'pending',resource:'essentials'};
+ const mine = mountMine();
  const scrolls={};
  const closeIcon=$('[data-close-dialog]').innerHTML;
  let modalTrigger=null,editIndex=null;
@@ -61,6 +62,132 @@
   return view==='schedule'?`schedule/${ui.day}/${ui.agenda}`:view;
  }
  function captureScroll() { $$('[data-scroll]',$(`#${ui.view}`)).forEach(el=>scrolls[scrollKey(el)]=el.scrollTop); }
+ function mountMine() {
+  const panel=$('#mine');
+  if(!panel)return null;
+  const form=$('#mine-form'), password=$('#mine-password'), remember=$('#mine-remember');
+  const body=$('#mine-body'), lock=$('#mine-lock'), submit=$('#mine-submit'), status=$('#mine-status');
+  const vault=JSON.parse($('#guide-vault').textContent);
+  const decode=value=>Uint8Array.from(atob(value),c=>c.charCodeAt(0));
+  const encoder=new TextEncoder();
+  const cipher={name:'AES-GCM',iv:decode(vault.iv),additionalData:encoder.encode(`${trip.id}-guide:v1`),tagLength:128};
+  const encrypted=decode(vault.ciphertext);
+  const browserCrypto=globalThis.crypto?.subtle;
+  const databaseName=`travel:${trip.id}:guide:v1`;
+  const channel=typeof BroadcastChannel==='function'?new BroadcastChannel(databaseName):null;
+  let active=false, epoch=0, sessionKey=null;
+  function note(message){
+   status.textContent=message;
+   status.hidden=!message;
+  }
+  function locked(){
+   body.replaceChildren();body.hidden=true;
+   lock.hidden=true;form.hidden=false;password.value='';
+  }
+  function opened(html,message=''){
+   body.innerHTML=html;
+   body.hidden=false;form.hidden=true;lock.hidden=false;
+   note(message);
+  }
+  async function keyRecord(mode,operation){
+   const db=await new Promise((resolve,reject)=>{
+    const open=indexedDB.open(databaseName,1);
+    open.onupgradeneeded=()=>open.result.createObjectStore('keys');
+    open.onsuccess=()=>resolve(open.result);
+    open.onerror=()=>reject(open.error);
+   });
+   try{
+    return await new Promise((resolve,reject)=>{
+     const tx=db.transaction('keys',mode);
+     const request=operation(tx.objectStore('keys'));
+     tx.oncomplete=()=>resolve(request.result);
+     tx.onabort=()=>reject(tx.error||request.error);
+    });
+   }finally{db.close();}
+  }
+  async function decrypt(key){
+   const bytes=await browserCrypto.decrypt(cipher,key,encrypted);
+   return new TextDecoder('utf-8',{fatal:true}).decode(bytes);
+  }
+  function visit(open){
+   if(active===open)return;
+   active=open;
+   const turn=++epoch;
+   locked();
+   note('');
+   if(!active)return;
+   if(!browserCrypto){submit.disabled=true;note('이 브라우저에서는 안내를 열 수 없습니다. HTTPS 주소를 지원하는 최신 브라우저에서 열어 주세요.');return;}
+   submit.disabled=true;
+   (async()=>{
+    try{
+     const saved=sessionKey?null:await keyRecord('readonly',db=>db.get('active')).catch(()=>null);
+     const key=sessionKey||(saved?.salt===vault.salt?saved.key:null);
+     if(!key||turn!==epoch)return;
+     const html=await decrypt(key);
+     if(turn!==epoch)return;
+     sessionKey=key;
+     opened(html);
+    }catch{
+     sessionKey=null;
+     if(turn===epoch)note('기억한 잠금 해제를 사용할 수 없습니다. 비밀번호를 입력해 주세요.');
+    }finally{if(turn===epoch)submit.disabled=false;}
+   })();
+  }
+  form.addEventListener('submit',async ev=>{
+   ev.preventDefault();
+   if(submit.disabled||!browserCrypto)return;
+   const passphrase=password.value.trim();
+   if(!passphrase)return;
+   password.value='';
+   const turn=++epoch;
+   submit.disabled=true;
+   note('안내를 여는 중…');
+   try{
+    const input=await browserCrypto.importKey('raw',encoder.encode(passphrase),'PBKDF2',false,['deriveKey']);
+    const key=await browserCrypto.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:decode(vault.salt),iterations:vault.iterations},input,{name:'AES-GCM',length:256},false,['decrypt']);
+    const html=await decrypt(key);
+    if(turn!==epoch)return;
+    let message='';
+    if(remember.checked){
+     try{await keyRecord('readwrite',db=>db.put({salt:vault.salt,key},'active'));}
+     catch{message='이 브라우저에서 기억하지 못했습니다. 새로고침하면 비밀번호를 다시 입력해야 합니다.';}
+    }
+    if(turn!==epoch)return;
+    sessionKey=key;
+    opened(html,message);
+    lock.focus({preventScroll:true});
+   }catch{
+    if(turn!==epoch)return;
+    note('비밀번호가 맞지 않습니다.');
+    password.focus({preventScroll:true});
+   }finally{if(turn===epoch)submit.disabled=false;}
+  });
+  function clearView(){
+   ++epoch;
+   sessionKey=null;
+   locked();
+   note('');
+   submit.disabled=!browserCrypto;
+  }
+  lock.addEventListener('click',async()=>{
+   clearView();
+   submit.disabled=true;
+   const turn=epoch;
+   channel?.postMessage('lock');
+   try{
+    await keyRecord('readwrite',db=>db.delete('active'));
+    if(turn===epoch)note('잠금 해제를 잊었습니다.');
+   }catch{
+    if(turn===epoch)note('브라우저에 저장된 잠금 해제를 지우지 못했습니다. 사이트 데이터를 삭제해 주세요.');
+   }finally{
+    if(turn===epoch){submit.disabled=false;password.focus({preventScroll:true});}
+   }
+  });
+  if(channel)channel.onmessage=event=>{if(event.data==='lock')clearView();};
+  window.addEventListener('pagehide',()=>{visit(false);sessionKey=null;});
+  window.addEventListener('pageshow',event=>{if(event.persisted)visit(!panel.hidden);});
+  return {visit};
+ }
  function showView(focus=false) {
   $$('.view').forEach(v=>{const active=v.id===ui.view;v.hidden=!active;v.toggleAttribute('data-active',active);});
   $$('[data-view-link]').forEach(a=>{if(a.dataset.viewLink===ui.view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
@@ -70,6 +197,7 @@
   if(ui.view==='checklist')updateChecks();
   if(ui.view==='budget')updateBudget();
   if(ui.view==='summaries')updateResources();
+  mine?.visit(ui.view==='mine');
   $$('[data-scroll]',$(`#${ui.view}`)).forEach(el=>{el.scrollTop=scrolls[scrollKey(el)]||0;});
   if(focus)$(`#${ui.view}`).focus({preventScroll:true});
  }
@@ -93,7 +221,7 @@
  function readRoute(initial=false) {
   let hash=location.hash.slice(1);try{hash=decodeURIComponent(hash);}catch{hash='';}
   const [view,value,mode]=hash.split('/');
-  if(['schedule','places','checklist','budget','summaries'].includes(view)) {
+  if(['schedule','places','checklist','budget','summaries'].includes(view)||(view==='mine'&&mine)) {
    captureScroll();ui.view=view;
    if(view==='schedule'){if(days.has(value))ui.day=value;ui.agenda=mode==='visits'?'visits':'conference';}
    if(view==='places'){

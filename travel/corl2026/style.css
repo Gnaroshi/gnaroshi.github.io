@@ -146,3 +146,37 @@
     border-top: 1px solid var(--line);
   }
 }
+
+.mine-link { white-space: nowrap; }
+.mine-content { max-width: 720px; }
+.mine-form { max-width: 360px; gap: 10px; margin-block: 8px 12px; }
+.js .mine-form { display: grid; }
+.mine-form > label:first-child { font-weight: 650; }
+#mine-password {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 16px;
+}
+.mine-remember { display: flex; align-items: center; gap: 8px; width: fit-content; min-height: 34px; }
+.mine-remember input { width: 18px; height: 18px; accent-color: var(--accent); }
+.mine-form small { color: var(--muted); }
+.mine-form .button { justify-content: center; min-height: 44px; }
+#mine-status { margin-bottom: 12px; }
+#mine-body { overflow-wrap: anywhere; }
+#mine-body .intro { color: var(--muted); margin-top: 4px; }
+#mine-body .notice { background: var(--soft); border-inline-start: 3px solid var(--accent); margin: 12px 0 16px; padding: 12px 14px; }
+#mine-body details { border-bottom: 1px solid var(--line); }
+#mine-body details:first-child { border-top: 1px solid var(--line); }
+#mine-body summary { padding: 12px 6px; cursor: pointer; min-height: 48px; font-weight: 650; }
+#mine-body .details-body { padding: 0 8px 12px; }
+#mine-body .details-body h2 { font-size: 16px; margin: 14px 0 6px; }
+#mine-body .details-body li + li { margin-top: 8px; }
+#mine-body a { color: var(--accent); text-decoration: underline; text-underline-offset: .16em; }
+@media (max-width: 350px) {
+  .header-actions:has(.mine-link) { gap: 6px; }
+}
