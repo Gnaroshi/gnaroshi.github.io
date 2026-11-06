@@ -45,10 +45,12 @@ const travelAgenda = function createAgendaRenderer({escape: e, pin, fallbackLink
   const locationMarkup = venue && !hours
    ? `<button class="venue-link" data-open-place="${e(venue.id)}">${pin}${e(location)}</button>`
    : location ? `<span class="venue-link">${e(location)}</span>` : '';
-  const time = sharedTime ? '' : `<div class="event-time">${e(item.time)}${track}</div>`;
+  const zone = item.zone ? `<span class="event-zone">${e(item.zone)}</span>` : '';
+  const time = sharedTime ? '' : `<div class="event-time">${e(item.time)}${zone}${track}</div>`;
   const badge = item.personal ? `<span class="event-personal">${e(item.personal)}</span>` : '';
   const fallback = fallbackLink ? `<noscript><p>${e(item.note||'')}</p>${fallbackLink(item.url,item.linkLabel||'공식 일정')}</noscript>` : '';
-  const content = `<div class="event-content"><h4><button class="event-select" data-event="${e(date)}/${index}">${e(item.title)}</button></h4>${badge}${locationMarkup}${fallback}</div>`;
+  const arrival = item.arrival ? `<p class="event-arrival">${e(item.arrival)}</p>` : '';
+  const content = `<div class="event-content"><h4><button class="event-select" data-event="${e(date)}/${index}">${e(item.title)}</button></h4>${arrival}${badge}${locationMarkup}${fallback}</div>`;
   return `<li class="agenda-event"${item.personal?' data-personal-event':''}>${time}${content}</li>`;
  }
 
@@ -82,6 +84,10 @@ const travelAgenda = function createAgendaRenderer({escape: e, pin, fallbackLink
  }
 
  return function dayAgenda(day, venues) {
+  if (day.travel) {
+   const rows = day.items.map((item,index) => agendaItem({item,index},day.date,venues)).join('');
+   return `<p class="travel-day-note">${e(day.notice)}</p><ol class="timeline" aria-label="이동 순서">${rows}</ol>`;
+  }
   const entries = scheduleEntries(day.items);
   const hours = entries.filter(({item}) => item.kind === 'hours');
   const sessions = entries.filter(({item}) => item.kind !== 'hours');
@@ -133,6 +139,8 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
  function persist() { try { localStorage.setItem(storageKey,JSON.stringify({checks:state.checks,saved:state.saved,budget:state.budget}));localStorage.setItem(plannerKey,JSON.stringify({plan:state.plan,theme:state.theme})); } catch { storageUnavailable=true;storageWarning('저장이 차단되어 있습니다. 입력은 현재 화면에서만 유지됩니다.'); } }
  const ui={view:'schedule',day:days.has(trip.start)?trip.start:trip.schedule[0]?.date,agenda:'conference',category:'all',query:'',savedOnly:false,place:trip.places.find(p=>p.status!=='closed')?.id,placeOpen:false,detailPushed:false,placeMode:'list',group:$('#check-group').value,checkFilter:'pending',resource:'essentials'};
  const publicAgenda=new Map(trip.schedule.map(day=>[day.date,day]));
+ let publicDay=ui.day;
+ const dateBar=$('.date-bar');
  let visibleAgenda=publicAgenda;
  const renderAgenda=travelAgenda({escape:e,pin:travelPin});
  const mine = mountMine();
@@ -161,12 +169,34 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
   return view==='schedule'?`schedule/${ui.day}/${ui.agenda}`:view;
  }
  function captureScroll() { $$('[data-scroll]',$(`#${ui.view}`)).forEach(el=>scrolls[scrollKey(el)]=el.scrollTop); }
+ function addTravelDay(day) {
+  const button=document.createElement('button');
+  const [year,month,dayOfMonth]=day.date.split('-').map(Number);
+  const weekday=new Intl.DateTimeFormat('ko-KR',{weekday:'long',timeZone:'UTC'}).format(new Date(Date.UTC(year,month-1,dayOfMonth)));
+  button.type='button';
+  button.dataset.day=day.date;
+  button.setAttribute('data-travel-day','');
+  button.setAttribute('aria-label',`${month}월 ${dayOfMonth}일 ${weekday} · ${day.title}`);
+  button.innerHTML=`<span>${e(day.shortLabel||'이동')}</span><strong>${dayOfMonth}</strong>`;
+  const next=$$('[data-day]',dateBar).find(item=>item.dataset.day>day.date)||$('.date-month',dateBar);
+  dateBar.insertBefore(button,next);
+  const article=document.createElement('article');
+  article.className='day-agenda';
+  article.dataset.scheduleDate=day.date;
+  article.hidden=true;
+  const host=document.createElement('div');
+  host.setAttribute('data-day-items','');
+  article.append(host);
+  $('#conference-agenda').append(article);
+ }
  function setPersonalAgenda(overlays,unlocked) {
   const next=new Map(publicAgenda);
-  for(const {date,items} of overlays){
+  for(const overlay of overlays){
+   if(!overlay||!/^\d{4}-\d{2}-\d{2}$/.test(overlay.date)||!Array.isArray(overlay.items))continue;
+   const {date,items}=overlay;
    const day=publicAgenda.get(date);
-   if(!day||!Array.isArray(items))continue;
-   const events=day.items.slice();
+   if(!day&&!overlay.travel)continue;
+   const events=day?day.items.slice():[];
    for(const item of items){
     if(!item||typeof item.personal!=='string')continue;
     if(item.replaces){
@@ -176,15 +206,28 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
      events.push(item);
     }
    }
-   next.set(date,{...day,items:events});
+   next.set(date,{...(day||overlay),items:events});
+  }
+  const privateFocus=document.activeElement?.closest('[data-travel-day], [data-lock-guide], [data-private-detail], [data-schedule-date]');
+  const resetDay=!next.has(ui.day);
+  for(const [date] of visibleAgenda){
+   if(next.has(date))continue;
+   $(`[data-day="${date}"]`)?.remove();
+   $(`[data-schedule-date="${date}"]`)?.remove();
+   delete scrolls[`schedule/${date}/conference`];
   }
   for(const [date,day] of next){
    if(day===visibleAgenda.get(date))continue;
+   if(!visibleAgenda.has(date))addTravelDay(day);
    const host=$(`[data-schedule-date="${date}"] [data-day-items]`);
    host.innerHTML=renderAgenda(day,trip.venues);
    bindPlaceOpen(host);
   }
   visibleAgenda=next;
+  if(resetDay){
+   ui.day=publicDay;
+   if(ui.view==='schedule')history.replaceState(null,'',routeHash());
+  }
   $('#agenda-private-toolbar').hidden=!unlocked;
   if(!unlocked&&$('#detail-body').hasAttribute('data-private-detail')){
    closeDialog($('#detail-dialog'),true);
@@ -192,6 +235,11 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
    $('#detail-body').removeAttribute('data-private-detail');
    $('#detail-title').textContent='장소';
    modalTrigger=null;
+  }
+  updateSchedule();
+  if(resetDay&&ui.view==='schedule'){
+   $('[data-scroll="schedule"]').scrollTop=scrolls[scrollKey($('[data-scroll="schedule"]'))]||0;
+   if(privateFocus)$('[data-day][aria-pressed="true"]')?.focus({preventScroll:true});
   }
  }
  function mountMine() {
@@ -326,7 +374,8 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
   }
   $$('[data-lock-guide]').forEach(button=>button.addEventListener('click',forget));
   schedule.addEventListener('click',()=>{
-   const date=payload?.days.some(day=>day.date===ui.day)?ui.day:payload?.days[0]?.date;
+   const first=payload?.days.map(day=>day.date).sort()[0];
+   const date=payload?.days.some(day=>day.date===ui.day)?ui.day:first;
    navigate('schedule',{day:date,agenda:'conference'});
   });
   if(channel)channel.onmessage=event=>{if(event.data==='lock')clearView();};
@@ -348,7 +397,7 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
   if(focus)$(`#${ui.view}`).focus({preventScroll:true});
  }
  function routeHash() {
-  if(ui.view==='schedule')return `#schedule/${ui.day}${ui.agenda==='visits'?'/visits':''}`;
+  if(ui.view==='schedule')return `#schedule/${publicDay}${ui.agenda==='visits'?'/visits':''}`;
   if(ui.view==='places')return `#places${ui.place&&(ui.placeOpen||ui.placeMode==='map')?`/${ui.place}${ui.placeMode==='map'?'/map':''}`:''}`;
   if(ui.view==='summaries')return `#summaries/${ui.resource}`;
   return `#${ui.view}`;
@@ -357,8 +406,10 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
   captureScroll();
   for(const d of $$('dialog[open]'))closeDialog(d,true);
   ui.view=view;
-  if(days.has(options.day))ui.day=options.day;
+  if(visibleAgenda.has(options.day))ui.day=options.day;
+  if(days.has(ui.day))publicDay=ui.day;
   if(['conference','visits'].includes(options.agenda))ui.agenda=options.agenda;
+  if(ui.agenda==='visits'&&!days.has(ui.day))ui.day=publicDay;
   if(destinations.has(options.place))ui.place=options.place;
   const hash=routeHash();
   if(location.hash!==hash)history[options.replace?'replaceState':'pushState'](null,'',hash);
@@ -369,7 +420,10 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
   const [view,value,mode]=hash.split('/');
   if(['schedule','places','checklist','budget','summaries'].includes(view)||(view==='mine'&&mine)) {
    captureScroll();ui.view=view;
-   if(view==='schedule'){if(days.has(value))ui.day=value;ui.agenda=mode==='visits'?'visits':'conference';}
+   if(view==='schedule'){
+    if(days.has(value))publicDay=value;
+    ui.day=publicDay;ui.agenda=mode==='visits'?'visits':'conference';
+   }
    if(view==='places'){
     ui.placeOpen=allPlaces.has(value)&&mode!=='map';ui.detailPushed=false;ui.placeMode=mode==='map'?'map':'list';
     if(allPlaces.has(value)){ui.place=value;if(allPlaces.get(value).status==='closed'){ui.category='closed';$('#place-category').value='closed';}}
@@ -383,14 +437,23 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
  }
  $$('[data-view-link]').forEach(a=>a.addEventListener('click',ev=>{ev.preventDefault();navigate(a.dataset.viewLink);}));
  window.addEventListener('hashchange',()=>readRoute());
- $$('[data-day]').forEach(b=>b.addEventListener('click',()=>navigate('schedule',{day:b.dataset.day,focus:false})));
+ dateBar.addEventListener('click',event=>{
+  const button=event.target.closest('[data-day]');
+  if(button)navigate('schedule',{day:button.dataset.day,focus:false});
+ });
  $$('[data-agenda]').forEach(b=>b.addEventListener('click',()=>navigate('schedule',{agenda:b.dataset.agenda,focus:false})));
  $$('[data-go-places]').forEach(b=>b.addEventListener('click',()=>navigate('places')));
  function updateSchedule() {
-  $$('[data-day]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.day===ui.day)));
+  const travelDates=$$('[data-travel-day]',dateBar);
+  travelDates.forEach(button=>button.hidden=ui.agenda==='visits');
+  dateBar.classList.toggle('has-travel-days',travelDates.length>0&&ui.agenda!=='visits');
+  $$('[data-day]',dateBar).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.day===ui.day)));
   $$('[data-agenda]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.agenda===ui.agenda)));
+  $('[data-agenda="conference"]').textContent=travelDates.length?'전체 일정':trip.programLabel||'일정';
   $$('[data-schedule-date]').forEach(d=>{const active=d.dataset.scheduleDate===ui.day;d.hidden=!active;d.toggleAttribute('data-day-active',active);});
-  $('#day-title').textContent=trip.schedule.find(d=>d.date===ui.day)?.title||'';
+  const day=visibleAgenda.get(ui.day);
+  $('#day-title').textContent=day?.title||'';
+  $('#day-time-label').textContent=day?.travel?'각 지역 현지 시각':'현지 시각';
   $('#conference-agenda').hidden=ui.agenda!=='conference';$('#personal-agenda').hidden=ui.agenda!=='visits';
   const plan=state.plan[ui.day]||[];
   $('#visit-count').textContent=plan.length?String(plan.length):'';
@@ -443,13 +506,13 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
  }
  function bindPlaceOpen(root=document) { $$('[data-open-place]',root).forEach(b=>{if(b.dataset.bound)return;b.dataset.bound='true';b.addEventListener('click',()=>selectPlace(b.dataset.openPlace,b));}); }
  function mountPlace(id,target) {
-  if(target.dataset.mounted===id&&target.childElementCount){const date=$('[data-add-date]',target);if(date)date.value=ui.day;syncPlanButtons(target);return;}
+  if(target.dataset.mounted===id&&target.childElementCount){const date=$('[data-add-date]',target);if(date)date.value=publicDay;syncPlanButtons(target);return;}
   target.dataset.mounted=id;target.replaceChildren($(`#detail-${id}`).content.cloneNode(true));
-  const select=$('[data-add-date]',target);if(select)select.value=ui.day;
+  const select=$('[data-add-date]',target);if(select)select.value=publicDay;
   bindSaved(target);updateSaved();
   $$('[data-load-map]',target).forEach(b=>b.addEventListener('click',()=>loadMap(b.closest('.map-host'),allPlaces.get(id))));
   const add=$('[data-add-plan]',target);
-  if(add){add.addEventListener('click',()=>{const date=$('[data-add-date]',target).value;if(!days.has(date))return;const list=state.plan[date]||(state.plan[date]=[]);if(!list.some(v=>v.id===id))list.push({id,time:''});persist();ui.day=date;updateSchedule();syncPlanButtons(target);const feedback=$('[data-plan-feedback]',target);feedback.innerHTML=`${e(trip.schedule.find(d=>d.date===date).label)}에 추가했습니다. <button class="quiet-button" data-open-visits>일정 보기</button>`;$('[data-open-visits]',feedback).addEventListener('click',()=>navigate('schedule',{agenda:'visits'}));});select.addEventListener('change',()=>syncPlanButtons(target));}
+  if(add){add.addEventListener('click',()=>{const date=$('[data-add-date]',target).value;if(!days.has(date))return;const list=state.plan[date]||(state.plan[date]=[]);if(!list.some(v=>v.id===id))list.push({id,time:''});persist();ui.day=date;publicDay=date;updateSchedule();syncPlanButtons(target);const feedback=$('[data-plan-feedback]',target);feedback.innerHTML=`${e(trip.schedule.find(d=>d.date===date).label)}에 추가했습니다. <button class="quiet-button" data-open-visits>일정 보기</button>`;$('[data-open-visits]',feedback).addEventListener('click',()=>navigate('schedule',{agenda:'visits'}));});select.addEventListener('change',()=>syncPlanButtons(target));}
   syncPlanButtons(target);
  }
  function syncPlanButtons(root=document) { $$('[data-add-plan]',root).forEach(b=>{const date=$('[data-add-date]',b.closest('.add-plan')).value;const exists=state.plan[date]?.some(v=>v.id===b.dataset.addPlan);b.textContent=exists?'추가됨':'일정에 추가';b.disabled=!!exists;}); }
@@ -483,7 +546,7 @@ const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColo
    ? `<button class="button" data-event-venue="${e(place.id)}">${e(location)}</button>`
    : location ? `<p class="muted">${e(location)}</p>` : '';
   const eventLink=typeof item.url==='string'&&/^https:\/\//i.test(item.url)?item.url:'';
-  $('#detail-body').innerHTML=`<span class="event-modal-time">${e(item.time)}</span><h3 class="event-modal-title">${e(item.title)}</h3>${item.personal?`<p class="event-personal">${e(item.personal)}</p>`:''}${locationMarkup}<p class="event-modal-note">${e(item.note)}</p>${eventLink?`<a class="text-link" href="${e(eventLink)}" target="_blank" rel="noopener noreferrer">${e(item.linkLabel||'공식 일정')} <span aria-hidden="true">↗</span></a>`:''}`;
+  $('#detail-body').innerHTML=`<span class="event-modal-time">${e(item.time)}${item.zone?' '+e(item.zone):''}</span><h3 class="event-modal-title">${e(item.title)}</h3>${item.arrival?`<p class="event-arrival">${e(item.arrival)}</p>`:''}${item.personal?`<p class="event-personal">${e(item.personal)}</p>`:''}${locationMarkup}<p class="event-modal-note">${e(item.note)}</p>${eventLink?`<a class="text-link" href="${e(eventLink)}" target="_blank" rel="noopener noreferrer">${e(item.linkLabel||'공식 일정')} <span aria-hidden="true">↗</span></a>`:''}`;
   const venue=$('[data-event-venue]',$('#detail-body'));if(venue)venue.addEventListener('click',()=>{mountPlace(venue.dataset.eventVenue,$('#detail-body'));$('#detail-title').textContent='행사장';});
   showDialog($('#detail-dialog'),b);
  });
