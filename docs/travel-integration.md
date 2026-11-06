@@ -100,3 +100,11 @@ Producer `5efbf727a7f94c5e7315dc22153c04ad0bff9cc8` added the password-unlocked 
 Website source `8aeba2a059b612fef84664ffc1a73e228caf3b0c` and public feed `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb` produced the 413-file local production artifact at `2026-11-06T13:23:54Z`. Static output checks and five smoke cases passed. Deployment `d07a5fb2d800ac6518f42d87d79850dbceeed328` advanced `gh-pages` from `517e70715d7e2526d40e42dc65f71e4fa19eae4b`.
 
 The live verifier matched the source, feed and primary routes. The guide, versioned JavaScript and CSS, and export provenance matched the artifact. Fresh locked views passed at 320px and 390px with empty private content and no external requests. Live WebKit also verified unlock, remembered access after reload and forgetting on the same static route. Pages published through `gh-pages:/` with HTTPS and Actions disabled.
+
+## Verified merged personal schedule — 2026-11-06
+
+Producer `f56403c347c93fa3f5774f608414ffcbec24877d` added the merged personal schedule after unlock. The export retains three assets and the existing provenance schema. Private events appear only after browser decryption. The producer passed 32 browser scenarios, real encrypted-guide checks in Chromium and WebKit, and its public privacy scan.
+
+Website source `6c85d64f103a9e4bd11cdb008a96d3d43e77b735` and public feed `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb` produced the 413-file local artifact at `2026-11-06T14:26:23Z`. Public output checks, five smoke cases and the encrypted-envelope check passed. Deployment `86226938250bea10f133b208be54ca0b9cd173f1` advanced `gh-pages` from `d07a5fb2d800ac6518f42d87d79850dbceeed328` and was verified live after Pages propagation.
+
+The guide and versioned assets matched the artifact byte for byte, and fresh locked views passed at 320px and 390px. A live WebKit check confirmed that the prior remembered unlock opens the merged schedule after refresh and that locking restores the public schedule. The global verifier matched the source, feed and primary routes. Pages published through `gh-pages:/` with HTTPS and Actions disabled.
