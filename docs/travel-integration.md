@@ -92,3 +92,11 @@ Producer `89b2555987792029bdfb4b3df9ae91b9bebf0b1d` groups equal-time sessions, 
 The source, static output, privacy and five smoke checks passed. The guide export matched the producer and the other public content matched the prior artifact after accounting for build metadata. Deployment `517e70715d7e2526d40e42dc65f71e4fa19eae4b` advanced `gh-pages` from `26ea1f64ffa7cd7013f482c723d276ade01fbf2a`.
 
 The global verifier matched the live source and feed pins, content hash and primary routes. The guide, versioned JavaScript and CSS, and export provenance matched the artifact. The public timeline passed the focused overlap, keyboard and day-scroll scenarios at 320px, 390px and 1440px. Pages published through `gh-pages:/` with HTTPS and Actions disabled.
+
+## Verified encrypted guide — 2026-11-06
+
+Producer `5efbf727a7f94c5e7315dc22153c04ad0bff9cc8` added the password-unlocked “내 안내” panel at `/travel/corl2026/#mine`. The approved public export carries the ciphertext and public decryption parameters. Web Crypto unlocks it in the browser, with an optional remembered key and a forget action. The producer passed 32 browser scenarios and its privacy scan.
+
+Website source `8aeba2a059b612fef84664ffc1a73e228caf3b0c` and public feed `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb` produced the 413-file local production artifact at `2026-11-06T13:23:54Z`. Static output checks and five smoke cases passed. Deployment `d07a5fb2d800ac6518f42d87d79850dbceeed328` advanced `gh-pages` from `517e70715d7e2526d40e42dc65f71e4fa19eae4b`.
+
+The live verifier matched the source, feed and primary routes. The guide, versioned JavaScript and CSS, and export provenance matched the artifact. Fresh locked views passed at 320px and 390px with empty private content and no external requests. Live WebKit also verified unlock, remembered access after reload and forgetting on the same static route. Pages published through `gh-pages:/` with HTTPS and Actions disabled.
