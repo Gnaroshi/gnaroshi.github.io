@@ -1,3 +1,99 @@
+const travelAgenda = function createAgendaRenderer({escape: e, pin, fallbackLink}) {
+ const minute = clock => {
+  const [hours, minutes] = clock.split(':').map(Number);
+  return hours * 60 + minutes;
+ };
+ const clock = minutes => `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+ const timeRange = ([start, end]) => `${clock(start)}–${clock(end)}`;
+
+ function scheduleEntries(items) {
+  return items.map((item, index) => {
+   const match = /^(\d{1,2}:[0-5]\d)(?:\s*[–—-]\s*(\d{1,2}:[0-5]\d))?/.exec(item.time);
+   const start = match ? minute(match[1]) : Infinity;
+   const end = match?.[2] ? minute(match[2]) : start;
+   return { item, index, start, end };
+  }).sort((a, b) => a.start - b.start || a.index - b.index);
+ }
+
+ function agendaSlots(entries) {
+  const slots = [];
+  let active;
+  for (const entry of entries) {
+   if (entry.end <= entry.start) {
+    slots.push({ entries: [entry] });
+    continue;
+   }
+   if (!active || entry.start >= active.end) {
+    active = { entries: [entry], end: entry.end, overlaps: [] };
+    slots.push(active);
+    continue;
+   }
+   const end = Math.min(active.end, entry.end);
+   const last = active.overlaps.at(-1);
+   if (last && entry.start <= last[1]) last[1] = Math.max(last[1], end);
+   else active.overlaps.push([entry.start, end]);
+   active.entries.push(entry);
+   active.end = Math.max(active.end, entry.end);
+  }
+  return slots;
+ }
+
+ function agendaItem(entry, date, venues, { sharedTime = false, track = '', hours = false } = {}) {
+  const { item, index } = entry;
+  const venue = venues.find(v => v.id === item.venue);
+  const location = item.location || venue?.shortName || venue?.name;
+  const locationMarkup = venue && !hours
+   ? `<button class="venue-link" data-open-place="${e(venue.id)}">${pin}${e(location)}</button>`
+   : location ? `<span class="venue-link">${e(location)}</span>` : '';
+  const time = sharedTime ? '' : `<div class="event-time">${e(item.time)}${track}</div>`;
+  const badge = item.personal ? `<span class="event-personal">${e(item.personal)}</span>` : '';
+  const fallback = fallbackLink ? `<noscript><p>${e(item.note||'')}</p>${fallbackLink(item.url,item.linkLabel||'공식 일정')}</noscript>` : '';
+  const content = `<div class="event-content"><h4><button class="event-select" data-event="${e(date)}/${index}">${e(item.title)}</button></h4>${badge}${locationMarkup}${fallback}</div>`;
+  return `<li class="agenda-event"${item.personal?' data-personal-event':''}>${time}${content}</li>`;
+ }
+
+ function agendaSlot(slot, date, venues, index) {
+  if (slot.entries.length === 1) return agendaItem(slot.entries[0], date, venues);
+  const first = slot.entries[0];
+  const simultaneous = slot.entries.every(entry => entry.start === first.start && entry.end === first.end);
+  const label = simultaneous ? '동시 진행' : '겹치는 시간';
+  const overlap = slot.overlaps.map(timeRange).join(' · ');
+  const duration = slot.end - first.start;
+  const rows = slot.entries.map(entry => {
+   if (simultaneous) return agendaItem(entry, date, venues, { sharedTime: true });
+   const start = ((entry.start - first.start) / duration * 100).toFixed(2);
+   const width = ((entry.end - entry.start) / duration * 100).toFixed(2);
+   const track = `<span class="overlap-track" aria-hidden="true"><span style="--start:${start}%;--duration:${width}%"></span></span>`;
+   return agendaItem(entry, date, venues, { track });
+  }).join('');
+  return `<li class="agenda-overlap" data-slot="${index}" data-overlap="${simultaneous ? 'same' : 'partial'}"><div class="overlap-heading"><span>${label}</span><strong>${overlap}</strong></div><ul class="overlap-events">${rows}</ul></li>`;
+ }
+
+ function personalClashes(slot) {
+  const times = new Set();
+  for (const personal of slot.entries.filter(entry => entry.item.personal)) {
+   for (const official of slot.entries.filter(entry => !entry.item.personal)) {
+    const start = Math.max(personal.start, official.start);
+    const end = Math.min(personal.end, official.end);
+    if (start < end) times.add(timeRange([start, end]));
+   }
+  }
+  return [...times].sort();
+ }
+
+ return function dayAgenda(day, venues) {
+  const entries = scheduleEntries(day.items);
+  const hours = entries.filter(({item}) => item.kind === 'hours');
+  const sessions = entries.filter(({item}) => item.kind !== 'hours');
+  const slots = agendaSlots(sessions);
+  const clashes = slots.flatMap((slot,index) => personalClashes(slot).map(time => `<button type="button" class="button quiet" data-jump-slot="${index}">${time}</button>`));
+  const overview = clashes.length ? `<div class="agenda-clashes"><strong>학회 일정과 겹침</strong><div>${clashes.join('')}</div></div>` : '';
+  const operations = hours.length ? `<section class="agenda-hours" aria-label="현장 운영시간"><h4>현장 운영시간</h4><ul>${hours.map(entry => agendaItem(entry, day.date, venues, { hours: true })).join('')}</ul></section>` : '';
+  const timeline = slots.length ? `<ol class="timeline" aria-label="시간순 일정">${slots.map((slot,index) => agendaSlot(slot, day.date, venues,index)).join('')}</ol>` : '';
+  return overview + operations + timeline;
+ };
+};
+const travelPin = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z\"/><circle cx=\"12\" cy=\"10\" r=\"2.5\"/></svg>";
 (() => {
  'use strict';
  const $ = (s, root=document) => root.querySelector(s);
@@ -36,6 +132,9 @@
  } catch { storageUnavailable=true;storageWarning('저장이 차단되어 있습니다. 입력은 현재 화면에서만 유지됩니다.'); }
  function persist() { try { localStorage.setItem(storageKey,JSON.stringify({checks:state.checks,saved:state.saved,budget:state.budget}));localStorage.setItem(plannerKey,JSON.stringify({plan:state.plan,theme:state.theme})); } catch { storageUnavailable=true;storageWarning('저장이 차단되어 있습니다. 입력은 현재 화면에서만 유지됩니다.'); } }
  const ui={view:'schedule',day:days.has(trip.start)?trip.start:trip.schedule[0]?.date,agenda:'conference',category:'all',query:'',savedOnly:false,place:trip.places.find(p=>p.status!=='closed')?.id,placeOpen:false,detailPushed:false,placeMode:'list',group:$('#check-group').value,checkFilter:'pending',resource:'essentials'};
+ const publicAgenda=new Map(trip.schedule.map(day=>[day.date,day]));
+ let visibleAgenda=publicAgenda;
+ const renderAgenda=travelAgenda({escape:e,pin:travelPin});
  const mine = mountMine();
  const scrolls={};
  const closeIcon=$('[data-close-dialog]').innerHTML;
@@ -62,11 +161,44 @@
   return view==='schedule'?`schedule/${ui.day}/${ui.agenda}`:view;
  }
  function captureScroll() { $$('[data-scroll]',$(`#${ui.view}`)).forEach(el=>scrolls[scrollKey(el)]=el.scrollTop); }
+ function setPersonalAgenda(overlays,unlocked) {
+  const next=new Map(publicAgenda);
+  for(const {date,items} of overlays){
+   const day=publicAgenda.get(date);
+   if(!day||!Array.isArray(items))continue;
+   const events=day.items.slice();
+   for(const item of items){
+    if(!item||typeof item.personal!=='string')continue;
+    if(item.replaces){
+     const at=events.findIndex(event=>event.id===item.replaces);
+     if(at>=0)events[at]={...events[at],...item};
+    }else if(typeof item.title==='string'&&typeof item.time==='string'){
+     events.push(item);
+    }
+   }
+   next.set(date,{...day,items:events});
+  }
+  for(const [date,day] of next){
+   if(day===visibleAgenda.get(date))continue;
+   const host=$(`[data-schedule-date="${date}"] [data-day-items]`);
+   host.innerHTML=renderAgenda(day,trip.venues);
+   bindPlaceOpen(host);
+  }
+  visibleAgenda=next;
+  $('#agenda-private-toolbar').hidden=!unlocked;
+  if(!unlocked&&$('#detail-body').hasAttribute('data-private-detail')){
+   closeDialog($('#detail-dialog'),true);
+   $('#detail-body').replaceChildren();
+   $('#detail-body').removeAttribute('data-private-detail');
+   $('#detail-title').textContent='장소';
+   modalTrigger=null;
+  }
+ }
  function mountMine() {
   const panel=$('#mine');
   if(!panel)return null;
   const form=$('#mine-form'), password=$('#mine-password'), remember=$('#mine-remember');
-  const body=$('#mine-body'), lock=$('#mine-lock'), submit=$('#mine-submit'), status=$('#mine-status');
+  const body=$('#mine-body'), lock=$('#mine-lock'), schedule=$('#mine-schedule'), submit=$('#mine-submit'), status=$('#mine-status');
   const vault=JSON.parse($('#guide-vault').textContent);
   const decode=value=>Uint8Array.from(atob(value),c=>c.charCodeAt(0));
   const encoder=new TextEncoder();
@@ -75,19 +207,25 @@
   const browserCrypto=globalThis.crypto?.subtle;
   const databaseName=`travel:${trip.id}:guide:v1`;
   const channel=typeof BroadcastChannel==='function'?new BroadcastChannel(databaseName):null;
-  let active=false, epoch=0, sessionKey=null;
+  let active=false, epoch=0, payload=null, unlockedMessage='';
   function note(message){
    status.textContent=message;
    status.hidden=!message;
   }
   function locked(){
    body.replaceChildren();body.hidden=true;
-   lock.hidden=true;form.hidden=false;password.value='';
+   lock.hidden=true;schedule.hidden=true;form.hidden=false;password.value='';
   }
-  function opened(html,message=''){
-   body.innerHTML=html;
+  function paintGuide(){
+   body.innerHTML=payload.html;
    body.hidden=false;form.hidden=true;lock.hidden=false;
-   note(message);
+   schedule.hidden=payload.days.length===0;
+   note(unlockedMessage);
+  }
+  function opened(guide,message=''){
+   payload=guide;unlockedMessage=message;
+   setPersonalAgenda(payload.days,true);
+   if(active)paintGuide();
   }
   async function keyRecord(mode,operation){
    const db=await new Promise((resolve,reject)=>{
@@ -107,31 +245,34 @@
   }
   async function decrypt(key){
    const bytes=await browserCrypto.decrypt(cipher,key,encrypted);
-   return new TextDecoder('utf-8',{fatal:true}).decode(bytes);
+   const text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
+   if(text.startsWith('<'))return {html:text,days:[]};
+   const guide=JSON.parse(text);
+   if(typeof guide.html!=='string'||!Array.isArray(guide.days))throw new Error('Invalid guide');
+   return guide;
   }
   function visit(open){
    if(active===open)return;
    active=open;
+   if(open&&payload)paintGuide();
+   else locked();
+  }
+  async function restore(){
+   if(!browserCrypto){
+    submit.disabled=true;
+    note('이 브라우저에서는 안내를 열 수 없습니다. HTTPS 주소를 지원하는 최신 브라우저에서 열어 주세요.');
+    return;
+   }
    const turn=++epoch;
-   locked();
-   note('');
-   if(!active)return;
-   if(!browserCrypto){submit.disabled=true;note('이 브라우저에서는 안내를 열 수 없습니다. HTTPS 주소를 지원하는 최신 브라우저에서 열어 주세요.');return;}
    submit.disabled=true;
-   (async()=>{
-    try{
-     const saved=sessionKey?null:await keyRecord('readonly',db=>db.get('active')).catch(()=>null);
-     const key=sessionKey||(saved?.salt===vault.salt?saved.key:null);
-     if(!key||turn!==epoch)return;
-     const html=await decrypt(key);
-     if(turn!==epoch)return;
-     sessionKey=key;
-     opened(html);
-    }catch{
-     sessionKey=null;
-     if(turn===epoch)note('기억한 잠금 해제를 사용할 수 없습니다. 비밀번호를 입력해 주세요.');
-    }finally{if(turn===epoch)submit.disabled=false;}
-   })();
+   try{
+    const saved=await keyRecord('readonly',db=>db.get('active')).catch(()=>null);
+    if(saved?.salt!==vault.salt||turn!==epoch)return;
+    const guide=await decrypt(saved.key);
+    if(turn===epoch)opened(guide);
+   }catch{
+    if(turn===epoch)note('기억한 잠금 해제를 사용할 수 없습니다. 비밀번호를 입력해 주세요.');
+   }finally{if(turn===epoch)submit.disabled=false;}
   }
   form.addEventListener('submit',async ev=>{
    ev.preventDefault();
@@ -145,7 +286,7 @@
    try{
     const input=await browserCrypto.importKey('raw',encoder.encode(passphrase),'PBKDF2',false,['deriveKey']);
     const key=await browserCrypto.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:decode(vault.salt),iterations:vault.iterations},input,{name:'AES-GCM',length:256},false,['decrypt']);
-    const html=await decrypt(key);
+    const guide=await decrypt(key);
     if(turn!==epoch)return;
     let message='';
     if(remember.checked){
@@ -153,9 +294,8 @@
      catch{message='이 브라우저에서 기억하지 못했습니다. 새로고침하면 비밀번호를 다시 입력해야 합니다.';}
     }
     if(turn!==epoch)return;
-    sessionKey=key;
-    opened(html,message);
-    lock.focus({preventScroll:true});
+    opened(guide,message);
+    if(active)(guide.days.length?schedule:lock).focus({preventScroll:true});
    }catch{
     if(turn!==epoch)return;
     note('비밀번호가 맞지 않습니다.');
@@ -164,12 +304,13 @@
   });
   function clearView(){
    ++epoch;
-   sessionKey=null;
+   payload=null;unlockedMessage='';
+   setPersonalAgenda([],false);
    locked();
    note('');
    submit.disabled=!browserCrypto;
   }
-  lock.addEventListener('click',async()=>{
+  async function forget(){
    clearView();
    submit.disabled=true;
    const turn=epoch;
@@ -180,13 +321,18 @@
    }catch{
     if(turn===epoch)note('브라우저에 저장된 잠금 해제를 지우지 못했습니다. 사이트 데이터를 삭제해 주세요.');
    }finally{
-    if(turn===epoch){submit.disabled=false;password.focus({preventScroll:true});}
+    if(turn===epoch){submit.disabled=false;if(active)password.focus({preventScroll:true});}
    }
+  }
+  $$('[data-lock-guide]').forEach(button=>button.addEventListener('click',forget));
+  schedule.addEventListener('click',()=>{
+   const date=payload?.days.some(day=>day.date===ui.day)?ui.day:payload?.days[0]?.date;
+   navigate('schedule',{day:date,agenda:'conference'});
   });
   if(channel)channel.onmessage=event=>{if(event.data==='lock')clearView();};
-  window.addEventListener('pagehide',()=>{visit(false);sessionKey=null;});
-  window.addEventListener('pageshow',event=>{if(event.persisted)visit(!panel.hidden);});
-  return {visit};
+  window.addEventListener('pagehide',clearView);
+  window.addEventListener('pageshow',event=>{if(event.persisted)restore();});
+  return {visit,restore};
  }
  function showView(focus=false) {
   $$('.view').forEach(v=>{const active=v.id===ui.view;v.hidden=!active;v.toggleAttribute('data-active',active);});
@@ -319,18 +465,28 @@
   $('#map-selected').innerHTML=`${e(p.name)}<small>${e(p.area)} · ${filtered.indexOf(p.id)+1} / ${filtered.length}</small>`;
   $('#map-prev').disabled=filtered.indexOf(p.id)<=0;$('#map-next').disabled=filtered.indexOf(p.id)>=filtered.length-1;
  }
- $$('[data-event]').forEach(b=>b.addEventListener('click',()=>{
-  const [date,index]=b.dataset.event.split('/');const day=trip.schedule.find(d=>d.date===date);const item=day?.items[Number(index)];if(!item)return;
+ $('#conference-agenda').addEventListener('click',event=>{
+  const jump=event.target.closest('[data-jump-slot]');
+  if(jump){
+   const group=$(`[data-slot="${jump.dataset.jumpSlot}"]`,jump.closest('[data-schedule-date]'));
+   if(group){group.tabIndex=-1;group.focus({preventScroll:true});group.scrollIntoView({block:'start'});}
+   return;
+  }
+  const b=event.target.closest('[data-event]');
+  if(!b)return;
+  const [date,index]=b.dataset.event.split('/');const day=visibleAgenda.get(date);const item=day?.items[Number(index)];if(!item)return;
+  $('#detail-body').toggleAttribute('data-private-detail',Boolean(item.personal));
   $('#detail-title').textContent=day.label;delete $('#detail-body').dataset.mounted;
   const place=allPlaces.get(item.venue);
   const location=item.location||place?.shortName||place?.name;
   const locationMarkup=place
    ? `<button class="button" data-event-venue="${e(place.id)}">${e(location)}</button>`
    : location ? `<p class="muted">${e(location)}</p>` : '';
-  $('#detail-body').innerHTML=`<span class="event-modal-time">${e(item.time)}</span><h3 class="event-modal-title">${e(item.title)}</h3>${locationMarkup}<p class="event-modal-note">${e(item.note)}</p>${item.url?`<a class="text-link" href="${e(item.url)}" target="_blank" rel="noopener noreferrer">${e(item.linkLabel||'공식 일정')} <span aria-hidden="true">↗</span></a>`:''}`;
+  const eventLink=typeof item.url==='string'&&/^https:\/\//i.test(item.url)?item.url:'';
+  $('#detail-body').innerHTML=`<span class="event-modal-time">${e(item.time)}</span><h3 class="event-modal-title">${e(item.title)}</h3>${item.personal?`<p class="event-personal">${e(item.personal)}</p>`:''}${locationMarkup}<p class="event-modal-note">${e(item.note)}</p>${eventLink?`<a class="text-link" href="${e(eventLink)}" target="_blank" rel="noopener noreferrer">${e(item.linkLabel||'공식 일정')} <span aria-hidden="true">↗</span></a>`:''}`;
   const venue=$('[data-event-venue]',$('#detail-body'));if(venue)venue.addEventListener('click',()=>{mountPlace(venue.dataset.eventVenue,$('#detail-body'));$('#detail-title').textContent='행사장';});
   showDialog($('#detail-dialog'),b);
- }));
+ });
  $$('[data-select-place]').forEach(b=>b.addEventListener('click',()=>selectPlace(b.dataset.selectPlace,b)));
  $('#place-search').addEventListener('input',ev=>{ui.query=ev.target.value.trim();updatePlaces();});
  $('#place-category').addEventListener('change',ev=>{ui.category=ev.target.value;updatePlaces();});
@@ -379,5 +535,5 @@
  const clock=()=>{try{$('#local-clock').textContent=`현지 ${new Intl.DateTimeFormat('ko-KR',{timeZone:trip.timezone,hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())}`;}catch{$('#local-clock').textContent='';}};
  clock();setInterval(clock,60000);
  matchMedia('(min-width: 1001px)').addEventListener('change',()=>{if(ui.view==='places')updatePlaces();});
- readRoute(true);updateChecks();updateBudget();updateSaved();
+ readRoute(true);updateChecks();updateBudget();updateSaved();mine?.restore();
 })();
