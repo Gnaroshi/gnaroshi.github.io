@@ -17,3 +17,5 @@
 .event-select{border:0;background:none;padding:0;min-height:30px;text-align:left;font:inherit;color:inherit}.event-select:hover{color:var(--accent)}.date-month{flex:0 0 auto;white-space:nowrap;min-width:24px}.date-bar button{flex:0 1 60px;min-width:40px}.event-modal-time{color:var(--accent);font-weight:650;font-size:13px}.event-modal-note{font-size:14px;line-height:1.8}.event-modal-title{font-size:20px;margin:8px 0 16px}@media(max-width:640px){.date-bar button{flex:1;width:auto;max-width:64px}.timeline li{padding:17px 0}.budget-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.budget-overview>div:first-child{grid-column:1/-1;padding-top:0}.budget-overview>div:first-child strong{font-size:28px}.budget-overview>div:not(:first-child) strong{font-size:18px}}
 
 .js #workspace{display:flex;flex-direction:column}.js .view{height:auto;flex:1}#storage-warning{position:static;flex:0 0 auto}.resource-storage{display:block;margin-top:24px}button:disabled:hover{filter:none}
+
+.resource-links { display: flex; flex-wrap: wrap; gap: 8px 16px; }
