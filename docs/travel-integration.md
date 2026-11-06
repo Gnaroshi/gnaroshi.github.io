@@ -108,3 +108,11 @@ Producer `f56403c347c93fa3f5774f608414ffcbec24877d` added the merged personal sc
 Website source `6c85d64f103a9e4bd11cdb008a96d3d43e77b735` and public feed `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb` produced the 413-file local artifact at `2026-11-06T14:26:23Z`. Public output checks, five smoke cases and the encrypted-envelope check passed. Deployment `86226938250bea10f133b208be54ca0b9cd173f1` advanced `gh-pages` from `d07a5fb2d800ac6518f42d87d79850dbceeed328` and was verified live after Pages propagation.
 
 The guide and versioned assets matched the artifact byte for byte, and fresh locked views passed at 320px and 390px. A live WebKit check confirmed that the prior remembered unlock opens the merged schedule after refresh and that locking restores the public schedule. The global verifier matched the source, feed and primary routes. Pages published through `gh-pages:/` with HTTPS and Actions disabled.
+
+## Verified private travel days — 2026-11-06
+
+Producer `ba7a2f6e9bea744e1ec3d347cde1a7a889751ff3` added private travel days to the unlocked schedule. The producer passed 32 browser scenarios, itinerary checks in Chromium and WebKit, and its public privacy scan. The locked public schedule data and five-date navigation matched the preceding export.
+
+Website source `862ebec796cb6f6f59e6169282bd1c7d6c0c103f` and public feed `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb` produced the 413-file local artifact at `2026-11-06T14:41:50Z`. Public output checks and five smoke cases passed. Deployment `73f0a7c96643eb95607c41b21aef183948fc06c5` advanced `gh-pages` from `86226938250bea10f133b208be54ca0b9cd173f1`. After delayed propagation, one documented legacy Pages request returned `queued`. Live verification subsequently matched the source, feed and primary routes.
+
+The live guide and versioned assets matched the artifact byte for byte. At 320px and 390px, fresh locked browsers displayed the same five public dates. Live WebKit verified migration from the prior remembered key, the three private dates and event order after unlock, and restoration of the five public dates after locking. Private dates stayed out of the URL. Pages published through `gh-pages:/` with HTTPS and Actions disabled.
