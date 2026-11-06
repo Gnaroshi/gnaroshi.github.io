@@ -84,3 +84,11 @@ Producer `6eb5837f03d29169fed70aba24326848b5d056da` supplied the refreshed confe
 The website passed Astro, localization, public copy, link and privacy checks and all five smoke cases. The guide matched the producer bytes after the expected HTML build metadata was added. The other public outputs matched the prior artifact after accounting for release metadata.
 
 Deployment `26ea1f64ffa7cd7013f482c723d276ade01fbf2a` advanced `gh-pages` from `2d0b1ae25cc0b8015342462247fa7b20ea664813`. The live verifier matched the production source and feed pins, feed content hash and primary routes. The guide HTML, versioned JavaScript and CSS, and export provenance returned HTTP 200 with exact matches to the validated artifact. Two focused scenarios also passed on the live guide. Pages published from `gh-pages:/` with HTTPS and Actions disabled. The built website source remains `c48bb7e3d961058c948a7e952098e0696602fe4e`.
+
+## Verified timeline layout — 2026-11-06
+
+Producer `89b2555987792029bdfb4b3df9ae91b9bebf0b1d` groups equal-time sessions, shows separate tracks for partial overlaps, and restores each selected day's scroll position. Its 31 browser scenarios passed with zero axe findings and a clean public export audit. Website source `11c3d1382a241729156f7ba91f46605c39550f4d` and public feed `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb` produced the 413-file local production artifact at `2026-11-06T11:21:10Z`.
+
+The source, static output, privacy and five smoke checks passed. The guide export matched the producer and the other public content matched the prior artifact after accounting for build metadata. Deployment `517e70715d7e2526d40e42dc65f71e4fa19eae4b` advanced `gh-pages` from `26ea1f64ffa7cd7013f482c723d276ade01fbf2a`.
+
+The global verifier matched the live source and feed pins, content hash and primary routes. The guide, versioned JavaScript and CSS, and export provenance matched the artifact. The public timeline passed the focused overlap, keyboard and day-scroll scenarios at 320px, 390px and 1440px. Pages published through `gh-pages:/` with HTTPS and Actions disabled.
