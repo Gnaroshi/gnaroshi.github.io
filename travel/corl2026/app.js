@@ -56,7 +56,11 @@
  $('#theme-toggle').addEventListener('click',()=>{setTheme(state.theme==='dark'?'light':'dark');persist();});
  ['storage-info','resources-storage'].forEach(id=>$(`#${id}`).addEventListener('click',ev=>showDialog($('#info-dialog'),ev.currentTarget)));
  const desktop=()=>matchMedia('(min-width: 1001px)').matches;
- function captureScroll() { $$('[data-scroll]',$(`#${ui.view}`)).forEach(el=>scrolls[el.dataset.scroll]=el.scrollTop); }
+ function scrollKey(el) {
+  const view=el.dataset.scroll;
+  return view==='schedule'?`schedule/${ui.day}/${ui.agenda}`:view;
+ }
+ function captureScroll() { $$('[data-scroll]',$(`#${ui.view}`)).forEach(el=>scrolls[scrollKey(el)]=el.scrollTop); }
  function showView(focus=false) {
   $$('.view').forEach(v=>{const active=v.id===ui.view;v.hidden=!active;v.toggleAttribute('data-active',active);});
   $$('[data-view-link]').forEach(a=>{if(a.dataset.viewLink===ui.view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
@@ -66,7 +70,7 @@
   if(ui.view==='checklist')updateChecks();
   if(ui.view==='budget')updateBudget();
   if(ui.view==='summaries')updateResources();
-  $$('[data-scroll]',$(`#${ui.view}`)).forEach(el=>{el.scrollTop=scrolls[el.dataset.scroll]||0;});
+  $$('[data-scroll]',$(`#${ui.view}`)).forEach(el=>{el.scrollTop=scrolls[scrollKey(el)]||0;});
   if(focus)$(`#${ui.view}`).focus({preventScroll:true});
  }
  function routeHash() {
