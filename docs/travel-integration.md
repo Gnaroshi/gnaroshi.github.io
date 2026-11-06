@@ -116,3 +116,11 @@ Producer `ba7a2f6e9bea744e1ec3d347cde1a7a889751ff3` added private travel days to
 Website source `862ebec796cb6f6f59e6169282bd1c7d6c0c103f` and public feed `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb` produced the 413-file local artifact at `2026-11-06T14:41:50Z`. Public output checks and five smoke cases passed. Deployment `73f0a7c96643eb95607c41b21aef183948fc06c5` advanced `gh-pages` from `86226938250bea10f133b208be54ca0b9cd173f1`. After delayed propagation, one documented legacy Pages request returned `queued`. Live verification subsequently matched the source, feed and primary routes.
 
 The live guide and versioned assets matched the artifact byte for byte. At 320px and 390px, fresh locked browsers displayed the same five public dates. Live WebKit verified migration from the prior remembered key, the three private dates and event order after unlock, and restoration of the five public dates after locking. Private dates stayed out of the URL. Pages published through `gh-pages:/` with HTTPS and Actions disabled.
+
+## Verified encrypted data refresh — 2026-11-07
+
+Producer `fb8daa56b5b1b3f77d5f21fced3d522e5039fe8d` updated the guide envelope with a fresh nonce and stable remembered-key parameters. The public HTML outside the envelope and both runtime assets matched the prior export. The producer passed its static checks and 32 browser scenarios.
+
+Website source `8ed0e6036df787994cfedf2547eb61ab42a594dd` and public feed `1deb21d9e0ca9c2f13211ea54ddef0370d4bb7fb` produced the 413-file local artifact at `2026-11-06T20:22:17Z`. Static output checks and five smoke cases passed. Deployment `e9d298a09a12a9e14cc7f1cfef801955e43a82c0` advanced `gh-pages` from `73f0a7c96643eb95607c41b21aef183948fc06c5`.
+
+The live source, feed, guide files and primary routes matched the verified artifact. Fresh locked browsers showed the same five public dates at 320px and 390px. A live 320px check verified that the prior remembered key opens the updated data and that locking removes private content from the DOM. Pages published through `gh-pages:/` with HTTPS and Actions disabled.
