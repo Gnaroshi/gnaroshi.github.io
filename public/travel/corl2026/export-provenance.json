@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "89b2555987792029bdfb4b3df9ae91b9bebf0b1d",
+  "sourceCommit": "5efbf727a7f94c5e7315dc22153c04ad0bff9cc8",
   "canonical": "https://gnaroshi.dev/travel/corl2026/",
   "files": [
     {
       "path": "app.js",
-      "sha256": "450c8a50668528806f6bd100b6ad88f7498cce98b179c85932c2d08133634a53"
+      "sha256": "de6f3c84f45a5b311d91070e7b1bf9a1684283b2e75a4459c03eae5b941e7ca1"
     },
     {
       "path": "index.html",
-      "sha256": "e84f9c95d15032338a9730b47dbbc9c6fd59a0a1cb4c317145ee5f68bc2b44ea"
+      "sha256": "59dcb720b5e26660e0e160580c2cfd430fbe222e97865a39ac7db289f1fbe4ca"
     },
     {
       "path": "style.css",
-      "sha256": "aa41bd44c5d18fec5efc380e37f69788077dfeb849172d0581830bd536fb0c61"
+      "sha256": "a1102b6146498c74976c541b56e9223265c7118d226e6aaf230061a059eb1f92"
     }
   ]
 }
